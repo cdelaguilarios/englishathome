@@ -1,0 +1,266 @@
+/*Login*/
+.login-box, .register-box{
+    margin: 3% auto;
+}
+
+/*Sección cargando (spin)=*/
+.cargando{
+    margin: 100px 0;
+    border: none;
+}
+
+/*Mensajes y errores*/
+.contenedor-alerta{
+    padding: 0;
+}
+.login-page .contenedor-alerta{
+    padding: 10px;
+}
+.alert {
+    padding: 10px;
+    margin-bottom: 10px;
+}
+.alert-dismissable .close, .alert-dismissible .close {
+    right: inherit;
+}
+
+/*Breadcrumb*/
+.content-header{
+    min-height: 44px;
+}
+.content-header>.breadcrumb {
+    float: left;
+    left: 10px;
+    right:0;
+}
+@media (max-width: 991px){
+    .content-header>.breadcrumb {
+        float: none;
+        left: 0;
+    }
+}
+
+/*Listas*/
+.table .buttons {
+    padding: 0px;
+    margin: 0px;
+    list-style: none;
+    padding-top: 2px;
+    float: left;
+}
+.table .buttons > li {
+    display: block;
+    float: left;
+    margin-left: 12px;
+}
+.table .buttons > li > a {
+    color: #039BE5;
+    opacity: 1 !important;
+}
+.table i{
+    width: 100%;
+    text-align: center;
+}
+.table .btn i{
+    width: inherit;
+}
+.sub-table{
+    border: 3px solid #dae1e8;
+}
+.table-bordered {
+    border: 1px solid #ddd;
+}
+.table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
+    border: 1px solid #ddd;
+}
+table.table-bordered tbody th, table.table-bordered tbody td {
+    border-left-width: 0;
+    border-bottom-width: 0;
+    vertical-align: middle;
+}
+.table>thead>tr>th{
+    vertical-align: middle;
+}
+.table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
+    border-top: 1px solid #dae1e8;
+}
+.table .clase-realizada{
+    background-color: #dcefde;
+}
+.table .clase-cancelada{
+    background-color: #e0281f;
+    color: white;
+}
+.table .clase-sin-profesor{
+    background-color: #f7b955;
+    color: white;
+}
+
+/*Botón creación*/
+.box-header a{
+    float:right;
+}
+
+/*Formularios*/
+.btn{
+    margin-left: 2px;
+}
+select.form-control{
+    margin-bottom: 5px;
+}
+.form-horizontal .checkbox-inline {
+    padding-top: 0;
+}
+input[type=checkbox] {
+    margin: 0;
+}
+#type-selector {
+    color: #fff;
+    background-color: #4d90fe;
+    padding: 5px 11px 0px 11px;
+}
+#type-selector label {
+    font-family: Roboto;
+    font-size: 13px;
+    font-weight: 300;
+}
+.fuelux .checkbox-inline input[type="checkbox"]:not(.sr-only) {   
+    width: inherit;
+    height: inherit;
+    margin: -5px -1px -1px;
+    clip: inherit;
+}
+.fuelux .checkbox-custom:before{
+    left: inherit;
+    right: -20px;
+}
+.fuelux .checkbox label{
+    font-weight: 700;
+}
+.checkbox label, .radio label{
+    padding-left: 25px;
+}
+.datepicker table tr td span.disabled, .datepicker table tr td span.disabled:hover, 
+.datepicker table tr td.disabled, .datepicker table tr td.disabled:hover{    
+    opacity: .35;
+}
+textarea{
+    resize: none;
+}
+
+/*Mensaje error - Validaciones formularios (Jquery validate)*/
+.help-block-error{
+    display: block;
+    margin: 0;
+    color: red;
+    width: 75vw;
+}
+
+/*Mapa - google maps*/
+.sec-mapa{
+    height: 300px;
+}
+.sec-mapa .controls {
+    margin-top: 10px;
+    border: 1px solid transparent;
+    border-radius: 2px 0 0 2px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    height: 32px;
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    width: 40%;
+    padding: 0 5px;
+}
+#mapa{
+    height: 100%;
+}
+#pac-input:focus {
+    border-color: #4d90fe;
+}
+.pac-container {
+    font-family: Roboto;
+}
+#mod-ubicacion-mapa .sec-mapa{
+    height: 500px;
+}
+
+/*Sección horario*/
+#calendario .schedule-table{
+    font-size: 9pt;
+}
+#calendario .schedule-header th{
+    border: 1px solid #3c8dbc;  
+    text-align: center;
+    background: #fafafa;
+}
+#calendario .schedule-rows td {
+    width: 70px;
+    cursor: pointer;
+    border: 1px solid #3c8dbc;
+    border-bottom: 0;
+    padding: 0 2px;
+}
+#calendario .schedule-rows td:first-child {
+    width: 80px;   
+    text-align: center;
+}
+#calendario .schedule-rows tr:last-child {    
+    border-bottom: 1px solid #3c8dbc;
+}
+#calendario .schedule-rows td[data-selected],
+#calendario .schedule-rows td[data-selecting] { background-color: #008d4c; }
+#calendario .schedule-rows td[data-disabled] { opacity: 0.55; }
+#modHorario .modal-header, #modHorario .modal-body, #modHorario .modal-footer{
+    padding: 5px 15px;
+}
+#modHorario .sec-btn-limpiar-seleccion .btn{
+    margin: 0;
+    float: left;
+}
+#secTexHorario ul{
+    list-style-type: none;
+    margin-top: 5px;
+    margin-left: -20px;
+}
+
+/*Perfil*/
+#sec-datos-principales .text-muted, #mod-datos-pago .text-muted{
+    margin-left: 20px;
+}
+
+/*Sección historial*/
+#sec-cargando-historial{
+    background-color: #fff;
+}
+#sec-cargando-historial .cargando{
+    margin: 30px 0;    
+}
+#sec-boton-carga-mas-historial{
+    text-align: center;
+    margin-top: 30px;
+}
+
+/*Sección pago*/
+#tab_lista_docentes_pago i {
+    width: inherit;
+}
+#tab_lista_docentes_pago_info{
+    white-space: inherit;
+    width: 160%;
+}
+.saldo-favor-utilizado{
+    color:green;
+}
+
+/*Sección clase*/
+#tab_lista_periodos_clases .fa-remove{
+    color: red;
+}
+#tab_lista_docentes_clase i {
+    width: inherit;
+}
+#tab_lista_docentes_clase_info{
+    white-space: inherit;
+    width: 160%;
+}

@@ -1,0 +1,433 @@
+    /*
+    Flaticon icon font: Flaticon
+    Creation date: 13/09/2016 09:16
+    */
+
+    @font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+    .fi:before{
+        display: inline-block;
+  font-family: "Flaticon";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+    }
+
+    .flaticon-abacus:before { content: "\f100"; }
+.flaticon-abc:before { content: "\f101"; }
+.flaticon-alarm-clock:before { content: "\f102"; }
+.flaticon-alarm-clock-1:before { content: "\f103"; }
+.flaticon-alphabet-book:before { content: "\f104"; }
+.flaticon-application-form:before { content: "\f105"; }
+.flaticon-application-form-1:before { content: "\f106"; }
+.flaticon-archives:before { content: "\f107"; }
+.flaticon-atomic-orbitals:before { content: "\f108"; }
+.flaticon-atomic-theory:before { content: "\f109"; }
+.flaticon-audio-book:before { content: "\f10a"; }
+.flaticon-audiobook:before { content: "\f10b"; }
+.flaticon-avi-extension:before { content: "\f10c"; }
+.flaticon-b-calification:before { content: "\f10d"; }
+.flaticon-b-letter:before { content: "\f10e"; }
+.flaticon-bag-of-books:before { content: "\f10f"; }
+.flaticon-bank-symbol:before { content: "\f110"; }
+.flaticon-bars:before { content: "\f111"; }
+.flaticon-basketball:before { content: "\f112"; }
+.flaticon-battery-levels:before { content: "\f113"; }
+.flaticon-big-trophy:before { content: "\f114"; }
+.flaticon-black-tie:before { content: "\f115"; }
+.flaticon-book:before { content: "\f116"; }
+.flaticon-book-and-apple:before { content: "\f117"; }
+.flaticon-book-and-speech-bubble:before { content: "\f118"; }
+.flaticon-book-with-cd-rom:before { content: "\f119"; }
+.flaticon-book-with-dvd:before { content: "\f11a"; }
+.flaticon-book-with-magnifying-glass:before { content: "\f11b"; }
+.flaticon-book-with-mouse:before { content: "\f11c"; }
+.flaticon-bookshelf-with-books:before { content: "\f11d"; }
+.flaticon-bussines-briefcase:before { content: "\f11e"; }
+.flaticon-canvas:before { content: "\f11f"; }
+.flaticon-capital-a:before { content: "\f120"; }
+.flaticon-cardiology-tool:before { content: "\f121"; }
+.flaticon-cart-with-books:before { content: "\f122"; }
+.flaticon-cellphone:before { content: "\f123"; }
+.flaticon-check-mark:before { content: "\f124"; }
+.flaticon-cinema-and-audience:before { content: "\f125"; }
+.flaticon-clipboard-with-a:before { content: "\f126"; }
+.flaticon-closed-envelope:before { content: "\f127"; }
+.flaticon-computer-connected-to-the-network:before { content: "\f128"; }
+.flaticon-computer-keyboard:before { content: "\f129"; }
+.flaticon-creche:before { content: "\f12a"; }
+.flaticon-delete-email:before { content: "\f12b"; }
+.flaticon-desktop-computer:before { content: "\f12c"; }
+.flaticon-diary:before { content: "\f12d"; }
+.flaticon-digital-display-30:before { content: "\f12e"; }
+.flaticon-digital-display-60:before { content: "\f12f"; }
+.flaticon-digital-number-15:before { content: "\f130"; }
+.flaticon-digital-number-45:before { content: "\f131"; }
+.flaticon-diploma-with-a-ribbon:before { content: "\f132"; }
+.flaticon-directional-sign:before { content: "\f133"; }
+.flaticon-dna-strand:before { content: "\f134"; }
+.flaticon-documents-with-a-star:before { content: "\f135"; }
+.flaticon-download-book:before { content: "\f136"; }
+.flaticon-download-ebook:before { content: "\f137"; }
+.flaticon-download-from-the-cloud:before { content: "\f138"; }
+.flaticon-download-from-the-net:before { content: "\f139"; }
+.flaticon-draw-with-compass:before { content: "\f13a"; }
+.flaticon-earth-and-moon:before { content: "\f13b"; }
+.flaticon-educational-platform:before { content: "\f13c"; }
+.flaticon-educational-video:before { content: "\f13d"; }
+.flaticon-educational-video-1:before { content: "\f13e"; }
+.flaticon-electromagnet:before { content: "\f13f"; }
+.flaticon-email-contacts:before { content: "\f140"; }
+.flaticon-eraser:before { content: "\f141"; }
+.flaticon-favorite-book:before { content: "\f142"; }
+.flaticon-flag-point:before { content: "\f143"; }
+.flaticon-folded-certificate:before { content: "\f144"; }
+.flaticon-football-helmet:before { content: "\f145"; }
+.flaticon-full-test-tube:before { content: "\f146"; }
+.flaticon-gaussian-function:before { content: "\f147"; }
+.flaticon-geography-book:before { content: "\f148"; }
+.flaticon-geometric-pencil:before { content: "\f149"; }
+.flaticon-glasses:before { content: "\f14a"; }
+.flaticon-graduate:before { content: "\f14b"; }
+.flaticon-graduate-1:before { content: "\f14c"; }
+.flaticon-graduate-girl:before { content: "\f14d"; }
+.flaticon-graduating:before { content: "\f14e"; }
+.flaticon-graduation-pictures:before { content: "\f14f"; }
+.flaticon-graduations-music:before { content: "\f150"; }
+.flaticon-graduations-questions:before { content: "\f151"; }
+.flaticon-graph-frame:before { content: "\f152"; }
+.flaticon-greek-pillar:before { content: "\f153"; }
+.flaticon-group-of-people:before { content: "\f154"; }
+.flaticon-halfway:before { content: "\f155"; }
+.flaticon-hand-bell:before { content: "\f156"; }
+.flaticon-handwriten-alphabet:before { content: "\f157"; }
+.flaticon-hard-cover-book:before { content: "\f158"; }
+.flaticon-having-an-idea:before { content: "\f159"; }
+.flaticon-hierarchical-order:before { content: "\f15a"; }
+.flaticon-human-brain:before { content: "\f15b"; }
+.flaticon-icloud:before { content: "\f15c"; }
+.flaticon-information-network:before { content: "\f15d"; }
+.flaticon-insignia-and-ribbon:before { content: "\f15e"; }
+.flaticon-ipad-video-player:before { content: "\f15f"; }
+.flaticon-laptop-with-a-graduation-cap:before { content: "\f160"; }
+.flaticon-leaf:before { content: "\f161"; }
+.flaticon-lecture:before { content: "\f162"; }
+.flaticon-lecture-1:before { content: "\f163"; }
+.flaticon-light-bulb:before { content: "\f164"; }
+.flaticon-location-flag:before { content: "\f165"; }
+.flaticon-looking-for-students:before { content: "\f166"; }
+.flaticon-lowering-graph:before { content: "\f167"; }
+.flaticon-man-with-open-arms:before { content: "\f168"; }
+.flaticon-measure-instruments:before { content: "\f169"; }
+.flaticon-measuring-tools:before { content: "\f16a"; }
+.flaticon-medal-with-a-star:before { content: "\f16b"; }
+.flaticon-medal-with-number-1:before { content: "\f16c"; }
+.flaticon-meeting:before { content: "\f16d"; }
+.flaticon-microscope:before { content: "\f16e"; }
+.flaticon-molecular-bond:before { content: "\f16f"; }
+.flaticon-molecular-bond-1:before { content: "\f170"; }
+.flaticon-month-calendar:before { content: "\f171"; }
+.flaticon-monthly-calendar:before { content: "\f172"; }
+.flaticon-mouse:before { content: "\f173"; }
+.flaticon-musical-note:before { content: "\f174"; }
+.flaticon-muted-book:before { content: "\f175"; }
+.flaticon-new-document:before { content: "\f176"; }
+.flaticon-new-email:before { content: "\f177"; }
+.flaticon-notepad-sheet:before { content: "\f178"; }
+.flaticon-numbers:before { content: "\f179"; }
+.flaticon-old-school:before { content: "\f17a"; }
+.flaticon-olympics-torch:before { content: "\f17b"; }
+.flaticon-online-class:before { content: "\f17c"; }
+.flaticon-online-class-1:before { content: "\f17d"; }
+.flaticon-online-test:before { content: "\f17e"; }
+.flaticon-open-email:before { content: "\f17f"; }
+.flaticon-open-scissors:before { content: "\f180"; }
+.flaticon-paint-brush:before { content: "\f181"; }
+.flaticon-paper-airplane:before { content: "\f182"; }
+.flaticon-paperclip:before { content: "\f183"; }
+.flaticon-paragraph-aa:before { content: "\f184"; }
+.flaticon-pdf-document:before { content: "\f185"; }
+.flaticon-pdf-file-on-screen:before { content: "\f186"; }
+.flaticon-pen:before { content: "\f187"; }
+.flaticon-pencil:before { content: "\f188"; }
+.flaticon-picture-in-frame:before { content: "\f189"; }
+.flaticon-pie-chart:before { content: "\f18a"; }
+.flaticon-play-buttom:before { content: "\f18b"; }
+.flaticon-play-files:before { content: "\f18c"; }
+.flaticon-podium:before { content: "\f18d"; }
+.flaticon-protractor:before { content: "\f18e"; }
+.flaticon-pushpin:before { content: "\f18f"; }
+.flaticon-quality-education:before { content: "\f190"; }
+.flaticon-quarter-pie-chart:before { content: "\f191"; }
+.flaticon-questioning:before { content: "\f192"; }
+.flaticon-reading-glasses:before { content: "\f193"; }
+.flaticon-rectangular-certificate:before { content: "\f194"; }
+.flaticon-research-with-books:before { content: "\f195"; }
+.flaticon-rolled-diploma:before { content: "\f196"; }
+.flaticon-sand-clock:before { content: "\f197"; }
+.flaticon-saturn:before { content: "\f198"; }
+.flaticon-school-bag:before { content: "\f199"; }
+.flaticon-school-bus:before { content: "\f19a"; }
+.flaticon-school-cart:before { content: "\f19b"; }
+.flaticon-school-globe:before { content: "\f19c"; }
+.flaticon-school-globe-1:before { content: "\f19d"; }
+.flaticon-school-network:before { content: "\f19e"; }
+.flaticon-school-supplies:before { content: "\f19f"; }
+.flaticon-science-in-a-laptop:before { content: "\f1a0"; }
+.flaticon-sealed-diploma:before { content: "\f1a1"; }
+.flaticon-searching-files:before { content: "\f1a2"; }
+.flaticon-searching-tool:before { content: "\f1a3"; }
+.flaticon-set-square:before { content: "\f1a4"; }
+.flaticon-shake-hands:before { content: "\f1a5"; }
+.flaticon-shopping-cart:before { content: "\f1a6"; }
+.flaticon-signature:before { content: "\f1a7"; }
+.flaticon-small-calculator:before { content: "\f1a8"; }
+.flaticon-smartphone-app:before { content: "\f1a9"; }
+.flaticon-stage:before { content: "\f1aa"; }
+.flaticon-steps-to-complete:before { content: "\f1ab"; }
+.flaticon-student-in-front-of-a-stack-of-books:before { content: "\f1ac"; }
+.flaticon-study-lamp:before { content: "\f1ad"; }
+.flaticon-studying-zone:before { content: "\f1ae"; }
+.flaticon-syringe:before { content: "\f1af"; }
+.flaticon-tablet-with-hand:before { content: "\f1b0"; }
+.flaticon-tactile-tablet:before { content: "\f1b1"; }
+.flaticon-teach:before { content: "\f1b2"; }
+.flaticon-teacher-with-stick:before { content: "\f1b3"; }
+.flaticon-telescope:before { content: "\f1b4"; }
+.flaticon-test-results:before { content: "\f1b5"; }
+.flaticon-theory-of-relativity:before { content: "\f1b6"; }
+.flaticon-three-books:before { content: "\f1b7"; }
+.flaticon-three-strings-guitar:before { content: "\f1b8"; }
+.flaticon-university:before { content: "\f1b9"; }
+.flaticon-university-class:before { content: "\f1ba"; }
+.flaticon-unknown-topic:before { content: "\f1bb"; }
+.flaticon-users-settings:before { content: "\f1bc"; }
+.flaticon-virus:before { content: "\f1bd"; }
+.flaticon-wagon:before { content: "\f1be"; }
+.flaticon-wall-clock:before { content: "\f1bf"; }
+.flaticon-window-graphic:before { content: "\f1c0"; }
+.flaticon-window-scrolling-left:before { content: "\f1c1"; }
+.flaticon-window-scrolling-medium:before { content: "\f1c2"; }
+.flaticon-window-scrolling-right:before { content: "\f1c3"; }
+.flaticon-world-map:before { content: "\f1c4"; }
+    
+    $font-Flaticon-abacus: "\f100";
+    $font-Flaticon-abc: "\f101";
+    $font-Flaticon-alarm-clock: "\f102";
+    $font-Flaticon-alarm-clock-1: "\f103";
+    $font-Flaticon-alphabet-book: "\f104";
+    $font-Flaticon-application-form: "\f105";
+    $font-Flaticon-application-form-1: "\f106";
+    $font-Flaticon-archives: "\f107";
+    $font-Flaticon-atomic-orbitals: "\f108";
+    $font-Flaticon-atomic-theory: "\f109";
+    $font-Flaticon-audio-book: "\f10a";
+    $font-Flaticon-audiobook: "\f10b";
+    $font-Flaticon-avi-extension: "\f10c";
+    $font-Flaticon-b-calification: "\f10d";
+    $font-Flaticon-b-letter: "\f10e";
+    $font-Flaticon-bag-of-books: "\f10f";
+    $font-Flaticon-bank-symbol: "\f110";
+    $font-Flaticon-bars: "\f111";
+    $font-Flaticon-basketball: "\f112";
+    $font-Flaticon-battery-levels: "\f113";
+    $font-Flaticon-big-trophy: "\f114";
+    $font-Flaticon-black-tie: "\f115";
+    $font-Flaticon-book: "\f116";
+    $font-Flaticon-book-and-apple: "\f117";
+    $font-Flaticon-book-and-speech-bubble: "\f118";
+    $font-Flaticon-book-with-cd-rom: "\f119";
+    $font-Flaticon-book-with-dvd: "\f11a";
+    $font-Flaticon-book-with-magnifying-glass: "\f11b";
+    $font-Flaticon-book-with-mouse: "\f11c";
+    $font-Flaticon-bookshelf-with-books: "\f11d";
+    $font-Flaticon-bussines-briefcase: "\f11e";
+    $font-Flaticon-canvas: "\f11f";
+    $font-Flaticon-capital-a: "\f120";
+    $font-Flaticon-cardiology-tool: "\f121";
+    $font-Flaticon-cart-with-books: "\f122";
+    $font-Flaticon-cellphone: "\f123";
+    $font-Flaticon-check-mark: "\f124";
+    $font-Flaticon-cinema-and-audience: "\f125";
+    $font-Flaticon-clipboard-with-a: "\f126";
+    $font-Flaticon-closed-envelope: "\f127";
+    $font-Flaticon-computer-connected-to-the-network: "\f128";
+    $font-Flaticon-computer-keyboard: "\f129";
+    $font-Flaticon-creche: "\f12a";
+    $font-Flaticon-delete-email: "\f12b";
+    $font-Flaticon-desktop-computer: "\f12c";
+    $font-Flaticon-diary: "\f12d";
+    $font-Flaticon-digital-display-30: "\f12e";
+    $font-Flaticon-digital-display-60: "\f12f";
+    $font-Flaticon-digital-number-15: "\f130";
+    $font-Flaticon-digital-number-45: "\f131";
+    $font-Flaticon-diploma-with-a-ribbon: "\f132";
+    $font-Flaticon-directional-sign: "\f133";
+    $font-Flaticon-dna-strand: "\f134";
+    $font-Flaticon-documents-with-a-star: "\f135";
+    $font-Flaticon-download-book: "\f136";
+    $font-Flaticon-download-ebook: "\f137";
+    $font-Flaticon-download-from-the-cloud: "\f138";
+    $font-Flaticon-download-from-the-net: "\f139";
+    $font-Flaticon-draw-with-compass: "\f13a";
+    $font-Flaticon-earth-and-moon: "\f13b";
+    $font-Flaticon-educational-platform: "\f13c";
+    $font-Flaticon-educational-video: "\f13d";
+    $font-Flaticon-educational-video-1: "\f13e";
+    $font-Flaticon-electromagnet: "\f13f";
+    $font-Flaticon-email-contacts: "\f140";
+    $font-Flaticon-eraser: "\f141";
+    $font-Flaticon-favorite-book: "\f142";
+    $font-Flaticon-flag-point: "\f143";
+    $font-Flaticon-folded-certificate: "\f144";
+    $font-Flaticon-football-helmet: "\f145";
+    $font-Flaticon-full-test-tube: "\f146";
+    $font-Flaticon-gaussian-function: "\f147";
+    $font-Flaticon-geography-book: "\f148";
+    $font-Flaticon-geometric-pencil: "\f149";
+    $font-Flaticon-glasses: "\f14a";
+    $font-Flaticon-graduate: "\f14b";
+    $font-Flaticon-graduate-1: "\f14c";
+    $font-Flaticon-graduate-girl: "\f14d";
+    $font-Flaticon-graduating: "\f14e";
+    $font-Flaticon-graduation-pictures: "\f14f";
+    $font-Flaticon-graduations-music: "\f150";
+    $font-Flaticon-graduations-questions: "\f151";
+    $font-Flaticon-graph-frame: "\f152";
+    $font-Flaticon-greek-pillar: "\f153";
+    $font-Flaticon-group-of-people: "\f154";
+    $font-Flaticon-halfway: "\f155";
+    $font-Flaticon-hand-bell: "\f156";
+    $font-Flaticon-handwriten-alphabet: "\f157";
+    $font-Flaticon-hard-cover-book: "\f158";
+    $font-Flaticon-having-an-idea: "\f159";
+    $font-Flaticon-hierarchical-order: "\f15a";
+    $font-Flaticon-human-brain: "\f15b";
+    $font-Flaticon-icloud: "\f15c";
+    $font-Flaticon-information-network: "\f15d";
+    $font-Flaticon-insignia-and-ribbon: "\f15e";
+    $font-Flaticon-ipad-video-player: "\f15f";
+    $font-Flaticon-laptop-with-a-graduation-cap: "\f160";
+    $font-Flaticon-leaf: "\f161";
+    $font-Flaticon-lecture: "\f162";
+    $font-Flaticon-lecture-1: "\f163";
+    $font-Flaticon-light-bulb: "\f164";
+    $font-Flaticon-location-flag: "\f165";
+    $font-Flaticon-looking-for-students: "\f166";
+    $font-Flaticon-lowering-graph: "\f167";
+    $font-Flaticon-man-with-open-arms: "\f168";
+    $font-Flaticon-measure-instruments: "\f169";
+    $font-Flaticon-measuring-tools: "\f16a";
+    $font-Flaticon-medal-with-a-star: "\f16b";
+    $font-Flaticon-medal-with-number-1: "\f16c";
+    $font-Flaticon-meeting: "\f16d";
+    $font-Flaticon-microscope: "\f16e";
+    $font-Flaticon-molecular-bond: "\f16f";
+    $font-Flaticon-molecular-bond-1: "\f170";
+    $font-Flaticon-month-calendar: "\f171";
+    $font-Flaticon-monthly-calendar: "\f172";
+    $font-Flaticon-mouse: "\f173";
+    $font-Flaticon-musical-note: "\f174";
+    $font-Flaticon-muted-book: "\f175";
+    $font-Flaticon-new-document: "\f176";
+    $font-Flaticon-new-email: "\f177";
+    $font-Flaticon-notepad-sheet: "\f178";
+    $font-Flaticon-numbers: "\f179";
+    $font-Flaticon-old-school: "\f17a";
+    $font-Flaticon-olympics-torch: "\f17b";
+    $font-Flaticon-online-class: "\f17c";
+    $font-Flaticon-online-class-1: "\f17d";
+    $font-Flaticon-online-test: "\f17e";
+    $font-Flaticon-open-email: "\f17f";
+    $font-Flaticon-open-scissors: "\f180";
+    $font-Flaticon-paint-brush: "\f181";
+    $font-Flaticon-paper-airplane: "\f182";
+    $font-Flaticon-paperclip: "\f183";
+    $font-Flaticon-paragraph-aa: "\f184";
+    $font-Flaticon-pdf-document: "\f185";
+    $font-Flaticon-pdf-file-on-screen: "\f186";
+    $font-Flaticon-pen: "\f187";
+    $font-Flaticon-pencil: "\f188";
+    $font-Flaticon-picture-in-frame: "\f189";
+    $font-Flaticon-pie-chart: "\f18a";
+    $font-Flaticon-play-buttom: "\f18b";
+    $font-Flaticon-play-files: "\f18c";
+    $font-Flaticon-podium: "\f18d";
+    $font-Flaticon-protractor: "\f18e";
+    $font-Flaticon-pushpin: "\f18f";
+    $font-Flaticon-quality-education: "\f190";
+    $font-Flaticon-quarter-pie-chart: "\f191";
+    $font-Flaticon-questioning: "\f192";
+    $font-Flaticon-reading-glasses: "\f193";
+    $font-Flaticon-rectangular-certificate: "\f194";
+    $font-Flaticon-research-with-books: "\f195";
+    $font-Flaticon-rolled-diploma: "\f196";
+    $font-Flaticon-sand-clock: "\f197";
+    $font-Flaticon-saturn: "\f198";
+    $font-Flaticon-school-bag: "\f199";
+    $font-Flaticon-school-bus: "\f19a";
+    $font-Flaticon-school-cart: "\f19b";
+    $font-Flaticon-school-globe: "\f19c";
+    $font-Flaticon-school-globe-1: "\f19d";
+    $font-Flaticon-school-network: "\f19e";
+    $font-Flaticon-school-supplies: "\f19f";
+    $font-Flaticon-science-in-a-laptop: "\f1a0";
+    $font-Flaticon-sealed-diploma: "\f1a1";
+    $font-Flaticon-searching-files: "\f1a2";
+    $font-Flaticon-searching-tool: "\f1a3";
+    $font-Flaticon-set-square: "\f1a4";
+    $font-Flaticon-shake-hands: "\f1a5";
+    $font-Flaticon-shopping-cart: "\f1a6";
+    $font-Flaticon-signature: "\f1a7";
+    $font-Flaticon-small-calculator: "\f1a8";
+    $font-Flaticon-smartphone-app: "\f1a9";
+    $font-Flaticon-stage: "\f1aa";
+    $font-Flaticon-steps-to-complete: "\f1ab";
+    $font-Flaticon-student-in-front-of-a-stack-of-books: "\f1ac";
+    $font-Flaticon-study-lamp: "\f1ad";
+    $font-Flaticon-studying-zone: "\f1ae";
+    $font-Flaticon-syringe: "\f1af";
+    $font-Flaticon-tablet-with-hand: "\f1b0";
+    $font-Flaticon-tactile-tablet: "\f1b1";
+    $font-Flaticon-teach: "\f1b2";
+    $font-Flaticon-teacher-with-stick: "\f1b3";
+    $font-Flaticon-telescope: "\f1b4";
+    $font-Flaticon-test-results: "\f1b5";
+    $font-Flaticon-theory-of-relativity: "\f1b6";
+    $font-Flaticon-three-books: "\f1b7";
+    $font-Flaticon-three-strings-guitar: "\f1b8";
+    $font-Flaticon-university: "\f1b9";
+    $font-Flaticon-university-class: "\f1ba";
+    $font-Flaticon-unknown-topic: "\f1bb";
+    $font-Flaticon-users-settings: "\f1bc";
+    $font-Flaticon-virus: "\f1bd";
+    $font-Flaticon-wagon: "\f1be";
+    $font-Flaticon-wall-clock: "\f1bf";
+    $font-Flaticon-window-graphic: "\f1c0";
+    $font-Flaticon-window-scrolling-left: "\f1c1";
+    $font-Flaticon-window-scrolling-medium: "\f1c2";
+    $font-Flaticon-window-scrolling-right: "\f1c3";
+    $font-Flaticon-world-map: "\f1c4";
