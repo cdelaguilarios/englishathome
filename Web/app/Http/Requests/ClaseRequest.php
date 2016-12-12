@@ -32,6 +32,7 @@ class ClaseRequest extends Request {
         $data["idClase"] = (isset($data["idClase"]) && $data["idClase"] != "" ? $data["idClase"] : NULL);
         $data["idAlumno"] = (isset($data["idAlumno"]) && $data["idAlumno"] != "" ? $data["idAlumno"] : NULL);
         $data["idProfesor"] = (isset($data["idProfesor"]) && $data["idProfesor"] != "" ? $data["idProfesor"] : NULL);
+        $data["pagoProfesor"] = (isset($data["pagoProfesor"]) ? $data["pagoProfesor"] : NULL);
 
         $data["fecha"] = (isset($data["fecha"]) ? $data["fecha"] : NULL);
         $data["horaInicio"] = (isset($data["horaInicio"]) ? $data["horaInicio"] : NULL);

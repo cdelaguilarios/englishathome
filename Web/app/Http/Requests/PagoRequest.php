@@ -77,12 +77,16 @@ class PagoRequest extends Request {
                 }
             } else {
                 $reglasValidacion += [
-                    "costoHoraDocente" => ["regex:" . ReglasValidacion::RegexDecimal],
                     "saldoFavor" => ["regex:" . ReglasValidacion::RegexDecimal]
-                ];                
-                if(!(is_null($data["idDocente"]) || Docente::verificarExistencia($data["idDocente"]))){
-                    $reglasValidacion["docenteNoValido"] = "required";
-                }   
+                ];
+                if (!is_null($data["idDocente"])) {
+                    $reglasValidacion += [
+                        "costoHoraDocente" => ["required", "regex:" . ReglasValidacion::RegexDecimal]
+                    ];
+                    if (!Docente::verificarExistencia($data["idDocente"])) {
+                        $reglasValidacion["docenteNoValido"] = "required";
+                    }
+                }
                 if (!ReglasValidacion::validarDatosNotificacionClasesPago($data["datosNotificacionClases"])) {
                     $reglasValidacion["datosNotificacionClasesNoValido"] = "required";
                 }
@@ -111,7 +115,7 @@ class PagoRequest extends Request {
             "generoDocenteNoValido.required" => "El genero seleccionado para filtrar la lista de profesores o postulantes no es válido",
             "idCursoDocenteNoValido.required" => "El curso seleccionado para filtrar la lista de profesores o postulantes no es válido",
             "tipoDocenteNoValido.required" => "El tipo seleccionado para filtrar la lista de profesores o postulantes no es válido",
-            "docenteNoValido.required" => "El docente seleccionado no es válido",            
+            "docenteNoValido.required" => "El docente seleccionado no es válido",
             "datosNotificacionClasesNoValido.required" => "Los datos de notificación de la clases seleccionadas no son válidas"
         ];
     }

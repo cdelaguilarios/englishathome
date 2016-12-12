@@ -33,13 +33,14 @@ class Docente extends Model {
     }
 
     protected static function listarDisponiblesXDatosClase($datos) {
-        $fechaInicio = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00")->addSeconds($datos["horaInicio"]);
-        $fechaFin = $fechaInicio->addSeconds($datos["duracion"]);
-
+        $fechaInicio = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00")->addSeconds($datos["horaInicio"]);       
+        $fechaFin = clone $fechaInicio;
+        $fechaFin->addSeconds($datos["duracion"]);
+        
+        
         $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicio, $fechaFin, TRUE);
         $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($fechaInicio->dayOfWeek, $fechaInicio->format("H:i:s"), $fechaFin->format("H:i:s"), $datos["tipoDocente"]);
         $idsDisponiblesSel = array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray());
-
 
         $generoDocenteClase = $datos["generoDocente"];
         $idCursoDocenteClase = $datos["idCursoDocente"];

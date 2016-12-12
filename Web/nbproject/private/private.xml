@@ -2,15 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/D:/Carlos/Proyectos/English%20at%20home/Web/app/Http/Requests/PagoRequest.php</file>
-            <file>file:/D:/Carlos/Proyectos/English%20at%20home/Web/app/Models/PagoAlumno.php</file>
-            <file>file:/D:/Carlos/Proyectos/English%20at%20home/Web/resources/views/alumno/util/pago.blade.php</file>
-            <file>file:/D:/Carlos/Proyectos/English%20at%20home/Web/app/Models/Docente.php</file>
-            <file>file:/D:/Carlos/Proyectos/English%20at%20home/Web/resources/views/alumno/util/docentesDisponibles.blade.php</file>
-            <file>file:/D:/Carlos/Proyectos/English%20at%20home/Web/public/assets/eah/js/pago.js</file>
-            <file>file:/D:/Carlos/Proyectos/English%20at%20home/Web/app/Models/Pago.php</file>
-            <file>file:/D:/Carlos/Proyectos/English%20at%20home/Web/app/Http/Controllers/AlumnoController.php</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
