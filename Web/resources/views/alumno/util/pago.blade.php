@@ -112,10 +112,10 @@
                             <table class="table table-bordered sub-table">
                                 <thead>
                                     <tr>
-                                        <th class="text-center">N°</th>
+                                        <th>N°</th>
                                         <th>Fecha</th>
-                                        <th class="text-center">Horas</th>
-                                        <th class="text-center">Notificar<br/><small>(Un día antes)</small></th>
+                                        <th>Horas</th>
+                                        <th>Notificar<br/><small>(Un día antes)</small></th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -206,15 +206,15 @@
 </div>
 <script>
     var urlListarPagos = "{{ route('alumnos.pagos.listar', ['id' => $idAlumno]) }}";
-    var urlEliminarPago = "{{ route('alumnos.pagos.eliminar', ['id' => $idAlumno, 'idPago' => 0]) }}";
     var urlGenerarClasesPago = "{{ route('alumnos.pagos.generarClases', ['id' => $idAlumno]) }}";
     var urlListarDocentesDisponiblesPago = "{{ route('alumnos.pagos.docentesDisponibles.listar', ['id' => $idAlumno]) }}";
     var urlPerfilProfesorPago = "{{ route('profesores.perfil', ['id' => 0]) }}";
     var urlDatosPago = "{{ route('alumnos.pagos.datos', ['id' => $idAlumno, 'idPago' => 0]) }}";
     var urlImagenesPago = "{{ route('imagenes', ['rutaImagen' => '0']) }}";
+    var urlEliminarPago = "{{ route('alumnos.pagos.eliminar', ['id' => $idAlumno, 'idPago' => 0]) }}";
     
     var motivosPago = {!!  json_encode(App\Helpers\Enum\MotivosPago::Listar()) !!};
-    var saldoFavorTotal = {{ ($totalSaldoFavor != "" ? $totalSaldoFavor : 0) }};
     var estadosPago = {!!  json_encode(App\Helpers\Enum\EstadosPago::Listar()) !!};
+    var saldoFavorTotal = {{ ($totalSaldoFavor != "" ? $totalSaldoFavor : 0) }};
 </script>
 <script src='{{ asset('assets/eah/js/pago.js')}}'></script>

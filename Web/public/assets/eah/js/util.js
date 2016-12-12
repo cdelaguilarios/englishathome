@@ -63,11 +63,11 @@ function validarImagen(value, element, param) {
 }
 $.validator.addMethod('validarAlfanumerico', validarAlfanumerico, 'Por favor solo ingrese valores alfanuméricos.');
 function validarAlfanumerico(value, element, param) {
-    return this.optional(element) || /^[a-zA-Z0-9]+$/i.test(value);
+    return this.optional(element) || /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/i.test(value);
 }
 $.validator.addMethod('validarAlfabetico', validarAlfabetico, 'Por favor solo ingrese letras.');
 function validarAlfabetico(value, element, param) {
-    return this.optional(element) || /^[a-zA-Z\s]+$/i.test(value);
+    return this.optional(element) || /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/i.test(value);
 }
 
 //CALENDARIO (DATEPICKER)
@@ -104,17 +104,46 @@ function establecerCalendario(idElemento, soloFechasPasadas, soloFechasFuturas, 
         $("#" + idElemento).val('');
     }
 }
+function establecerCampoDuracion(idElementoSel, tiempoSegundosDefecto) {
+    minHorasClase = (typeof (minHorasClase) === "undefined" ? "" : minHorasClase);
+    maxHorasClase = (typeof (maxHorasClase) === "undefined" ? "" : maxHorasClase);
+
+    if (minHorasClase !== "" && maxHorasClase !== "") {
+        establecerCampoHoras(idElementoSel, minHorasClase, maxHorasClase, 0.5, tiempoSegundosDefecto);
+    }
+}
+function establecerCampoHorario(idElementoSel, tiempoSegundosDefecto) {
+    minHorario = (typeof (minHorario) === "undefined" ? "" : minHorario);
+    maxHorario = (typeof (maxHorario) === "undefined" ? "" : maxHorario);
+
+    if (minHorario !== "" && maxHorario !== "") {
+        establecerCampoHoras(idElementoSel, minHorario, maxHorario, 0.5, tiempoSegundosDefecto);
+    }
+}
+function establecerCampoHoras(idElementoSel, min, max, intervalo, tiempoSegundosDefecto) {
+    $("#" + idElementoSel).html("");
+    var valorDefecto = parseInt(min);
+    var cont = parseInt(min);
+
+    while (cont <= parseInt(max) && cont <= 24) {
+        $("#" + idElementoSel).append('<option value="' + (cont * 3600) + '">' + formatoHora(cont * 3600) + '</option>');
+        if (tiempoSegundosDefecto && (tiempoSegundosDefecto === cont * 3600)) {
+            valorDefecto = (cont * 3600);
+        }
+        cont += intervalo;
+    }
+    $("#" + idElementoSel).val(valorDefecto);
+}
 function formatoFecha(fecha, contiempo, soloTiempo) {
     if (!isNaN(Date.parse(fecha))) {
-        var fechaNue = new Date(fecha);
-        var horas = fechaNue.getHours();
-        var minutos = fechaNue.getMinutes();
-        var segundos = fechaNue.getSeconds();
-        return (soloTiempo ? (((horas < 10 ? "0" : "") + horas) + ":" + ((minutos < 10 ? "0" : "") + minutos)) : $.datepicker.formatDate('dd/mm/yy', fechaNue) + (contiempo ? " " + ((horas < 10 ? "0" : "") + horas) + ":" + ((minutos < 10 ? "0" : "") + minutos) + ":" + ((segundos < 10 ? "0" : "") + segundos) : ""));
+        var fechaSel = new Date(fecha);
+        var horas = fechaSel.getHours();
+        var minutos = fechaSel.getMinutes();
+        var segundos = fechaSel.getSeconds();
+        return (soloTiempo ? (((horas < 10 ? "0" : "") + horas) + ":" + ((minutos < 10 ? "0" : "") + minutos)) : $.datepicker.formatDate('dd/mm/yy', fechaSel) + (contiempo ? " " + ((horas < 10 ? "0" : "") + horas) + ":" + ((minutos < 10 ? "0" : "") + minutos) + ":" + ((segundos < 10 ? "0" : "") + segundos) : ""));
     }
     return "";
 }
-
 function formatoHora(tiempoSegundos, incluirSegundos) {
     tiempoSegundos = Number(tiempoSegundos);
     var h = Math.floor(tiempoSegundos / 3600);
@@ -123,6 +152,17 @@ function formatoHora(tiempoSegundos, incluirSegundos) {
     return ((h > 0 ? h + ":" + (m < 10 ? "0" : "") : "") + m + (incluirSegundos ? ":" + (s < 10 ? "0" : "") + s : ""));
 
 }
+function tiempoSegundos(fecha) {
+    if (!isNaN(Date.parse(fecha))) {
+        var fechaSel = new Date(fecha);
+        var horas = fechaSel.getHours();
+        var minutos = fechaSel.getMinutes();
+        var segundos = fechaSel.getSeconds();
+        return horas * 3600 + minutos * 60 + segundos;
+    }
+    return 0;
+}
+
 
 //Grillas
 $.extend(true, $.fn.dataTable.defaults, {

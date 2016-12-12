@@ -1,9 +1,8 @@
 window.addEventListener("load", verificarJqueryPago, false);
 function verificarJqueryPago() {
-    ((window.jQuery && jQuery.ui) ? cargarPagos() : window.setTimeout(verificarJqueryPago, 100));
+    ((window.jQuery && jQuery.ui) ? cargarSeccionPagos() : window.setTimeout(verificarJqueryPago, 100));
 }
-
-function cargarPagos() {
+function cargarSeccionPagos() {
     urlListarPagos = (typeof (urlListarPagos) === "undefined" ? "" : urlListarPagos);
     urlEliminarPago = (typeof (urlEliminarPago) === "undefined" ? "" : urlEliminarPago);
     motivosPago = (typeof (motivosPago) === "undefined" ? "" : motivosPago);
@@ -44,7 +43,7 @@ function cargarPagos() {
                 //Botones
                 var tBotones = '<ul class="buttons">' +
                         '<li>' +
-                        '<a href="javascript:void(0)" onclick="verDatosPago(' + d.id + ');" title="Ver datos del pago"><i class="fa fa-eye"></i></a>' +
+                        '<a href="javascript:void(0);" onclick="verDatosPago(' + d.id + ');" title="Ver datos del pago"><i class="fa fa-eye"></i></a>' +
                         '</li>' +
                         '<li>' +
                         '<a href="javascript:void(0);" title="Eliminar pago" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?\', \'tab-lista-pagos\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' +
@@ -172,7 +171,7 @@ function cargarPagos() {
     });
     $("#btn-confirmar-docente-disponible-pago").click(function () {
         urlPerfilProfesorPago = (typeof (urlPerfilProfesorPago) === "undefined" ? "" : urlPerfilProfesorPago);
-        if (urlListarDocentesDisponiblesPago !== "" && urlPerfilProfesorPago !== "") {
+        if (urlPerfilProfesorPago !== "") {
             var docenteDisponiblePago = $("input[name='idDocenteDisponiblePago']:checked");
             limpiarCamposPago(true);
             mostrarSeccionPago([2, 2]);
@@ -224,10 +223,10 @@ function generarClases(e) {
                                     : '');
 
                             $("#sec-lista-clases-pago tbody").append('<tr>' +
-                                    '<td class="text-center">' + (parseInt(i) + 1) + '</td>' +
+                                    '<td>' + (parseInt(i) + 1) + '</td>' +
                                     '<td><b>' + formatoFecha(v.fechaInicio.date) + '</b> - De ' + formatoFecha(v.fechaInicio.date, false, true) + ' a ' + formatoFecha(v.fechaFin.date, false, true) + '</td>' +
-                                    '<td class="text-center">' + formatoHora(v.duracion) + tiempoAdicional + '</td>' +
-                                    '<td class="text-center"><input type="checkbox" name="notificarClasePago_' + (parseInt(i) + 1) + '"' + (v.idProfesor !== '' ? '' : ' checked="checked"') + '/></td>' +
+                                    '<td>' + formatoHora(v.duracion) + tiempoAdicional + '</td>' +
+                                    '<td><input type="checkbox" name="notificarClasePago_' + (parseInt(i) + 1) + '"' + (v.idProfesor !== '' ? '' : ' checked="checked"') + '/></td>' +
                                     '</tr>');
                         } else if (v > 0) {
                             $("#sec-saldo-favor-pago").html('<span>El alumno tiene un saldo a favor de <b>S/. ' + redondear(v, 2) + '</b></span>');
@@ -279,6 +278,7 @@ function cargarDocentesDisponiblesPago(recargarLista) {
                     url: urlListarDocentesDisponiblesPago,
                     type: "POST",
                     data: function (d) {
+
                         d.docentesDisponibles = "1";
                         d.tipoDocente = $("#tipo-docente-disponible-pago").val();
                         d.generoDocente = $("#genero-docente-disponible-pago").val();
@@ -296,11 +296,10 @@ function cargarDocentesDisponiblesPago(recargarLista) {
                     {data: "id", name: "id", orderable: false, "searchable": false, width: "10%"}
                 ],
                 createdRow: function (r, d, i) {
-                    //Motivo              
+                    //Nombre completo              
                     $("td", r).eq(0).html(d.nombreCompleto + ' <a href=' + (urlPerfilProfesorPago.replace('/0', '/' + d.id)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>');
 
-                    //Elegir
-                    $("td", r).eq(1).addClass('text-center');
+                    //Opciones
                     $("td", r).eq(1).html('<input type="radio" name="idDocenteDisponiblePago" value="' + d.id + '" data-nombrecompleto="' + d.nombreCompleto + '"' + (i === 0 ? ' checked="checked"' : '') + '>');
                 }
             });

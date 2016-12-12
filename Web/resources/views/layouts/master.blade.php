@@ -144,7 +144,7 @@
         <script src="{{ asset('assets/plugins/jquery_validate/jquery.validate.messages_es.js') }}"></script>        
         <script src="{{ asset('assets/plugins/datepicker/bootstrap-datepicker.js') }}"></script>   
         <script src="{{ asset('assets/plugins/datepicker/locales/bootstrap-datepicker.es.js') }}"></script>
-        <script type="text/javascript">var urlBase = "{{ url('/') }}";</script>
+        <script type="text/javascript">var urlBase = "{{ url('/') }}";var minHorasClase = "{{ $minHorasClase }}";var maxHorasClase = "{{ $maxHorasClase }}";var minHorario= "{{ $minHorario }}";var maxHorario = "{{ $maxHorario}}";</script>
         <script src="{{ asset('assets/eah/js/util.js') }}"></script>
         <script src="{{ asset('assets/eah/js/mensajes.js') }}"></script>   
         @yield("section_script")

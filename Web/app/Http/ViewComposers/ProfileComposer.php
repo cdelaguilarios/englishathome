@@ -3,6 +3,7 @@
 namespace App\Http\ViewComposers;
 
 use Auth;
+use Config;
 use App\Models\Curso;
 use App\Models\Usuario;
 use App\Helpers\Enum\RolesUsuario;
@@ -42,6 +43,10 @@ class ProfileComposer {
             $view->with('tiposDocente', TiposEntidad::listarTiposDocente());
             $view->with('generos', GenerosEntidad::listar());
             $view->with('cursos', Curso::listarSimple());
+            $view->with('minHorasClase', Config::get('eah.minHorasClase'));
+            $view->with('maxHorasClase', Config::get('eah.maxHorasClase'));
+            $view->with('minHorario', Config::get('eah.minHorario'));
+            $view->with('maxHorario', Config::get('eah.maxHorario'));
         }
     }
 

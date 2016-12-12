@@ -66,7 +66,7 @@ class Horario extends Model {
         }
     }
 
-    protected static function listarIdsXRangoHorario($numeroDiaSemana, $horaInicio, $horaFin, $tipoEntidad) {
+    protected static function listarIdsEntidadesXRangoFecha($numeroDiaSemana, $horaInicio, $horaFin, $tipoEntidad) {
         $nombreTabla = Horario::nombreTabla();
         return Horario::leftJoin(Entidad::nombreTabla() . ' as entidad', $nombreTabla . '.idEntidad', '=', 'entidad.id')
                         ->where('entidad.tipo', $tipoEntidad)

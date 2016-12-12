@@ -8,6 +8,12 @@ var diasNum = [1, 2, 3, 4, 5, 6, 7];
 var diasLet = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
 var minutosIntervalo = 30;
 function cargarHorario() {
+    minHorario = (typeof (minHorario) === "undefined" ? "" : minHorario);
+    maxHorario = (typeof (maxHorario) === "undefined" ? "" : maxHorario);
+    if (!(minHorario !== "" && maxHorario !== "")) {
+        return;
+    }
+
     if ($("input[name='horario']").length > 0 && $("input[name='horario']").val() !== "") {
         horarioFin = $.parseJSON($("input[name='horario']").val());
         mostrarTextoHorario();
@@ -15,8 +21,8 @@ function cargarHorario() {
 
     $("#calendario").dayScheduleSelector({
         days: diasNum,
-        startTime: "08:00",
-        endTime: "23:00",
+        startTime: formatoHora(parseInt(minHorario) * 3600),
+        endTime: formatoHora(parseInt(maxHorario) * 3600),
         interval: minutosIntervalo,
         stringDays: diasLet
     });

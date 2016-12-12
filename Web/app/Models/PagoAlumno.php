@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Auth;
 use App\Helpers\Enum\MotivosPago;
+use App\Helpers\Enum\EstadosPago;
 use App\Helpers\Enum\TiposHistorial;
 use App\Helpers\Enum\MensajesHistorial;
 use Illuminate\Database\Eloquent\Model;
@@ -45,7 +46,15 @@ class PagoAlumno extends Model {
                         ->where($nombreTabla . '.idAlumno', $idAlumno);
     }
 
-    protected static function registrar($idAlumno, $datos, $request) {
+    protected static function registrar($idAlumno, $request) {
+        $datos = $request->all();
+        $datosPago = Pago::registrar($datos, EstadosPago::Realizado, $request);
+        $pagoAlumno = new PagoAlumno([
+            'idPago' => $datosPago["id"],
+            'idAlumno' => $idAlumno
+        ]);
+        $pagoAlumno->save();
+
         if ($datos["usarSaldoFavor"] == 1) {
             Pago::whereIn('id', function($q) use ($idAlumno) {
                 $nombreTabla = PagoAlumno::nombreTabla();
@@ -56,13 +65,6 @@ class PagoAlumno extends Model {
             })->update(['saldoFavorUtilizado' => 1]);
         }
 
-        $datosPago = Pago::registrar($datos, $request);
-        $pagoAlumno = new PagoAlumno([
-            'idPago' => $datosPago["id"],
-            'idAlumno' => $idAlumno
-        ]);
-        $pagoAlumno->save();
-
         $listaMotivosPago = MotivosPago::listar();
         $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$listaMotivosPago[$datos["motivo"]], (isset($datos["descripcion"]) && $datos["descripcion"] != "" ? "<br/><strong>Descripción:</strong> " . $datos["descripcion"] : ""), number_format((float) ($datos["monto"]), 2, '.', '')], MensajesHistorial::MensajeAlumnoRegistroPago);
         Historial::Registrar([$idAlumno, Auth::user()->idEntidad], MensajesHistorial::TituloAlumnoRegistroPago, $mensajeHistorial, $datosPago["rutaImagenComprobante"], FALSE, TRUE, $datosPago["id"], NULL, NULL, TiposHistorial::Pago);
@@ -71,11 +73,11 @@ class PagoAlumno extends Model {
             Clase::registrarXDatosPago($idAlumno, $datosPago["id"], $datos);
         }
     }
-    
+
     protected static function eliminar($idAlumno, $id) {
         PagoAlumno::obtenerXId($idAlumno, $id);
         Pago::eliminar($id);
-        Clase::eliminarXPago($idAlumno, $id);        
+        Clase::eliminarXPago($idAlumno, $id);
     }
 
 }

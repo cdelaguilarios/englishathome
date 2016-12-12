@@ -8,8 +8,8 @@ use App\Models\Ubigeo;
 class ReglasValidacion {
 
     const RegexDecimal = '/^[\d]{1,14}(\.[\d]{1,4})?$/';
-    const RegexAlfanumerico = '/^[a-zA-Z0-9]+$/';
-    const RegexAlfabetico = '/^[a-zA-Z\s]+$/';  
+    const RegexAlfanumerico = '/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/';
+    const RegexAlfabetico = '/^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/';  
     const RegexGeoLatitud = '/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/';
     const RegexGeoLongitud = '/^\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/';
     const RegexTiempo = '/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/';

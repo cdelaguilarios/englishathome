@@ -44,7 +44,7 @@
                             <thead>
                                 <tr>
                                     <th>Profesor/Docente</th>
-                                    <th class="text-center">Elegir</th>
+                                    <th>Elegir</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>

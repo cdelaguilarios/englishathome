@@ -1,12 +1,12 @@
-window.addEventListener("load", verificarJqueryPeriodo, false);
-function verificarJqueryPeriodo() {
-    ((window.jQuery && jQuery.ui) ? cargarPeriodos() : window.setTimeout(verificarJqueryPeriodo, 100));
+window.addEventListener("load", verificarJqueryClase, false);
+function verificarJqueryClase() {
+    ((window.jQuery && jQuery.ui) ? cargarSeccionClases() : window.setTimeout(verificarJqueryClase, 100));
 }
-
-function  cargarPeriodos() {
+function  cargarSeccionClases() {
     urlListarPeriodos = (typeof (urlListarPeriodos) === "undefined" ? "" : urlListarPeriodos);
+
     if (urlListarPeriodos !== "") {
-        $('#tab-lista-periodos-clases').DataTable({
+        $("#tab-lista-periodos-clases").DataTable({
             "processing": true,
             "serverSide": true,
             "ajax": {
@@ -19,11 +19,11 @@ function  cargarPeriodos() {
             autoWidth: false,
             order: [[0, "desc"]],
             columns: [
-                {data: 'numeroPeriodo', name: 'numeroPeriodo'},
-                {data: 'fechaInicio', name: 'fechaInicio'},
-                {data: 'fechaFin', name: 'fechaFin'},
-                {data: 'numeroHorasTotal', name: 'numeroHorasTotal'},
-                {data: 'numeroPeriodo', name: 'numeroPeriodo', orderable: false, "searchable": false}
+                {data: "numeroPeriodo", name: "numeroPeriodo"},
+                {data: "fechaInicio", name: "fechaInicio"},
+                {data: "fechaFin", name: "fechaFin"},
+                {data: "horasTotal", name: "horasTotal"},
+                {data: "numeroPeriodo", name: "numeroPeriodo", orderable: false, searchable: false}
             ],
             "createdRow": function (r, d, i) {
                 var fechaActual = new Date();
@@ -31,69 +31,100 @@ function  cargarPeriodos() {
                 var fechaFinSel = new Date(d.fechaFin);
 
                 //Código                        
-                $('td', r).eq(0).addClass('text-center');
-                $('td', r).eq(0).html(d.numeroPeriodo + ((fechaActual >= fechaInicioSel && fechaActual <= fechaFinSel) ? ' (Actual)' : ''));
+                $("td", r).eq(0).html(d.numeroPeriodo + ((fechaActual >= fechaInicioSel && fechaActual <= fechaFinSel) ? " (Actual)" : ""));
 
                 //Fecha de inicio
-                $('td', r).eq(1).html(formatoFecha(d.fechaInicio));
+                $("td", r).eq(1).html(formatoFecha(d.fechaInicio));
 
                 //Fecha de fin
-                $('td', r).eq(2).html(formatoFecha(d.fechaFin));
+                $("td", r).eq(2).html(formatoFecha(d.fechaFin));
 
-                //Numero horas total
-                $('td', r).eq(3).html(formatoHora(d.numeroHorasTotal));
+                //Horas total
+                $("td", r).eq(3).html(formatoHora(d.horasTotal));
 
                 //Opciones
                 $('td', r).eq(4).html('<a href="javascript:void(0);" onclick="mostrarOcultarClases(this);" class="btn btn-primary btn-xs" data-periodo="' + d.numeroPeriodo + '"><i class="fa fa-eye"></i> Ver clases</button>');
             }
         });
     }
-    mostrarSeccionClase([1]);
-    establecerCalendario("fechaClaseReprogramada", false, true);
-    //Registrar clase
-    $("#btn-nuevo-clase, #btnAnteriorClase").click(function () {
-        if ($(this).attr("id").indexOf("Nuevo") !== -1) {
-            limpiarCamposClase();
+    $("#formulario-cancelar-clase").validate({
+        ignore: ":hidden",
+        rules: {
+            fecha: {
+                required: true
+            },
+            horaInicio: {
+                required: true
+            },
+            duracion: {
+                required: true
+            }
+        },
+        submitHandler: function (form) {
+            if ("¿Está seguro que desea cancelar esta clase?") {
+                form.submit();
+            }
+        },
+        highlight: function () {
+        },
+        unhighlight: function () {
+        },
+        errorElement: "div",
+        errorClass: "help-block-error",
+        errorPlacement: function (error, element) {
+            if (element.closest("div[class*=col-sm-]").length > 0) {
+                element.closest("div[class*=col-sm-]").append(error);
+            } else if (element.parent(".input-group").length) {
+                error.insertAfter(element.parent());
+            } else {
+                error.insertAfter(element);
+            }
         }
-        $("#btnAnteriorClase, #btnRegistrarClase").hide();
-        $("#btnSiguienteClase").show();
-        mostrarSeccionClase([2, 1]);
-    });
-    $("#btnSiguienteClase").click(function () {
-        $("#btnSiguienteClase").hide();
-        $("#btnAnteriorClase, #btnRegistrarClase").show();
-        mostrarSeccionPago([2, 2]);
-    });
-    //Cancelar clase
-    $("#btnAnteriorCanClase").click(function () {
-        $("#btnAnteriorCanClase, #btnRegistrarCanClase").hide();
-        $("#btnSiguienteCanClase").show();
-        mostrarSeccionClase([3, 1]);
-    });
-    $("#btnSiguienteCanClase").click(function () {
-        $("#btnSiguienteCanClase").hide();
-        $("#btnAnteriorCanClase, #btnRegistrarCanClase").show();
-        mostrarSeccionPago([3, 2]);
-    });
-    //Cancelar registros
-    $("#btnCancelarClase, #btnCancelarCanClase").click(function () {
-        mostrarSeccionClase([1]);
     });
 
-    $("#btnDocentesDisponiblesClase").click(function () {
-        cargarDocentesDisponiblesClase(false);
+    mostrarSeccionClase();
+    establecerCalendario("fecha-clase-reprogramada", false, true);
+
+    //Cancelar registros
+    $(".btn-cancelar-clase").click(mostrarSeccionClase);
+    $("#tipo-cancelacion-clase").change(function () {
+        tipoCancelacionAlumno = (typeof (tipoCancelacionAlumno) === "undefined" ? "" : tipoCancelacionAlumno);
+        if ($(this).val() === tipoCancelacionAlumno) {
+            mostrarSeccionClase([2, 1]);
+            ($("#reprogramar-clase-can-alu").is(":checked") ? $("#sec-clase-23").show() : $("#sec-clase-23").hide());
+        } else {
+            mostrarSeccionClase([2, 2]);
+            ($("#reprogramar-clase-can-pro").is(":checked") ? $("#sec-clase-23").show() : $("#sec-clase-23").hide());
+        }
     });
-    $("#generoDocenteDisponibleClase, #idCursoDocenteDisponibleClase, #tipoDocenteDisponibleClase").change(function () {
+    $("#reprogramar-clase-can-alu, #reprogramar-clase-can-pro").change(function () {
+        ($(this).is(":checked") ? $("#sec-clase-23").show() : $("#sec-clase-23").hide());
+    });
+    $(".btn-docentes-disponibles-clase").click(cargarDocentesDisponiblesClase);
+    $("#genero-docente-disponible-clase, #id-curso-docente-disponible-clase, #tipo-docente-disponible-clase").change(function () {
         cargarDocentesDisponiblesClase(true);
+    });
+    $("#btn-confirmar-docente-disponible-clase").click(function () {
+        urlPerfilProfesorClase = (typeof (urlPerfilProfesorClase) === "undefined" ? "" : urlPerfilProfesorClase);
+        if (urlPerfilProfesorClase !== "") {
+            var docenteDisponibleClase = $("input[name='idDocenteDisponibleClase']:checked");
+            mostrarSeccionClase([2, 1]);
+            if (docenteDisponibleClase.length > 0) {
+                $("input[name='idDocente']").val(docenteDisponibleClase.val());
+                $(".nombre-docente-clase").html((docenteDisponibleClase.val() !== '' ? '<i class="fa flaticon-teach"></i> <b>' + docenteDisponibleClase.data('nombrecompleto') + '</b> <a href=' + (docenteDisponibleClase.replace('/0', '/' + docenteDisponibleClase.val())) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>' : ''));
+                mostrarSeccionClase([2, 1, 1]);
+            }
+        }
+        $('#mod-docentes-disponibles-pago').modal("hide");
     });
 }
 
-function mostrarOcultarClases(elemento, forzarMostrar) {
-    var tr = $(elemento).closest('tr');
+function mostrarOcultarClases(elemento, forzarCargaClases) {
+    var tr = $(elemento).closest("tr");
     var fila = $("#tab-lista-periodos-clases").DataTable().row(tr);
-    if (fila.child.isShown() && !forzarMostrar) {
+    if (fila.child.isShown() && !forzarCargaClases) {
         fila.child.hide();
-        tr.find("a:eq(0)").html(tr.find("a:eq(0)").html().replace('<i class="fa fa-eye-slash"></i> Ocultar', '<i class="fa fa-eye"></i> Ver'));
+        tr.find('a:eq(0)').html(tr.find('a:eq(0)').html().replace('<i class="fa fa-eye-slash"></i> Ocultar', '<i class="fa fa-eye"></i> Ver'));
     } else {
         listarClases(tr, fila, fila.data());
     }
@@ -105,9 +136,8 @@ function listarClases(tr, fila, datosFila) {
     estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
 
     if (urlListarClases !== "" && urlEliminarClase !== "" && urlPerfilProfesorClase !== "" && estadosClase !== "") {
-        $.blockUI({message: '<h4>Cargando...</h4>'});
-        var numeroPeriodo = datosFila.numeroPeriodo;
-        llamadaAjax(((urlListarClases.replace("/0", "/" + numeroPeriodo))), "POST", {}, true,
+        $.blockUI({message: "<h4>Cargando...</h4>"});
+        llamadaAjax(((urlListarClases.replace("/0", "/" + datosFila.numeroPeriodo))), "POST", {}, true,
                 function (d) {
                     if (d.length > 0) {
                         var htmlListaClases = "";
@@ -129,7 +159,7 @@ function listarClases(tr, fila, datosFila) {
                                     '<td>' +
                                     '<ul class="buttons">' +
                                     '<li>' +
-                                    '<a href="javascript:void(0);" onclick="cancelarClase(' + d[i].id + ');" title="Cancelar clase"><i class="fa fa-remove"></i></a>' +
+                                    '<a href="javascript:void(0);" onclick="cancelarClase(' + d[i].id + ', ' + d[i].idProfesor + ', \'' + d[i].fechaInicio + '\', ' + d[i].duracion + ');" title="Cancelar clase"><i class="fa fa-remove"></i></a>' +
                                     '</li>' +
                                     "<li>" +
                                     '<a href="javascript:void(0);" title="Eliminar clase" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de esta clase?\', null, true, function(){mostrarOcultarClases($(\'a[data-periodo=' + d[i].numeroPeriodo + ']\'), true);})" data-id="' + d[i].id + '" data-urleliminar="' + ((urlEliminarClase.replace('/0', '/' + d[i].id))) + '">' +
@@ -143,8 +173,8 @@ function listarClases(tr, fila, datosFila) {
                         $('body').unblock({
                             onUnblock: function () {
                                 fila.child('<div class="box-body">' +
-                                        '<div id="secMensajesPeriodo' + d[0].numeroPeriodo + '"></div>' +
-                                        '<table id="tab_lista_clases_' + d[0].numeroPeriodo + '" class="table table-bordered sub-table">' +
+                                        '<div id="sec-mensajes-periodo-' + d[0].numeroPeriodo + '"></div>' +
+                                        '<table id="tab-lista-clases-' + d[0].numeroPeriodo + '" class="table table-bordered sub-table">' +
                                         '<thead>' +
                                         '<tr>' +
                                         '<th>N°</th>' +
@@ -157,8 +187,8 @@ function listarClases(tr, fila, datosFila) {
                                         '<tbody>' + htmlListaClases + '</tbody>' +
                                         '</table>' +
                                         '</div>').show();
-                                tr.find("a:eq(0)").html(tr.find("a:eq(0)").html().replace('<i class="fa fa-eye"></i> Ver', '<i class="fa fa-eye-slash"></i> Ocultar'));
-                                $('#tab_lista_clases_' + d[0].numeroPeriodo).DataTable({
+                                tr.find('a:eq(0)').html(tr.find('a:eq(0)').html().replace('<i class="fa fa-eye"></i> Ver', '<i class="fa fa-eye-slash"></i> Ocultar'));
+                                $("#tab-lista-clases-" + d[0].numeroPeriodo).DataTable({
                                     paginate: false,
                                     columnDefs: [
                                         {targets: [2, 4], orderable: false, searchable: false}
@@ -186,30 +216,32 @@ function listarClases(tr, fila, datosFila) {
     }
 }
 
-function cancelarClase(idClase) {
-    limpiarCamposCancelacionClase();
-    $("#btnAnteriorCanClase, #btnRegistrarCanClase").hide();
-    $("#btnSiguienteCanClase").show();
-    mostrarSeccionClase([3, 1]);
+function cancelarClase(idClase, idProfesor, fechaInicio, duracionClase) {
+    limpiarCamposClase();
+    mostrarSeccionClase([2, 1, 1]);
+    $("input[name='idClase']").val(idClase);
+    if (idProfesor !== null) {
+        $("input[name='idProfesorClaseCancelada']").val(idClase);
+    }
+    establecerCampoHorario("hora-inicio-clase-reprogramada", tiempoSegundos(fechaInicio));
+    establecerCampoDuracion("duracion-clase-reprogramada", duracionClase);
 }
-
-//Util
 function cargarDocentesDisponiblesClase(recargarLista) {
-    var camposFormularioCancelarClase = $("#formulario-cancelar-clase").find("#fechaClaseReprogramada");
+    var camposFormularioCancelarClase = $("#formulario-cancelar-clase");
     if (!camposFormularioCancelarClase.valid()) {
         return false;
     }
 
-    $('#modDocentesDisponiblesClase').modal('show');
-    if ($.fn.DataTable.isDataTable('#tab_lista_docentes_clase')) {
+    $('#mod-docentes-disponibles-clase').modal('show');
+    if ($.fn.DataTable.isDataTable('#tab-lista-docentes-clase')) {
         if (recargarLista) {
-            $('#tab_lista_docentes_clase').DataTable().ajax.reload();
+            $('#tab-lista-docentes-clase').DataTable().ajax.reload();
         }
     } else {
         urlListarDocentesDisponiblesClase = (typeof (urlListarDocentesDisponiblesClase) === "undefined" ? "" : urlListarDocentesDisponiblesClase);
         urlPerfilProfesorClase = (typeof (urlPerfilProfesorClase) === "undefined" ? "" : urlPerfilProfesorClase);
-        if (urlListarDocentesDisponiblesClase !== "" && urlListarDocentesDisponiblesClase !== "") {
-            $('#tab_lista_docentes_clase').DataTable({
+        if (urlListarDocentesDisponiblesClase !== "" && urlPerfilProfesorClase !== "") {
+            $('#tab-lista-docentes-clase').DataTable({
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
@@ -217,13 +249,14 @@ function cargarDocentesDisponiblesClase(recargarLista) {
                     "type": "POST",
                     "data": function (d) {
                         d.docentesDisponibles = "1";
-                        d._token = $('meta[name=_token]').attr("content");
-                        d.generoDocenteClase = $("#generoDocenteDisponibleClase").val();
-                        d.idCursoDocenteClase = $("#idCursoDocenteDisponibleClase").val();
-                        d.tipoDocenteClase = $("#tipoDocenteDisponibleClase").val();
-                        d.fechaClaseReprogramada = $("#fechaClaseReprogramada").val();
-                        d.horaInicioClaseReprogramada = "09:00:00";
-                        d.duracionClaseReprogramada = "2";
+                        d.tipoDocente = $("#tipo-docente-disponible-pago").val();
+                        d.generoDocente = $("#genero-docente-disponible-pago").val();
+                        d.idCursoDocente = $("#id-curso-docente-disponible-pago").val();
+
+                        var fDatos = $("#formulario-cancelar-clase").serializeArray();
+                        $(fDatos).each(function (i, o) {
+                            d[o.name] = o.value;
+                        });
                     }
                 },
                 autoWidth: false,
@@ -232,18 +265,22 @@ function cargarDocentesDisponiblesClase(recargarLista) {
                     {data: 'id', name: 'id', orderable: false, "searchable": false, width: "10%"}
                 ],
                 "createdRow": function (r, d, i) {
-                    //Motivo              
+                    //Nombre completo               
                     $('td', r).eq(0).html(d.nombreCompleto + ' <a href=' + (urlPerfilProfesorClase.replace("/0", "/" + d.id)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>');
 
-                    //Elegir
-                    $('td', r).eq(1).addClass('text-center');
+                    //Opciones
                     $('td', r).eq(1).html('<input type="radio" name="idDocenteDisponibleClase" value="' + d.id + '" data-nombrecompleto="' + d.nombreCompleto + '"' + (i === 0 ? ' checked="checked"' : '') + '>');
                 }
             });
         }
     }
 }
+
+//Util
 function mostrarSeccionClase(numSecciones) {
+    if (!numSecciones) {
+        numSecciones = [1];
+    }
     $('[id*="sec-clase-"]').hide();
     var auxSec = "";
     for (var i = 0; i < numSecciones.length; i++) {
@@ -251,9 +288,4 @@ function mostrarSeccionClase(numSecciones) {
         auxSec += "" + numSecciones[i];
     }
 }
-function limpiarCamposClase() {
-
-}
-function limpiarCamposCancelacionClase() {
-
-}
+function limpiarCamposClase() {}

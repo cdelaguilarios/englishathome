@@ -100,13 +100,14 @@ class AlumnoController extends Controller {
     }
 
     // </editor-fold>
-
+    // <editor-fold desc="Historial">
     public function historial($id, HistorialRequest $req) {
         $datos = $req->all();
         $datosHistorial = Historial::obtener($datos["numeroCarga"], $id);
         return response()->json($datosHistorial, 200);
     }
 
+    // </editor-fold>
     // <editor-fold desc="Pagos">
     public function listarPagos($id) {
         return Datatables::of(PagoAlumno::listar($id))->make(true);
@@ -125,8 +126,7 @@ class AlumnoController extends Controller {
 
     public function registrarPago($id, PagoRequest $request) {
         try {
-            $datos = $request->all();
-            PagoAlumno::registrar($id, $datos, $request);
+            PagoAlumno::registrar($id, $request);
             Mensajes::agregarMensajeExitoso("Registro exitoso.");
         } catch (\Exception $e) {
             Log::error($e);
@@ -159,6 +159,25 @@ class AlumnoController extends Controller {
         return response()->json(Clase::listar($id, $numeroPeriodo), 200);
     }
 
+    public function listarDocentesDisponiblesXClase($id, ClaseRequest $req) {
+        return Datatables::of(Docente::listarDisponiblesXDatosClase($req->all()))
+                        ->filterColumn('nombreCompleto', function($q, $k) {
+                            $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
+                        })->make(true);
+    }
+
+    public function cancelarClase($id, ClaseRequest $request) {
+        try {
+            $datos = $request->all();
+            Clase::cancelarClase($id, $datos);
+            Mensajes::agregarMensajeExitoso("Cancelación exitosa.");
+        } catch (\Exception $e) {
+            Log::error($e);
+            Mensajes::agregarMensajeError("No se pudo cancelar la clase seleccionada.");
+        }
+        return redirect(route('alumnos.perfil', ['id' => $id]));
+    }
+
     public function eliminarClase($id, $idClase) {
         try {
             Clase::eliminar($id, $idClase);
@@ -167,23 +186,6 @@ class AlumnoController extends Controller {
             return response()->json(['mensaje' => 'No se pudo eliminar el registro de datos de la clase seleccionada.'], 400);
         }
         return response()->json(['mensaje' => 'Eliminación exitosa', 'id' => $idClase], 200);
-    }
-
-    public function listarDocentesDisponiblesXClase($id, ClaseRequest $req) {
-        return Datatables::of(Docente::listarDisponiblesXDatosClase($id, $req->all()))
-                        ->filterColumn('nombreCompleto', function($q, $k) {
-                            $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
-                        })->make(true);
-    }
-
-    public function cancelarClase($id, $idClase) {
-        try {
-            Clase::cancelarClase($id, $idClase);
-        } catch (ModelNotFoundException $e) {
-            Log::error($e);
-            return response()->json(['mensaje' => 'No se pudo cancelar la clase seleccionada.'], 400);
-        }
-        return response()->json([ 'mensaje' => 'Cancelación exitosa', 'id' => $id], 200);
     }
 
     // </editor-fold>

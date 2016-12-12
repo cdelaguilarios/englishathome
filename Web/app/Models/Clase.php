@@ -11,6 +11,7 @@ use App\Helpers\Enum\EstadosClase;
 use App\Helpers\Enum\TiposHistorial;
 use App\Helpers\Enum\MensajesHistorial;
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\Enum\TiposCancelacionClase;
 
 class Clase extends Model {
 
@@ -59,10 +60,10 @@ class Clase extends Model {
     }
 
     protected static function listarPeriodos($idAlumno) {
-        return Clase::select('numeroPeriodo', DB::raw('min(fechaInicio) AS fechaInicio, max(fechaFin) AS fechaFin, sum(duracion) AS numeroHorasTotal'))->where('idAlumno', $idAlumno)->where('eliminado', 0)->groupBy('numeroPeriodo');
+        return Clase::select('numeroPeriodo', DB::raw('min(fechaInicio) AS fechaInicio, max(fechaFin) AS fechaFin, sum(duracion) AS horasTotal'))->where('idAlumno', $idAlumno)->where('eliminado', 0)->groupBy('numeroPeriodo');
     }
 
-    protected static function listarIdsXRangoFecha($fechaInicio, $fechaFin, $idsProfesores = FALSE) {
+    protected static function listarIdsEntidadesXRangoFecha($fechaInicio, $fechaFin, $idsProfesores = FALSE) {
         $clases = Clase::where('fechaInicio', '<=', $fechaInicio)->where('fechaFin', '>=', $fechaFin)->lists('idProfesor');
         return ($idsProfesores ? $clases->lists('idProfesor') : $clases->lists('idAlumno'));
     }
@@ -124,8 +125,39 @@ class Clase extends Model {
         }
     }
 
-    protected static function cancelarClase($idAlumno, $idClase) {
-        
+    protected static function cancelarClase($idAlumno, $datos) {
+        $claseCancelada = Clase::obtenerXId($idAlumno, $datos["idClase"]);
+        $claseCancelada->tipoCancelacion = $datos["tipoCancelacion"];
+        $claseCancelada->fechaCancelacion = Carbon::now()->toDateTimeString();
+        $claseCancelada->estado = EstadosClase::Cancelada;
+        $claseCancelada->save();
+
+        if ($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionAlumno && isset($datos["idProfesor"]) && $datos["pagoProfesor"] != "") {
+            PagoProfesor::registrarXDatosClaseCancelada($datos["idProfesor"], $datos["idClase"], $datos["pagoProfesor"]);
+        }
+        if (($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionAlumno && $datos["reprogramarCancelacionAlumno"] == 1) || ($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionProfesor && $datos["reprogramarCancelacionProfesor"] == 1)) {
+            $fechaInicio = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00")->addSeconds($datos["horaInicio"]);
+            $fechaFin = $fechaInicio->addSeconds($datos["duracion"]);
+
+            $clase = new Clase([
+                'idAlumno' => $idAlumno,
+                'idProfesor' => $datos["idDocente"],
+                'numeroPeriodo' => $claseCancelada["numeroPeriodo"],
+                'duracion' => $datos["duracion"],
+                'costoHora' => $claseCancelada["costoHora"],
+                'costoHoraProfesor' => $datos["costoHoraDocente"],
+                'fechaInicio' => $fechaInicio,
+                'fechaFin' => $fechaFin,
+                'estado' => EstadosClase::Programada
+            ]);
+            $clase->save();
+
+            if (isset($claseCancelada["idHistorial"])) {
+                $tituloHistorial = str_replace(["[DIAS]"], ["1 día"], (!is_null($datos["idDocente"]) ? MensajesHistorial::TituloCorreoAlumnoClase : MensajesHistorial::TituloCorreoAlumnoClaseSinProfesor));
+                $mensajeHistorial = str_replace(["[FECHA]", "[PERIODO]", "[DURACION]"], [$fechaInicio->format('d/m/Y H:i:s'), $claseCancelada["numeroPeriodo"], gmdate("H:i", $datos["duracion"])], (!is_null($datos["idDocente"]) ? MensajesHistorial::MensajeCorreoAlumnoClase : MensajesHistorial::MensajeCorreoAlumnoClaseSinProfesor));
+                Historial::Registrar([$idAlumno, $datos["idDocente"], Auth::user()->idEntidad], $tituloHistorial, $mensajeHistorial, NULL, TRUE, FALSE, NULL, $clase["id"], $fechaInicio->subDays(1), TiposHistorial::Correo);
+            }
+        }
     }
 
     protected static function eliminar($idAlumno, $id) {
@@ -140,6 +172,15 @@ class Clase extends Model {
         foreach ($clases as $clase) {
             Clase::eliminar($idAlumno, $clase->id);
         }
+    }
+
+    protected static function verificarExistencia($idAlumno, $id) {
+        try {
+            Clase::obtenerXId($idAlumno, $id);
+        } catch (Exception $ex) {
+            return FALSE;
+        }
+        return TRUE;
     }
 
 }

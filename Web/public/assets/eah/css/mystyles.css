@@ -242,10 +242,10 @@ textarea{
 }
 
 /*Sección pago*/
-#tab_lista_docentes_pago i {
+#tab-lista-docentes-pago i {
     width: inherit;
 }
-#tab_lista_docentes_pago_info{
+#tab-lista-docentes-pago-info{
     white-space: inherit;
     width: 160%;
 }
@@ -254,7 +254,7 @@ textarea{
 }
 
 /*Sección clase*/
-#tab_lista_periodos_clases .fa-remove{
+#tab-lista-periodos-clases .fa-remove{
     color: red;
 }
 #tab_lista_docentes_clase i {

@@ -16,8 +16,8 @@
         <div class="box box-primary">
             <div class="box-body box-profile">
                 <img class="profile-user-img img-responsive img-circle" src="{{ route('imagenes', ['rutaImagen' => $alumno->rutaImagenPerfil]) }}" alt="User profile picture">
-                <h3 class="profile-username text-center">{!! $alumno->nombre . " " .  $alumno->apellido !!}</h3>
-                <p class="text-muted text-center">{!! $alumno->correoElectronico !!}</p>
+                <h3 class="profile-username">{!! $alumno->nombre . " " .  $alumno->apellido !!}</h3>
+                <p class="text-muted">{!! $alumno->correoElectronico !!}</p>
             </div>
         </div>
         <div id="sec-datos-principales" class="box box-primary">

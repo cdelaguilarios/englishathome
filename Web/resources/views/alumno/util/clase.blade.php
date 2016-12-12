@@ -20,79 +20,160 @@
             </div>
         </div> 
         <div id="sec-clase-2">                    
-            {{ Form::open(['url' => route('alumnos.clases.cancelar', ['id' => $idAlumno]), 'id' => 'formulario-cancelar-clase', 'class' => 'form-horizontal', 'novalidate' => 'novalidate', 'files' => true]) }}
+            {{ Form::open(['url' => route("alumnos.clases.cancelar", ["id" => $idAlumno]), "id" => "formulario-cancelar-clase", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
             @include('partials/errors')
-            <div id="sec-clase-21">
-                <div class="box-header">
-                    <h3 class="box-title with-border">Cancelar clase</h3>                
-                </div>  
-                <div class="box-body">
-                    <div class="form-group">
-                        <div class="col-sm-4">
-                            {{ Form::select('tipoCancelacion', [0 => 'Clase cancelada por el alumno', 1 => 'Clase cancelada por el profesor'], null, ['class' => 'form-control']) }}
-                        </div>
+            <div class="box-header">
+                <h3 class="box-title with-border">Cancelar clase</h3>                
+            </div>  
+            <div class="box-body">
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        {{ Form::select("tipoCancelacion", App\Helpers\Enum\TiposCancelacionClase::listar(), NULL, ["id" => "tipo-cancelacion-clase", "class" => "form-control"]) }}
                     </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <label class="control-label">
+                            <i class="fa fa-edit"></i> Datos de cancelación
+                        </label>
+                    </div>
+                </div>
+                <div id="sec-clase-21" class="box-body">
+                    <div class="form-group">
+                        {{ Form::label("pagoProfesor", "Pago al profesor por clase cancelada: ", ["class" => "col-sm-4 control-label"]) }}
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <b>S/.</b>
+                                </span>
+                                {{ Form::text("pagoProfesor", NULL, ["class" => "form-control", "maxlength" => "19"]) }}
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="checkbox">
+                                <label class="checkbox-custom" data-initialize="checkbox">
+                                    {{ Form::label("reprogramar-clase-can-alu", "Reprogramar clase ") }}
+                                    {{ Form::checkbox("reprogramarCancelacionAlumno", null, FALSE, ["id" => "reprogramar-clase-can-alu"]) }}
+                                </label>
+                            </div>
+                        </div> 
+                    </div>
+                </div>      
+                <div id="sec-clase-22" class="box-body">
+                    <div class="form-group">
+                        {{ Form::label("pagoProfesor2", "Pago al profesor por clase cancelada 2: ", ["class" => "col-sm-4 control-label"]) }}
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <b>S/.</b>
+                                </span>
+                                {{ Form::text("pagoProfesor2", NULL, ["class" => "form-control", "maxlength" => "19"]) }}
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="checkbox">
+                                <label class="checkbox-custom" data-initialize="checkbox">
+                                    {{ Form::label("reprogramar-clase-can-pro", "Reprogramar clase ") }}
+                                    {{ Form::checkbox("reprogramarCancelacionProfesor", null, FALSE, ["id" => "reprogramar-clase-can-pro"]) }}
+                                </label>
+                            </div>
+                        </div> 
+                    </div>
+                </div>    
+                <div id="sec-clase-23">
                     <div class="form-group">
                         <div class="col-sm-12">
                             <label class="control-label">
-                                <i class="fa fa-edit"></i> Datos de cancelación
+                                <i class="fa fa-calendar-check-o"></i> Nueva clase (reprogramación)
                             </label>
                         </div>
+                    </div>           
+                    <div class="form-group">
+                        {{ Form::label("fecha", "Fecha: ", ["class" => "col-sm-2 control-label"]) }}
+                        <div class="col-sm-3">
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>                                
+                                {{ Form::text("fecha", NULL, ["id" => "fecha-clase-reprogramada", "class" => "form-control  pull-right"]) }}
+                            </div>
+                        </div>                        
                     </div>
-                    <div class="box-body">
+                    <div class="form-group">
+                        {{ Form::label("horaInicio", "Hora inicio: ", ["class" => "col-sm-2 control-label"]) }}
+                        <div class="col-sm-3">
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa  fa-clock-o"></i>
+                                </div>    
+                                {{ Form::select("horaInicio", [], NULL, ["id" => "hora-inicio-clase-reprogramada", "class" => "form-control"]) }}
+                            </div>
+                        </div>
+                        {{ Form::label("duracion", "Duración: ", ["class" => "col-sm-1 control-label"]) }}
+                        <div class="col-sm-2">
+                            <div class="input-group date">
+                                <div class="input-group-addon">
+                                    <i class="fa  fa-clock-o"></i>
+                                </div>    
+                                {{ Form::select("duracion", [], NULL, ["id" => "duracion-clase-reprogramada", "class" => "form-control"]) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-body">                        
                         <div class="form-group">
-                            {{ Form::label('pagoProfesorClaseCancelada', 'Pago al profesor por clase cancelada: ', ['class' => 'col-sm-4 control-label']) }}
-                            <div class="col-sm-3">
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <b>S/.</b>
-                                    </span>
-                                    {{ Form::text('pagoProfesorClaseCancelada', null, ['class' => 'form-control', 'maxlength' =>'19']) }}
+                            <div class="col-sm-12">
+                                <button type="button" class="btn btn-primary btn-sm btn-docentes-disponibles-clase">Elegir profesor disponible</button> 
+                            </div>
+                        </div>
+                        <div id="sec-clase-231">
+                            <div class="form-group">
+                                {{ Form::label("", "", ["class" => "col-sm-3 control-label nombre-docente-clase"]) }}
+                            </div>
+                            <div class="form-group">
+                                {{ Form::label("costoHoraDocente", "Pago por hora al profesor (*): ", ["class" => "col-sm-3 control-label"]) }}
+                                <div class="col-sm-4">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <b>S/.</b>
+                                        </span>
+                                        {{ Form::text("costoHoraDocente", null, ["id" => "costo-hora-docente-clase", "class" => "form-control", "maxlength" =>"19"]) }}
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-sm-5">
-                                <div class="checkbox">
-                                    <label class="checkbox-custom" data-initialize="checkbox">
-                                        {{ Form::label('reprogramarClaseCancelada', 'Reprogramar clase', ['class' => 'checkbox-label']) }}
-                                        {{ Form::checkbox('reprogramarClaseCancelada', null, TRUE) }}
-                                    </label>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <br/><span>(*) Campos obligatorios</span>
                                 </div>
-                            </div> 
+                            </div>
                         </div>
-                    </div>         
-                </div>  
-            </div>            
-            <div id="sec-clase-22">
-                <div class="box-header">
-                    <h3 class="box-title with-border">Nueva clase</h3>                
-                </div>  
-                <div class="box-body">
-                    <div class="form-group">
-                        <div class="col-sm-12">
-                            <br/><span>(*) Campos obligatorios</span>
-                        </div>
+                        {{ Form::hidden("idDocente") }} 
+
+
+                        {{ Form::hidden("cancelar", 1) }} 
+                        {{ Form::hidden("idClase") }} 
+                        {{ Form::hidden("idAlumno", $idAlumno) }} 
+                        {{ Form::hidden("idProfesor") }} 
                     </div>
-                </div> 
-            </div>
+                </div>
+            </div>      
             <div class="box-footer">    
-                <button id="btnCancelarCanClase" type="button" class="btn btn-default">Cancelar</button>
-                <button id="btnRegistrarCanClase" type="submit" class="btn btn-success pull-right">Registrar</button>
-                <button id="btnSiguienteCanClase" type="button" class="btn btn-success pull-right">Siguiente</button>
-                <button id="btnAnteriorCanClase"  type="button" class="btn btn-primary pull-right">Anterior</button>
+                <button type="button" class="btn btn-default btn-cancelar-clase">Cancelar</button>
+                <button type="submit" class="btn btn-success pull-right">Registrar</button>
             </div>
             {{ Form::close() }}
         </div> 
     </div>
 </div>
-@include('alumno.util.docentesDisponibles', ['seccion' => 'Clase'])
+@include('alumno.util.docentesDisponibles', ['seccion' => 'clase'])
 @if(isset($idAlumno))
 <script>
     var urlListarPeriodos = "{{ route('alumnos.periodosClases.listar', ['id' => $idAlumno]) }}";
-    var urlEliminarClase = "{{ route('alumnos.clases.eliminar', ['id' => $idAlumno, 'idClase' => 0]) }}";
     var urlListarClases = "{{ route('alumnos.periodo.clases.listar', ['id' => $idAlumno, 'numeroPeriodo' => 0]) }}";
+    var urlEliminarClase = "{{ route('alumnos.clases.eliminar', ['id' => $idAlumno, 'idClase' => 0]) }}";
     var urlPerfilProfesorClase = "{{ route('profesores.perfil', ['id' => 0]) }}";
     var urlListarDocentesDisponiblesClase = "{{ route('alumnos.clases.docentesDisponibles.listar', ['id' => $idAlumno]) }}";
     var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::Listar()) !!};
+    var tipoCancelacionAlumno = "{{ App\Helpers\Enum\TiposCancelacionClase::CancelacionAlumno }}";
 </script>
 <script src='{{ asset('assets/eah/js/clase.js')}}'></script>
 @endif

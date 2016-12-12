@@ -9,6 +9,9 @@ class MensajesHistorial {
     
     const TituloAlumnoRegistroPago = "[" . TiposEntidad::Usuario . "] registró un pago del alumno [" . TiposEntidad::Alumno . "]";
     const MensajeAlumnoRegistroPago = "<strong>Motivo:</strong> [MOTIVO]<br/><strong>Monto:</strong> S/.[MONTO] [DESCRIPCION]<br/>";
+        
+    const TituloProfesorRegistroPago = "[" . TiposEntidad::Usuario . "] registró un pago del alumno [" . TiposEntidad::Profesor . "]";
+    const MensajeProfesorRegistroPago = "<strong>Motivo:</strong> [MOTIVO]<br/><strong>Monto:</strong> S/.[MONTO] [DESCRIPCION]<br/>";
     
     const TituloCorreoAlumnoClase = "Estamos a [DIAS] de la clase del alumno [" . TiposEntidad::Alumno . "]";
     const MensajeCorreoAlumnoClase = "La próxima clase del alumno [" . TiposEntidad::Alumno . "] será el [FECHA]. Los datos principales de esta clase son:<br/><br/><strong>Período:</strong> [PERIODO]<br/><strong>Profesor asignado:</strong> [PROFESOR]<br/><strong>Duración:</strong> [DURACION]<br/>";
