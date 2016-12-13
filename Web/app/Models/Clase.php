@@ -95,6 +95,31 @@ class Clase extends Model {
         return $clasesGeneradas + ["montoRestante" => ($datos["monto"] - ($horasPagadas * (float) $datos["costoHoraClase"]))];
     }
 
+    protected static function registrar($idAlumno, $datos) {
+        $fechaInicio = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00")->addSeconds($datos["horaInicio"]);
+        $fechaFin = clone $fechaInicio;
+        $fechaFin->addSeconds($datos["duracion"]);
+
+        $clase = new Clase([
+            'idAlumno' => $idAlumno,
+            'idProfesor' => $datos["idDocente"],
+            'numeroPeriodo' => $datos["numeroPeriodo"],
+            'duracion' => $datos["duracion"],
+            'costoHora' => $datos["costoHora"],
+            'costoHoraProfesor' => $datos["costoHoraDocente"],
+            'fechaInicio' => $fechaInicio,
+            'fechaFin' => $fechaFin,
+            'estado' => EstadosClase::Programada
+        ]);
+        $clase->save();
+
+        if ($datos["notificar"] == 1) {
+            $tituloHistorial = str_replace(["[DIAS]"], ["1 día"], (!is_null($datos["idDocente"]) ? MensajesHistorial::TituloCorreoAlumnoClase : MensajesHistorial::TituloCorreoAlumnoClaseSinProfesor));
+            $mensajeHistorial = str_replace(["[FECHA]", "[PERIODO]", "[DURACION]"], [$fechaInicio->format('d/m/Y H:i:s'), $datos["numeroPeriodo"], gmdate("H:i", $datos["duracion"])], (!is_null($datos["idDocente"]) ? MensajesHistorial::MensajeCorreoAlumnoClase : MensajesHistorial::MensajeCorreoAlumnoClaseSinProfesor));
+            Historial::Registrar([$idAlumno, $datos["idDocente"], Auth::user()->idEntidad], $tituloHistorial, $mensajeHistorial, NULL, TRUE, FALSE, NULL, $clase["id"], $fechaInicio->subDays(1), TiposHistorial::Correo);
+        }
+    }
+
     protected static function registrarXDatosPago($idAlumno, $idPago, $datos) {
         $datosClases = Clase::generarXDatosPago($idAlumno, $datos);
         $datosNotificacionClases = json_decode($datos["datosNotificacionClases"]);
@@ -125,37 +150,41 @@ class Clase extends Model {
         }
     }
 
-    protected static function cancelarClase($idAlumno, $datos) {
+    protected static function cancelar($idAlumno, $datos) {
         $claseCancelada = Clase::obtenerXId($idAlumno, $datos["idClase"]);
-        $claseCancelada->tipoCancelacion = $datos["tipoCancelacion"];
-        $claseCancelada->fechaCancelacion = Carbon::now()->toDateTimeString();
-        $claseCancelada->estado = EstadosClase::Cancelada;
-        $claseCancelada->save();
+        if ($claseCancelada !== EstadosClase::Programada) {
+            $claseCancelada->tipoCancelacion = $datos["tipoCancelacion"];
+            $claseCancelada->fechaCancelacion = Carbon::now()->toDateTimeString();
+            $claseCancelada->estado = EstadosClase::Cancelada;
+            $claseCancelada->save();
 
-        if ($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionAlumno && isset($datos["idProfesor"]) && isset($datos["pagoProfesor"])) {
-            PagoProfesor::registrarXDatosClaseCancelada($datos["idProfesor"], $datos["idClase"], $datos["pagoProfesor"]);
-        }
-        if (($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionAlumno && $datos["reprogramarCancelacionAlumno"] == 1) || ($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionProfesor && $datos["reprogramarCancelacionProfesor"] == 1)) {
-            $fechaInicio = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00")->addSeconds($datos["horaInicio"]);
-            $fechaFin = $fechaInicio->addSeconds($datos["duracion"]);
+            if ($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionAlumno && isset($datos["idProfesor"]) && isset($datos["pagoProfesor"])) {
+                PagoProfesor::registrarXDatosClaseCancelada($datos["idProfesor"], $datos["idClase"], $datos["pagoProfesor"]);
+            }
+            if (($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionAlumno && $datos["reprogramarCancelacionAlumno"] == 1) || ($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionProfesor && $datos["reprogramarCancelacionProfesor"] == 1)) {
+                $fechaInicio = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00")->addSeconds($datos["horaInicio"]);
+                $fechaFin = clone $fechaInicio;
+                $fechaFin->addSeconds($datos["duracion"]);
 
-            $clase = new Clase([
-                'idAlumno' => $idAlumno,
-                'idProfesor' => $datos["idDocente"],
-                'numeroPeriodo' => $claseCancelada["numeroPeriodo"],
-                'duracion' => $datos["duracion"],
-                'costoHora' => $claseCancelada["costoHora"],
-                'costoHoraProfesor' => $datos["costoHoraDocente"],
-                'fechaInicio' => $fechaInicio,
-                'fechaFin' => $fechaFin,
-                'estado' => EstadosClase::Programada
-            ]);
-            $clase->save();
+                $clase = new Clase([
+                    'idAlumno' => $idAlumno,
+                    'idProfesor' => $datos["idDocente"],
+                    'numeroPeriodo' => $claseCancelada["numeroPeriodo"],
+                    'duracion' => $datos["duracion"],
+                    'costoHora' => $claseCancelada["costoHora"],
+                    'costoHoraProfesor' => $datos["costoHoraDocente"],
+                    'fechaInicio' => $fechaInicio,
+                    'fechaFin' => $fechaFin,
+                    'estado' => EstadosClase::Programada,
+                    'idClaseCancelada' => $claseCancelada["id"]
+                ]);
+                $clase->save();
 
-            if (isset($claseCancelada["idHistorial"])) {
-                $tituloHistorial = str_replace(["[DIAS]"], ["1 día"], (!is_null($datos["idDocente"]) ? MensajesHistorial::TituloCorreoAlumnoClase : MensajesHistorial::TituloCorreoAlumnoClaseSinProfesor));
-                $mensajeHistorial = str_replace(["[FECHA]", "[PERIODO]", "[DURACION]"], [$fechaInicio->format('d/m/Y H:i:s'), $claseCancelada["numeroPeriodo"], gmdate("H:i", $datos["duracion"])], (!is_null($datos["idDocente"]) ? MensajesHistorial::MensajeCorreoAlumnoClase : MensajesHistorial::MensajeCorreoAlumnoClaseSinProfesor));
-                Historial::Registrar([$idAlumno, $datos["idDocente"], Auth::user()->idEntidad], $tituloHistorial, $mensajeHistorial, NULL, TRUE, FALSE, NULL, $clase["id"], $fechaInicio->subDays(1), TiposHistorial::Correo);
+                if (isset($claseCancelada["idHistorial"])) {
+                    $tituloHistorial = str_replace(["[DIAS]"], ["1 día"], (!is_null($datos["idDocente"]) ? MensajesHistorial::TituloCorreoAlumnoClase : MensajesHistorial::TituloCorreoAlumnoClaseSinProfesor));
+                    $mensajeHistorial = str_replace(["[FECHA]", "[PERIODO]", "[DURACION]"], [$fechaInicio->format('d/m/Y H:i:s'), $claseCancelada["numeroPeriodo"], gmdate("H:i", $datos["duracion"])], (!is_null($datos["idDocente"]) ? MensajesHistorial::MensajeCorreoAlumnoClase : MensajesHistorial::MensajeCorreoAlumnoClaseSinProfesor));
+                    Historial::Registrar([$idAlumno, $datos["idDocente"], Auth::user()->idEntidad], $tituloHistorial, $mensajeHistorial, NULL, TRUE, FALSE, NULL, $clase["id"], $fechaInicio->subDays(1), TiposHistorial::Correo);
+                }
             }
         }
     }

@@ -23,7 +23,7 @@ class Docente extends Model {
         }
         $generoDocentePago = $datos["generoDocente"];
         $idCursoDocentePago = $datos["idCursoDocente"];
-        $docentes = ($datos["tipoDocente"] == TiposEntidad::Profesor ? Profesor::Listar() : Postulante::Listar());
+        $docentes = ($datos["tipoDocente"] == TiposEntidad::Profesor ? Profesor::listar() : Postulante::Listar());
 
         return $docentes->where(function ($q) use ($generoDocentePago) {
                     $q->whereNull("entidad.genero")->orWhereIn("entidad.genero", ($generoDocentePago != "" ? [$generoDocentePago] : array_keys(GenerosEntidad::listar())));
@@ -44,7 +44,7 @@ class Docente extends Model {
 
         $generoDocenteClase = $datos["generoDocente"];
         $idCursoDocenteClase = $datos["idCursoDocente"];
-        $docentes = ($datos["tipoDocente"] == TiposEntidad::Profesor ? Profesor::Listar() : Postulante::Listar());
+        $docentes = ($datos["tipoDocente"] == TiposEntidad::Profesor ? Profesor::listar() : Postulante::Listar());
 
         return $docentes->where(function ($q) use ($generoDocenteClase) {
                     $q->whereNull("entidad.genero")->orWhereIn("entidad.genero", ($generoDocenteClase != "" ? [$generoDocenteClase] : array_keys(GenerosEntidad::listar())));

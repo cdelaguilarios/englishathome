@@ -1,19 +1,19 @@
 @extends("layouts.master")
-@section("titulo", "Alumnos")
+@section("titulo", "Profesores")
 
 @section("section_script")
 <script type="text/javascript">
-    var urlListar = "{{ route('alumnos.listar') }}";
-    var urlPerfil = "{{ route('alumnos.perfil', ['id' => 0]) }}";
-    var urlEditar = "{{ route('alumnos.editar', ['id' => 0]) }}";
-    var urlEliminar = "{{ route('alumnos.destroy', ['id' => 0]) }}";
-    var estados = {!! json_encode(App\Helpers\Enum\EstadosAlumno::Listar()) !!};
+    var urlListar = "{{ route('profesores.listar') }}";
+    var urlPerfil = "{{ route('profesores.perfil', ['id' => 0]) }}";
+    var urlEditar = "{{ route('profesores.editar', ['id' => 0]) }}";
+    var urlEliminar = "{{ route('profesores.destroy', ['id' => 0]) }}";
+    var estados = {!! json_encode(App\Helpers\Enum\EstadosProfesor::Listar()) !!};
 </script>
-<script src="{{ asset('assets/eah/js/modulos/alumno/alumno.js') }}"></script>
+<script src="{{ asset('assets/eah/js/modulos/profesor/profesor.js') }}"></script>
 @endsection
 
 @section("breadcrumb")
-<li class="active">Alumnos</li>
+<li class="active">Profesores</li>
 @endsection
 
 @section("content")
@@ -21,8 +21,8 @@
     <div class="col-xs-12">
         <div class="box box-info">
             <div class="box-header">
-                <h3 class="box-title">Lista de alumnos</h3>
-                <a href="{{ route('alumnos.nuevo')}}" class="btn btn-primary btn-clean">Nuevo alumno</a>   
+                <h3 class="box-title">Lista de profesores</h3>
+                <a href="{{ route('profesores.nuevo')}}" class="btn btn-primary btn-clean">Nuevo profesor</a>   
             </div>         
             <div class="box-body">
                 <table id="tab-lista" class="table table-bordered table-hover">

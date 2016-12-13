@@ -2,7 +2,7 @@
 @section("titulo", "Alumnos")
 
 @section("section_script")
-<script src="{{ asset('assets/eah/js/modulos/alumno.js') }}"></script>
+<script src="{{ asset('assets/eah/js/modulos/alumno/alumno.js') }}"></script>
 @endsection
 
 @section("breadcrumb")

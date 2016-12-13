@@ -72,10 +72,13 @@ Route::group(['middleware' => 'auth'], function() {
         Route::get('interesado/{id}/editar', ['uses' => 'InteresadoController@edit', 'as' => 'interesados.editar']);
         
         //Profesores
-        Route::resource('profesores', 'AlumnoController');
+        Route::resource('profesores', 'ProfesorController');
         Route::get('profesores', ['uses' => 'ProfesorController@index', 'as' => 'profesores']);
-        Route::post('profesores/listar', ['uses' => 'ProfesorController@listar', 'as' => 'profesores.listar']);
+        Route::post('profesores/listar', ['uses' => 'ProfesorController@listar', 'as' => 'profesores.listar']);  
+        Route::get('profesor/nuevo', ['uses' => 'ProfesorController@create', 'as' => 'profesores.nuevo']);
         Route::get('profesor/{id}/perfil', ['uses' => 'ProfesorController@show', 'as' => 'profesores.perfil']);
+        Route::get('profesor/{id}/editar', ['uses' => 'ProfesorController@edit', 'as' => 'profesores.editar']);  
+        Route::post('profesor/{id}/historial', ['uses' => 'ProfesorController@historial', 'as' => 'profesores.historial']);       
         
     });
 });

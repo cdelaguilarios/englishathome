@@ -93,7 +93,7 @@
                             <a href="{{ route('interesados')}}"><i class="fa flaticon-questioning"></i> <span>Interesados</span></a>
                         </li>
                         <li class="{{ ((isset($seccion) && $seccion == "profesores") ? "active" : "") }}">
-                            <a href="#"><i class="fa flaticon-teach"></i> <span>Profesores</span></a>
+                            <a href="{{ route('profesores')}}"><i class="fa flaticon-teach"></i> <span>Profesores</span></a>
                         </li>
                         <li class="{{ ((isset($seccion) && $seccion == "postulantes") ? "active" : "") }}">
                             <a href="{{ route('interesados')}}">CV&nbsp;&nbsp;&nbsp;<span>Postulantes</span></a>

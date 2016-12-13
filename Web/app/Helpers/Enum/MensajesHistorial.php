@@ -10,6 +10,9 @@ class MensajesHistorial {
     const TituloAlumnoRegistroPago = "[" . TiposEntidad::Usuario . "] registró un pago del alumno [" . TiposEntidad::Alumno . "]";
     const MensajeAlumnoRegistroPago = "<strong>Motivo:</strong> [MOTIVO]<br/><strong>Monto:</strong> S/.[MONTO] [DESCRIPCION]<br/>";
         
+
+    const TituloProfesorRegistroXUsuario = "[" . TiposEntidad::Usuario . "] registró a [" . TiposEntidad::Profesor . "] como nuevo profesor(a)";
+    
     const TituloProfesorRegistroPago = "[" . TiposEntidad::Usuario . "] registró un pago del alumno [" . TiposEntidad::Profesor . "]";
     const MensajeProfesorRegistroPago = "<strong>Motivo:</strong> [MOTIVO]<br/><strong>Monto:</strong> S/.[MONTO] [DESCRIPCION]<br/>";
     
