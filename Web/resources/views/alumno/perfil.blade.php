@@ -70,7 +70,7 @@
                     @include("alumno.util.pago", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "totalSaldoFavor" => $alumno->totalSaldoFavor]) 
                 </div>
                 <div class="tab-pane" id="clase">
-                    @include("alumno.util.clase", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase])
+                    @include("alumno.clase.principal", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase])
                 </div>
             </div>
         </div>

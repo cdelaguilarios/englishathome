@@ -13,10 +13,10 @@ use App\Models\PagoAlumno;
 use App\Models\NivelIngles;
 use App\Models\TipoDocumento;
 use App\Helpers\Enum\MotivosPago;
-use App\Http\Requests\PagoRequest;
-use App\Http\Requests\ClaseRequest;
+use App\Http\Requests\Alumno\Pago;
+use App\Http\Requests\Alumno\Clase;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AlumnoRequest;
+use App\Http\Requests\Alumno\AlumnoRequest;
 use App\Http\Requests\HistorialRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -113,18 +113,18 @@ class AlumnoController extends Controller {
         return Datatables::of(PagoAlumno::listar($id))->make(true);
     }
 
-    public function generarClasesXPago($id, PagoRequest $req) {
+    public function generarClasesXPago($id, Pago\PagoRequest $req) {
         return response()->json(Clase::generarXDatosPago($id, $req->all()), 200);
     }
 
-    public function listarDocentesDisponiblesXPago($id, PagoRequest $req) {
+    public function listarDocentesDisponiblesXPago($id, Pago\PagoRequest $req) {
         return Datatables::of(Docente::listarDisponiblesXDatosPago($id, $req->all()))
                         ->filterColumn('nombreCompleto', function($q, $k) {
                             $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
                         })->make(true);
     }
 
-    public function registrarPago($id, PagoRequest $request) {
+    public function registrarPago($id, Pago\PagoRequest $request) {
         try {
             PagoAlumno::registrar($id, $request);
             Mensajes::agregarMensajeExitoso("Registro exitoso.");
@@ -159,14 +159,14 @@ class AlumnoController extends Controller {
         return response()->json(Clase::listar($id, $numeroPeriodo), 200);
     }
 
-    public function listarDocentesDisponiblesXClase($id, ClaseRequest $req) {
+    public function listarDocentesDisponiblesXClase($id, Clase\DocenteDisponibleRequest $req) {
         return Datatables::of(Docente::listarDisponiblesXDatosClase($req->all()))
                         ->filterColumn('nombreCompleto', function($q, $k) {
                             $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
                         })->make(true);
     }
 
-    public function cancelarClase($id, ClaseRequest $request) {
+    public function cancelarClase($id, Clase\CancelarRequest $request) {
         try {
             $datos = $request->all();
             Clase::cancelar($id, $datos);
@@ -178,7 +178,7 @@ class AlumnoController extends Controller {
         return redirect(route('alumnos.perfil', ['id' => $id]));
     }
 
-    public function registrarClase($id, ClaseRequest $request) {
+    public function registrarClase($id, Clase\ClaseRequest $request) {
         try {
             $datos = $request->all();
             Clase::registrar($id, $datos);

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Alumno;
 
 use App\Models\Curso;
 use App\Models\NivelIngles;
