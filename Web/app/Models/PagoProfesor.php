@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Auth;
+use App\Helpers\Enum\MotivosPago;
 use App\Helpers\Enum\EstadosPago;
 use App\Helpers\Enum\TiposHistorial;
 use App\Helpers\Enum\MensajesHistorial;
@@ -20,8 +22,22 @@ class PagoProfesor extends Model {
         return $nombreTabla;
     }
 
+    protected static function registrar($idProfesor, $request) {
+        $datos = $request->all();
+        $datosPago = Pago::registrar($datos, EstadosPago::Realizado, $request);
+        $pagoProfesor = new PagoProfesor([
+            'idPago' => $datosPago["id"],
+            'idProfesor' => $idProfesor
+        ]);
+        $pagoProfesor->save();
+
+        $listaMotivosPago = MotivosPago::listar();
+        $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$listaMotivosPago[$datos["motivo"]], "", number_format((float) ($datos["monto"]), 2, '.', '')], MensajesHistorial::MensajeProfesorRegistroPago);
+        Historial::Registrar([$idProfesor, Auth::user()->idEntidad], MensajesHistorial::TituloProfesorRegistroPago, $mensajeHistorial, $datosPago["rutaImagenComprobante"], FALSE, TRUE, $datosPago["id"], NULL, NULL, TiposHistorial::Pago);
+    }
+
     protected static function registrarXDatosClaseCancelada($idProfesor, $idClaseCancelada, $monto) {
-        $datos = ["motivo" => "Pago por clase cancelada.", "monto" => $monto];
+        $datos = ["motivo" => MotivosPago::ClaseCancelada, "monto" => $monto];
         $datosPago = Pago::registrar($datos, EstadosPago::Pendiente);
         $pagoProfesor = new PagoProfesor([
             'idPago' => $datosPago["id"],

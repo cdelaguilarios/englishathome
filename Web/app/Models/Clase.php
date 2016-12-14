@@ -40,7 +40,7 @@ class Clase extends Model {
                         ->firstOrFail();
     }
 
-    protected static function listar($idAlumno, $numeroPeriodo) {
+    protected static function listarXAlumno($idAlumno, $numeroPeriodo) {
         $nombreTabla = Clase::nombreTabla();
         return Clase::select($nombreTabla . '.*', 'entidadProfesor.nombre AS nombreProfesor', 'entidadProfesor.apellido AS apellidoProfesor', 'historial.id AS idHistorial')
                         ->leftJoin(Entidad::nombreTabla() . ' as entidadProfesor', $nombreTabla . '.idProfesor', '=', 'entidadProfesor.id')
@@ -55,12 +55,25 @@ class Clase extends Model {
                         ->get();
     }
 
-    protected static function totalPeriodos($idAlumno) {
-        return count(Clase::groupBy('numeroPeriodo')->selectRaw('count(*) as total')->where('idAlumno', $idAlumno)->get()->toArray());
+    protected static function listarXProfesor($idProfesor) {
+        $nombreTabla = Clase::nombreTabla();
+        return Clase::select($nombreTabla . '.*', 'entidadAlumno.nombre AS nombreAlumno', 'entidadAlumno.apellido AS apellidoAlumno', 'historial.id AS idHistorial')
+                        ->leftJoin(Entidad::nombreTabla() . ' as entidadAlumno', $nombreTabla . '.idAlumno', '=', 'entidadAlumno.id')
+                        ->leftJoin(Historial::NombreTabla() . ' as historial', $nombreTabla . '.id', '=', 'historial.idClase')
+                        ->where($nombreTabla . '.idProfesor', $idProfesor)
+                        ->where($nombreTabla . '.eliminado', 0)
+                        ->where(function ($q) {
+                            $q->whereNull('historial.id')->orWhere('historial.enviarCorreo', 1);
+                        })
+                        ->orderBy($nombreTabla . '.fechaInicio', 'ASC');
     }
 
     protected static function listarPeriodos($idAlumno) {
         return Clase::select('numeroPeriodo', DB::raw('min(fechaInicio) AS fechaInicio, max(fechaFin) AS fechaFin, sum(duracion) AS horasTotal'))->where('idAlumno', $idAlumno)->where('eliminado', 0)->groupBy('numeroPeriodo');
+    }
+
+    protected static function totalPeriodos($idAlumno) {
+        return count(Clase::groupBy('numeroPeriodo')->selectRaw('count(*) as total')->where('idAlumno', $idAlumno)->get()->toArray());
     }
 
     protected static function listarIdsEntidadesXRangoFecha($fechaInicio, $fechaFin, $idsProfesores = FALSE) {
@@ -96,9 +109,11 @@ class Clase extends Model {
     }
 
     protected static function registrar($idAlumno, $datos) {
-        $fechaInicio = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00")->addSeconds($datos["horaInicio"]);
-        $fechaFin = clone $fechaInicio;
-        $fechaFin->addSeconds($datos["duracion"]);
+        if (!(isset($datos["fechaInicio"]) && isset($datos["fechaFin"]))) {
+            $datos["fechaInicio"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00")->addSeconds($datos["horaInicio"]);
+            $datos["fechaFin"] = clone $datos["fechaInicio"];
+            $datos["fechaFin"]->addSeconds($datos["duracion"]);
+        }
 
         $clase = new Clase([
             'idAlumno' => $idAlumno,
@@ -107,17 +122,18 @@ class Clase extends Model {
             'duracion' => $datos["duracion"],
             'costoHora' => $datos["costoHora"],
             'costoHoraProfesor' => $datos["costoHoraDocente"],
-            'fechaInicio' => $fechaInicio,
-            'fechaFin' => $fechaFin,
+            'fechaInicio' => $datos["fechaInicio"],
+            'fechaFin' => $datos["fechaFin"],
             'estado' => EstadosClase::Programada
         ]);
         $clase->save();
 
         if ($datos["notificar"] == 1) {
             $tituloHistorial = str_replace(["[DIAS]"], ["1 día"], (!is_null($datos["idDocente"]) ? MensajesHistorial::TituloCorreoAlumnoClase : MensajesHistorial::TituloCorreoAlumnoClaseSinProfesor));
-            $mensajeHistorial = str_replace(["[FECHA]", "[PERIODO]", "[DURACION]"], [$fechaInicio->format('d/m/Y H:i:s'), $datos["numeroPeriodo"], gmdate("H:i", $datos["duracion"])], (!is_null($datos["idDocente"]) ? MensajesHistorial::MensajeCorreoAlumnoClase : MensajesHistorial::MensajeCorreoAlumnoClaseSinProfesor));
-            Historial::Registrar([$idAlumno, $datos["idDocente"], Auth::user()->idEntidad], $tituloHistorial, $mensajeHistorial, NULL, TRUE, FALSE, NULL, $clase["id"], $fechaInicio->subDays(1), TiposHistorial::Correo);
+            $mensajeHistorial = str_replace(["[FECHA]", "[PERIODO]", "[DURACION]"], [$datos["fechaInicio"]->format('d/m/Y H:i:s'), $datos["numeroPeriodo"], gmdate("H:i", $datos["duracion"])], (!is_null($datos["idDocente"]) ? MensajesHistorial::MensajeCorreoAlumnoClase : MensajesHistorial::MensajeCorreoAlumnoClaseSinProfesor));
+            Historial::Registrar([$idAlumno, $datos["idDocente"], Auth::user()->idEntidad], $tituloHistorial, $mensajeHistorial, NULL, TRUE, FALSE, NULL, $clase["id"], $datos["fechaInicio"]->subDays(1), TiposHistorial::Correo);
         }
+        return $clase["id"];
     }
 
     protected static function registrarXDatosPago($idAlumno, $idPago, $datos) {
@@ -128,25 +144,14 @@ class Clase extends Model {
             if (!isset($datosClases[$i]["duracion"])) {
                 continue;
             }
-            $clase = new Clase([
-                'idAlumno' => $idAlumno,
-                'idProfesor' => $datos["idDocente"],
-                'numeroPeriodo' => $datos["periodoClases"],
-                'duracion' => $datosClases[$i]["duracion"],
-                'costoHora' => $datos["costoHoraClase"],
-                'costoHoraProfesor' => $datos["costoHoraDocente"],
-                'fechaInicio' => $datosClases[$i]["fechaInicio"],
-                'fechaFin' => $datosClases[$i]["fechaFin"],
-                'estado' => EstadosClase::Programada
-            ]);
-            $clase->save();
-
-            PagoClase::registrar($idPago, $clase["id"]);
-            if ($datosNotificacionClases[$i]->notificar != "" && $datosNotificacionClases[$i]->notificar) {
-                $tituloHistorial = str_replace(["[DIAS]"], ["1 día"], (!is_null($datos["idDocente"]) ? MensajesHistorial::TituloCorreoAlumnoClase : MensajesHistorial::TituloCorreoAlumnoClaseSinProfesor));
-                $mensajeHistorial = str_replace(["[FECHA]", "[PERIODO]", "[DURACION]"], [$datosClases[$i]["fechaInicio"]->format('d/m/Y H:i:s'), $datos["periodoClases"], gmdate("H:i", $datosClases[$i]["duracion"])], (!is_null($datos["idDocente"]) ? MensajesHistorial::MensajeCorreoAlumnoClase : MensajesHistorial::MensajeCorreoAlumnoClaseSinProfesor));
-                Historial::Registrar([$idAlumno, $datos["idDocente"], Auth::user()->idEntidad], $tituloHistorial, $mensajeHistorial, NULL, TRUE, FALSE, NULL, $clase["id"], $datosClases[$i]["fechaInicio"]->subDays(1), TiposHistorial::Correo);
-            }
+            $datos["duracion"] = $datosClases[$i]["duracion"];
+            $datos["costoHora"] = $datos["costoHoraClase"];
+            $datos["fechaInicio"] = $datosClases[$i]["fechaInicio"];
+            $datos["fechaFin"] = $datosClases[$i]["fechaFin"];
+            $datos["numeroPeriodo"] = $datos["periodoClases"];
+            $datos["notificar"] = (($datosNotificacionClases[$i]->notificar != "" && $datosNotificacionClases[$i]->notificar) ? 1 : 0);
+            $idClase = Clase::registrar($idAlumno, $datos);
+            PagoClase::registrar($idPago, $idClase);
         }
     }
 
@@ -161,30 +166,13 @@ class Clase extends Model {
             if ($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionAlumno && isset($datos["idProfesor"]) && isset($datos["pagoProfesor"])) {
                 PagoProfesor::registrarXDatosClaseCancelada($datos["idProfesor"], $datos["idClase"], $datos["pagoProfesor"]);
             }
-            if (($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionAlumno && $datos["reprogramarCancelacionAlumno"] == 1) || ($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionProfesor && $datos["reprogramarCancelacionProfesor"] == 1)) {
-                $fechaInicio = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00")->addSeconds($datos["horaInicio"]);
-                $fechaFin = clone $fechaInicio;
-                $fechaFin->addSeconds($datos["duracion"]);
-
-                $clase = new Clase([
-                    'idAlumno' => $idAlumno,
-                    'idProfesor' => $datos["idDocente"],
-                    'numeroPeriodo' => $claseCancelada["numeroPeriodo"],
-                    'duracion' => $datos["duracion"],
-                    'costoHora' => $claseCancelada["costoHora"],
-                    'costoHoraProfesor' => $datos["costoHoraDocente"],
-                    'fechaInicio' => $fechaInicio,
-                    'fechaFin' => $fechaFin,
-                    'estado' => EstadosClase::Programada,
-                    'idClaseCancelada' => $claseCancelada["id"]
-                ]);
-                $clase->save();
-
-                if (isset($claseCancelada["idHistorial"])) {
-                    $tituloHistorial = str_replace(["[DIAS]"], ["1 día"], (!is_null($datos["idDocente"]) ? MensajesHistorial::TituloCorreoAlumnoClase : MensajesHistorial::TituloCorreoAlumnoClaseSinProfesor));
-                    $mensajeHistorial = str_replace(["[FECHA]", "[PERIODO]", "[DURACION]"], [$fechaInicio->format('d/m/Y H:i:s'), $claseCancelada["numeroPeriodo"], gmdate("H:i", $datos["duracion"])], (!is_null($datos["idDocente"]) ? MensajesHistorial::MensajeCorreoAlumnoClase : MensajesHistorial::MensajeCorreoAlumnoClaseSinProfesor));
-                    Historial::Registrar([$idAlumno, $datos["idDocente"], Auth::user()->idEntidad], $tituloHistorial, $mensajeHistorial, NULL, TRUE, FALSE, NULL, $clase["id"], $fechaInicio->subDays(1), TiposHistorial::Correo);
-                }
+            if (($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionAlumno && $datos["reprogramarCancelacionAlumno"] == 1) ||
+                    ($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionProfesor && $datos["reprogramarCancelacionProfesor"] == 1)) {
+                $datos["numeroPeriodo"] = $claseCancelada["numeroPeriodo"];
+                $datos["costoHora"] = $claseCancelada["costoHora"];
+                $datos["notificar"] = ((isset($claseCancelada["idHistorial"])) ? 1 : 0);
+                $datos["idClaseCancelada"] = $claseCancelada["id"];
+                Clase::registra($idAlumno, $datos);
             }
         }
     }

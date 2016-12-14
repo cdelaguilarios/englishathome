@@ -6,6 +6,7 @@ class MotivosPago {
 
     const Clases = "CLASES";
     const Otros = "OTROS";
+    const ClaseCancelada = "CLASE_CANCELADA";
 
     public static function listar() {
         return [

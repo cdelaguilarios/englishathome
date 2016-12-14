@@ -27,13 +27,13 @@
             <div class="box-body">
                 <strong><i class="fa fa-fw fa-calendar"></i> Horario</strong>
                 <p class="text-muted">
-                    @include("profesor.util.horario", ["horario" => $profesor->horario, "modo" => "visualizar"])
+                    @include("util.horario", ["horario" => $profesor->horario, "modo" => "visualizar"])
                 </p>
                 <hr>
                 <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
                 <p class="text-muted">{!! $profesor->direccion . " " . $profesor->direccionUbicacion !!}</p>
                 <p class="text-muted">
-                    @include("profesor.util.ubicacionMapa", ["geoLatitud" => $profesor->geoLatitud, "geoLongitud" => $profesor->geoLongitud, "modo" => "visualizar"])
+                    @include("util.ubicacionMapa", ["geoLatitud" => $profesor->geoLatitud, "geoLongitud" => $profesor->geoLongitud, "modo" => "visualizar"])
                 </p>
                 <hr>
                 <strong><i class="fa fa-user margin-r-5"></i> {!! $tiposDocumentos[$profesor->idTipoDocumento] !!}</strong>
@@ -60,15 +60,16 @@
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#historial" data-toggle="tab">Historial</a></li>
                 <li><a href="#pago" data-toggle="tab">Detalle económico</a></li>
-                <li><a href="#clase" data-toggle="tab">Períodos de clases</a></li>
+                <li><a href="#clase" data-toggle="tab">Clases</a></li>
             </ul>
             <div class="tab-content">
                 <div class="active tab-pane" id="historial">
-                    @include("profesor.util.historial", ["idAlumno" => $profesor->id]) 
+                    @include("util.historial", ["idEntidad" => $profesor->id]) 
                 </div>
                 <div class="tab-pane" id="pago">
                 </div>
                 <div class="tab-pane" id="clase">
+                    @include("profesor.clase.principal", ["idProfesor" => $profesor->id])
                 </div>
             </div>
         </div>

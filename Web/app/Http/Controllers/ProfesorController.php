@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use Log;
 use Mensajes;
 use Datatables;
+use App\Models\Clase;
 use App\Models\Profesor;
+use App\Models\PagoProfesor;
 use App\Models\TipoDocumento;
-use App\Http\Requests\ProfesorRequest;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProfesorRequest;
+use App\Http\Requests\Profesor\PagoRequest;
 
 class ProfesorController extends Controller {
 
@@ -33,10 +36,10 @@ class ProfesorController extends Controller {
     }
 
     public function store(ProfesorRequest $req) {
+        try {
             $idProfesor = Profesor::registrar($req);
             Mensajes::agregarMensajeExitoso("Registro exitoso.");
             return redirect(route('profesores.perfil', ['id' => $idProfesor]));
-        try {
         } catch (\Exception $e) {
             Log::error($e);
             Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
@@ -88,11 +91,21 @@ class ProfesorController extends Controller {
     }
 
     // </editor-fold>
-    // <editor-fold desc="Historial">
-    public function historial($id, HistorialRequest $req) {
-        $datos = $req->all();
-        $datosHistorial = Historial::obtener($datos["numeroCarga"], $id);
-        return response()->json($datosHistorial, 200);
+    // <editor-fold desc="Clases">
+    public function listarClases($id) {
+        return Datatables::of(Clase::listarXProfesor($id))->make(true);
     }
+
+    public function registrarPagoXClases($id, PagoRequest $request) {
+        try {
+            PagoProfesor::registrar($id, $request);
+            Mensajes::agregarMensajeExitoso("Registro exitoso.");
+        } catch (\Exception $e) {
+            Log::error($e);
+            Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
+        }
+        return redirect(route('profesores.perfil', ['id' => $id]));
+    }
+
     // </editor-fold>
 }

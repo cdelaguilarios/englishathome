@@ -82,7 +82,7 @@
                     </div>          
                 </div>
                 <div id="sec-wiz-alumno-2" class="step-pane sample-pane alert" data-step="2">
-                    @include("alumno.util.ubigeo")  
+                    @include("util.ubigeo")  
                     <div class="form-group">    
                         {{ Form::label("direccion", "Dirección (*): ", ["class" => "col-sm-2 control-label"]) }}                
                         <div class="col-sm-10">
@@ -98,7 +98,7 @@
                     <div class="form-group">
                         {{ Form::label("geoLocalizacion", "Ubicación mapa: ", ["class" => "col-sm-2 control-label"]) }}
                         <div class="col-sm-10 sec-mapa">
-                            @include("alumno.util.ubicacionMapa", ["modo" => (isset($modo) ? $modo : "editar")])
+                            @include("util.ubicacionMapa", ["modo" => (isset($modo) ? $modo : "editar")])
                             <div>Sugerimos seleccionar la ubicación exacta en el mapa del lugar donde se realizarán las clases.</div>
                         </div>
                         {{ Form::hidden("geoLatitud", null) }} 
@@ -199,7 +199,7 @@
                     <div class="form-group">
                         <div class="col-sm-offset-1 col-sm-10">
                             <div id="sec-men-alerta-horario"></div>
-                            @include("alumno.util.horario")  
+                            @include("util.horario")  
                         </div>                                        
                     </div>
                     <div class="form-group">

@@ -27,13 +27,13 @@
             <div class="box-body">
                 <strong><i class="fa fa-fw fa-calendar"></i> Horario</strong>
                 <p class="text-muted">
-                    @include("alumno.util.horario", ["horario" => $alumno->horario, "modo" => "visualizar"])
+                    @include("util.horario", ["horario" => $alumno->horario, "modo" => "visualizar"])
                 </p>
                 <hr>
                 <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
                 <p class="text-muted">{!! $alumno->direccion . " " . $alumno->direccionUbicacion !!}</p>
                 <p class="text-muted">
-                    @include("alumno.util.ubicacionMapa", ["geoLatitud" => $alumno->geoLatitud, "geoLongitud" => $alumno->geoLongitud, "modo" => "visualizar"])
+                    @include("util.ubicacionMapa", ["geoLatitud" => $alumno->geoLatitud, "geoLongitud" => $alumno->geoLongitud, "modo" => "visualizar"])
                 </p>
                 <hr>
                 <strong><i class="fa fa-user margin-r-5"></i> {!! $tiposDocumentos[$alumno->idTipoDocumento] !!}</strong>
@@ -64,10 +64,10 @@
             </ul>
             <div class="tab-content">
                 <div class="active tab-pane" id="historial">
-                    @include("alumno.util.historial", ["idAlumno" => $alumno->id]) 
+                    @include("util.historial", ["idEntidad" => $alumno->id]) 
                 </div>
                 <div class="tab-pane" id="pago">
-                    @include("alumno.util.pago", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "totalSaldoFavor" => $alumno->totalSaldoFavor]) 
+                    @include("alumno.pago.principal", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "totalSaldoFavor" => $alumno->totalSaldoFavor]) 
                 </div>
                 <div class="tab-pane" id="clase">
                     @include("alumno.clase.principal", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase])

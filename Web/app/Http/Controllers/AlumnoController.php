@@ -8,16 +8,14 @@ use Datatables;
 use App\Models\Clase;
 use App\Models\Alumno;
 use App\Models\Docente;
-use App\Models\Historial;
 use App\Models\PagoAlumno;
 use App\Models\NivelIngles;
 use App\Models\TipoDocumento;
 use App\Helpers\Enum\MotivosPago;
-use App\Http\Requests\Alumno\Pago;
-use App\Http\Requests\Alumno\Clase;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Alumno\AlumnoRequest;
-use App\Http\Requests\HistorialRequest;
+use App\Http\Requests\Alumno\Pago as PagoReq;
+use App\Http\Requests\Alumno\Clase as ClaseReq;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AlumnoController extends Controller {
@@ -100,31 +98,23 @@ class AlumnoController extends Controller {
     }
 
     // </editor-fold>
-    // <editor-fold desc="Historial">
-    public function historial($id, HistorialRequest $req) {
-        $datos = $req->all();
-        $datosHistorial = Historial::obtener($datos["numeroCarga"], $id);
-        return response()->json($datosHistorial, 200);
-    }
-
-    // </editor-fold>
     // <editor-fold desc="Pagos">
     public function listarPagos($id) {
         return Datatables::of(PagoAlumno::listar($id))->make(true);
     }
 
-    public function generarClasesXPago($id, Pago\PagoRequest $req) {
+    public function generarClasesXPago($id, PagoReq\PagoRequest $req) {
         return response()->json(Clase::generarXDatosPago($id, $req->all()), 200);
     }
 
-    public function listarDocentesDisponiblesXPago($id, Pago\PagoRequest $req) {
+    public function listarDocentesDisponiblesXPago($id, PagoReq\PagoRequest $req) {
         return Datatables::of(Docente::listarDisponiblesXDatosPago($id, $req->all()))
                         ->filterColumn('nombreCompleto', function($q, $k) {
                             $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
                         })->make(true);
     }
 
-    public function registrarPago($id, Pago\PagoRequest $request) {
+    public function registrarPago($id, PagoReq\PagoRequest $request) {
         try {
             PagoAlumno::registrar($id, $request);
             Mensajes::agregarMensajeExitoso("Registro exitoso.");
@@ -156,17 +146,17 @@ class AlumnoController extends Controller {
     }
 
     public function listarClases($id, $numeroPeriodo) {
-        return response()->json(Clase::listar($id, $numeroPeriodo), 200);
+        return response()->json(Clase::listarXAlumno($id, $numeroPeriodo), 200);
     }
 
-    public function listarDocentesDisponiblesXClase($id, Clase\DocenteDisponibleRequest $req) {
+    public function listarDocentesDisponiblesXClase($id, ClaseReq\DocenteDisponibleRequest $req) {
         return Datatables::of(Docente::listarDisponiblesXDatosClase($req->all()))
                         ->filterColumn('nombreCompleto', function($q, $k) {
                             $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
                         })->make(true);
     }
 
-    public function cancelarClase($id, Clase\CancelarRequest $request) {
+    public function cancelarClase($id, ClaseReq\CancelarRequest $request) {
         try {
             $datos = $request->all();
             Clase::cancelar($id, $datos);
@@ -178,7 +168,7 @@ class AlumnoController extends Controller {
         return redirect(route('alumnos.perfil', ['id' => $id]));
     }
 
-    public function registrarClase($id, Clase\ClaseRequest $request) {
+    public function registrarClase($id, ClaseReq\ClaseRequest $request) {
         try {
             $datos = $request->all();
             Clase::registrar($id, $datos);
@@ -201,9 +191,4 @@ class AlumnoController extends Controller {
     }
 
     // </editor-fold>
-
-    public function test() {
-        return response()->json([], 200);
-    }
-
 }

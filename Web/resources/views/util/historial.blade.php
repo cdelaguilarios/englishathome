@@ -4,12 +4,9 @@
         <i class="fa fa-angle-double-down"></i> Mostrar más
     </a>
 </div>
-
 {{ Form::hidden("numeroCarga", 0) }} 
-@if(isset($idAlumno))
 <script>
-    var urlCargarHistorial = "{{ route('alumnos.historial', ['id' => $idAlumno]) }}";
+    var urlCargarHistorial = "{{ route('historial', ['id' => $idEntidad]) }}";
     var urlImagenesHistorial = "{{ route('imagenes', ['rutaImagen' => '0']) }}";
 </script>
 <script src="{{ asset("assets/eah/js/historial.js")}}"></script>
-@endif
