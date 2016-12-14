@@ -211,14 +211,14 @@ textarea{
 #calendario .schedule-rows td[data-selected],
 #calendario .schedule-rows td[data-selecting] { background-color: #008d4c; }
 #calendario .schedule-rows td[data-disabled] { opacity: 0.55; }
-#modHorario .modal-header, #modHorario .modal-body, #modHorario .modal-footer{
+#mod-horario .modal-header, #mod-horario .modal-body, #mod-horario .modal-footer{
     padding: 5px 15px;
 }
-#modHorario .sec-btn-limpiar-seleccion .btn{
+#mod-horario .sec-btn-limpiar-seleccion .btn{
     margin: 0;
     float: left;
 }
-#secTexHorario ul{
+#sec-info-horario ul{
     list-style-type: none;
     margin-top: 5px;
     margin-left: -20px;
@@ -228,6 +228,10 @@ textarea{
 #sec-datos-principales .text-muted, #mod-datos-pago .text-muted{
     margin-left: 20px;
 }
+.box-profile{
+  text-align: center;
+}
+
 
 /*Sección historial*/
 #sec-cargando-historial{

@@ -96,9 +96,9 @@ function listarClases(tr, fila, datosFila) {
     urlEliminarClase = (typeof (urlEliminarClase) === "undefined" ? "" : urlEliminarClase);
     urlPerfilProfesorClase = (typeof (urlPerfilProfesorClase) === "undefined" ? "" : urlPerfilProfesorClase);
     estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
-    estadosClaseProgramada = (typeof (estadosClaseProgramada) === "undefined" ? "" : estadosClaseProgramada);
+    estadoClaseRealizada = (typeof (estadoClaseRealizada) === "undefined" ? "" : estadoClaseRealizada);
 
-    if (urlListarClases !== "" && urlEliminarClase !== "" && urlPerfilProfesorClase !== "" && estadosClase !== "" && estadosClaseProgramada !== "") {
+    if (urlListarClases !== "" && urlEliminarClase !== "" && urlPerfilProfesorClase !== "" && estadosClase !== "" && estadoClaseRealizada !== "") {
         $.blockUI({message: "<h4>Cargando...</h4>"});
         llamadaAjax(((urlListarClases.replace("/0", "/" + datosFila.numeroPeriodo))), "POST", {}, true,
                 function (d) {
@@ -121,10 +121,13 @@ function listarClases(tr, fila, datosFila) {
                                     '</td>' +
                                     '<td>' +
                                     '<ul class="buttons">' +
-                                    (d[i].estado !== estadosClaseProgramada ? '' :
-                                            '<li>' +
+                                    '<li>' +
+                                            '<a href="javascript:void(0);" onclick="cancelarClase(' + d[i].id + ', ' + d[i].idProfesor + ', \'' + d[i].fechaInicio + '\', ' + d[i].duracion + ');" title="Editar clase"><i class="fa fa-pencil"></i></a>' +
+                                            '</li>'+
+                                    (d[i].estado !== estadoClaseRealizada ? '<li>' +
                                             '<a href="javascript:void(0);" onclick="cancelarClase(' + d[i].id + ', ' + d[i].idProfesor + ', \'' + d[i].fechaInicio + '\', ' + d[i].duracion + ');" title="Cancelar clase"><i class="fa fa-remove"></i></a>' +
-                                            '</li>') +
+                                            '</li>' :
+                                            '') +
                                     "<li>" +
                                     '<a href="javascript:void(0);" title="Eliminar clase" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de esta clase?\', null, true, function(){mostrarOcultarClases($(\'a[data-periodo=' + d[i].numeroPeriodo + ']\'), true);})" data-id="' + d[i].id + '" data-urleliminar="' + ((urlEliminarClase.replace('/0', '/' + d[i].id))) + '">' +
                                     "<i class='fa fa-trash'></i>" +
@@ -182,7 +185,7 @@ function listarClases(tr, fila, datosFila) {
 
 //Formulario
 function cargarFormularioClase() {
-    $("#formulario-registrar-clase").validate({
+    $("#formulario-registrar-clase, #formulario-actualizar-clase").validate({
         ignore: ":hidden",
         rules: {
             fecha: {
@@ -293,7 +296,7 @@ function cargarFormularioCancelarClase() {
     establecerCalendario("fecha-clase-reprogramada", false, true);
     $("#tipo-cancelacion-clase").change(function () {
         tipoCancelacionAlumno = (typeof (tipoCancelacionAlumno) === "undefined" ? "" : tipoCancelacionAlumno);
-        (($(this).val() === tipoCancelacionAlumno) ? mostrarSeccionClase([3, 1]) : mostrarSeccionClase([3, 2]));
+        (($(this).val() === tipoCancelacionAlumno) ? mostrarSeccionClase([4, 1]) : mostrarSeccionClase([4, 2]));
         verificarSeccionReprogramarClase();
     });
     $("#reprogramar-clase-can-alu, #reprogramar-clase-can-pro").change(verificarSeccionReprogramarClase);
@@ -311,8 +314,8 @@ function cancelarClase(idClase, idProfesor, fechaInicio, duracionClase) {
 function verificarSeccionReprogramarClase() {
     var repClaseAlu = $("#reprogramar-clase-can-alu");
     var repClasePro = $("#reprogramar-clase-can-pro");
-    (((repClaseAlu.is(":visible") && repClaseAlu.is(":checked")) || (repClasePro.is(":visible") && repClasePro.is(":checked"))) ? $("#sec-clase-33").show() : $("#sec-clase-33").hide());
-    (($("#sec-clase-33").is(":visible") && $("input[name='idDocente']").val() !== "") ? $("#sec-clase-331").show() : $("#sec-clase-331").hide());
+    (((repClaseAlu.is(":visible") && repClaseAlu.is(":checked")) || (repClasePro.is(":visible") && repClasePro.is(":checked"))) ? $("#sec-clase-43").show() : $("#sec-clase-43").hide());
+    (($("#sec-clase-43").is(":visible") && $("input[name='idDocente']").val() !== "") ? $("#sec-clase-431").show() : $("#sec-clase-431").hide());
 }
 
 //Común - Util

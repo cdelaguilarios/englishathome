@@ -1,5 +1,4 @@
-{{ Form::open(['url' => route("alumnos.clases.cancelar", ["id" => $idAlumno]), "id" => "formulario-cancelar-clase", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
-@include('partials/errors')
+
 <div class="box-header">
   <h3 class="box-title with-border">Cancelar clase</h3>                
 </div>  
@@ -16,7 +15,7 @@
       </label>
     </div>
   </div>
-  <div id="sec-clase-31" class="box-body">
+  <div id="sec-clase-41" class="box-body">
     <div class="form-group">
       {{ Form::label("pagoProfesor", "Pago al profesor por clase cancelada: ", ["class" => "col-sm-4 control-label"]) }}
       <div class="col-sm-3">
@@ -37,7 +36,7 @@
       </div> 
     </div>
   </div>      
-  <div id="sec-clase-32" class="box-body">
+  <div id="sec-clase-42" class="box-body">
     <div class="form-group">
       <div class="col-sm-3">
         <div class="checkbox">
@@ -49,7 +48,7 @@
       </div> 
     </div>
   </div>    
-  <div id="sec-clase-33">
+  <div id="sec-clase-43">
     <div class="form-group">
       <div class="col-sm-12">
         <label class="control-label">
@@ -94,7 +93,7 @@
           <button type="button" class="btn btn-primary btn-sm btn-docentes-disponibles-clase">Elegir profesor disponible</button> 
         </div>
       </div>
-      <div id="sec-clase-331">
+      <div id="sec-clase-431">
         <div class="form-group">
           {{ Form::label("", "", ["class" => "col-sm-3 control-label nombre-docente-clase"]) }}
         </div>
@@ -126,4 +125,3 @@
   <button type="button" class="btn btn-default btn-cancelar-clase">Cancelar</button>
   <button type="submit" class="btn btn-success pull-right">Registrar</button>
 </div>
-{{ Form::close() }}

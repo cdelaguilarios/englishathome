@@ -179,7 +179,7 @@
                         </div>
                         {{ Form::label("numeroHorasClase", "Número de horas por clase (*): ", ["class" => "col-sm-3 control-label"]) }}
                         <div class="col-sm-1">
-                            {{ Form::number("numeroHorasClase", null, ["class" => "form-control", "maxlength" =>"2", "min" =>"1", "max" =>"24"]) }}
+                            {{ Form::select("numeroHorasClase", [], NULL, ["id" => "numero-horas-clase", "class" => "form-control"]) }}
                         </div>                    
                     </div>
                     <div class="form-group">

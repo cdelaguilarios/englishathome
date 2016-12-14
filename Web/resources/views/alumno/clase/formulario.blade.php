@@ -1,5 +1,3 @@
-{{ Form::open(['url' => route("alumnos.clases.registrar", ["id" => $idAlumno]), "id" => "formulario-registrar-clase", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
-@include('partials/errors')
 <div class="box-header">
   <h3 class="box-title with-border">Nueva clase</h3>                
 </div>  
@@ -93,4 +91,3 @@
     <button type="submit" class="btn btn-success pull-right">Registrar</button>
   </div>
 </div>
-{{ Form::close() }}

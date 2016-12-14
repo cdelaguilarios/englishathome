@@ -179,6 +179,18 @@ class AlumnoController extends Controller {
         }
         return redirect(route('alumnos.perfil', ['id' => $id]));
     }
+    
+    public function actualizarClase($id, ClaseReq\ClaseRequest $request) {
+        try {
+            $datos = $request->all();
+            Clase::registrar($id, $datos);
+            Mensajes::agregarMensajeExitoso("Registro exitoso.");
+        } catch (\Exception $e) {
+            Log::error($e);
+            Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
+        }
+        return redirect(route('alumnos.perfil', ['id' => $id]));
+    }
 
     public function eliminarClase($id, $idClase) {
         try {

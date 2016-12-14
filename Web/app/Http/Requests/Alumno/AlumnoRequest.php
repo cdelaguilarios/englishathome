@@ -15,35 +15,36 @@ class AlumnoRequest extends Request {
     }
 
     protected function getValidatorInstance() {
-        $data = $this->all();
+        $datos = $this->all();
 
-        $data["imagenPerfil"] = (isset($data["imagenPerfil"]) ? $data["imagenPerfil"] : NULL);
-        $data["idTipoDocumento"] = (isset($data["idTipoDocumento"]) ? $data["idTipoDocumento"] : NULL);
-        $data["codigoDepartamento"] = (isset($data["codigoDepartamento"]) ? $data["codigoDepartamento"] : NULL);
-        $data["codigoProvincia"] = (isset($data["codigoProvincia"]) ? $data["codigoProvincia"] : NULL);
-        $data["codigoDistrito"] = (isset($data["codigoDistrito"]) ? $data["codigoDistrito"] : NULL);
-        $data["codigoUbigeo"] = (isset($data["codigoUbigeo"]) ? $data["codigoUbigeo"] : NULL);
-        $data["referenciaDireccion"] = (isset($data["referenciaDireccion"]) ? $data["referenciaDireccion"] : NULL);
-        $data["geoLatitud"] = (isset($data["geoLatitud"]) ? $data["geoLatitud"] : NULL);
-        $data["geoLongitud"] = (isset($data["geoLongitud"]) ? $data["geoLongitud"] : NULL);
-        $data["idNivelIngles"] = (isset($data["idNivelIngles"]) ? $data["idNivelIngles"] : NULL);
-        $data["inglesLugarEstudio"] = (isset($data["inglesLugarEstudio"]) ? $data["inglesLugarEstudio"] : NULL);
-        $data["inglesPracticaComo"] = (isset($data["inglesPracticaComo"]) ? $data["inglesPracticaComo"] : NULL);
-        $data["inglesObjetivo"] = (isset($data["inglesObjetivo"]) ? $data["inglesObjetivo"] : NULL);
-        $data["conComputadora"] = (isset($data["conComputadora"]) && $data["conComputadora"] == "on" ? 1 : 0);
-        $data["conInternet"] = (isset($data["conInternet"]) && $data["conInternet"] == "on" ? 1 : 0);
-        $data["conPlumonPizarra"] = (isset($data["conPlumonPizarra"]) && $data["conPlumonPizarra"] == "on" ? 1 : 0);
-        $data["conAmbienteClase"] = (isset($data["conAmbienteClase"]) && $data["conAmbienteClase"] == "on" ? 1 : 0);
-        $data["idCurso"] = (isset($data["idCurso"]) ? $data["idCurso"] : NULL);
-        $data["horario"] = (isset($data["horario"]) ? $data["horario"] : NULL);
-        $data["comentarioAdicional"] = (isset($data["comentarioAdicional"]) ? $data["comentarioAdicional"] : NULL);
+        $datos["imagenPerfil"] = (isset($datos["imagenPerfil"]) ? $datos["imagenPerfil"] : NULL);
+        $datos["idTipoDocumento"] = (isset($datos["idTipoDocumento"]) ? $datos["idTipoDocumento"] : NULL);
+        $datos["codigoDepartamento"] = (isset($datos["codigoDepartamento"]) ? $datos["codigoDepartamento"] : NULL);
+        $datos["codigoProvincia"] = (isset($datos["codigoProvincia"]) ? $datos["codigoProvincia"] : NULL);
+        $datos["codigoDistrito"] = (isset($datos["codigoDistrito"]) ? $datos["codigoDistrito"] : NULL);
+        $datos["codigoUbigeo"] = (isset($datos["codigoUbigeo"]) ? $datos["codigoUbigeo"] : NULL);
+        $datos["referenciaDireccion"] = (isset($datos["referenciaDireccion"]) ? $datos["referenciaDireccion"] : NULL);
+        $datos["geoLatitud"] = (isset($datos["geoLatitud"]) ? $datos["geoLatitud"] : NULL);
+        $datos["geoLongitud"] = (isset($datos["geoLongitud"]) ? $datos["geoLongitud"] : NULL);
+        $datos["idNivelIngles"] = (isset($datos["idNivelIngles"]) ? $datos["idNivelIngles"] : NULL);
+        $datos["inglesLugarEstudio"] = (isset($datos["inglesLugarEstudio"]) ? $datos["inglesLugarEstudio"] : NULL);
+        $datos["inglesPracticaComo"] = (isset($datos["inglesPracticaComo"]) ? $datos["inglesPracticaComo"] : NULL);
+        $datos["inglesObjetivo"] = (isset($datos["inglesObjetivo"]) ? $datos["inglesObjetivo"] : NULL);
+        $datos["conComputadora"] = (isset($datos["conComputadora"]) && $datos["conComputadora"] == "on" ? 1 : 0);
+        $datos["conInternet"] = (isset($datos["conInternet"]) && $datos["conInternet"] == "on" ? 1 : 0);
+        $datos["conPlumonPizarra"] = (isset($datos["conPlumonPizarra"]) && $datos["conPlumonPizarra"] == "on" ? 1 : 0);
+        $datos["conAmbienteClase"] = (isset($datos["conAmbienteClase"]) && $datos["conAmbienteClase"] == "on" ? 1 : 0);
+        $datos["numeroHorasClase"] = (isset($datos["numeroHorasClase"]) ? $datos["numeroHorasClase"] : NULL);
+        $datos["idCurso"] = (isset($datos["idCurso"]) ? $datos["idCurso"] : NULL);
+        $datos["horario"] = (isset($datos["horario"]) ? $datos["horario"] : NULL);
+        $datos["comentarioAdicional"] = (isset($datos["comentarioAdicional"]) ? $datos["comentarioAdicional"] : NULL);
 
-        $this->getInputSource()->replace($data);
+        $this->getInputSource()->replace($datos);
         return parent::getValidatorInstance();
     }
 
     public function rules() {
-        $data = $this->all();
+        $datos = $this->all();
 
         $reglasValidacion = [
             'nombre' => ['required', 'max:255', 'regex:' . ReglasValidacion::RegexAlfabetico],
@@ -60,31 +61,31 @@ class AlumnoRequest extends Request {
             'inglesLugarEstudio' => 'max:255',
             'inglesPracticaComo' => 'max:255',
             'inglesObjetivo' => 'max:255',
-            'numeroHorasClase' => 'required|numeric|digits_between:1,2|between:1,24',
+            "numeroHorasClase" => "required|numeric|between:" . ((int) Config::get("eah.minHorasClase") * 3600) . "," . ((int) Config::get("eah.maxHorasClase") * 3600),
             'fechaInicioClase' => 'required|date_format:d/m/Y',
             'comentarioAdicional' => 'max:255'
         ];
 
         $listaTiposDocumentos = TipoDocumento::listarSimple();
-        if (!(!is_null($data["idTipoDocumento"]) && array_key_exists($data["idTipoDocumento"], $listaTiposDocumentos->toArray()))) {
+        if (!(!is_null($datos["idTipoDocumento"]) && array_key_exists($datos["idTipoDocumento"], $listaTiposDocumentos->toArray()))) {
             $reglasValidacion['tipoDocumenoNoValido'] = 'required';
         }
 
-        if (!ReglasValidacion::validarUbigeo($data["codigoDepartamento"], $data["codigoProvincia"], $data["codigoDistrito"], $data["codigoUbigeo"])) {
+        if (!ReglasValidacion::validarUbigeo($datos["codigoDepartamento"], $datos["codigoProvincia"], $datos["codigoDistrito"], $datos["codigoUbigeo"])) {
             $reglasValidacion["ubigeoNoValido"] = "required";
         }
 
         $listaNivelesIngles = NivelIngles::listarSimple();
-        if (!(!is_null($data["idNivelIngles"]) && array_key_exists($data["idNivelIngles"], $listaNivelesIngles->toArray()))) {
+        if (!(!is_null($datos["idNivelIngles"]) && array_key_exists($datos["idNivelIngles"], $listaNivelesIngles->toArray()))) {
             $reglasValidacion['nivelInglesNoValido'] = 'required';
         }
 
         $listaCursos = Curso::listarSimple();
-        if (!(!is_null($data["idCurso"]) && array_key_exists($data["idCurso"], $listaCursos->toArray()))) {
+        if (!(!is_null($datos["idCurso"]) && array_key_exists($datos["idCurso"], $listaCursos->toArray()))) {
             $reglasValidacion['cursoNoValido'] = 'required';
         }
 
-        if (!ReglasValidacion::validarHorario($data["horario"])) {
+        if (!ReglasValidacion::validarHorario($datos["horario"])) {
             $reglasValidacion["horarioNoValido"] = "required";
         }
 

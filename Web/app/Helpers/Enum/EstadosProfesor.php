@@ -10,7 +10,7 @@ class EstadosProfesor {
 
     public static function Listar() {
         return [
-            EstadosProfesor::Registrado => ['Registrado', 'label-info'],
+            EstadosProfesor::Registrado => ['Registrado', 'label-primary'],
             EstadosProfesor::Activo => ['Activo', 'label-success'],
             EstadosProfesor::Inactivo => ['Inactivo', 'label-warning']
         ];
