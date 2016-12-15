@@ -41,12 +41,13 @@
   @include('alumno.util.docentesDisponibles', ['seccion' => 'clase'])
 </div>
 <script>
+  var urlDatosClase = "{{ route('alumnos.clases.datos', ['id' => $idAlumno, 'idClase' => 0]) }}";
   var urlListarPeriodos = "{{ route('alumnos.periodosClases.listar', ['id' => $idAlumno]) }}";
   var urlListarClases = "{{ route('alumnos.periodo.clases.listar', ['id' => $idAlumno, 'numeroPeriodo' => 0]) }}";
   var urlEliminarClase = "{{ route('alumnos.clases.eliminar', ['id' => $idAlumno, 'idClase' => 0]) }}";
   var urlPerfilProfesorClase = "{{ route('profesores.perfil', ['id' => 0]) }}";
   var urlListarDocentesDisponiblesClase = "{{ route('alumnos.clases.docentesDisponibles.listar', ['id' => $idAlumno]) }}";
-  var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::Listar()) !!};
+  var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
   var estadoClaseRealizada = "{{ App\Helpers\Enum\EstadosClase::Realizada }}";
   var estadoClaseCancelada = "{{ App\Helpers\Enum\EstadosClase::Cancelada }}";
   var tipoCancelacionAlumno = "{{ App\Helpers\Enum\TiposCancelacionClase::CancelacionAlumno }}";

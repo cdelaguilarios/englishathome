@@ -43,7 +43,7 @@
         {{ Form::text("costoHora", number_format($costoHoraClase, 2, ".", ","), array("class" => "form-control", "maxlength" =>"19")) }}
       </div>
     </div> 
-    {{ Form::label("numeroPeriodo", "Período (*): ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("numeroPeriodo", "Período (*): ", ["class" => "col-sm-1 control-label"]) }}
     <div class="col-sm-2">
       {{ Form::number("numeroPeriodo", "", ["class" => "form-control", "maxlength" =>"11", "min" =>"1"]) }}
     </div>

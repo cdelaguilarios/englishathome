@@ -8,8 +8,8 @@ class EstadosClase {
     const Cancelada = "CANCELADA";
     const PendienteConfirmar = "PENDIENTE_CONFIRMAR";
     const Realizada = "REALIZADA";
-
-    public static function Listar() {
+    
+    public static function listar() {
         return [
             EstadosClase::Programada => ['Programada', 'label-primary'],
             EstadosClase::Cancelada => ['Cancelada', 'label-danger'],
