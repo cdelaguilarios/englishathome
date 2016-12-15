@@ -48,6 +48,7 @@
   var urlListarDocentesDisponiblesClase = "{{ route('alumnos.clases.docentesDisponibles.listar', ['id' => $idAlumno]) }}";
   var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::Listar()) !!};
   var estadoClaseRealizada = "{{ App\Helpers\Enum\EstadosClase::Realizada }}";
+  var estadoClaseCancelada = "{{ App\Helpers\Enum\EstadosClase::Cancelada }}";
   var tipoCancelacionAlumno = "{{ App\Helpers\Enum\TiposCancelacionClase::CancelacionAlumno }}";
 </script>
 <script src='{{ asset('assets/eah/js/modulos/alumno/clase.js')}}'></script>

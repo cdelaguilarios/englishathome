@@ -97,8 +97,9 @@ function listarClases(tr, fila, datosFila) {
     urlPerfilProfesorClase = (typeof (urlPerfilProfesorClase) === "undefined" ? "" : urlPerfilProfesorClase);
     estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
     estadoClaseRealizada = (typeof (estadoClaseRealizada) === "undefined" ? "" : estadoClaseRealizada);
+    estadoClaseCancelada = (typeof (estadoClaseCancelada) === "undefined" ? "" : estadoClaseCancelada);
 
-    if (urlListarClases !== "" && urlEliminarClase !== "" && urlPerfilProfesorClase !== "" && estadosClase !== "" && estadoClaseRealizada !== "") {
+    if (urlListarClases !== "" && urlEliminarClase !== "" && urlPerfilProfesorClase !== "" && estadosClase !== "" && estadoClaseRealizada !== "" && estadoClaseCancelada !== "") {
         $.blockUI({message: "<h4>Cargando...</h4>"});
         llamadaAjax(((urlListarClases.replace("/0", "/" + datosFila.numeroPeriodo))), "POST", {}, true,
                 function (d) {
@@ -122,9 +123,9 @@ function listarClases(tr, fila, datosFila) {
                                     '<td>' +
                                     '<ul class="buttons">' +
                                     '<li>' +
-                                            '<a href="javascript:void(0);" onclick="cancelarClase(' + d[i].id + ', ' + d[i].idProfesor + ', \'' + d[i].fechaInicio + '\', ' + d[i].duracion + ');" title="Editar clase"><i class="fa fa-pencil"></i></a>' +
-                                            '</li>'+
-                                    (d[i].estado !== estadoClaseRealizada ? '<li>' +
+                                    '<a href="javascript:void(0);" onclick="editarClase(this, \'tab-lista-clases-' + d[0].numeroPeriodo + '\');" title="Editar clase"><i class="fa fa-pencil"></i></a>' +
+                                    '</li>' +
+                                    (d[i].estado !== estadoClaseRealizada && d[i].estado !== estadoClaseCancelada ? '<li>' +
                                             '<a href="javascript:void(0);" onclick="cancelarClase(' + d[i].id + ', ' + d[i].idProfesor + ', \'' + d[i].fechaInicio + '\', ' + d[i].duracion + ');" title="Cancelar clase"><i class="fa fa-remove"></i></a>' +
                                             '</li>' :
                                             '') +
@@ -184,7 +185,8 @@ function listarClases(tr, fila, datosFila) {
 }
 
 //Formulario
-function cargarFormularioClase() {
+function cargarFormularioClase()
+{
     $("#formulario-registrar-clase, #formulario-actualizar-clase").validate({
         ignore: ":hidden",
         rules: {
@@ -243,6 +245,14 @@ function cargarFormularioClase() {
         limpiarCamposClase();
         mostrarSeccionClase([2]);
     });
+}
+function editarClase(elemento, idTabla) {
+    var tr = $(elemento).closest("tr");
+    var fila = $("#" + idTabla).DataTable().row(tr);
+    var datosClase = fila.data();
+    console.log(datosClase.numeroPeriodo);
+    limpiarCamposClase();
+    mostrarSeccionClase([3]);
 }
 
 //Formulario Cancelar
