@@ -43,9 +43,8 @@ Route::group(['middleware' => 'auth'], function() {
         Route::post('alumno/{id}/periodosClases', ['uses' => 'AlumnoController@listarPeriodosClases', 'as' => 'alumnos.periodosClases.listar']);
         Route::post('alumno/{id}/periodo/{numeroPeriodo}/clases', ['uses' => 'AlumnoController@listarClases', 'as' => 'alumnos.periodo.clases.listar']);
         Route::post('alumno/{id}/clase/docentesDisponibles', ['uses' => 'AlumnoController@listarDocentesDisponiblesXClase', 'as' => 'alumnos.clases.docentesDisponibles.listar']);
-        Route::post('alumno/{id}/clase/registrar', ['uses' => 'AlumnoController@registrarClase', 'as' => 'alumnos.clases.registrar']);
+        Route::post('alumno/{id}/clase/registrarActualizar', ['uses' => 'AlumnoController@registrarActualizarClase', 'as' => 'alumnos.clases.registrar.actualizar']);
         Route::post('alumno/{id}/clase/{idClase}/datos', ['uses' => 'AlumnoController@datosClase', 'as' => 'alumnos.clases.datos']);
-        Route::patch('alumno/{id}/clase/actualizar', ['uses' => 'AlumnoController@actualizarClase', 'as' => 'alumnos.clases.actualizar']);
         Route::post('alumno/{id}/clase/cancelar', ['uses' => 'AlumnoController@cancelarClase', 'as' => 'alumnos.clases.cancelar']);
         Route::delete('alumno/{id}/clase/{idClase}/eliminar', ['uses' => 'AlumnoController@eliminarClase', 'as' => 'alumnos.clases.eliminar']);
         // </editor-fold>

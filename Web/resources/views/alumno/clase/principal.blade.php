@@ -20,18 +20,12 @@
       </div>
     </div> 
     <div id="sec-clase-2">  
-      {{ Form::open(['url' => route("alumnos.clases.registrar", ["id" => $idAlumno]), "id" => "formulario-registrar-clase", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
-      @include('partials/errors')
-      @include("alumno.clase.formulario") 
-      {{ Form::close() }}
-    </div>    
-    <div id="sec-clase-3">  
-      {{ Form::model($alumno, ["method" => "PATCH", "action" => ["AlumnoController@actualizarClase", $alumno->id], "id" => "formulario-actualizar-clase", "class" => "form-horizontal", "files" => true]) }}      
+      {{ Form::open(['url' => route("alumnos.clases.registrar.actualizar", ["id" => $idAlumno]), "id" => "formulario-registrar-clase", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
       @include('partials/errors')
       @include("alumno.clase.formulario") 
       {{ Form::close() }}
     </div>
-    <div id="sec-clase-4">     
+    <div id="sec-clase-3">     
       {{ Form::open(['url' => route("alumnos.clases.cancelar", ["id" => $idAlumno]), "id" => "formulario-cancelar-clase", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
       @include('partials/errors')
       @include("alumno.clase.formularioCancelar") 

@@ -253,7 +253,11 @@ function editarClase(idClase) {
             function (d) {
               console.log(d);
               limpiarCamposClase();
-              mostrarSeccionClase([3]);
+              
+              $("#fecha-clase").val(formatoFecha(d.fechaInicio));
+              
+              
+              mostrarSeccionClase([2]);
               $("body").unblock();
             },
             function (d) {
@@ -325,7 +329,7 @@ function cargarFormularioCancelarClase() {
   establecerCalendario("fecha-clase-reprogramada", false, true);
   $("#tipo-cancelacion-clase").change(function () {
     tipoCancelacionAlumno = (typeof (tipoCancelacionAlumno) === "undefined" ? "" : tipoCancelacionAlumno);
-    (($(this).val() === tipoCancelacionAlumno) ? mostrarSeccionClase([4, 1]) : mostrarSeccionClase([4, 2]));
+    (($(this).val() === tipoCancelacionAlumno) ? mostrarSeccionClase([3, 1]) : mostrarSeccionClase([3, 2]));
     verificarSeccionReprogramarClase();
   });
   $("#reprogramar-clase-can-alu, #reprogramar-clase-can-pro").change(verificarSeccionReprogramarClase);
@@ -343,8 +347,8 @@ function cancelarClase(idClase, idProfesor, fechaInicio, duracionClase) {
 function verificarSeccionReprogramarClase() {
   var repClaseAlu = $("#reprogramar-clase-can-alu");
   var repClasePro = $("#reprogramar-clase-can-pro");
-  (((repClaseAlu.is(":visible") && repClaseAlu.is(":checked")) || (repClasePro.is(":visible") && repClasePro.is(":checked"))) ? $("#sec-clase-43").show() : $("#sec-clase-43").hide());
-  (($("#sec-clase-43").is(":visible") && $("input[name='idDocente']").val() !== "") ? $("#sec-clase-431").show() : $("#sec-clase-431").hide());
+  (((repClaseAlu.is(":visible") && repClaseAlu.is(":checked")) || (repClasePro.is(":visible") && repClasePro.is(":checked"))) ? $("#sec-clase-33").show() : $("#sec-clase-33").hide());
+  (($("#sec-clase-33").is(":visible") && $("input[name='idDocente']").val() !== "") ? $("#sec-clase-331").show() : $("#sec-clase-331").hide());
 }
 
 //Común - Util
@@ -415,6 +419,5 @@ function limpiarCamposClase(soloCamposDocente) {
   $(".nombre-docente-pago").html("");
 
   if (!soloCamposDocente) {
-
   }
 }
