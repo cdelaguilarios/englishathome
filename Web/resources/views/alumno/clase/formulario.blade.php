@@ -9,7 +9,7 @@
     </div>
     {{ Form::label("estado", "Estado: ", ["class" => "col-sm-1 col-sm-offset-1 control-label"]) }}
     <div class="col-sm-4">
-      {{ Form::select("estado", $estadosClase, NULL, ["id" => "estado-clase", "class" => "form-control"]) }}
+      {{ Form::select("estado", $estadosClaseSimple, NULL, ["id" => "estado-clase", "class" => "form-control"]) }}
     </div>
     <div class="col-sm-2">
       <div class="checkbox">
@@ -70,7 +70,7 @@
     </div>
     <div id="sec-clase-21">
       <div class="form-group">
-        {{ Form::label("", "", ["class" => "col-sm-3 control-label nombre-docente-clase"]) }}
+        {{ Form::label("", "", ["class" => "col-sm-4 control-label nombre-docente-clase"]) }}
       </div>
       <div class="form-group">
         {{ Form::label("costoHoraDocente", "Pago por hora al profesor (*): ", ["class" => "col-sm-3 control-label"]) }}

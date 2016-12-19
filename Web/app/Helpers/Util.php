@@ -7,7 +7,7 @@ use Intervention\Image\ImageManager;
 
 class Util {
 
-  public static function GuardarImagen($identificador, $imagen, $reajustar = TRUE) {
+  public static function guardarImagen($identificador, $imagen, $reajustar = TRUE) {
     try {
       $manager = new ImageManager();
       $nombreArchivo = $identificador . time() . "." . $imagen->getClientOriginalExtension();

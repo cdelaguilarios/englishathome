@@ -29,4 +29,12 @@ class PagoClase extends Model {
                     ->where($nombreTabla . ".idClase", $idClase)->count();
   }
 
+  public static function eliminarXClase($idClase) {    
+    PagoClase::where("idClase", $idClase)->delete();
+  }
+
+  public static function eliminarXPago($idPago) {    
+    PagoClase::where("idPago", $idPago)->delete();
+  }
+
 }

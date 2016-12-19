@@ -7,7 +7,7 @@ class RolesUsuario {
   const Principal = "PRINCIPAL";
   const Secundario = "SECUNDARIO";
 
-  public static function Listar() {
+  public static function listar() {
     return [
         RolesUsuario::Principal => "Principal",
         RolesUsuario::Secundario => "Secundario"

@@ -10,7 +10,7 @@ class TiposEntidad {
   const Postulante = "POSTULANTE";
   const Usuario = "USUARIO";
 
-  public static function Listar() {
+  public static function listar() {
     return [
         TiposEntidad::Alumno => ["Alumno", "alumnos.perfil"],
         TiposEntidad::Interesado => ["Interesado", "interesados.editar"],

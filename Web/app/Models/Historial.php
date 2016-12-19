@@ -78,13 +78,13 @@ class Historial extends Model {
 
   private static function FormatearDatosHistorial($historial) {
     $datosHistorial = [];
-    $tiposNotificacion = TiposHistorial::Listar();
+    $tiposNotificacion = TiposHistorial::listar();
 
     foreach ($historial as $dh) {
       $fNotificacion = date("Y-m-d 00:00:00", strtotime($dh->fechaNotificacion));
       $entidades = Entidad::select(Entidad::nombreTabla() . ".*")->leftJoin(EntidadHistorial::NombreTabla() . " as entidadHistorial", Entidad::nombreTabla() . ".id", "=", "entidadHistorial.idEntidad")->where("entidadHistorial.idHistorial", $dh->id)->get();
 
-      $tiposEntidad = TiposEntidad::Listar();
+      $tiposEntidad = TiposEntidad::listar();
       foreach ($entidades as $entidad) {
         if (!array_key_exists($entidad->tipo, $tiposEntidad)) {
           continue;

@@ -14,7 +14,7 @@ class EstadosPago {
     ];
   }
 
-  public static function Listar() {
+  public static function listar() {
     return [
         EstadosPago::Realizado => ["Realizado", "label-success"],
         EstadosPago::Pendiente => ["Pendiente", "label-warning"]

@@ -65,7 +65,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
 
     $imagenPerfil = $req->file("imagenPerfil");
     if (isset($imagenPerfil) && !is_null($imagenPerfil) && $imagenPerfil != "") {
-      $entidad->rutaImagenPerfil = Util::GuardarImagen($entidad["id"] . "_iu_", $imagenPerfil);
+      $entidad->rutaImagenPerfil = Util::guardarImagen($entidad["id"] . "_iu_", $imagenPerfil);
       $entidad->save();
     }
     return $entidad["id"];
@@ -80,7 +80,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
 
     $imagenPerfil = $req->file("imagenPerfil");
     if (isset($imagenPerfil) && !is_null($imagenPerfil) && $imagenPerfil != "") {
-      $entidad->rutaImagenPerfil = Util::GuardarImagen($id . "_iu_", $imagenPerfil);
+      $entidad->rutaImagenPerfil = Util::guardarImagen($id . "_iu_", $imagenPerfil);
     }
 
 

@@ -35,10 +35,9 @@ function cargarHorario() {
         horarioSel[dia].push($(selected[i]).data("time"));
       }
     });
-    $("#calendario").on("deselected.artsy.dayScheduleSelector", function (e, selected) {
-      horarioSel[$(selected[0]).data("day")] = [];
+    $("#calendario").on("deselected.artsy.dayScheduleSelector", function (e, selected, dia) {
+      horarioSel[dia] = [];
       for (var i = 0; i < selected.length; i++) {
-        var dia = $(selected[i]).data("day");
         horarioSel[dia] = (horarioSel[dia] !== undefined ? horarioSel[dia] : []);
         horarioSel[dia].push($(selected[i]).data("time"));
       }

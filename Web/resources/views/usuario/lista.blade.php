@@ -7,7 +7,7 @@
   var urlEditar = "{{ route("usuarios.editar", ["id" => 0]) }}";
   var urlEliminar = "{{ route("usuarios.destroy", ["id" => 0]) }}";
   var roles = {!!  json_encode($roles) !!};
-  var estados = {!!  json_encode(App\Helpers\Enum\EstadosUsuario::Listar()) !!};</script>
+  var estados = {!!  json_encode(App\Helpers\Enum\EstadosUsuario::listar()) !!};</script>
 <script src="{{ asset("assets/eah/js/modulos/usuario.js")}}"></script>
 @endsection
 

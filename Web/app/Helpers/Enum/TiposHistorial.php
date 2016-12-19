@@ -10,7 +10,7 @@ class TiposHistorial {
   const IconoDefecto = "fa-bullhorn";
   const ClaseColorIconoDefecto = "bg-yellow";
 
-  public static function Listar() {
+  public static function listar() {
     return [
         TiposHistorial::Notificacion => ["Notificación", "fa-bullhorn", "bg-yellow"],
         TiposHistorial::Pago => ["Pago", "fa-dollar", "bg-green"],

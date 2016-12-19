@@ -109,7 +109,7 @@
       </div>
       <div id="sec-pago-221">
         <div class="form-group">
-          {{ Form::label("", "", ["class" => "col-sm-3 control-label nombre-docente-pago"]) }}
+          {{ Form::label("", "", ["class" => "col-sm-4 control-label nombre-docente-pago"]) }}
         </div>
         <div class="form-group">
           {{ Form::label("costoHoraDocente", "Pago por hora al profesor (*): ", ["class" => "col-sm-3 control-label"]) }}

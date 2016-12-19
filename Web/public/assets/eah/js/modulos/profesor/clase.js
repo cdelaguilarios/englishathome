@@ -3,6 +3,12 @@ function verificarJqueryClase() {
   ((window.jQuery && jQuery.ui) ? cargarSeccionClases() : window.setTimeout(verificarJqueryClase, 100));
 }
 function  cargarSeccionClases() {
+  //Urls y datos  
+  urlListarClases = (typeof (urlListarClases) === "undefined" ? "" : urlListarClases);
+  urlPerfilAlumno = (typeof (urlPerfilAlumno) === "undefined" ? "" : urlPerfilAlumno);
+  estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
+  estadosPago = (typeof (estadosPago) === "undefined" ? "" : estadosPago);
+
   cargarListaClase();
   cargarFormularioPagoClase();
   mostrarSeccionClase();
@@ -10,12 +16,7 @@ function  cargarSeccionClases() {
 
 //Lista
 function cargarListaClase() {
-  urlListarClases = (typeof (urlListarClases) === "undefined" ? "" : urlListarClases);
-  urlPerfilAlumnoClase = (typeof (urlPerfilAlumnoClase) === "undefined" ? "" : urlPerfilAlumnoClase);
-  estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
-  estadosPago = (typeof (estadosPago) === "undefined" ? "" : estadosPago);
-
-  if (urlListarClases !== "" && urlPerfilAlumnoClase !== "" && estadosClase !== "" && estadosPago !== "") {
+  if (urlListarClases !== "" && urlPerfilAlumno !== "" && estadosClase !== "" && estadosPago !== "") {
     $("#tab-lista-clases").DataTable({
       "processing": true,
       "serverSide": true,
@@ -41,7 +42,7 @@ function cargarListaClase() {
         $("td", r).eq(0).html(d.estadoPago !== null ? '' : '<input type="checkbox" data-id="' + d.id + '" data-idalumno="' + d.idAlumno + '"/>');
 
         //Alumno                         
-        $("td", r).eq(1).html('<a target="_blank" href="' + urlPerfilAlumnoClase.replace("/0", "/" + d.idAlumno) + '">' + d.nombreAlumno + ' ' + d.apellidoAlumno + '</a>');
+        $("td", r).eq(1).html('<a target="_blank" href="' + urlPerfilAlumno.replace("/0", "/" + d.idAlumno) + '">' + d.nombreAlumno + ' ' + d.apellidoAlumno + '</a>');
 
         //Fecha                     
         $("td", r).eq(2).html(formatoFecha(d.fechaInicio) + ' - De ' + formatoFecha(d.fechaInicio, false, true) + ' a ' + formatoFecha(d.fechaFin, false, true));

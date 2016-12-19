@@ -3,6 +3,16 @@ function verificarJqueryPago() {
   ((window.jQuery && jQuery.ui) ? cargarSeccionPagos() : window.setTimeout(verificarJqueryPago, 100));
 }
 function cargarSeccionPagos() {
+  //Urls y datos  
+  urlListarPagos = (typeof (urlListarPagos) === "undefined" ? "" : urlListarPagos);
+  urlActualizarEstadoPago = (typeof (urlActualizarEstadoPago) === "undefined" ? "" : urlActualizarEstadoPago);
+  urlDatosPago = (typeof (urlDatosPago) === "undefined" ? "" : urlDatosPago);
+  urlEliminarPago = (typeof (urlEliminarPago) === "undefined" ? "" : urlEliminarPago);
+
+  urlImagenes = (typeof (urlImagenes) === "undefined" ? "" : urlImagenes);
+  motivosPago = (typeof (motivosPago) === "undefined" ? "" : motivosPago);
+  estadosPago = (typeof (estadosPago) === "undefined" ? "" : estadosPago);
+
   cargarListaPago();
   cargarFormularioPago();
   mostrarSeccionPago();
@@ -10,11 +20,6 @@ function cargarSeccionPagos() {
 
 //Lista
 function cargarListaPago() {
-  urlListarPagos = (typeof (urlListarPagos) === "undefined" ? "" : urlListarPagos);
-  urlEliminarPago = (typeof (urlEliminarPago) === "undefined" ? "" : urlEliminarPago);
-  motivosPago = (typeof (motivosPago) === "undefined" ? "" : motivosPago);
-  estadosPago = (typeof (estadosPago) === "undefined" ? "" : estadosPago);
-
   if (urlListarPagos !== "" && urlEliminarPago !== "" && motivosPago !== "" && estadosPago !== "") {
     $("#tab-lista-pagos").DataTable({
       processing: true,
@@ -64,8 +69,6 @@ function cargarListaPago() {
       }
     });
 
-    urlActualizarEstadoPago = (typeof (urlActualizarEstadoPago) === "undefined" ? "" : urlActualizarEstadoPago);
-    urlActualizarEstadoPago = (typeof (urlActualizarEstadoPago) === "undefined" ? "" : urlActualizarEstadoPago);
     $(window).click(function (e) {
       if (!$(e.target).closest('.sec-btn-editar-estado-pago').length) {
         $(".sec-btn-editar-estado-pago select").trigger("change");
@@ -139,12 +142,7 @@ function cargarFormularioPago() {
 
 //Datos
 function verDatosPago(idPago) {
-  urlDatosPago = (typeof (urlDatosPago) === "undefined" ? "" : urlDatosPago);
-  motivosPago = (typeof (motivosPago) === "undefined" ? "" : motivosPago);
-  urlImagenesPago = (typeof (urlImagenesPago) === "undefined" ? "" : urlImagenesPago);
-  estadosPago = (typeof (estadosPago) === "undefined" ? "" : estadosPago);
-
-  if (urlDatosPago !== "" && motivosPago !== "" && urlImagenesPago !== "" && estadosPago !== "") {
+  if (urlDatosPago !== "" && motivosPago !== "" && urlImagenes !== "" && estadosPago !== "") {
     $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
     llamadaAjax(urlDatosPago.replace("/0", "/" + idPago), "POST", {}, true,
         function (d) {
@@ -159,7 +157,7 @@ function verDatosPago(idPago) {
           $("#dat-fecha-registro-pago").text(formatoFecha(d.fechaRegistro, true));
           if (d.rutasImagenesComprobante !== null && d.rutasImagenesComprobante !== "") {
             var imagenes = d.rutasImagenesComprobante.split(",");
-            var rutaImagen = urlImagenesPago.replace("/0", "/" + imagenes[0]);
+            var rutaImagen = urlImagenes.replace("/0", "/" + imagenes[0]);
             $("#dat-imagen-comprobante-pago").attr("href", rutaImagen);
             $("#dat-imagen-comprobante-pago").find("img").attr("src", rutaImagen);
           }

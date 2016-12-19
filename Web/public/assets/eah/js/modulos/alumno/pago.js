@@ -3,6 +3,21 @@ function verificarJqueryPago() {
   ((window.jQuery && jQuery.ui) ? cargarSeccionPagos() : window.setTimeout(verificarJqueryPago, 100));
 }
 function cargarSeccionPagos() {
+  //Urls y datos  
+  urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
+  urlImagenes = (typeof (urlImagenes) === "undefined" ? "" : urlImagenes);
+
+  urlListarPagos = (typeof (urlListarPagos) === "undefined" ? "" : urlListarPagos);
+  urlActualizarEstadoPago = (typeof (urlActualizarEstadoPago) === "undefined" ? "" : urlActualizarEstadoPago);
+  urlDatosPago = (typeof (urlDatosPago) === "undefined" ? "" : urlDatosPago);
+  urlEliminarPago = (typeof (urlEliminarPago) === "undefined" ? "" : urlEliminarPago);
+  urlGenerarClasesPago = (typeof (urlGenerarClasesPago) === "undefined" ? "" : urlGenerarClasesPago);
+  urlListarDocentesDisponiblesPago = (typeof (urlListarDocentesDisponiblesPago) === "undefined" ? "" : urlListarDocentesDisponiblesPago);
+
+  motivosPago = (typeof (motivosPago) === "undefined" ? "" : motivosPago);
+  estadosPago = (typeof (estadosPago) === "undefined" ? "" : estadosPago);
+  saldoFavorTotal = (typeof (saldoFavorTotal) === "undefined" ? "" : saldoFavorTotal);
+
   cargarListaPago();
   cargarFormularioPago();
   mostrarSeccionPago();
@@ -10,11 +25,6 @@ function cargarSeccionPagos() {
 
 //Lista
 function cargarListaPago() {
-  urlListarPagos = (typeof (urlListarPagos) === "undefined" ? "" : urlListarPagos);
-  urlEliminarPago = (typeof (urlEliminarPago) === "undefined" ? "" : urlEliminarPago);
-  motivosPago = (typeof (motivosPago) === "undefined" ? "" : motivosPago);
-  estadosPago = (typeof (estadosPago) === "undefined" ? "" : estadosPago);
-
   if (urlListarPagos !== "" && urlEliminarPago !== "" && motivosPago !== "" && estadosPago !== "") {
     $("#tab-lista-pagos").DataTable({
       processing: true,
@@ -64,8 +74,6 @@ function cargarListaPago() {
       }
     });
 
-    urlActualizarEstadoPago = (typeof (urlActualizarEstadoPago) === "undefined" ? "" : urlActualizarEstadoPago);
-    urlActualizarEstadoPago = (typeof (urlActualizarEstadoPago) === "undefined" ? "" : urlActualizarEstadoPago);
     $(window).click(function (e) {
       if (!$(e.target).closest('.sec-btn-editar-estado-pago').length) {
         $(".sec-btn-editar-estado-pago select").trigger("change");
@@ -174,7 +182,6 @@ function cargarFormularioPago() {
     }
   });
   $("#usar-saldo-favor").click(function (e) {
-    saldoFavorTotal = (typeof (saldoFavorTotal) === "undefined" ? "" : saldoFavorTotal);
     if ($("#monto-pago").valid() && saldoFavorTotal !== "") {
       $("#monto-pago").val(parseFloat($("#monto-pago").val()) + (($(this).is(":checked")) ? saldoFavorTotal : -1 * saldoFavorTotal));
       $(this).attr("checked", $(this).is(":checked"));
@@ -202,14 +209,13 @@ function cargarFormularioPago() {
     cargarDocentesDisponiblesPago(true);
   });
   $("#btn-confirmar-docente-disponible-pago").click(function () {
-    urlPerfilProfesorPago = (typeof (urlPerfilProfesorPago) === "undefined" ? "" : urlPerfilProfesorPago);
-    if (urlPerfilProfesorPago !== "") {
+    if (urlPerfilProfesor !== "") {
       var docenteDisponiblePago = $("input[name='idDocenteDisponiblePago']:checked");
       limpiarCamposPago(true);
       mostrarSeccionPago([2, 2]);
       if (docenteDisponiblePago.length > 0) {
         $("input[name='idDocente']").val(docenteDisponiblePago.val());
-        $("#nombre-docente-pago").html((docenteDisponiblePago.val() !== '' ? '<i class="fa flaticon-teach"></i> <b>' + docenteDisponiblePago.data('nombrecompleto') + '</b> <a href=' + (urlPerfilProfesorPago.replace('/0', '/' + docenteDisponiblePago.val())) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>' : ''));
+        $("#nombre-docente-pago").html((docenteDisponiblePago.val() !== '' ? '<i class="fa flaticon-teach"></i> <b>' + docenteDisponiblePago.data('nombrecompleto') + '</b> <a href=' + (urlPerfilProfesor.replace('/0', '/' + docenteDisponiblePago.val())) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>' : ''));
         mostrarSeccionPago([2, 2, 1]);
       }
     }
@@ -229,7 +235,6 @@ function generarClases(e) {
     return false;
   }
 
-  urlGenerarClasesPago = (typeof (urlGenerarClasesPago) === "undefined" ? "" : urlGenerarClasesPago);
   var fDatos = $("#formulario-pago").serializeArray();
   var datos = {};
   datos["generarClases"] = "1";
@@ -289,12 +294,8 @@ function generarClases(e) {
 
 //Datos
 function verDatosPago(idPago) {
-  urlDatosPago = (typeof (urlDatosPago) === "undefined" ? "" : urlDatosPago);
-  motivosPago = (typeof (motivosPago) === "undefined" ? "" : motivosPago);
-  urlImagenesPago = (typeof (urlImagenesPago) === "undefined" ? "" : urlImagenesPago);
-  estadosPago = (typeof (estadosPago) === "undefined" ? "" : estadosPago);
 
-  if (urlDatosPago !== "" && motivosPago !== "" && urlImagenesPago !== "" && estadosPago !== "") {
+  if (urlDatosPago !== "" && motivosPago !== "" && urlImagenes !== "" && estadosPago !== "") {
     $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
     llamadaAjax(urlDatosPago.replace("/0", "/" + idPago), "POST", {}, true,
         function (d) {
@@ -308,7 +309,7 @@ function verDatosPago(idPago) {
           $("#dat-estado-pago").html('<span class="label ' + estadosPago[d.estado][1] + ' btn_estado">' + estadosPago[d.estado][0] + '</span>');
           $("#dat-fecha-registro-pago").text(formatoFecha(d.fechaRegistro, true));
           if (d.rutaImagenesComprobantes !== "") {
-            var rutaImagen = urlImagenesPago.replace("/0", "/" + d.rutaImagenesComprobantes);
+            var rutaImagen = urlImagenes.replace("/0", "/" + d.rutaImagenesComprobantes);
             $("#dat-imagen-comprobante-pago").attr("href", rutaImagen);
             $("#dat-imagen-comprobante-pago").find("img").attr("src", rutaImagen);
           }
@@ -344,9 +345,7 @@ function cargarDocentesDisponiblesPago(recargarListaPago) {
       $("#tab-lista-docentes-pago").DataTable().ajax.reload();
     }
   } else {
-    urlListarDocentesDisponiblesPago = (typeof (urlListarDocentesDisponiblesPago) === "undefined" ? "" : urlListarDocentesDisponiblesPago);
-    urlPerfilProfesorPago = (typeof (urlPerfilProfesorPago) === "undefined" ? "" : urlPerfilProfesorPago);
-    if (urlListarDocentesDisponiblesPago !== "" && urlPerfilProfesorPago !== "") {
+    if (urlListarDocentesDisponiblesPago !== "" && urlPerfilProfesor !== "") {
       $("#tab-lista-docentes-pago").DataTable({
         processing: true,
         serverSide: true,
@@ -373,7 +372,7 @@ function cargarDocentesDisponiblesPago(recargarListaPago) {
         ],
         createdRow: function (r, d, i) {
           //Nombre completo              
-          $("td", r).eq(0).html(d.nombreCompleto + ' <a href=' + (urlPerfilProfesorPago.replace('/0', '/' + d.id)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>');
+          $("td", r).eq(0).html(d.nombreCompleto + ' <a href=' + (urlPerfilProfesor.replace('/0', '/' + d.id)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>');
 
           //Opciones
           $("td", r).eq(1).html('<input type="radio" name="idDocenteDisponiblePago" value="' + d.id + '" data-nombrecompleto="' + d.nombreCompleto + '"' + (i === 0 ? ' checked="checked"' : '') + '>');

@@ -90,7 +90,6 @@ class PagoAlumno extends Model {
   protected static function eliminar($idAlumno, $id) {
     PagoAlumno::obtenerXId($idAlumno, $id);
     Pago::eliminar($id);
-    Clase::eliminarXPago($idAlumno, $id);
   }
   
   protected static function verificarExistencia($idAlumno, $id) {

@@ -8,7 +8,7 @@ class EstadosAlumno {
   const Activo = "ACTIVO";
   const Inactivo = "INACTIVO";
 
-  public static function Listar() {
+  public static function listar() {
     return [
         EstadosAlumno::Registrado => ["Registrado", "label-primary"],
         EstadosAlumno::Activo => ["Activo", "label-success"],

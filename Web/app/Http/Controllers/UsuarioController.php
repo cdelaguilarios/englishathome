@@ -19,8 +19,8 @@ class UsuarioController extends Controller {
 
   public function __construct() {
     $this->data["seccion"] = "usuarios";
-    $this->data["roles"] = RolesUsuario::Listar();
-    $this->data["estados"] = EstadosUsuario::Listar(TRUE);
+    $this->data["roles"] = RolesUsuario::listar();
+    $this->data["estados"] = EstadosUsuario::listar(TRUE);
   }
 
   public function index() {

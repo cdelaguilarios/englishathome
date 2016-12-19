@@ -6,7 +6,7 @@
   var urlListar = "{{ route("interesados.listar") }}";
   var urlEditar = "{{ route("interesados.editar", ["id" => 0]) }}";
   var urlEliminar = "{{ route("interesados.destroy", ["id" => 0]) }}";
-  var estados = {!!  json_encode(App\Helpers\Enum\EstadosInteresado::Listar()) !!};</script>
+  var estados = {!!  json_encode(App\Helpers\Enum\EstadosInteresado::listar()) !!};</script>
 <script src="{{ asset("assets/eah/js/modulos/interesado.js")}}"></script>
 @endsection
 

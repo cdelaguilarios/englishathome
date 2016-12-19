@@ -65,7 +65,7 @@ class Profesor extends Model {
     $datos = $req->all();
     $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
 
-    Entidad::Actualizar($id, $datos, TiposEntidad::Alumno, EstadosAlumno::Registrado);
+    Entidad::Actualizar($id, $datos, TiposEntidad::Profesor, EstadosProfesor::Registrado);
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($id, $datos["idCurso"]);
     Horario::registrarActualizar($id, $datos["horario"]);

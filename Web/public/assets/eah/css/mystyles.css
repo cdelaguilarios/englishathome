@@ -252,7 +252,7 @@ textarea{
 }
 
 /*Sección pago*/
-#tab-lista-docentes-pago i {
+#tab-lista-docentes-pago i, #tab-lista-docentes-clase i{
   width: inherit;
 }
 #tab-lista-docentes-pago-info{

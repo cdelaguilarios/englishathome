@@ -33,11 +33,11 @@ class Pago extends Model {
       $rutaImagenesComprobantes = NULL;
       $imagenComprobantePago = $request->file("imagenComprobante");
       if (isset($imagenComprobantePago) && $imagenComprobantePago != "") {
-        $rutaImagenesComprobantes = Util::GuardarImagen($pago["id"] . "_icp_", $imagenComprobantePago, FALSE);
+        $rutaImagenesComprobantes = Util::guardarImagen($pago["id"] . "_icp_", $imagenComprobantePago, FALSE);
       }
       $imagenDocumentoVerificacion = $request->file("imagenDocumentoVerificacion");
       if (isset($imagenDocumentoVerificacion) && $imagenDocumentoVerificacion != "") {
-        $rutaImagenesComprobantes .= "," . Util::GuardarImagen($pago["id"] . "_idv_", $imagenDocumentoVerificacion, FALSE);
+        $rutaImagenesComprobantes .= "," . Util::guardarImagen($pago["id"] . "_idv_", $imagenDocumentoVerificacion, FALSE);
       }
       $pago->rutasImagenesComprobante .= $rutaImagenesComprobantes;
       $pago->save();

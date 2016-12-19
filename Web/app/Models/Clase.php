@@ -174,7 +174,7 @@ class Clase extends Model {
 
   protected static function cancelar($idAlumno, $datos) {
     $claseCancelada = Clase::obtenerXId($idAlumno, $datos["idClase"]);
-    if ($claseCancelada !== EstadosClase::Programada) {
+    if ($claseCancelada !== EstadosClase::Cancelada && $claseCancelada !== EstadosClase::Realizada) {
       $claseCancelada->tipoCancelacion = $datos["tipoCancelacion"];
       $claseCancelada->fechaCancelacion = Carbon::now()->toDateTimeString();
       $claseCancelada->estado = EstadosClase::Cancelada;
@@ -183,8 +183,10 @@ class Clase extends Model {
       if ($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionAlumno && isset($datos["idProfesor"]) && isset($datos["pagoProfesor"])) {
         PagoProfesor::registrarXDatosClaseCancelada($datos["idProfesor"], $datos["idClase"], $datos["pagoProfesor"]);
       }
+      
       if (($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionAlumno && $datos["reprogramarCancelacionAlumno"] == 1) ||
               ($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionProfesor && $datos["reprogramarCancelacionProfesor"] == 1)) {
+        unset($datos["idClase"]);
         $datos["numeroPeriodo"] = $claseCancelada["numeroPeriodo"];
         $datos["costoHora"] = $claseCancelada["costoHora"];
         $datos["notificar"] = ((isset($claseCancelada["idHistorial"])) ? 1 : 0);
@@ -200,13 +202,6 @@ class Clase extends Model {
     $clase->eliminado = 1;
     $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $clase->save();
-  }
-
-  protected static function eliminarXPago($idAlumno, $idPago) {
-    $clases = Clase::where("idAlumno", $idAlumno)->where("idPago", $idPago)->get();
-    foreach ($clases as $clase) {
-      Clase::eliminar($idAlumno, $clase->id);
-    }
   }
 
   protected static function verificarExistencia($idAlumno, $id) {

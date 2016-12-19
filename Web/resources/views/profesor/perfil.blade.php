@@ -52,7 +52,7 @@
           {!! \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $profesor->fechaNacimiento)->format("d/m/Y") !!}
         </p>
         <hr>                              
-        <a href="#" class="btn btn-primary btn-block"><b>Editar datos</b></a>
+        <a href="{{ route("profesores.editar", $profesor->id)}}" class="btn btn-primary btn-block"><b>Editar datos</b></a>
       </div>
     </div>
   </div>

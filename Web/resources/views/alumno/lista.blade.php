@@ -7,7 +7,8 @@
   var urlPerfil = "{{ route("alumnos.perfil", ["id" => 0]) }}";
   var urlEditar = "{{ route("alumnos.editar", ["id" => 0]) }}";
   var urlEliminar = "{{ route("alumnos.destroy", ["id" => 0]) }}";
-  var estados = {!! json_encode(App\Helpers\Enum\EstadosAlumno::Listar()) !!};</script>
+  var estados = {!! json_encode(App\Helpers\Enum\EstadosAlumno::Listar()) !!};
+</script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/alumno.js") }}"></script>
 @endsection
 

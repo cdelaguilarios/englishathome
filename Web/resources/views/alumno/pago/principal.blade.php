@@ -19,7 +19,7 @@
         </table>
       </div>
       <div style="display: none">
-        {{ Form::select("", $estadosPago, NULL, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
+        {{ Form::select("", $estadosPagoSimple, NULL, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
       </div>
     </div>        
     @include("alumno.pago.formulario") 
@@ -29,14 +29,11 @@
 @include("alumno.pago.datos") 
 <script>
   var urlListarPagos = "{{ route("alumnos.pagos.listar", ["id" => $idAlumno]) }}";
-  var urlGenerarClasesPago = "{{ route("alumnos.pagos.generarClases", ["id" => $idAlumno]) }}";
-  var urlListarDocentesDisponiblesPago = "{{ route("alumnos.pagos.docentesDisponibles.listar", ["id" => $idAlumno]) }}";
-  var urlPerfilProfesorPago = "{{ route("profesores.perfil", ["id" => 0]) }}";
-  var urlDatosPago = "{{ route("alumnos.pagos.datos", ["id" => $idAlumno, "idPago" => 0]) }}";
-  var urlImagenesPago = "{{ route("imagenes", ["rutaImagen" => "0"]) }}";
   var urlActualizarEstadoPago = "{{ route("alumnos.pagos.actualizar.estado", ["id" => $idAlumno]) }}";
-  var urlEliminarPago = "{{ route("alumnos.pagos.eliminar", ["id" => $idAlumno, "idPago" => 0]) }}";
-  var motivosPago = {!!  json_encode(App\Helpers\Enum\MotivosPago::Listar()) !!};
-  var estadosPago = {!!  json_encode(App\Helpers\Enum\EstadosPago::Listar()) !!};
-  var saldoFavorTotal = {{ ($totalSaldoFavor != "" ? $totalSaldoFavor : 0) }};</script>
+  var urlDatosPago = "{{ route("alumnos.pagos.datos", ["id" => $idAlumno, "idPago" => 0]) }}";
+  var urlEliminarPago = "{{ route("alumnos.pagos.eliminar", ["id" => $idAlumno, "idPago" => 0]) }}";  
+  var urlGenerarClasesPago = "{{ route("alumnos.pagos.generarClases", ["id" => $idAlumno]) }}";
+  var urlListarDocentesDisponiblesPago = "{{ route("alumnos.pagos.docentesDisponibles.listar", ["id" => $idAlumno]) }}"; 
+  var saldoFavorTotal = {{ ($totalSaldoFavor != "" ? $totalSaldoFavor : 0) }};
+</script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/pago.js")}}"></script>

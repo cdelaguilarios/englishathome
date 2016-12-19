@@ -31,11 +31,8 @@
 @include("profesor.pago.datos") 
 <script>
   var urlListarPagos = "{{ route("profesores.pagos.listar", ["id" => $idProfesor]) }}";
-  var urlPerfilAlumnoPago = "{{ route("alumnos.perfil", ["id" => 0]) }}";
-  var urlDatosPago = "{{ route("profesores.pagos.datos", ["id" => $idProfesor, "idPago" => 0]) }}";
-  var urlImagenesPago = "{{ route("imagenes", ["rutaImagen" => "0"]) }}";
   var urlActualizarEstadoPago = "{{ route("profesores.pagos.actualizar.estado", ["id" => $idProfesor]) }}";
+  var urlDatosPago = "{{ route("profesores.pagos.datos", ["id" => $idProfesor, "idPago" => 0]) }}";
   var urlEliminarPago = "{{ route("profesores.pagos.eliminar", ["id" => $idProfesor, "idPago" => 0]) }}";
-  var motivosPago = {!!  json_encode(App\Helpers\Enum\MotivosPago::Listar()) !!};
-  var estadosPago = {!!  json_encode(App\Helpers\Enum\EstadosPago::Listar()) !!};</script>
+</script>
 <script src="{{ asset("assets/eah/js/modulos/profesor/pago.js")}}"></script>

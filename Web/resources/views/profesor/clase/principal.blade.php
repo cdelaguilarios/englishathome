@@ -27,9 +27,5 @@
   </div>
   <script>
     var urlListarClases = "{{ route("profesores.clases.listar", ["id" => $idProfesor]) }}";
-    var urlPerfilAlumnoClase = "{{ route("alumnos.perfil", ["id" => 0]) }}";
-    var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::Listar()) !!};
-    var estadosPago = {!!  json_encode(App\Helpers\Enum\EstadosPago::Listar()) !!};
-    var estadoPagoRealizado = "{{  App\Helpers\Enum\EstadosPago::Realizado }}";
   </script>
   <script src="{{ asset("assets/eah/js/modulos/profesor/clase.js")}}"></script>

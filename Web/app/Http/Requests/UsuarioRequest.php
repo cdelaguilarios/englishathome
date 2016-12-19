@@ -42,11 +42,11 @@ class UsuarioRequest extends Request {
         "imagenPerfil" => "image"
     ];
 
-    $roles = RolesUsuario::Listar();
+    $roles = RolesUsuario::listar();
     if (!array_key_exists($data["rol"], $roles)) {
       $reglasValidacion["rolNoValido"] = "required";
     }
-    $estados = EstadosUsuario::Listar(TRUE);
+    $estados = EstadosUsuario::listar(TRUE);
     if (!array_key_exists($data["estado"], $estados)) {
       $reglasValidacion["estadoNoValido"] = "required";
     }

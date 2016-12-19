@@ -9,12 +9,6 @@ use App\Models\Clase;
 use App\Models\Alumno;
 use App\Models\Docente;
 use App\Models\PagoAlumno;
-use App\Models\NivelIngles;
-use App\Models\TipoDocumento;
-use App\Helpers\Enum\MotivosPago;
-use App\Helpers\Enum\EstadosPago;
-use App\Helpers\Enum\EstadosClase;
-use App\Helpers\Enum\EstadosAlumno;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Alumno\AlumnoRequest;
 use App\Http\Requests\Alumno\Pago as PagoReq;
@@ -27,12 +21,6 @@ class AlumnoController extends Controller {
 
   public function __construct() {
     $this->data["seccion"] = "alumnos";
-    $this->data["nivelesIngles"] = NivelIngles::listarSimple();
-    $this->data["tiposDocumentos"] = TipoDocumento::listarSimple();
-    $this->data["motivosPago"] = MotivosPago::listar();
-    $this->data["estadosClase"] = EstadosClase::listarSimple();
-    $this->data["estadosPago"] = EstadosPago::listarSimple();
-    $this->data["estadosAlumno"] = EstadosAlumno::Listar();
   }
 
   // <editor-fold desc="Alumno">

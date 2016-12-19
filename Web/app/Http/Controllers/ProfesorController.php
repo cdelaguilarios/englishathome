@@ -8,10 +8,7 @@ use Datatables;
 use App\Models\Clase;
 use App\Models\Profesor;
 use App\Models\PagoProfesor;
-use App\Models\TipoDocumento;
-use App\Helpers\Enum\EstadosPago;
 use App\Http\Controllers\Controller;
-use App\Helpers\Enum\EstadosProfesor;
 use App\Http\Requests\ProfesorRequest;
 use App\Http\Requests\Profesor\Pago as PagoReq;
 
@@ -21,9 +18,6 @@ class ProfesorController extends Controller {
 
   public function __construct() {
     $this->data["seccion"] = "profesores";
-    $this->data["tiposDocumentos"] = TipoDocumento::listarSimple();
-    $this->data["estadosPago"] = EstadosPago::listarSimple();
-    $this->data["estadosProfesor"] = EstadosProfesor::Listar();
   }
 
   // <editor-fold desc="Profesor">
