@@ -5,10 +5,10 @@ $(function () {
 });
 function agregarMensaje(tipo, mensaje, mostrarTemporalmente, idSecContenedor) {
   var plantillaMen =
-          '<div class="alert alert-[TIPO] alert-dismissible" role="alert">' +
-          '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-          '[MENSAJE]' +
-          '</div>';
+      '<div class="alert alert-[TIPO] alert-dismissible" role="alert">' +
+      '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+      '[MENSAJE]' +
+      '</div>';
   plantillaMen = plantillaMen.replace("[TIPO]", (tipo === "exitosos" ? "success" : (tipo === "advertencias" ? "warning" : (tipo === "alertas" ? "info" : "danger"))));
   plantillaMen = plantillaMen.replace("[MENSAJE]", mensaje);
   $("div" + (idSecContenedor !== undefined ? idSecContenedor : ".contenedor-alerta")).append(plantillaMen);

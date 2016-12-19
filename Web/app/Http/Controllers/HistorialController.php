@@ -8,15 +8,16 @@ use App\Http\Requests\HistorialRequest;
 
 class HistorialController extends Controller {
 
-    protected $data = array();
+  protected $data = array();
 
-    public function __construct() {
-    }
+  public function __construct() {
+    
+  }
 
-    public function historial($id, HistorialRequest $req) {
-        $datos = $req->all();
-        $datosHistorial = Historial::obtener($datos["numeroCarga"], $id);
-        return response()->json($datosHistorial, 200);
-    }
+  public function historial($id, HistorialRequest $req) {
+    $datos = $req->all();
+    $datosHistorial = Historial::obtener($datos["numeroCarga"], $id);
+    return response()->json($datosHistorial, 200);
+  }
 
 }

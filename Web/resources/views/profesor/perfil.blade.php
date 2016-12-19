@@ -2,11 +2,11 @@
 @section("titulo", "Profesores")
 
 @section("section_script")
-<script src="{{ asset('assets/eah/js/modulos/profesor/profesor.js') }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/profesor/profesor.js") }}"></script>
 @endsection
 
 @section("breadcrumb")
-<li><a href="{{ route('profesores') }}">Profesores</a></li>
+<li><a href="{{ route("profesores") }}">Profesores</a></li>
 <li class="active">Perfil</li>
 @endsection
 
@@ -15,9 +15,10 @@
   <div class="col-md-3">
     <div class="box box-primary">
       <div class="box-body box-profile">
-        <img class="profile-user-img img-responsive img-circle" src="{{ route('imagenes', ['rutaImagen' => (isset($profesor->rutaImagenPerfil) && $profesor->rutaImagenPerfil != "" ? $profesor->rutaImagenPerfil : "-")]) }}" alt="User profile picture">
-        <h3 class="profile-username">{!! $profesor->nombre . " " .  $profesor->apellido !!}</h3>
+        <img class="profile-user-img img-responsive img-circle" src="{{ route("imagenes", ["rutaImagen" => (isset($profesor->rutaImagenPerfil) && $profesor->rutaImagenPerfil != "" ? $profesor->rutaImagenPerfil : "-")]) }}" alt="User profile picture">
+        <h3 class="profile-username">Profesor {!! $profesor->nombre . " " .  $profesor->apellido !!}</h3>
         <p class="text-muted">{!! $profesor->correoElectronico !!}</p>
+        <span class="label {!! $estadosProfesor[$profesor->estado][1] !!} btn_estado">{!! $estadosProfesor[$profesor->estado][0] !!}</span>
       </div>
     </div>
     <div id="sec-datos-principales" class="box box-primary">
@@ -31,7 +32,7 @@
         </p>
         <hr>
         <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
-        <p class="text-muted">{!! $profesor->direccion . " " . $profesor->direccionUbicacion !!}</p>
+        <p class="text-muted">{!! $profesor->direccion !!}<br/>{!! $profesor->direccionUbicacion !!}</p>
         <p class="text-muted">
           @include("util.ubicacionMapa", ["geoLatitud" => $profesor->geoLatitud, "geoLongitud" => $profesor->geoLongitud, "modo" => "visualizar"])
         </p>
@@ -67,6 +68,7 @@
           @include("util.historial", ["idEntidad" => $profesor->id]) 
         </div>
         <div class="tab-pane" id="pago">
+          @include("profesor.pago.principal", ["idProfesor" => $profesor->id])
         </div>
         <div class="tab-pane" id="clase">
           @include("profesor.clase.principal", ["idProfesor" => $profesor->id])

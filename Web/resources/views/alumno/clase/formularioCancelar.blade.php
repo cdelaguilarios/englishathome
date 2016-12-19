@@ -114,7 +114,7 @@
           </div>
         </div>
       </div>
-      {{ Form::hidden("idDocente", "", ["id" => "id-docente-clase-reprogramada"]) }} 
+      {{ Form::hidden("idDocente", "", ["class" => "id-docente-clase"]) }} 
       {{ Form::hidden("idClase") }} 
       {{ Form::hidden("idAlumno", $idAlumno) }} 
       {{ Form::hidden("idProfesor") }} 

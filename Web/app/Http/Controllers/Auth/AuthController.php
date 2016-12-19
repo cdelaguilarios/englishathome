@@ -15,12 +15,12 @@ class AuthController extends Controller {
     use AuthenticatesAndRegistersUsers,
         ThrottlesLogins;
 
-    protected $loginPath = '';
-    protected $redirectTo = '/';
+    protected $loginPath = "";
+    protected $redirectTo = "/";
 
     public function __construct() {
-        $this->middleware($this->guestMiddleware(), ['except' => 'getLogout']);
-        $this->loginPath = route('auth.login');
+        $this->middleware($this->guestMiddleware(), ["except" => "getLogout"]);
+        $this->loginPath = route("auth.login");
     }
 
     public function authenticated($request, $user) {
@@ -36,15 +36,15 @@ class AuthController extends Controller {
 
     protected function validator(array $data) {
         return Validator::make($data, [
-                    'email' => 'required|email|max:255|unique:' . Usuario::NombreTabla(),
-                    'password' => 'required|min:6|confirmed',
+                    "email" => "required|email|max:255|unique:" . Usuario::NombreTabla(),
+                    "password" => "required|min:6|confirmed",
         ]);
     }
 
     protected function create(array $data) {
         $usuario = new Usuario([
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
+            "email" => $data["email"],
+            "password" => bcrypt($data["password"]),
         ]);
         $usuario->save();
         return $usuario;

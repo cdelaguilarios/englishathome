@@ -125,6 +125,7 @@
             if (!plugin.isSelecting()) {  // if we are not in selecting mode
                 if (isSlotSelected($(this))) {
                     plugin.deselect($(this));
+        plugin.$el.trigger('deselected.artsy.dayScheduleSelector', [getSelection(plugin, plugin.$el.find('.time-slot[data-day="' + day + '"]').filter("[data-selected='selected']").first(), plugin.$el.find('.time-slot[data-day="' + day + '"]').filter("[data-selected='selected']").last())]);
                 } else {  // then start selecting
                     plugin.$selectingStart = $(this);
                     $(this).attr('data-selecting', 'selecting');

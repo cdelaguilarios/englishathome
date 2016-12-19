@@ -2,11 +2,11 @@
 @section("titulo", "Alumnos")
 
 @section("section_script")
-<script src="{{ asset('assets/eah/js/modulos/alumno/alumno.js') }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/alumno/alumno.js") }}"></script>
 @endsection
 
 @section("breadcrumb")
-<li><a href="{{ route('alumnos') }}">Alumnos</a></li>
+<li><a href="{{ route("alumnos") }}">Alumnos</a></li>
 <li class="active">Nuevo</li>
 @endsection
 

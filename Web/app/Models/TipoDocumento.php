@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class TipoDocumento extends Model {
 
-    public $timestamps = false;
-    protected $table = 'tipoDocumento';
+  public $timestamps = false;
+  protected $table = "tipoDocumento";
 
-    protected static function listarSimple() {
-        return TipoDocumento::where('eliminado', 0)->lists('nombre', 'id');
-    }
+  protected static function listarSimple() {
+    return TipoDocumento::where("eliminado", 0)->lists("nombre", "id");
+  }
 
 }

@@ -1,9 +1,27 @@
 <div class="box-header">
   <h3 class="box-title with-border">Nueva clase</h3>                
 </div>  
-<div class="box-body">           
-  <div class="form-group">
-    {{ Form::label("fecha", "Fecha: ", ["class" => "col-sm-2 control-label"]) }}
+<div class="box-body">    
+  <div class="form-group">    
+    {{ Form::label("numeroPeriodo", "Período (*): ", ["class" => "col-sm-2 control-label"]) }}
+    <div class="col-sm-2">
+      {{ Form::number("numeroPeriodo", "", ["id" => "numero-periodo-clase", "class" => "form-control", "maxlength" =>"11", "min" =>"1"]) }}
+    </div>
+    {{ Form::label("estado", "Estado: ", ["class" => "col-sm-1 col-sm-offset-1 control-label"]) }}
+    <div class="col-sm-4">
+      {{ Form::select("estado", $estadosClase, NULL, ["id" => "estado-clase", "class" => "form-control"]) }}
+    </div>
+    <div class="col-sm-2">
+      <div class="checkbox">
+        <label class="checkbox-custom" data-initialize="checkbox">
+          {{ Form::label("notificar", "Notificar", ["class" => "checkbox-label"]) }}
+          {{ Form::checkbox("notificar", null, FALSE, ["id" => "notificar-clase"]) }} 
+        </label>
+      </div>
+    </div> 
+  </div>
+  <div class="form-group"> 
+    {{ Form::label("fecha", "Fecha (*): ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       <div class="input-group date">
         <div class="input-group-addon">
@@ -11,9 +29,9 @@
         </div>                                
         {{ Form::text("fecha", NULL, ["id" => "fecha-clase", "class" => "form-control  pull-right"]) }}
       </div>
-    </div>                        
+    </div> 
   </div>
-  <div class="form-group">
+  <div class="form-group">    
     {{ Form::label("horaInicio", "Hora inicio: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       <div class="input-group date">
@@ -40,19 +58,7 @@
         <span class="input-group-addon">
           <b>S/.</b>
         </span>
-        {{ Form::text("costoHora", number_format($costoHoraClase, 2, ".", ","), array("class" => "form-control", "maxlength" =>"19")) }}
-      </div>
-    </div> 
-    {{ Form::label("numeroPeriodo", "Período (*): ", ["class" => "col-sm-1 control-label"]) }}
-    <div class="col-sm-2">
-      {{ Form::number("numeroPeriodo", "", ["class" => "form-control", "maxlength" =>"11", "min" =>"1"]) }}
-    </div>
-    <div class="col-sm-3">
-      <div class="checkbox">
-        <label class="checkbox-custom" data-initialize="checkbox">
-          {{ Form::label("notificar", "Notificar", ["class" => "checkbox-label"]) }}
-          {{ Form::checkbox("notificar", null, FALSE) }}
-        </label>
+        {{ Form::text("costoHora", number_format($costoHoraClase, 2, ".", ","), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
       </div>
     </div> 
   </div>
@@ -73,7 +79,7 @@
             <span class="input-group-addon">
               <b>S/.</b>
             </span>
-            {{ Form::text("costoHoraDocente", null, ["class" => "form-control", "maxlength" =>"19"]) }}
+            {{ Form::text("costoHoraDocente", null, ["id" => "costo-hora-docente", "class" => "form-control", "maxlength" =>"19"]) }}
           </div>
         </div>
       </div>
@@ -82,12 +88,13 @@
           <br/><span>(*) Campos obligatorios</span>
         </div>
       </div>
-      {{ Form::hidden("idDocente", "", ["id" => "id-docente-clase-registrar"]) }} 
+      {{ Form::hidden("idDocente", "", ["class" => "id-docente-clase"]) }} 
       {{ Form::hidden("idClase") }} 
+      {{ Form::hidden("idAlumno", $idAlumno) }} 
     </div>
   </div> 
   <div class="box-footer">    
     <button type="button" class="btn btn-default btn-cancelar-clase">Cancelar</button>
-    <button type="submit" class="btn btn-success pull-right">Registrar</button>
+    <button id="btn-guardar" type="submit" class="btn btn-success pull-right">Registrar</button>
   </div>
 </div>

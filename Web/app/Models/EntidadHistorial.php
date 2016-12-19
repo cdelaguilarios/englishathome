@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class EntidadHistorial extends Model {
 
-    public $timestamps = false;
-    protected $table = 'entidadHistorial';
-    protected $fillable = ['idEntidad', 'idHistorial'];
+  public $timestamps = false;
+  protected $table = "entidadHistorial";
+  protected $fillable = ["idEntidad", "idHistorial"];
 
-    public static function NombreTabla() {
-        $modeloEntidadHistorial = new EntidadHistorial();
-        $nombreTabla = $modeloEntidadHistorial->getTable();
-        unset($modeloEntidadHistorial);
-        return $nombreTabla;
-    }
+  public static function NombreTabla() {
+    $modeloEntidadHistorial = new EntidadHistorial();
+    $nombreTabla = $modeloEntidadHistorial->getTable();
+    unset($modeloEntidadHistorial);
+    return $nombreTabla;
+  }
 
 }

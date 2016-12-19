@@ -12,6 +12,9 @@ use App\Models\PagoAlumno;
 use App\Models\NivelIngles;
 use App\Models\TipoDocumento;
 use App\Helpers\Enum\MotivosPago;
+use App\Helpers\Enum\EstadosPago;
+use App\Helpers\Enum\EstadosClase;
+use App\Helpers\Enum\EstadosAlumno;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Alumno\AlumnoRequest;
 use App\Http\Requests\Alumno\Pago as PagoReq;
@@ -20,179 +23,204 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AlumnoController extends Controller {
 
-    protected $data = array();
+  protected $data = array();
 
-    public function __construct() {
-        $this->data['seccion'] = 'alumnos';
-        $this->data['nivelesIngles'] = NivelIngles::listarSimple();
-        $this->data['tiposDocumentos'] = TipoDocumento::listarSimple();
-        $this->data['motivosPago'] = MotivosPago::listar();
-    }
+  public function __construct() {
+    $this->data["seccion"] = "alumnos";
+    $this->data["nivelesIngles"] = NivelIngles::listarSimple();
+    $this->data["tiposDocumentos"] = TipoDocumento::listarSimple();
+    $this->data["motivosPago"] = MotivosPago::listar();
+    $this->data["estadosClase"] = EstadosClase::listarSimple();
+    $this->data["estadosPago"] = EstadosPago::listarSimple();
+    $this->data["estadosAlumno"] = EstadosAlumno::Listar();
+  }
 
-    // <editor-fold desc="Alumno">
-    public function index() {
-        return view('alumno.lista', $this->data);
-    }
+  // <editor-fold desc="Alumno">
+  public function index() {
+    return view("alumno.lista", $this->data);
+  }
 
-    public function listar() {
-        return Datatables::of(Alumno::listar())->make(true);
-    }
+  public function listar() {
+    return Datatables::of(Alumno::listar())->make(true);
+  }
 
-    public function create() {
-        return view('alumno.crear', $this->data);
-    }
+  public function create() {
+    return view("alumno.crear", $this->data);
+  }
 
-    public function store(AlumnoRequest $req) {
-        try {
-            $idAlumno = Alumno::registrar($req);
-            Mensajes::agregarMensajeExitoso("Registro exitoso.");
-            return redirect(route('alumnos.perfil', ['id' => $idAlumno]));
-        } catch (\Exception $e) {
-            Log::error($e);
-            Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
-            return redirect(route('alumnos.nuevo'));
-        }
+  public function store(AlumnoRequest $req) {
+    try {
+      $idAlumno = Alumno::registrar($req);
+      Mensajes::agregarMensajeExitoso("Registro exitoso.");
+      return redirect(route("alumnos.perfil", ["id" => $idAlumno]));
+    } catch (\Exception $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
+      return redirect(route("alumnos.nuevo"));
     }
+  }
 
-    public function show($id) {
-        try {
-            $this->data['alumno'] = Alumno::obtenerXId($id);
-        } catch (ModelNotFoundException $e) {
-            Log::error($e);
-            Mensajes::agregarMensajeError("No se encontraron datos del alumno seleccionado.");
-            return redirect('alumnos');
-        }
-        return view('alumno.perfil', $this->data);
+  public function show($id) {
+    try {
+      $this->data["alumno"] = Alumno::obtenerXId($id);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("No se encontraron datos del alumno seleccionado.");
+      return redirect("alumnos");
     }
+    return view("alumno.perfil", $this->data);
+  }
 
-    public function edit($id) {
-        try {
-            $this->data['alumno'] = Alumno::obtenerXId($id);
-        } catch (ModelNotFoundException $e) {
-            Log::error($e);
-            Mensajes::agregarMensajeError("No se encontraron datos del alumno seleccionado.");
-            return redirect('alumnos');
-        }
-        return view('alumno.editar', $this->data);
+  public function edit($id) {
+    try {
+      $this->data["alumno"] = Alumno::obtenerXId($id);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("No se encontraron datos del alumno seleccionado.");
+      return redirect("alumnos");
     }
+    return view("alumno.editar", $this->data);
+  }
 
-    public function update($id, AlumnoRequest $req) {
-        try {
-            Alumno::actualizar($id, $req);
-            Mensajes::agregarMensajeExitoso("Actualización exitosa.");
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");
-        }
-        return redirect(route('alumnos.editar', ['id' => $id]));
+  public function update($id, AlumnoRequest $req) {
+    try {
+      Alumno::actualizar($id, $req);
+      Mensajes::agregarMensajeExitoso("Actualización exitosa.");
+    } catch (\Exception $e) {
+      Log::error($e->getMessage());
+      Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");
     }
+    return redirect(route("alumnos.editar", ["id" => $id]));
+  }
 
-    public function destroy($id) {
-        try {
-            Alumno::eliminar($id);
-        } catch (ModelNotFoundException $e) {
-            Log::error($e);
-            return response()->json(['mensaje' => 'No se pudo eliminar el registro de datos del alumno seleccionado.'], 400);
-        }
-        return response()->json(['mensaje' => 'Eliminación exitosa', 'id' => $id], 200);
+  public function destroy($id) {
+    try {
+      Alumno::eliminar($id);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "No se pudo eliminar el registro de datos del alumno seleccionado."], 400);
     }
+    return response()->json(["mensaje" => "Eliminación exitosa", "id" => $id], 200);
+  }
 
-    // </editor-fold>
-    // <editor-fold desc="Pagos">
-    public function listarPagos($id) {
-        return Datatables::of(PagoAlumno::listar($id))->make(true);
-    }
+  // </editor-fold>
+  // <editor-fold desc="Pagos">
+  public function listarPagos($id) {
+    return Datatables::of(PagoAlumno::listar($id))->make(true);
+  }
 
-    public function generarClasesXPago($id, PagoReq\PagoRequest $req) {
-        return response()->json(Clase::generarXDatosPago($id, $req->all()), 200);
-    }
+  public function generarClasesXPago($id, PagoReq\PagoRequest $req) {
+    return response()->json(Clase::generarXDatosPago($id, $req->all()), 200);
+  }
 
-    public function listarDocentesDisponiblesXPago($id, PagoReq\PagoRequest $req) {
-        return Datatables::of(Docente::listarDisponiblesXDatosPago($id, $req->all()))
-                        ->filterColumn('nombreCompleto', function($q, $k) {
-                            $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
-                        })->make(true);
-    }
+  public function listarDocentesDisponiblesXPago($id, PagoReq\PagoRequest $req) {
+    return Datatables::of(Docente::listarDisponiblesXDatosPago($id, $req->all()))
+                    ->filterColumn("nombreCompleto", function($q, $k) {
+                      $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
+                    })->make(true);
+  }
 
-    public function registrarPago($id, PagoReq\PagoRequest $request) {
-        try {
-            PagoAlumno::registrar($id, $request);
-            Mensajes::agregarMensajeExitoso("Registro exitoso.");
-        } catch (\Exception $e) {
-            Log::error($e);
-            Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
-        }
-        return redirect(route('alumnos.perfil', ['id' => $id]));
+  public function registrarPago($id, PagoReq\PagoRequest $request) {
+    try {
+      PagoAlumno::registrar($id, $request);
+      Mensajes::agregarMensajeExitoso("Registro exitoso.");
+    } catch (\Exception $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
     }
+    return redirect(route("alumnos.perfil", ["id" => $id]));
+  }
 
-    public function datosPago($id, $idPago) {
-        return response()->json(PagoAlumno::obtenerXId($id, $idPago), 200);
+  public function actualizarEstadoPago($id, PagoReq\ActualizarEstadoRequest $request) {
+    try {
+      $datos = $request->all();
+      PagoAlumno::actualizarEstado($id, $datos);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
     }
+    return response()->json(["mensaje" => "Actualización exitosa."], 200);
+  }
 
-    public function eliminarPago($id, $idPago) {
-        try {
-            PagoAlumno::eliminar($id, $idPago);
-        } catch (ModelNotFoundException $e) {
-            Log::error($e);
-            return response()->json(['mensaje' => 'No se pudo eliminar el registro de datos del pago seleccionado.'], 400);
-        }
-        return response()->json(['mensaje' => 'Eliminación exitosa', 'id' => $idPago], 200);
-    }
+  public function datosPago($id, $idPago) {
+    return response()->json(PagoAlumno::obtenerXId($id, $idPago), 200);
+  }
 
-    // </editor-fold>
-    // <editor-fold desc="Clases">
-    public function listarPeriodosClases($id) {
-        return Datatables::of(Clase::listarPeriodos($id))->make(true);
+  public function eliminarPago($id, $idPago) {
+    try {
+      PagoAlumno::eliminar($id, $idPago);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "No se pudo eliminar el registro de datos del pago seleccionado."], 400);
     }
+    return response()->json(["mensaje" => "Eliminación exitosa", "id" => $idPago], 200);
+  }
 
-    public function listarClases($id, $numeroPeriodo) {
-        return response()->json(Clase::listarXAlumno($id, $numeroPeriodo), 200);
-    }
+  // </editor-fold>
+  // <editor-fold desc="Clases">
+  public function listarPeriodosClases($id) {
+    return Datatables::of(Clase::listarPeriodos($id))->make(true);
+  }
 
-    public function listarDocentesDisponiblesXClase($id, ClaseReq\DocenteDisponibleRequest $req) {
-        return Datatables::of(Docente::listarDisponiblesXDatosClase($req->all()))
-                        ->filterColumn('nombreCompleto', function($q, $k) {
-                            $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
-                        })->make(true);
-    }
+  public function listarClases($id, $numeroPeriodo) {
+    return response()->json(Clase::listarXAlumno($id, $numeroPeriodo), 200);
+  }
 
-    public function cancelarClase($id, ClaseReq\CancelarRequest $request) {
-        try {
-            $datos = $request->all();
-            Clase::cancelar($id, $datos);
-            Mensajes::agregarMensajeExitoso("Cancelación exitosa.");
-        } catch (\Exception $e) {
-            Log::error($e);
-            Mensajes::agregarMensajeError("No se pudo cancelar la clase seleccionada.");
-        }
-        return redirect(route('alumnos.perfil', ['id' => $id]));
-    }
+  public function listarDocentesDisponiblesXClase($id, ClaseReq\DocenteDisponibleRequest $req) {
+    return Datatables::of(Docente::listarDisponiblesXDatosClase($req->all()))
+                    ->filterColumn('nombreCompleto', function($q, $k) {
+                      $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
+                    })->make(true);
+  }
 
-    public function registrarActualizarClase($id, ClaseReq\ClaseRequest $request) {
-        try {
-            $datos = $request->all();
-            Clase::registrar($id, $datos);
-            Mensajes::agregarMensajeExitoso("Registro exitoso.");
-        } catch (\Exception $e) {
-            Log::error($e);
-            Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
-        }
-        return redirect(route('alumnos.perfil', ['id' => $id]));
+  public function cancelarClase($id, ClaseReq\CancelarRequest $request) {
+    try {
+      $datos = $request->all();
+      Clase::cancelar($id, $datos);
+      Mensajes::agregarMensajeExitoso("Cancelación exitosa.");
+    } catch (\Exception $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("No se pudo cancelar la clase seleccionada.");
     }
-    
-    public function datosClase($id, $idClase) {
-        return response()->json(Clase::obtenerXId($id, $idClase), 200);
-    }
+    return redirect(route("alumnos.perfil", ["id" => $id]));
+  }
 
-    public function eliminarClase($id, $idClase) {
-        try {
-            Clase::eliminar($id, $idClase);
-        } catch (ModelNotFoundException $e) {
-            Log::error($e);
-            return response()->json(['mensaje' => 'No se pudo eliminar el registro de datos de la clase seleccionada.'], 400);
-        }
-        return response()->json(['mensaje' => 'Eliminación exitosa', 'id' => $idClase], 200);
+  public function registrarActualizarClase($id, ClaseReq\ClaseRequest $request) {
+    try {
+      $datos = $request->all();
+      Clase::registrarActualizar($id, $datos);
+      Mensajes::agregarMensajeExitoso(isset($datos["idClase"]) ? "Registro exitoso." : "Actualización exitosa.");
+    } catch (\Exception $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("Ocurrió un problema durante el registro/actualización de datos. Por favor inténtelo nuevamente.");
     }
+    return redirect(route("alumnos.perfil", ["id" => $id]));
+  }
 
-    // </editor-fold>
+  public function actualizarEstadoClase($id, ClaseReq\ActualizarEstadoRequest $request) {
+    try {
+      $datos = $request->all();
+      Clase::actualizarEstado($id, $datos);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
+    }
+    return response()->json(["mensaje" => "Actualización exitosa."], 200);
+  }
+
+  public function datosClase($id, $idClase) {
+    return response()->json(Clase::obtenerXId($id, $idClase), 200);
+  }
+
+  public function eliminarClase($id, $idClase) {
+    try {
+      Clase::eliminar($id, $idClase);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "No se pudo eliminar el registro de datos de la clase seleccionada."], 400);
+    }
+    return response()->json(["mensaje" => "Eliminación exitosa", "id" => $idClase], 200);
+  }
+
+  // </editor-fold>
 }

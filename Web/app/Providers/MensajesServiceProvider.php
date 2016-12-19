@@ -7,15 +7,14 @@ use Illuminate\Support\ServiceProvider;
 
 class MensajesServiceProvider extends ServiceProvider {
 
-    public function boot() {
-        //
-    }
+  public function boot() {
+    //
+  }
 
-    public function register() {        
-        App::bind('mensajes', function()
-        {
-            return new \App\Libraries\Mensajes;
-        });
-    }
+  public function register() {
+    App::bind("mensajes", function() {
+      return new \App\Libraries\Mensajes;
+    });
+  }
 
 }
