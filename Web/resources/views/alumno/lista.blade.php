@@ -31,7 +31,7 @@
               <th>Nombre completo</th>     
               <th>Correo electrónico</th>
               <th>Estado</th>
-              <th class="col-md-1">&nbsp;</th>
+              <th class="col-sm-1">&nbsp;</th>
             </tr>
           </thead>
         </table>

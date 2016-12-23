@@ -5,7 +5,7 @@ $(document).ready(function () {
   estados = (typeof (estados) === "undefined" ? "" : estados);
 
   if (urlListar !== "" && urlEditar !== "" && urlEliminar !== "" && estados !== "") {
-    $("#tab_lista").DataTable({
+    $("#tab-lista").DataTable({
       "processing": true,
       "serverSide": true,
       "ajax": {
@@ -13,6 +13,7 @@ $(document).ready(function () {
         "type": "POST",
         "data": function (d) {
           d._token = $("meta[name=_token]").attr("content");
+          d.estado = $("#bus-estado").val();
         }
       },
       autoWidth: false,
@@ -21,32 +22,37 @@ $(document).ready(function () {
         {data: "telefono", name: "telefono"},
         {data: "correoElectronico", name: "correoElectronico"},
         {data: "estado", name: "estado"},
-        {data: "id", name: "id", orderable: false, "searchable": false, width: "7%"}
+        {data: "id", name: "id", orderable: false, "searchable": false, width: "5%"}
       ],
-      "createdRow": function (row, data, index) {
+      "createdRow": function (r, data, index) {
         //Nombre completo        
-        $("td", row).eq(0).html((data.nombre !== null ? data.nombre : "") + " " + (data.apellido !== null ? data.apellido : ""));
+        $("td", r).eq(0).html((data.nombre !== null ? data.nombre : "") + " " + (data.apellido !== null ? data.apellido : ""));
 
         //Estado
-        $("td", row).eq(3).html('<span class="label ' + estados[data.estado][1] + ' btn_estado">' + estados[data.estado][0] + '</span>');
+        $("td", r).eq(3).addClass("text-center");
+        $("td", r).eq(3).html('<span class="label ' + estados[data.estado][1] + ' btn_estado">' + estados[data.estado][0] + '</span>');
 
         //Botones
-        var tBotones = "<ul class='buttons'>" +
-            "<li>" +
-            "<a href='" + (urlEditar.replace("/0", "/" + data.id)) + "' title='Editar datos'><i class='fa fa-pencil'></i></a>" +
-            "</li>" +
-            "<li>" +
-            "<a href='javascript:void(0);' title='Eliminar interesado' onclick='eliminarElemento(this, \"¿Está seguro que desea eliminar los datos de esta persona interesada?\", \"tab_lista\")' data-id='" + data.id + "' data-urleliminar='" + ((urlEliminar.replace("/0", "/" + data.id))) + "'>" +
-            "<i class='fa fa-trash'></i>" +
-            "</a>" +
-            "</li>" +
-            "</ul>";
-        $("td", row).eq(4).html(tBotones);
+        var tBotones = '<ul class="buttons">' +
+            '<li>' +
+            '<a href="' + (urlEditar.replace("/0", "/" + data.id)) + '" title="Editar datos"><i class="fa fa-pencil"></i></a>' +
+            '</li>' +
+            '<li>' +
+            '<a href="javascript:void(0);" title="Eliminar interesado" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de esta persona interesada?\', \'tab_lista\')" data-id="' + data.id + '" data-urleliminar="' + ((urlEliminar.replace("/0", "/" + data.id))) + '">' +
+            '<i class="fa fa-trash"></i>' +
+            '</a>' +
+            '</li>' +
+            '</ul>';
+        $("td", r).eq(4).addClass("text-center");
+        $("td", r).eq(4).html(tBotones);
       }
     });
   }
+  $("#bus-estado").change(function(){    
+      $("#tab-lista").DataTable().ajax.reload();
+  });
 
-  $("#formulario_interesado").validate({
+  $("#formulario-interesado").validate({
     ignore: "",
     rules: {
       nombre: {

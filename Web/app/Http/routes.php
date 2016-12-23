@@ -6,6 +6,8 @@ Route::get("iniciar_sesion", ["uses" => "Auth\AuthController@getLogin", "as" => 
 Route::post("iniciar_sesion", ["uses" => "Auth\AuthController@postLogin", "as" => "auth.login"]);
 Route::get("cerrar_sesion", ["uses" => "Auth\AuthController@getLogout", "as" => "auth.logout"]);
 
+Route::post("interesados/registroExterno", ["uses" => "InteresadoController@registroExterno", "as" => "interesados.regstro.externo"]);
+
 Route::group(["middleware" => "auth"], function() {
   Route::get("/", ["uses" => "InicioController@inicio", "as" => "/"]);
   Route::get("imagenes/{rutaImagen}", ["uses" => "InicioController@obtenerImagen", "as" => "imagenes"]);
@@ -26,6 +28,13 @@ Route::group(["middleware" => "auth"], function() {
     Route::get("usuario/{id}/editar", ["uses" => "UsuarioController@edit", "as" => "usuarios.editar"]);
     Route::patch("usuario/{id}/update", ["uses" => "UsuarioController@update", "as" => "usuarios.update"]);
     // </editor-fold>
+    // <editor-fold desc="Interesados">
+    Route::resource("interesados", "InteresadoController", ["except" => ["show"]]);
+    Route::get("interesados", ["uses" => "InteresadoController@index", "as" => "interesados"]);
+    Route::post("interesados/listar", ["uses" => "InteresadoController@listar", "as" => "interesados.listar"]);
+    Route::get("interesado/nuevo", ["uses" => "InteresadoController@create", "as" => "interesados.nuevo"]);
+    Route::get("interesado/{id}/editar", ["uses" => "InteresadoController@edit", "as" => "interesados.editar"]);
+    // </editor-fold>
     // <editor-fold desc="Alumnos">
     Route::resource("alumnos", "AlumnoController");
     Route::get("alumnos", ["uses" => "AlumnoController@index", "as" => "alumnos"]);
@@ -36,7 +45,7 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("alumno/{id}/pagos", ["uses" => "AlumnoController@listarPagos", "as" => "alumnos.pagos.listar"]);
     Route::post("alumno/{id}/pago/generarClases", ["uses" => "AlumnoController@generarClasesXPago", "as" => "alumnos.pagos.generarClases"]);
     Route::post("alumno/{id}/pago/docentesDisponibles", ["uses" => "AlumnoController@listarDocentesDisponiblesXPago", "as" => "alumnos.pagos.docentesDisponibles.listar"]);
-    Route::post("alumno/{id}/pago/registrar", ["uses" => "AlumnoController@registrarPago", "as" => "alumnos.pagos.registrar"]);    
+    Route::post("alumno/{id}/pago/registrar", ["uses" => "AlumnoController@registrarPago", "as" => "alumnos.pagos.registrar"]);
     Route::post("alumno/{id}/pago/actualizarEstado", ["uses" => "AlumnoController@actualizarEstadoPago", "as" => "alumnos.pagos.actualizar.estado"]);
     Route::post("alumno/{id}/pago/{idPago}/datos", ["uses" => "AlumnoController@datosPago", "as" => "alumnos.pagos.datos"]);
     Route::delete("alumno/{id}/pago/{idPago}/eliminar", ["uses" => "AlumnoController@eliminarPago", "as" => "alumnos.pagos.eliminar"]);
@@ -48,13 +57,6 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("alumno/{id}/clase/{idClase}/datos", ["uses" => "AlumnoController@datosClase", "as" => "alumnos.clases.datos"]);
     Route::post("alumno/{id}/clase/cancelar", ["uses" => "AlumnoController@cancelarClase", "as" => "alumnos.clases.cancelar"]);
     Route::delete("alumno/{id}/clase/{idClase}/eliminar", ["uses" => "AlumnoController@eliminarClase", "as" => "alumnos.clases.eliminar"]);
-    // </editor-fold>
-    // <editor-fold desc="Interesados">
-    Route::resource("interesados", "InteresadoController", ["except" => ["show"]]);
-    Route::get("interesados", ["uses" => "InteresadoController@index", "as" => "interesados"]);
-    Route::post("interesados/listar", ["uses" => "InteresadoController@listar", "as" => "interesados.listar"]);
-    Route::get("interesado/nuevo", ["uses" => "InteresadoController@create", "as" => "interesados.nuevo"]);
-    Route::get("interesado/{id}/editar", ["uses" => "InteresadoController@edit", "as" => "interesados.editar"]);
     // </editor-fold>
     // <editor-fold desc="Profesores">
     Route::resource("profesores", "ProfesorController");

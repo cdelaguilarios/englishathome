@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-sm-12">
     <div id="sec-mensajes-pago"></div>
     <div id="sec-pago-1">
       <div class="box-header">
@@ -13,7 +13,7 @@
               <th>Monto</th>
               <th>Fecha de registro</th>
               <th>Estado</th>
-              <th class="col-md-1">&nbsp;</th>
+              <th class="col-sm-1">&nbsp;</th>
             </tr>
           </thead>
         </table>

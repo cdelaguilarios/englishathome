@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-sm-12">
     <div id="wiz-registro-alumno" class="box box-info wizard" data-initialize="wizard">
       <div class="steps-container">
         <ul class="steps">

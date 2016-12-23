@@ -4,12 +4,19 @@ namespace App\Helpers\Enum;
 
 class EstadosInteresado {
 
-  const Pendiente = "PENDIENTE";
+  const PendienteInformacion = "PENDIENTE-INFORMACION";
   const PorConfirmar = "PORCONFIRMAR";
 
+  public static function listarSimple() {
+    return [
+        EstadosInteresado::PendienteInformacion => "Pendiente de información",
+        EstadosInteresado::PorConfirmar => "Por confirmar"
+    ];
+  }
+  
   public static function listar() {
     return [
-        EstadosInteresado::Pendiente => ["Pendiente", "label-warning"],
+        EstadosInteresado::PendienteInformacion => ["Pendiente de información", "label-warning"],
         EstadosInteresado::PorConfirmar => ["Por confirmar", "label-info"]
     ];
   }

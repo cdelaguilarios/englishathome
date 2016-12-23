@@ -19,18 +19,35 @@
   <div class="col-xs-12">
     <div class="box box-info">
       <div class="box-header">
-        <h3 class="box-title">Lista de interesados</h3>
-        <a href="{{ route("interesados.nuevo")}}" class="btn btn-primary btn-clean">Nueva persona interesada</a>   
+        <h3 class="box-title">Filtros de búsquedad</h3> 
       </div>         
       <div class="box-body">
-        <table id="tab_lista" class="table table-bordered table-hover">
+        <div class="form-group">          
+          {{ Form::label("bus-estado", "Búsqueda por estado: ", ["class" => "col-sm-2 control-label"]) }}
+          <div class="col-sm-3">
+            {{ Form::select("estado", App\Helpers\Enum\EstadosInteresado::listarSimple(), App\Helpers\Enum\EstadosInteresado::PendienteInformacion, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos"]) }}
+          </div>
+        </div> 
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box box-info">
+      <div class="box-header">
+        <h3 class="box-title">Interesados</h3>
+        <a href="{{ route("interesados.nuevo")}}" class="btn btn-primary btn-clean">Nuevo interesado</a>   
+      </div>         
+      <div class="box-body">
+        <table id="tab-lista" class="table table-bordered table-hover">
           <thead>
             <tr>
               <th>Nombre completo</th>   
               <th>Teléfono</th>  
               <th>Correo electrónico</th>
               <th>Estado</th>
-              <th class="col-md-1">&nbsp;</th>
+              <th>Opciones</th>
             </tr>
           </thead>
         </table>

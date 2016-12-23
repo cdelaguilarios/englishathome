@@ -9,7 +9,7 @@
       </div>
       <div class="modal-body"> 
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-sm-6">
             <div id="sec-mensajes-mod-datos-pago"></div>
             <div class="box-body">
               <strong><i class="fa  fa-check-square margin-r-5"></i> Motivo</strong>
@@ -26,7 +26,7 @@
               <p id="dat-fecha-registro-pago" class="text-muted"></p>
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-sm-6">
             <a id="dat-imagen-comprobante-pago" href="{{ route("imagenes", ["rutaImagen" => "0"]) }}" target="_blank">
               <img class="img-responsive" src="{{ route("imagenes", ["rutaImagen" => "0"]) }}" alt="Imagen comprobante"> 
             </a>

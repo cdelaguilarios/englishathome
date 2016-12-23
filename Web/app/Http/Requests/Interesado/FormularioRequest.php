@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Interesado;
 
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 
-class InteresadoRequest extends Request {
+class FormularioRequest extends Request {
 
   public function authorize() {
     return true;
   }
 
   protected function getValidatorInstance() {
-    $data = $this->all();
+    $datos = $this->all();
 
-    $data["id"] = (isset($data["id"]) ? $data["id"] : 0);
-    $data["consulta"] = (isset($data["consulta"]) ? $data["consulta"] : NULL);
+    $datos["id"] = (isset($datos["id"]) ? $datos["id"] : 0);
+    $datos["consulta"] = (isset($datos["consulta"]) ? $datos["consulta"] : NULL);
 
-    $this->getInputSource()->replace($data);
+    $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
 

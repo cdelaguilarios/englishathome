@@ -12,7 +12,7 @@
 
 @section("content")
 <div class="row">
-  <div class="col-md-3">
+  <div class="col-sm-3">
     <div class="box box-primary">
       <div class="box-body box-profile">
         <img class="profile-user-img img-responsive img-circle" src="{{ route("imagenes", ["rutaImagen" => (isset($profesor->rutaImagenPerfil) && $profesor->rutaImagenPerfil != "" ? $profesor->rutaImagenPerfil : "-")]) }}" alt="User profile picture">
@@ -56,7 +56,7 @@
       </div>
     </div>
   </div>
-  <div class="col-md-9">
+  <div class="col-sm-9">
     <div class="nav-tabs-custom">
       <ul class="nav nav-tabs">
         <li class="active"><a href="#historial" data-toggle="tab">Historial</a></li>

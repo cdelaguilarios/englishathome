@@ -12,7 +12,7 @@
 
 @section("content") 
 @include("partials/errors")
-{!! Form::open(["url" => "interesados", "id" => "formulario_interesado", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) !!}
+{!! Form::open(["url" => "interesados", "id" => "formulario-interesado", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) !!}
 @include("interesado.formulario", ["modo" => "registrar"])
 {!! Form::close() !!}
 @endsection

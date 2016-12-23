@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-sm-12">
     <div id="sec-mensajes-clase"></div>
     <div id="sec-clase-1">      
       <div class="box-body">

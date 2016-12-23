@@ -68,8 +68,8 @@ class Clase extends Model {
                     ->leftJoin(Entidad::nombreTabla() . " as entidadAlumno", $nombreTabla . ".idAlumno", "=", "entidadAlumno.id")
                     ->leftJoin(Historial::NombreTabla() . " as historial", $nombreTabla . ".id", "=", "historial.idClase")
                     ->leftJoin(PagoClase::NombreTabla() . " as pagoClase", $nombreTabla . ".id", "=", "pagoClase.idClase")
-                    ->leftJoin(Pago::NombreTabla() . " as pago", "pagoClase.idPago", "=", "pago.id")
-                    ->leftJoin(PagoProfesor::NombreTabla() . " as pagoProfesor", "pago.id", "=", "pagoProfesor.idPago")
+                    ->leftJoin(PagoProfesor::NombreTabla() . " as pagoProfesor", "pagoClase.idPago", "=", "pagoProfesor.idPago")
+                    ->leftJoin(Pago::NombreTabla() . " as pago", "pagoProfesor.idPago", "=", "pago.id")
                     ->where($nombreTabla . ".idProfesor", $idProfesor)
                     ->where($nombreTabla . ".eliminado", 0)
                     ->where(function ($q) {
@@ -77,7 +77,7 @@ class Clase extends Model {
                     })
                     ->where(function ($q) use ($idProfesor) {
                       $q->whereNull("pagoProfesor.idProfesor")->orWhere("pagoProfesor.idProfesor", $idProfesor);
-                    })
+                    })  
                     ->orderBy($nombreTabla . ".fechaInicio", "ASC");
   }
 

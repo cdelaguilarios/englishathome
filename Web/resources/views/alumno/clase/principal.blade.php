@@ -10,11 +10,11 @@
         <table id="tab-lista-periodos-clases" class="table table-bordered table-hover">
           <thead>
             <tr> 
-              <th class="col-md-2">Período</th>    
+              <th class="col-sm-2">Período</th>    
               <th>Fecha de inicio</th>
               <th>Fecha de fin</th>
               <th>Total de horas</th>
-              <th class="col-md-1">&nbsp;</th> 
+              <th class="col-sm-1">&nbsp;</th> 
             </tr>
           </thead>
         </table>
