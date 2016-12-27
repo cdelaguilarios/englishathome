@@ -19,7 +19,12 @@
 |
 */
 
+/*<aq:dev>*/
 require __DIR__.'/../bootstrap/autoload.php';
+/*</aq:dev>*/
+/*<aq:stapro>
+require __DIR__.'/bootstrap/autoload.php';
+</aq:stapro>*/
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +38,12 @@ require __DIR__.'/../bootstrap/autoload.php';
 |
 */
 
+/*<aq:dev>*/
 $app = require_once __DIR__.'/../bootstrap/app.php';
+/*</aq:dev>*/
+/*<aq:stapro>
+$app = require_once __DIR__.'/bootstrap/app.php';
+</aq:stapro>*/
 
 /*
 |--------------------------------------------------------------------------

@@ -52,6 +52,7 @@ return [
             'prefix' => '',
         ],
 
+	/* <aq:dev> */
         'mysql' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST', '127.0.0.1'),
@@ -65,6 +66,21 @@ return [
             'strict' => false,
             'engine' => null,
         ],
+        /* </aq:dev> */
+
+        /* <aq:stapro>
+          'mysql' => [
+          'driver'    => 'mysql',
+          'host'      => env('DB_HOST', '{db_host}'),
+          'database'  => env('DB_DATABASE', '{db_name}'),
+          'username'  => env('DB_USERNAME', '{db_user}'),
+          'password'  => env('DB_PASSWORD', '{db_password}'),
+          'charset'   => 'utf8',
+          'collation' => 'utf8_unicode_ci',
+          'prefix'    => '',
+          'strict'    => false,
+          ],
+          </aq:stapro> */
 
         'pgsql' => [
             'driver' => 'pgsql',
