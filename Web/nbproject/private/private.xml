@@ -11,12 +11,6 @@
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/D:/Carlos/Proyectos/englishathome/Web/app/Http/Controllers/InteresadoController.php</file>
-            <file>file:/D:/Carlos/Proyectos/englishathome/Web/resources/views/interesado/cotizacion.blade.php</file>
-            <file>file:/D:/Carlos/Proyectos/englishathome/Web/.env</file>
-            <file>file:/D:/Carlos/Proyectos/englishathome/Web/config/mail.php</file>
-            <file>file:/D:/Carlos/Proyectos/englishathome/Web/resources/views/interesado/crear.blade.php</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
