@@ -45,9 +45,17 @@
         {{ Form::hidden("id") }}
       </div>
       <div class="box-footer">    
-        <span>(*) Campos obligatorios</span>
-        <button id="btn-guardar" type="submit" class="btn btn-success pull-right" >{{ ((isset($modo) && $modo == "registrar") ? "Registrar" : "Guardar") }}</button>
-        <a href="{{ route("interesados") }}" type="button" class="btn btn-default pull-right" >Cancelar</a>
+        <div class="form-group">
+          <div class="col-sm-6">
+            <span>(*) Campos obligatorios</span>
+          </div>
+          <div class="col-sm-6">   
+            <button id="btn-guardar" type="submit" class="btn btn-success pull-right">
+              {{ ((isset($modo) && $modo == "registrar") ? "Registrar" : "Guardar") }}
+            </button>
+            <a href="{{ route("interesados") }}" type="button" class="btn btn-default pull-right" >Cancelar</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>

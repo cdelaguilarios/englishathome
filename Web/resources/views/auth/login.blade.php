@@ -28,7 +28,7 @@
                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="row">
-        <div class="col-xs-12">                        
+        <div class="col-sm-12">                        
           <button type="submit" class="btn btn-default btn-block btn-flat">@lang("auth.login")</button>
         </div>
       </div>

@@ -97,6 +97,12 @@ table.table-bordered tbody th, table.table-bordered tbody td {
   background-color: #f7b955;
   color: white;
 }
+table.dataTable.dtr-inline.collapsed > tbody > tr > td:first-child:before, table.dataTable.dtr-inline.collapsed > tbody > tr > th:first-child:before{
+  background-color: #3c8dbc;
+}
+div.dataTables_info{
+  white-space: inherit;
+}
 
 /*Botón creación*/
 .box-header a{
@@ -227,7 +233,7 @@ textarea{
 }
 
 /*Perfil*/
-#sec-datos-principales .text-muted, #mod-datos-pago .text-muted{
+ .sec-datos .text-muted{
   margin-left: 20px;
 }
 .box-profile{
@@ -273,4 +279,15 @@ textarea{
 #tab_lista_docentes_clase_info{
   white-space: inherit;
   width: 160%;
+}
+
+/*Alumno - registro externo*/
+.register-box {
+    width: 70%;
+}
+@media (max-width: 768px){
+.register-box {
+    width: 90%;
+    margin-top: 20px;
+}
 }

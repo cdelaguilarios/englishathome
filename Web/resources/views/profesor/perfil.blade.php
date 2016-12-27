@@ -21,7 +21,7 @@
         <span class="label {!! $estadosProfesor[$profesor->estado][1] !!} btn_estado">{!! $estadosProfesor[$profesor->estado][0] !!}</span>
       </div>
     </div>
-    <div id="sec-datos-principales" class="box box-primary">
+    <div class="sec-datos box box-primary">
       <div class="box-header with-border">
         <h3 class="box-title">Datos principales del profesor</h3>
       </div>

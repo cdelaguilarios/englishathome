@@ -17,6 +17,7 @@ use App\Helpers\Enum\EstadosAlumno;
 use Illuminate\Contracts\View\View;
 use App\Helpers\Enum\GenerosEntidad;
 use App\Helpers\Enum\EstadosProfesor;
+use App\Helpers\Enum\EstadosInteresado;
 use App\Helpers\Enum\TiposCancelacionClase;
 
 class ProfileComposer {
@@ -55,6 +56,7 @@ class ProfileComposer {
       $view->with("estadoPagoRealizado", EstadosPago::Realizado);
       $view->with("estadosPago", EstadosPago::listar());
       $view->with("estadosPagoSimple", EstadosPago::listarSimple());
+      $view->with("estadosInteresado", EstadosInteresado::listar());
       $view->with("estadosAlumno", EstadosAlumno::listar());
       $view->with("estadosProfesor", EstadosProfesor::listar());
       $view->with("estadoClaseRealizada", EstadosClase::Realizada);

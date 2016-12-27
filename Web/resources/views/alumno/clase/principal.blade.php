@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-xs-12">
+  <div class="col-sm-12">
     @include("partials/errors")
     <div id="sec-mensajes-clase"></div>
     <div id="sec-clase-1">

@@ -5,7 +5,7 @@ function verificarJqueryHorario() {
 
 var horarioSel = [], horarioFin = [], horarioInicial = new Object();
 var diasNum = [1, 2, 3, 4, 5, 6, 7];
-var diasLet = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+var diasLet = ["Lu.", "Ma.", "Mi.", "Ju.", "Vi.", "Sá.", "Do."];
 var minutosIntervalo = 30;
 function cargarHorario() {
   minHorario = (typeof (minHorario) === "undefined" ? "" : minHorario);

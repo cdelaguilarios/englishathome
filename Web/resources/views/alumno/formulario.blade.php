@@ -173,7 +173,7 @@
             <h4>Detalle del curso:</h4>
           </div>
           <div class="form-group">
-            {{ Form::label("idCurso", "Curso de interes (*): ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("idCurso", "Curso de interes: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3">
               {{ Form::select("idCurso", $cursos, (isset($alumno) ? $alumno->idCurso : NULL), ["class" => "form-control"]) }}
             </div>

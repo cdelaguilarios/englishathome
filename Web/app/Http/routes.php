@@ -8,6 +8,8 @@ Route::get("cerrar_sesion", ["uses" => "Auth\AuthController@getLogout", "as" => 
 
 Route::post("interesados/registroExterno", ["uses" => "InteresadoController@registroExterno", "as" => "interesados.regstro.externo"]);
 
+Route::get("alumno/crearExterno", ["uses" => "AlumnoController@crearExterno", "as" => "usuarios.crear.externo"]);
+
 Route::group(["middleware" => "auth"], function() {
   Route::get("/", ["uses" => "InicioController@inicio", "as" => "/"]);
   Route::get("imagenes/{rutaImagen}", ["uses" => "InicioController@obtenerImagen", "as" => "imagenes"]);
@@ -34,6 +36,8 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("interesados/listar", ["uses" => "InteresadoController@listar", "as" => "interesados.listar"]);
     Route::get("interesado/nuevo", ["uses" => "InteresadoController@create", "as" => "interesados.nuevo"]);
     Route::get("interesado/{id}/editar", ["uses" => "InteresadoController@edit", "as" => "interesados.editar"]);
+    Route::get("interesado/{id}/cotizacion", ["uses" => "InteresadoController@cotizacion", "as" => "interesados.cotizacion"]);
+    Route::post("interesado/{id}/cotizacion", ["uses" => "InteresadoController@envioCotizacion", "as" => "interesados.cotizacion"]);
     // </editor-fold>
     // <editor-fold desc="Alumnos">
     Route::resource("alumnos", "AlumnoController");
@@ -75,6 +79,9 @@ Route::group(["middleware" => "auth"], function() {
     // </editor-fold>
     // <editor-fold desc="Historial">
     Route::post("historial/{id}", ["uses" => "HistorialController@historial", "as" => "historial"]);
+    // </editor-fold>
+    // <editor-fold desc="Curso">
+    Route::post("curso/{id}/datos", ["uses" => "CursoController@datos", "as" => "cursos.datos"]);
     // </editor-fold>
   });
 });

@@ -5,6 +5,7 @@
 <script type="text/javascript">
   var urlListar = "{{ route("interesados.listar") }}";
   var urlEditar = "{{ route("interesados.editar", ["id" => 0]) }}";
+  var urlCotizacion = "{{ route("interesados.cotizacion", ["id" => 0]) }}";
   var urlEliminar = "{{ route("interesados.destroy", ["id" => 0]) }}";
   var estados = {!!  json_encode(App\Helpers\Enum\EstadosInteresado::listar()) !!};</script>
 <script src="{{ asset("assets/eah/js/modulos/interesado.js")}}"></script>
@@ -16,7 +17,7 @@
 
 @section("content")
 <div class="row">
-  <div class="col-xs-12">
+  <div class="col-sm-12">
     <div class="box box-info">
       <div class="box-header">
         <h3 class="box-title">Filtros de búsquedad</h3> 
@@ -33,7 +34,7 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-xs-12">
+  <div class="col-sm-12">
     <div class="box box-info">
       <div class="box-header">
         <h3 class="box-title">Interesados</h3>
@@ -47,7 +48,7 @@
               <th>Teléfono</th>  
               <th>Correo electrónico</th>
               <th>Estado</th>
-              <th>Opciones</th>
+              <th class="all">Opciones</th>
             </tr>
           </thead>
         </table>

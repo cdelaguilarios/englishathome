@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Interesado\BusquedaRequest;
 use App\Http\Requests\Interesado\FormularioRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Http\Requests\Interesado\FormularioCotizacionRequest;
 
 class InteresadoController extends Controller {
 
@@ -20,6 +21,7 @@ class InteresadoController extends Controller {
   }
 
   public function index() {
+    
     return view("interesado.lista", $this->data);
   }
 
@@ -77,6 +79,29 @@ class InteresadoController extends Controller {
       Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");
     }
     return redirect(route("interesados.editar", ["id" => $id]));
+  }
+  
+  public function cotizacion($id) {
+    try {
+      $this->data["interesado"] = Interesado::obtenerXId($id);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("No se encontraron datos de la persona interesada seleccionada.");
+      return redirect("interesados");
+    }
+    return view("interesado.cotizacion", $this->data);
+  }
+
+  public function envioCotizacion($id, FormularioCotizacionRequest $req) {
+    try {
+      $datos = $req->all();
+      Interesado::envioCotizacion($id, $datos);
+      Mensajes::agregarMensajeExitoso("Cotización enviada.");
+    } catch (\Exception $e) {
+      Log::error($e->getMessage());
+      Mensajes::agregarMensajeError("Ocurrió un problema durante el envio de la cotización. Por favor inténtelo nuevamente.");
+    }
+    return redirect(route("interesados.cotizacion", ["id" => $id]));
   }
 
   public function destroy($id) {

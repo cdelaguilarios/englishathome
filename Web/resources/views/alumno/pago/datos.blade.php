@@ -11,7 +11,7 @@
         <div class="row">
           <div class="col-sm-6">
             <div id="sec-mensajes-mod-datos-pago"></div>
-            <div class="box-body">
+            <div class="box-body sec-datos">
               <strong><i class="fa  fa-check-square margin-r-5"></i> Motivo</strong>
               <p id="dat-motivo-pago" class="text-muted"></p>
               <div id="sec-descripcion-pago">

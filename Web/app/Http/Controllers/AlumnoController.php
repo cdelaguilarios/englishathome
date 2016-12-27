@@ -36,6 +36,10 @@ class AlumnoController extends Controller {
     return view("alumno.crear", $this->data);
   }
 
+  public function crearExterno() {
+    return view("alumno.crearExterno", $this->data);
+  }
+  
   public function store(AlumnoRequest $req) {
     try {
       $idAlumno = Alumno::registrar($req);

@@ -331,7 +331,7 @@ function obtenerDatosClase(idClase, funcionRetorno) {
 //Formulario Cancelar
 function cargarFormularioCancelarClase() {
   $("#formulario-cancelar-clase").validate({
-    ignore: ":hidden",
+    ignore: ":hidden,:visible",
     rules: {
       pagoProfesor: {
         required: true,
