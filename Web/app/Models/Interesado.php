@@ -3,16 +3,19 @@
 namespace App\Models;
 
 use Mail;
+use Crypt;
 use Carbon\Carbon;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\EstadosInteresado;
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\Enum\TiposRelacionEntidad;
 
 class Interesado extends Model {
 
   public $timestamps = false;
+  protected $primaryKey = "idEntidad";
   protected $table = "interesado";
-  protected $fillable = ["consulta", "cursoInteres"];
+  protected $fillable = ["consulta", "cursoInteres", "codigoVerificacion"];
 
   public static function nombreTabla() {
     $modeloInteresado = new Interesado();
@@ -58,18 +61,34 @@ class Interesado extends Model {
     $interesado->update($datos);
   }
 
+  protected static function actualizarEstado($id, $estado) {
+    Entidad::actualizarEstado($id, $estado);
+  }
+
   protected static function envioCotizacion($id, $datos) {
-    $interesado = Interesado::ObtenerXId($id);
+    $entidad = Entidad::ObtenerXId($id);
+    $entidad->estado = EstadosInteresado::CotizacionEnviada;
+    $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+    $entidad->save();
+
     $curso = Curso::obtenerXId($datos["idCurso"]);
     $datos["titulo"] = $curso->nombre;
     $datos["curso"] = $curso->nombre;
-    $datos["urlInscripcion"] = "https://www.google.com.pe/";
-    $correo = (!is_null($datos["correoCotizacionPrueba"]) ? $datos["correoCotizacionPrueba"] : $interesado->correoElectronico);
-    $nombreDestinatario = (!is_null($datos["correoCotizacionPrueba"]) ? "" : $interesado->nombre . " " . $interesado->apellido);
+    $datos["urlInscripcion"] = route("usuarios.crear.externo", ["codigoVerificacion" => Crypt::encrypt($entidad->id)]);
+    $correo = (!is_null($datos["correoCotizacionPrueba"]) ? $datos["correoCotizacionPrueba"] : $entidad->correoElectronico);
+    $nombreDestinatario = (!is_null($datos["correoCotizacionPrueba"]) ? "" : $entidad->nombre . " " . $entidad->apellido);
 
     Mail::send('plantillaCorreo.cotizacion', $datos, function ($m) use ($correo, $nombreDestinatario) {
-      $m->to($correo, $nombreDestinatario)->subject('Base!');
+      $m->to($correo, $nombreDestinatario)->subject('English at home - Cotización');
     });
+  }
+
+  protected static function alumnoRegistrado($id, $idAlumno) {
+    RelacionEntidad::registrar($idAlumno, $id, TiposRelacionEntidad::AlumnoInteresado);
+    $entidad = Entidad::ObtenerXId($id);
+    $entidad->estado = EstadosInteresado::AlumnoRegistrado;
+    $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+    $entidad->save();
   }
 
   protected static function eliminar($id) {

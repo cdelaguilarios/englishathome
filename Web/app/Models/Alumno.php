@@ -63,6 +63,11 @@ class Alumno extends Model {
     $alumno->idEntidad = $idEntidad;
     $alumno->save();
 
+
+    if (isset($datos["idInteresado"])) {
+      Interesado::alumnoRegistrado($datos["idInteresado"], $alumno->idEntidad);
+    }
+
     Historial::Registrar([$idEntidad, ((Auth::guest()) ? NULL : Auth::user()->idEntidad)], ((Auth::guest()) ? MensajesHistorial::TituloAlumnoRegistro : MensajesHistorial::TituloAlumnoRegistroXUsuario), "");
     return $idEntidad;
   }

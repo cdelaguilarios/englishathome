@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Interesado\BusquedaRequest;
 use App\Http\Requests\Interesado\FormularioRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Http\Requests\Interesado\ActualizarEstadoRequest;
 use App\Http\Requests\Interesado\FormularioCotizacionRequest;
 
 class InteresadoController extends Controller {
@@ -21,7 +22,7 @@ class InteresadoController extends Controller {
   }
 
   public function index() {
-    
+
     return view("interesado.lista", $this->data);
   }
 
@@ -80,7 +81,18 @@ class InteresadoController extends Controller {
     }
     return redirect(route("interesados.editar", ["id" => $id]));
   }
-  
+
+  public function actualizarEstado($id, ActualizarEstadoRequest $request) {
+    try {
+      $datos = $request->all();
+      Interesado::actualizarEstado($id, $datos["estado"]);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
+    }
+    return response()->json(["mensaje" => "Actualización exitosa."], 200);
+  }
+
   public function cotizacion($id) {
     try {
       $this->data["interesado"] = Interesado::obtenerXId($id);
@@ -93,10 +105,11 @@ class InteresadoController extends Controller {
   }
 
   public function envioCotizacion($id, FormularioCotizacionRequest $req) {
+    $datos = $req->all();
+    Interesado::envioCotizacion($id, $datos);
+    Mensajes::agregarMensajeExitoso("Cotización enviada.");
     try {
-      $datos = $req->all();
-      Interesado::envioCotizacion($id, $datos);
-      Mensajes::agregarMensajeExitoso("Cotización enviada.");
+      
     } catch (\Exception $e) {
       Log::error($e->getMessage());
       Mensajes::agregarMensajeError("Ocurrió un problema durante el envio de la cotización. Por favor inténtelo nuevamente.");

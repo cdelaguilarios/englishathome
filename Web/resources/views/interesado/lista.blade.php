@@ -5,6 +5,7 @@
 <script type="text/javascript">
   var urlListar = "{{ route("interesados.listar") }}";
   var urlEditar = "{{ route("interesados.editar", ["id" => 0]) }}";
+  var urlActualizarEstado = "{{ route("interesados.actualizar.estado", ["id" => 0]) }}";
   var urlCotizacion = "{{ route("interesados.cotizacion", ["id" => 0]) }}";
   var urlEliminar = "{{ route("interesados.destroy", ["id" => 0]) }}";
   var estados = {!!  json_encode(App\Helpers\Enum\EstadosInteresado::listar()) !!};</script>
@@ -55,5 +56,8 @@
       </div>
     </div>
   </div>
+</div>
+<div style="display: none">
+  {{ Form::select("", App\Helpers\Enum\EstadosInteresado::listarSimple(), NULL, ["id" => "sel-estados", "class" => "form-control"]) }}
 </div>
 @endsection

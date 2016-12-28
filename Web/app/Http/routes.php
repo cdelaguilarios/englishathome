@@ -7,16 +7,18 @@ Route::post("iniciar_sesion", ["uses" => "Auth\AuthController@postLogin", "as" =
 Route::get("cerrar_sesion", ["uses" => "Auth\AuthController@getLogout", "as" => "auth.logout"]);
 
 Route::post("interesados/registroExterno", ["uses" => "InteresadoController@registroExterno", "as" => "interesados.regstro.externo"]);
+Route::get("alumno/registroExterno/{codigoVerificacion}", ["uses" => "AlumnoController@registroExterno", "as" => "usuarios.crear.externo"]);
 
-Route::get("alumno/crearExterno", ["uses" => "AlumnoController@crearExterno", "as" => "usuarios.crear.externo"]);
+Route::post("ubigeo/listarDepartamentos", ["uses" => "UbigeoController@listarDepartamentos", "as" => "ubigeo.listarDepartamentos"]);
+Route::post("ubigeo/listarProvincias/{codigoDepartamento}", ["uses" => "UbigeoController@listarProvincias", "as" => "ubigeo.listarProvincias"]);
+Route::post("ubigeo/listarDistritos/{codigoProvincia}", ["uses" => "UbigeoController@listarDistritos", "as" => "ubigeo.listarDistritos"]);
 
+  Route::resource("alumnos", "AlumnoController");
 Route::group(["middleware" => "auth"], function() {
   Route::get("/", ["uses" => "InicioController@inicio", "as" => "/"]);
   Route::get("imagenes/{rutaImagen}", ["uses" => "InicioController@obtenerImagen", "as" => "imagenes"]);
 
-  Route::post("ubigeo/listarDepartamentos", ["uses" => "UbigeoController@listarDepartamentos", "as" => "ubigeo.listarDepartamentos"]);
-  Route::post("ubigeo/listarProvincias/{codigoDepartamento}", ["uses" => "UbigeoController@listarProvincias", "as" => "ubigeo.listarProvincias"]);
-  Route::post("ubigeo/listarDistritos/{codigoProvincia}", ["uses" => "UbigeoController@listarDistritos", "as" => "ubigeo.listarDistritos"]);
+
 
   Route::group(["middleware" => "verificacion.usuario:,"], function() {
     // <editor-fold desc="Usuarios">
@@ -36,11 +38,11 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("interesados/listar", ["uses" => "InteresadoController@listar", "as" => "interesados.listar"]);
     Route::get("interesado/nuevo", ["uses" => "InteresadoController@create", "as" => "interesados.nuevo"]);
     Route::get("interesado/{id}/editar", ["uses" => "InteresadoController@edit", "as" => "interesados.editar"]);
+    Route::post("interesado/{id}/actualizarEstado", ["uses" => "InteresadoController@actualizarEstado", "as" => "interesados.actualizar.estado"]);
     Route::get("interesado/{id}/cotizacion", ["uses" => "InteresadoController@cotizacion", "as" => "interesados.cotizacion"]);
     Route::post("interesado/{id}/cotizacion", ["uses" => "InteresadoController@envioCotizacion", "as" => "interesados.cotizacion"]);
     // </editor-fold>
     // <editor-fold desc="Alumnos">
-    Route::resource("alumnos", "AlumnoController");
     Route::get("alumnos", ["uses" => "AlumnoController@index", "as" => "alumnos"]);
     Route::post("alumnos/listar", ["uses" => "AlumnoController@listar", "as" => "alumnos.listar"]);
     Route::get("alumno/nuevo", ["uses" => "AlumnoController@create", "as" => "alumnos.nuevo"]);

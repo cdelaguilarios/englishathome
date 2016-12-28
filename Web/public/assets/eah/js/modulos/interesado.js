@@ -1,6 +1,7 @@
 $(document).ready(function () {
   urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
+  urlActualizarEstado = (typeof (urlActualizarEstado) === "undefined" ? "" : urlActualizarEstado);
   urlCotizacion = (typeof (urlCotizacion) === "undefined" ? "" : urlCotizacion);
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   estados = (typeof (estados) === "undefined" ? "" : estados);
@@ -25,7 +26,7 @@ $(document).ready(function () {
         {data: "telefono", name: "telefono"},
         {data: "correoElectronico", name: "correoElectronico"},
         {data: "estado", name: "estado", render: function (e, t, d, m) {
-            return '<span class="label ' + estados[d.estado][1] + ' btn_estado">' + estados[d.estado][0] + '</span>';
+            return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn_estado">' + estados[d.estado][0] + '</span></a></div>';
           }},
         {data: "id", name: "id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
@@ -52,6 +53,26 @@ $(document).ready(function () {
   $("#bus-estado").change(function () {
     $("#tab-lista").DataTable().ajax.reload();
   });
+  $(window).click(function (e) {
+    if (!$(e.target).closest('.sec-btn-editar-estado').length) {
+      $(".sec-btn-editar-estado select").trigger("change");
+    }
+  });
+  $(".btn-editar-estado").live("click", function () {
+    $("#sel-estados").clone().val($(this).data("estado")).data("id", $(this).data("id")).data("estado", $(this).data("estado")).appendTo($(this).closest(".sec-btn-editar-estado"));
+    $(this).remove();
+    event.stopPropagation();
+  });
+  $(".sec-btn-editar-estado select").live("change", function () {
+    var id = $(this).data("id");
+    if (urlActualizarEstado !== "" && $(this).data("estado") !== $(this).val()) {
+      llamadaAjax(urlActualizarEstado.replace("/0", "/" + id), "POST", {"estado": $(this).val()}, true);
+    }
+    $(this).closest(".sec-btn-editar-estado").append('<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + id + '" data-estado="' + $(this).val() + '"><span class="label ' + estados[$(this).val()][1] + ' btn_estado">' + estados[$(this).val()][0] + '</span></a>');
+    $(this).remove();
+  });
+
+
 
   $("#formulario-interesado").validate({
     ignore: ":hidden",

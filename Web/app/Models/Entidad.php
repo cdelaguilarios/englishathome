@@ -38,6 +38,13 @@ class Entidad extends Model {
     $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $entidad->update($datos);
   }
+  
+  protected static function actualizarEstado($id, $estado) {
+    $entidad = Entidad::ObtenerXId($id);
+    $entidad->estado = $estado;
+    $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+    $entidad->save();
+  }
 
   public static function registrarActualizarImagenPerfil($id, $imagenPerfil) {
     if (isset($imagenPerfil) && !is_null($imagenPerfil) && $imagenPerfil != "") {

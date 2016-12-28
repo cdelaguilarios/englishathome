@@ -26,19 +26,19 @@
           <div class="form-group">
             {{ Form::label("nombre", "Nombres (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
-              {{ Form::text("nombre", NULL, ["class" => "form-control", "maxlength" =>"255"]) }}
+              {{ Form::text("nombre", (isset($interesado) ? $interesado->nombre : NULL), ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
           </div>
           <div class="form-group">
             {{ Form::label("apellido", "Apellidos (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
-              {{ Form::text("apellido", NULL, ["class" => "form-control", "maxlength" =>"255"]) }}
+              {{ Form::text("apellido", (isset($interesado) ? $interesado->apellido : NULL), ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
           </div>  
           <div class="form-group">
             {{ Form::label("telefono", "Teléfono (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
-              {{ Form::text("telefono", NULL, ["class" => "form-control", "maxlength" =>"30"]) }}
+              {{ Form::text("telefono", (isset($interesado) ? $interesado->telefono : NULL), ["class" => "form-control", "maxlength" =>"30"]) }}
             </div>
           </div>                 
           <div class="form-group">
@@ -64,7 +64,7 @@
           <div class="form-group">
             {{ Form::label("correoElectronico", "Correo electrónico (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
-              {{ Form::email("correoElectronico", NULL, ["class" => "form-control", "maxlength" =>"245"]) }}
+              {{ Form::email("correoElectronico", (isset($interesado) ? $interesado->correoElectronico : NULL), ["class" => "form-control", "maxlength" =>"245"]) }}
             </div>
           </div> 
           <div class="form-group">
@@ -178,7 +178,7 @@
               {{ Form::select("idCurso", $cursos, (isset($alumno) ? $alumno->idCurso : NULL), ["class" => "form-control"]) }}
             </div>
             {{ Form::label("numeroHorasClase", "Número de horas por clase (*): ", ["class" => "col-sm-3 control-label"]) }}
-            <div class="col-sm-1">
+            <div class="col-sm-2">
               {{ Form::select("numeroHorasClase", [], (isset($alumno->numeroHorasClase) ? $alumno->numeroHorasClase : NULL), ["id" => "numero-horas-clase", "class" => "form-control"]) }}     
               {{ Form::hidden("auxNumeroHorasClase", (isset($alumno->numeroHorasClase) ? $alumno->numeroHorasClase : NULL)) }}             
             </div>                    
@@ -212,16 +212,23 @@
             </div>                                        
           </div>
         </div>
-        <div class="box-footer">    
-          <span>(*) Campos obligatorios</span>          
-          <button id="btn-guardar" type="button" class="btn btn-success btn-next pull-right" data-last="{!! ((isset($modo) && $modo == "registrar") ? "Registrar" : "Guardar") !!} datos">
-                  Siguiente
-        </button>
-        <button type="button" class="btn btn-default btn-prev pull-right">
-          Anterior
-        </button>
+        <div class="box-footer">   
+          <div class="form-group">
+            <div class="col-sm-6">
+              <span>(*) Campos obligatorios</span>
+            </div>
+            <div class="col-sm-6">   
+              <button id="btn-guardar" type="button" class="btn btn-primary btn-next pull-right" data-last="{!! ((isset($modo) && $modo == "registrar") ? "Registrar" : "Guardar") !!} datos">
+                      Siguiente
+            </button>
+            <button type="button" class="btn btn-default btn-prev pull-right">
+              Anterior
+            </button>
+          </div>
+        </div>
       </div>                
       {{ Form::hidden("modoEditarRegistrar", 1) }} 
+      {{ Form::hidden("idInteresado", (isset($interesado) ? $interesado->idEntidad : NULL)) }} 
     </div>
   </div>       
 </div>

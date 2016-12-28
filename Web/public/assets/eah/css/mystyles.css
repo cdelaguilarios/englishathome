@@ -283,7 +283,7 @@ textarea{
 
 /*Alumno - registro externo*/
 .register-box {
-    width: 70%;
+    width: 80%;
 }
 @media (max-width: 768px){
 .register-box {
