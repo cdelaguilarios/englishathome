@@ -4,6 +4,7 @@ namespace App\Http\Requests\Alumno\Clase;
 
 use App\Models\Clase;
 use App\Http\Requests\Request;
+use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\EstadosClase;
 
 class ActualizarEstadoRequest extends Request {
@@ -14,10 +15,9 @@ class ActualizarEstadoRequest extends Request {
 
   protected function getValidatorInstance() {
     $datos = $this->all();
-    $datos["idClase"] = (isset($datos["idClase"]) && $datos["idClase"] != "" ? $datos["idClase"] : NULL);
-    $datos["idAlumno"] = (isset($datos["idAlumno"]) && $datos["idAlumno"] != "" ? $datos["idAlumno"] : NULL);
-    $data["estado"] = (isset($data["estado"]) ? $data["estado"] : NULL);
-
+    $datos["idClase"] = ReglasValidacion::formatoDato($datos, "idClase");
+    $datos["idAlumno"] = ReglasValidacion::formatoDato($datos, "idAlumno");
+    $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -26,11 +26,10 @@ class ActualizarEstadoRequest extends Request {
     $datos = $this->all();
     $reglasValidacion = [];
 
-
-    if (!is_null($datos["idClase"]) && !is_null($datos["idAlumno"]) && !Clase::verificarExistencia($datos["idAlumno"], $datos["idClase"])) {
+    if (!Clase::verificarExistencia($datos["idAlumno"], $datos["idClase"])) {
       $reglasValidacion["claseNoValida"] = "required";
     }
-    $estados = EstadosClase::listarSimple(TRUE);
+    $estados = EstadosClase::listarSimple();
     if (!array_key_exists($datos["estado"], $estados)) {
       $reglasValidacion["estadoNoValido"] = "required";
     }

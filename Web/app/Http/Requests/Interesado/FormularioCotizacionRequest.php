@@ -14,18 +14,14 @@ class FormularioCotizacionRequest extends Request {
 
   protected function getValidatorInstance() {
     $datos = $this->all();
-
-    $datos["idCurso"] = (isset($datos["idCurso"]) && $datos["idCurso"] != "" ? $datos["idCurso"] : NULL);
-    $datos["descripcionCurso"] = (isset($datos["descripcionCurso"]) ? $datos["descripcionCurso"] : NULL);
-    $datos["metodologia"] = (isset($datos["metodologia"]) ? $datos["metodologia"] : NULL);
-    $datos["cursoIncluye"] = (isset($datos["cursoIncluye"]) ? $datos["cursoIncluye"] : NULL);
-
-    $datos["numeroHorasInversion"] = (isset($datos["numeroHorasInversion"]) ? $datos["numeroHorasInversion"] : NULL);
-    $datos["costoMaterialesIversion"] = (isset($datos["costoMaterialesIversion"]) ? $datos["costoMaterialesIversion"] : NULL);
-    $datos["totalInversion"] = (isset($datos["totalInversion"]) ? $datos["totalInversion"] : NULL);
-
-    $datos["correoCotizacionPrueba"] = (isset($datos["correoCotizacionPrueba"]) && $datos["correoCotizacionPrueba"] != "" ? $datos["correoCotizacionPrueba"] : NULL);
-
+    $datos["idCurso"] = ReglasValidacion::formatoDato($datos, "idCurso");
+    $datos["descripcionCurso"] = ReglasValidacion::formatoDato($datos, "descripcionCurso");
+    $datos["metodologia"] = ReglasValidacion::formatoDato($datos, "metodologia");
+    $datos["cursoIncluye"] = ReglasValidacion::formatoDato($datos, "cursoIncluye");
+    $datos["inversion"] = ReglasValidacion::formatoDato($datos, "inversion");
+    $datos["inversionCuotas"] = ReglasValidacion::formatoDato($datos, "inversionCuotas");
+    $datos["costoHoraClase"] = ReglasValidacion::formatoDato($datos, "costoHoraClase");
+    $datos["correoCotizacionPrueba"] = ReglasValidacion::formatoDato($datos, "correoCotizacionPrueba");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -37,27 +33,25 @@ class FormularioCotizacionRequest extends Request {
         "descripcionCurso" => "required|max:4000",
         "metodologia" => "required|max:4000",
         "cursoIncluye" => "required|max:4000",
-        "numeroHorasInversion" => "required|numeric|between:1,9999",
-        "costoMaterialesIversion" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
-        "totalInversion" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
+        "inversion" => "required|max:4000",
+        "inversionCuotas" => "required|max:4000",
+        "costoHoraClase" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
         "correoCotizacionPrueba" => "email|max:245"
     ];
 
     $listaCursos = Curso::listarSimple()->toArray();
-    if (!(!is_null($datos["idCurso"]) && array_key_exists($datos["idCurso"], $listaCursos))) {
+    if (!array_key_exists($datos["idCurso"], $listaCursos)) {
       $reglasValidacion["cursoNoValido"] = "required";
     }
 
     switch ($this->method()) {
       case "GET":
-      case "DELETE": {
+      case "DELETE":
+      case "PUT":
+      case "PATCH": {
           return [];
         }
       case "POST": {
-          return $reglasValidacion;
-        }
-      case "PUT":
-      case "PATCH": {
           return $reglasValidacion;
         }
       default:break;
@@ -66,7 +60,7 @@ class FormularioCotizacionRequest extends Request {
 
   public function messages() {
     return [
-        "cursoNoValido.required" => "El curso seleccionado no es válido"
+        "cursoNoValido.required" => "El curso seleccionado no es válido."
     ];
   }
 

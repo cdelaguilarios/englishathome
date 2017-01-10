@@ -13,27 +13,31 @@
               <th>Monto</th>
               <th>Fecha de registro</th>
               <th>Estado</th>
-              <th class="col-sm-1">&nbsp;</th>
+              <th class="all">Opciones</th>
             </tr>
           </thead>
         </table>
       </div>
       <div style="display: none">
-        {{ Form::select("", $estadosPagoSimple, NULL, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
+        {{ Form::select("", App\Helpers\Enum\EstadosPago::listarSimple(), NULL, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
       </div>
-    </div>        
-    @include("alumno.pago.formulario") 
+    </div>      
+    <div id="sec-pago-2" style="display: none;">
+      {{ Form::open(["url" => route("alumnos.pagos.registrar", ["id" => $idAlumno]), "id" => "formulario-pago", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
+      @include("alumno.pago.formulario") 
+      {{ Form::close() }}
+    </div>
   </div>
 </div>
 @include("alumno.util.docentesDisponibles", ["seccion" => "pago"])
 @include("alumno.pago.datos") 
 <script>
-  var urlListarPagos = "{{ route("alumnos.pagos.listar", ["id" => $idAlumno]) }}";
-  var urlActualizarEstadoPago = "{{ route("alumnos.pagos.actualizar.estado", ["id" => $idAlumno]) }}";
-  var urlDatosPago = "{{ route("alumnos.pagos.datos", ["id" => $idAlumno, "idPago" => 0]) }}";
-  var urlEliminarPago = "{{ route("alumnos.pagos.eliminar", ["id" => $idAlumno, "idPago" => 0]) }}";  
-  var urlGenerarClasesPago = "{{ route("alumnos.pagos.generarClases", ["id" => $idAlumno]) }}";
-  var urlListarDocentesDisponiblesPago = "{{ route("alumnos.pagos.docentesDisponibles.listar", ["id" => $idAlumno]) }}"; 
+  var urlListarPagos = "{{ route('alumnos.pagos.listar', ['id' => $idAlumno]) }}";
+  var urlActualizarEstadoPago = "{{ route('alumnos.pagos.actualizar.estado', ['id' => $idAlumno]) }}";
+  var urlGenerarClasesPago = "{{ route('alumnos.pagos.generarClases', ['id' => $idAlumno]) }}";
+  var urlListarDocentesDisponiblesPago = "{{ route('alumnos.pagos.docentesDisponibles.listar', ['id' => $idAlumno]) }}";
   var saldoFavorTotal = {{ ($totalSaldoFavor != "" ? $totalSaldoFavor : 0) }};
+  var urlDatosPago = "{{ route('alumnos.pagos.datos', ['id' => $idAlumno, 'idPago' => 0]) }}";
+  var urlEliminarPago = "{{ route('alumnos.pagos.eliminar', ['id' => $idAlumno, 'idPago' => 0]) }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/pago.js")}}"></script>

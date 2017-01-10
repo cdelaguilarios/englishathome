@@ -9,7 +9,7 @@
     </div>
     {{ Form::label("estado", "Estado: ", ["class" => "col-sm-1 col-sm-offset-1 control-label"]) }}
     <div class="col-sm-4">
-      {{ Form::select("estado", $estadosClaseSimple, NULL, ["id" => "estado-clase", "class" => "form-control"]) }}
+      {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarSimple(), NULL, ["id" => "estado-clase", "class" => "form-control"]) }}
     </div>
     <div class="col-sm-2">
       <div class="checkbox">
@@ -27,7 +27,7 @@
         <div class="input-group-addon">
           <i class="fa fa-calendar"></i>
         </div>                                
-        {{ Form::text("fecha", NULL, ["id" => "fecha-clase", "class" => "form-control  pull-right"]) }}
+        {{ Form::text("fecha", NULL, ["id" => "fecha-clase", "class" => "form-control", "placeholder" => "dd/mm/aaaa"]) }}
       </div>
     </div> 
   </div>

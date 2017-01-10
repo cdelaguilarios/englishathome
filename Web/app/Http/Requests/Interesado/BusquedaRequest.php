@@ -14,7 +14,7 @@ class BusquedaRequest extends Request {
 
   protected function getValidatorInstance() {
     $datos = $this->all();
-    $datos["estado"] = (isset($datos["estado"]) && trim($datos["estado"]) != "" ? $datos["estado"] : NULL);
+    $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -30,14 +30,12 @@ class BusquedaRequest extends Request {
 
     switch ($this->method()) {
       case "GET":
-      case "DELETE": {
+      case "DELETE":
+      case "PUT":
+      case "PATCH": {
           return [];
         }
       case "POST": {
-          return $reglasValidacion;
-        }
-      case "PUT":
-      case "PATCH": {
           return $reglasValidacion;
         }
       default:break;
@@ -46,7 +44,7 @@ class BusquedaRequest extends Request {
 
   public function messages() {
     return [
-        "estadoNoValido.required" => "El estado seleccionado no es válido"
+        "estadoNoValido.required" => "El estado seleccionado no es válido."
     ];
   }
 

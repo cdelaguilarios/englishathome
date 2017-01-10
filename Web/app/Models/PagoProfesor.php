@@ -22,7 +22,7 @@ class PagoProfesor extends Model {
     return $nombreTabla;
   }
 
-  protected static function obtenerXId($idProfesor, $id) {
+  public static function obtenerXId($idProfesor, $id) {
     $nombreTabla = PagoProfesor::nombreTabla();
     return PagoProfesor::select("pago.*")
                     ->leftJoin(Pago::nombreTabla() . " as pago", $nombreTabla . ".idPago", "=", "pago.id")
@@ -31,7 +31,7 @@ class PagoProfesor extends Model {
                     ->where("pago.id", $id)->firstOrFail();
   }
 
-  protected static function obtenerXClase($idClase) {
+  public static function obtenerXClase($idClase) {
     $nombreTabla = PagoProfesor::nombreTabla();
     return PagoProfesor::select("pago.*")
                     ->leftJoin(Pago::nombreTabla() . " as pago", $nombreTabla . ".idPago", "=", "pago.id")
@@ -40,14 +40,14 @@ class PagoProfesor extends Model {
                     ->where("pagoClase.idClase", $idClase)->first();
   }
 
-  protected static function listar($idProfesor) {
+  public static function listar($idProfesor) {
     $nombreTabla = PagoProfesor::nombreTabla();
     return PagoProfesor::leftJoin(Pago::nombreTabla() . " as pago", $nombreTabla . ".idPago", "=", "pago.id")
                     ->where("pago.eliminado", 0)
                     ->where($nombreTabla . ".idProfesor", $idProfesor);
   }
 
-  protected static function registrar($idProfesor, $request) {
+  public static function registrar($idProfesor, $request) {
     $datos = $request->all();
     $datosPago = Pago::registrar($datos, EstadosPago::Realizado, $request);
     $pagoProfesor = new PagoProfesor([
@@ -72,7 +72,7 @@ class PagoProfesor extends Model {
     Historial::Registrar([$idProfesor, Auth::user()->idEntidad], MensajesHistorial::TituloProfesorRegistroPago, $mensajeHistorial, $datosPago["rutasImagenesComprobante"], FALSE, TRUE, $datosPago["id"], NULL, NULL, TiposHistorial::Pago);
   }
 
-  protected static function registrarXDatosClaseCancelada($idProfesor, $idClaseCancelada, $monto) {
+  public static function registrarXDatosClaseCancelada($idProfesor, $idClaseCancelada, $monto) {
     $datos = ["motivo" => MotivosPago::ClaseCancelada, "monto" => $monto];
     $datosPago = Pago::registrar($datos, EstadosPago::Pendiente);
     $pagoProfesor = new PagoProfesor([
@@ -85,17 +85,17 @@ class PagoProfesor extends Model {
     Historial::Registrar([$idProfesor, Auth::user()->idEntidad], MensajesHistorial::TituloProfesorRegistroPago, $mensajeHistorial, NULL, FALSE, TRUE, $datosPago["id"], NULL, NULL, TiposHistorial::Pago);
   }
   
-  protected static function actualizarEstado($idProfesor, $datos) {
+  public static function actualizarEstado($idProfesor, $datos) {
     Pago::actualizarEstado($datos["idPago"], $datos["estado"]);
   }
 
-  protected static function eliminar($idProfesor, $id) {
+  public static function eliminar($idProfesor, $id) {
     PagoProfesor::obtenerXId($idProfesor, $id);
     Pago::eliminar($id);
   }
 
   
-  protected static function verificarExistencia($idProfesor, $id) {
+  public static function verificarExistencia($idProfesor, $id) {
     try {
       PagoProfesor::obtenerXId($idProfesor, $id);
     } catch (Exception $ex) {

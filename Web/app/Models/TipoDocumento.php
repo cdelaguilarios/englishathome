@@ -9,7 +9,7 @@ class TipoDocumento extends Model {
   public $timestamps = false;
   protected $table = "tipoDocumento";
 
-  protected static function listarSimple() {
+  public static function listarSimple() {
     return TipoDocumento::where("eliminado", 0)->lists("nombre", "id");
   }
 

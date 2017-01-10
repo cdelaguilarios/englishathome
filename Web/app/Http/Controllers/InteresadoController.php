@@ -22,33 +22,34 @@ class InteresadoController extends Controller {
   }
 
   public function index() {
-
     return view("interesado.lista", $this->data);
   }
 
   public function listar(BusquedaRequest $req) {
     $datos = $req->all();
-    return Datatables::of(Interesado::listar($datos))->make(true);
+    return Datatables::of(Interesado::listar($datos))->filterColumn("entidad.nombre", function($q, $k) {
+              $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
+            })->make(true);
   }
 
-  public function create() {
+  public function crear() {
     return view("interesado.crear", $this->data);
   }
 
-  public function store(FormularioRequest $req) {
+  public function registrar(FormularioRequest $req) {
     try {
       $datos = $req->all();
-      $id = Interesado::registrar($datos);
+      Interesado::registrar($datos);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
-      return redirect(route("interesados.editar", ["id" => $id]));
+      return redirect(route("interesados"));
     } catch (\Exception $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
-      return redirect(route("interesados.nuevo"));
+      return redirect(route("interesados.crear"));
     }
   }
 
-  public function registroExterno(FormularioRequest $req) {
+  public function registrarExterno(FormularioRequest $req) {
     try {
       $datos = $req->all();
       $id = Interesado::registrar($datos);
@@ -59,7 +60,7 @@ class InteresadoController extends Controller {
     return response()->json(["mensaje" => "Registro exitoso.", "id" => $id], 200);
   }
 
-  public function edit($id) {
+  public function editar($id) {
     try {
       $this->data["interesado"] = Interesado::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
@@ -70,7 +71,7 @@ class InteresadoController extends Controller {
     return view("interesado.editar", $this->data);
   }
 
-  public function update($id, FormularioRequest $req) {
+  public function actualizar($id, FormularioRequest $req) {
     try {
       $datos = $req->all();
       Interesado::actualizar($id, $datos);
@@ -93,7 +94,7 @@ class InteresadoController extends Controller {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function cotizacion($id) {
+  public function cotizar($id) {
     try {
       $this->data["interesado"] = Interesado::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
@@ -104,20 +105,19 @@ class InteresadoController extends Controller {
     return view("interesado.cotizacion", $this->data);
   }
 
-  public function envioCotizacion($id, FormularioCotizacionRequest $req) {
-    $datos = $req->all();
-    Interesado::envioCotizacion($id, $datos);
-    Mensajes::agregarMensajeExitoso("Cotización enviada.");
+  public function enviarCotizacion($id, FormularioCotizacionRequest $req) {
     try {
-      
+      $datos = $req->all();
+      Interesado::enviarCotizacion($id, $datos);
+      Mensajes::agregarMensajeExitoso("Cotización enviada.");
     } catch (\Exception $e) {
       Log::error($e->getMessage());
       Mensajes::agregarMensajeError("Ocurrió un problema durante el envio de la cotización. Por favor inténtelo nuevamente.");
     }
-    return redirect(route("interesados.cotizacion", ["id" => $id]));
+    return redirect(route("interesados.cotizar", ["id" => $id]));
   }
 
-  public function destroy($id) {
+  public function eliminar($id) {
     try {
       Interesado::eliminar($id);
     } catch (ModelNotFoundException $e) {

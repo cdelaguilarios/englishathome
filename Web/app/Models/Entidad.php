@@ -10,7 +10,7 @@ class Entidad extends Model {
 
   public $timestamps = false;
   protected $table = "entidad";
-  protected $fillable = ["nombre", "apellido", "fechaNacimiento", "genero", "telefono", "idTipoDocumento", "numeroDocumento", "correoElectronico", "rutaImagenPerfil", "direccion", "referenciaDireccion", "codigoUbigeo", "geoLatitud", "geoLongitud"];
+  protected $fillable = ["nombre", "apellido", "fechaNacimiento", "sexo", "telefono", "idTipoDocumento", "numeroDocumento", "correoElectronico", "rutaImagenPerfil", "direccion", "numeroDepartamento", "referenciaDireccion", "codigoUbigeo", "geoLatitud", "geoLongitud"];
 
   public static function nombreTabla() {
     $modeloEntidad = new Entidad();
@@ -28,18 +28,20 @@ class Entidad extends Model {
     $entidad->tipo = $tipo;
     $entidad->estado = $estado;
     $entidad->save();
-    return $entidad["id"];
+    return $entidad->id;
   }
 
   public static function Actualizar($id, $datos, $tipo, $estado) {
     $entidad = Entidad::ObtenerXId($id);
     $entidad->tipo = $tipo;
-    $entidad->estado = $estado;
+    if (isset($estado)) {
+      $entidad->estado = $estado;
+    }
     $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $entidad->update($datos);
   }
-  
-  protected static function actualizarEstado($id, $estado) {
+
+  public static function actualizarEstado($id, $estado) {
     $entidad = Entidad::ObtenerXId($id);
     $entidad->estado = $estado;
     $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
@@ -49,7 +51,7 @@ class Entidad extends Model {
   public static function registrarActualizarImagenPerfil($id, $imagenPerfil) {
     if (isset($imagenPerfil) && !is_null($imagenPerfil) && $imagenPerfil != "") {
       $entidad = Entidad::ObtenerXId($id);
-      $entidad->rutaImagenPerfil = Util::guardarImagen($entidad["id"] . "_ia_", $imagenPerfil);
+      $entidad->rutaImagenPerfil = Util::guardarImagen($entidad->id . "_ia_", $imagenPerfil);
       $entidad->save();
     }
   }

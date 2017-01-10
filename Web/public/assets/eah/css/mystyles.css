@@ -16,9 +16,12 @@
 .login-page .contenedor-alerta{
   padding: 10px;
 }
+.box-default {
+  margin-bottom: 5px;
+}
 .alert {
   padding: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 0;
 }
 .alert-dismissable .close, .alert-dismissible .close {
   right: inherit;
@@ -112,6 +115,7 @@ div.dataTables_info{
 /*Formularios*/
 .btn{
   margin-left: 2px;
+  margin-top: 2px;
 }
 select.form-control{
   margin-bottom: 5px;
@@ -140,13 +144,13 @@ input[type=checkbox] {
 }
 .fuelux .checkbox-custom:before{
   left: inherit;
-  right: -20px;
+  right: -18px;
 }
 .fuelux .checkbox label{
   font-weight: 700;
 }
 .checkbox label, .radio label{
-  padding-left: 25px;
+  padding-left: 0;
 }
 .datepicker table tr td span.disabled, .datepicker table tr td span.disabled:hover, 
 .datepicker table tr td.disabled, .datepicker table tr td.disabled:hover{    
@@ -226,6 +230,9 @@ textarea{
   margin: 0;
   float: left;
 }
+#sec-perfil-horario .btn{
+  margin-left: 20px;
+}
 #sec-info-horario ul{
   list-style-type: none;
   margin-top: 5px;
@@ -233,7 +240,7 @@ textarea{
 }
 
 /*Perfil*/
- .sec-datos .text-muted{
+.sec-datos .text-muted{
   margin-left: 20px;
 }
 .box-profile{
@@ -283,11 +290,27 @@ textarea{
 
 /*Alumno - registro externo*/
 .register-box {
-    width: 80%;
+  width: 80%;
 }
 @media (max-width: 768px){
-.register-box {
+  .register-box {
     width: 90%;
     margin-top: 20px;
+  }
 }
+
+.bootstrap-wysihtml5-insert-link-modal .checkbox{
+  display: none;
+}
+@media (max-width: 768px){
+  input[type=file] {
+    max-width: 200px;
+  }
+  #sec-not-mobile { 
+    display: none;
+  }
+}
+
+#sec-instrucciones-horario img{
+  width: 100%;
 }

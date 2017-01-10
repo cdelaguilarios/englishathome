@@ -13,6 +13,7 @@ class ReglasValidacion {
   const RegexGeoLatitud = "/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/";
   const RegexGeoLongitud = "/^\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/";
   const RegexTiempo = "/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/";
+  const RegexFecha = '/(^(((0[1-9]|1[0-9]|2[0-8])[\/](0[1-9]|1[012]))|((29|30|31)[\/](0[13578]|1[02]))|((29|30)[\/](0[4,6,9]|11)))[\/](19|[2-9][0-9])\d\d$)|(^29[\/]02[\/](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)/'; //dd/MM/yyyy
 
   public static function validarUbigeo($codigoDepartamento, $codigoProvincia, $codigoDistrito, $codigoUbigeo) {
     $departamentos = Ubigeo::listarDepartamentos();
@@ -85,4 +86,7 @@ class ReglasValidacion {
     return TRUE;
   }
 
+  public static function formatoDato($datos, $nombreDato, $retornoOpc = NULL){
+    return (isset($datos[$nombreDato]) && trim($datos[$nombreDato]) != "" ? $datos[$nombreDato] : $retornoOpc);
+  }
 }

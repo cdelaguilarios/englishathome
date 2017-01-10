@@ -6,19 +6,17 @@ Route::get("iniciar_sesion", ["uses" => "Auth\AuthController@getLogin", "as" => 
 Route::post("iniciar_sesion", ["uses" => "Auth\AuthController@postLogin", "as" => "auth.login"]);
 Route::get("cerrar_sesion", ["uses" => "Auth\AuthController@getLogout", "as" => "auth.logout"]);
 
-Route::post("interesados/registroExterno", ["uses" => "InteresadoController@registroExterno", "as" => "interesados.regstro.externo"]);
-Route::get("alumno/registroExterno/{codigoVerificacion}", ["uses" => "AlumnoController@registroExterno", "as" => "usuarios.crear.externo"]);
+Route::post("interesado/registrar/externo", ["uses" => "InteresadoController@registrarExterno", "as" => "interesados.registrar.externo"]);
+Route::get("alumno/nuevo/{codigoVerificacion}", ["uses" => "AlumnoController@crearExterno", "as" => "alumnos.crear.externo"]);
+Route::post("alumno/registrar/externo", ["uses" => "AlumnoController@registrarExterno", "as" => "alumnos.registrar.externo"]);
 
 Route::post("ubigeo/listarDepartamentos", ["uses" => "UbigeoController@listarDepartamentos", "as" => "ubigeo.listarDepartamentos"]);
 Route::post("ubigeo/listarProvincias/{codigoDepartamento}", ["uses" => "UbigeoController@listarProvincias", "as" => "ubigeo.listarProvincias"]);
 Route::post("ubigeo/listarDistritos/{codigoProvincia}", ["uses" => "UbigeoController@listarDistritos", "as" => "ubigeo.listarDistritos"]);
 
-  Route::resource("alumnos", "AlumnoController");
 Route::group(["middleware" => "auth"], function() {
   Route::get("/", ["uses" => "InicioController@inicio", "as" => "/"]);
   Route::get("imagenes/{rutaImagen}", ["uses" => "InicioController@obtenerImagen", "as" => "imagenes"]);
-
-
 
   Route::group(["middleware" => "verificacion.usuario:,"], function() {
     // <editor-fold desc="Usuarios">
@@ -33,35 +31,46 @@ Route::group(["middleware" => "auth"], function() {
     Route::patch("usuario/{id}/update", ["uses" => "UsuarioController@update", "as" => "usuarios.update"]);
     // </editor-fold>
     // <editor-fold desc="Interesados">
-    Route::resource("interesados", "InteresadoController", ["except" => ["show"]]);
     Route::get("interesados", ["uses" => "InteresadoController@index", "as" => "interesados"]);
     Route::post("interesados/listar", ["uses" => "InteresadoController@listar", "as" => "interesados.listar"]);
-    Route::get("interesado/nuevo", ["uses" => "InteresadoController@create", "as" => "interesados.nuevo"]);
-    Route::get("interesado/{id}/editar", ["uses" => "InteresadoController@edit", "as" => "interesados.editar"]);
+    Route::get("interesado/nuevo", ["uses" => "InteresadoController@crear", "as" => "interesados.crear"]);
+    Route::post("interesado/registrar", ["uses" => "InteresadoController@registrar", "as" => "interesados.registrar"]);
+    Route::get("interesado/{id}/editar", ["uses" => "InteresadoController@editar", "as" => "interesados.editar"]);
+    Route::patch("interesado/{id}/actualizar", ["uses" => "InteresadoController@actualizar", "as" => "interesados.actualizar"]);
     Route::post("interesado/{id}/actualizarEstado", ["uses" => "InteresadoController@actualizarEstado", "as" => "interesados.actualizar.estado"]);
-    Route::get("interesado/{id}/cotizacion", ["uses" => "InteresadoController@cotizacion", "as" => "interesados.cotizacion"]);
-    Route::post("interesado/{id}/cotizacion", ["uses" => "InteresadoController@envioCotizacion", "as" => "interesados.cotizacion"]);
+    Route::get("interesado/{id}/cotizar", ["uses" => "InteresadoController@cotizar", "as" => "interesados.cotizar"]);
+    Route::post("interesado/{id}/enviarCotizacion", ["uses" => "InteresadoController@enviarCotizacion", "as" => "interesados.enviar.cotizacion"]);
+    Route::delete("interesado/{id}/eliminar", ["uses" => "InteresadoController@eliminar", "as" => "interesados.eliminar"]);
     // </editor-fold>
     // <editor-fold desc="Alumnos">
     Route::get("alumnos", ["uses" => "AlumnoController@index", "as" => "alumnos"]);
     Route::post("alumnos/listar", ["uses" => "AlumnoController@listar", "as" => "alumnos.listar"]);
-    Route::get("alumno/nuevo", ["uses" => "AlumnoController@create", "as" => "alumnos.nuevo"]);
-    Route::get("alumno/{id}/editar", ["uses" => "AlumnoController@edit", "as" => "alumnos.editar"]);
-    Route::get("alumno/{id}/perfil", ["uses" => "AlumnoController@show", "as" => "alumnos.perfil"]);
+    Route::get("alumno/nuevo", ["uses" => "AlumnoController@crear", "as" => "alumnos.crear"]);
+    Route::post("alumno/registrar", ["uses" => "AlumnoController@registrar", "as" => "alumnos.registrar"]);
+    Route::get("alumno/{id}/editar", ["uses" => "AlumnoController@editar", "as" => "alumnos.editar"]);
+    Route::patch("alumno/{id}/actualizar", ["uses" => "AlumnoController@actualizar", "as" => "alumnos.actualizar"]);
+    Route::post("alumno/{id}/actualizarEstado", ["uses" => "AlumnoController@actualizarEstado", "as" => "alumnos.actualizar.estado"]);
+    Route::post("alumno/{id}/actualizarHorario", ["uses" => "AlumnoController@actualizarHorario", "as" => "alumnos.actualizar.horario"]);
+    Route::get("alumno/{id}/perfil", ["uses" => "AlumnoController@perfil", "as" => "alumnos.perfil"]);
+    Route::delete("alumno/{id}/eliminar", ["uses" => "AlumnoController@eliminar", "as" => "alumnos.eliminar"]);
+    // </editor-fold>
+    // <editor-fold desc="Alumnos - pagos">
     Route::post("alumno/{id}/pagos", ["uses" => "AlumnoController@listarPagos", "as" => "alumnos.pagos.listar"]);
+    Route::post("alumno/{id}/pago/actualizarEstado", ["uses" => "AlumnoController@actualizarEstadoPago", "as" => "alumnos.pagos.actualizar.estado"]);
     Route::post("alumno/{id}/pago/generarClases", ["uses" => "AlumnoController@generarClasesXPago", "as" => "alumnos.pagos.generarClases"]);
     Route::post("alumno/{id}/pago/docentesDisponibles", ["uses" => "AlumnoController@listarDocentesDisponiblesXPago", "as" => "alumnos.pagos.docentesDisponibles.listar"]);
     Route::post("alumno/{id}/pago/registrar", ["uses" => "AlumnoController@registrarPago", "as" => "alumnos.pagos.registrar"]);
-    Route::post("alumno/{id}/pago/actualizarEstado", ["uses" => "AlumnoController@actualizarEstadoPago", "as" => "alumnos.pagos.actualizar.estado"]);
     Route::post("alumno/{id}/pago/{idPago}/datos", ["uses" => "AlumnoController@datosPago", "as" => "alumnos.pagos.datos"]);
     Route::delete("alumno/{id}/pago/{idPago}/eliminar", ["uses" => "AlumnoController@eliminarPago", "as" => "alumnos.pagos.eliminar"]);
-    Route::post("alumno/{id}/periodosClases", ["uses" => "AlumnoController@listarPeriodosClases", "as" => "alumnos.periodosClases.listar"]);
+    // </editor-fold>
+    // <editor-fold desc="Alumnos - clases">
+    Route::post("alumno/{id}/periodosClases", ["uses" => "AlumnoController@listarPeriodosClases", "as" => "alumnos.periodos.clases.listar"]);
     Route::post("alumno/{id}/periodo/{numeroPeriodo}/clases", ["uses" => "AlumnoController@listarClases", "as" => "alumnos.periodo.clases.listar"]);
+    Route::post("alumno/{id}/clase/actualizarEstado", ["uses" => "AlumnoController@actualizarEstadoClase", "as" => "alumnos.clases.actualizar.estado"]);
     Route::post("alumno/{id}/clase/docentesDisponibles", ["uses" => "AlumnoController@listarDocentesDisponiblesXClase", "as" => "alumnos.clases.docentesDisponibles.listar"]);
     Route::post("alumno/{id}/clase/registrarActualizar", ["uses" => "AlumnoController@registrarActualizarClase", "as" => "alumnos.clases.registrar.actualizar"]);
-    Route::post("alumno/{id}/clase/actualizarEstado", ["uses" => "AlumnoController@actualizarEstadoClase", "as" => "alumnos.clases.actualizar.estado"]);
-    Route::post("alumno/{id}/clase/{idClase}/datos", ["uses" => "AlumnoController@datosClase", "as" => "alumnos.clases.datos"]);
     Route::post("alumno/{id}/clase/cancelar", ["uses" => "AlumnoController@cancelarClase", "as" => "alumnos.clases.cancelar"]);
+    Route::post("alumno/{id}/clase/{idClase}/datos", ["uses" => "AlumnoController@datosClase", "as" => "alumnos.clases.datos"]);
     Route::delete("alumno/{id}/clase/{idClase}/eliminar", ["uses" => "AlumnoController@eliminarClase", "as" => "alumnos.clases.eliminar"]);
     // </editor-fold>
     // <editor-fold desc="Profesores">

@@ -75,7 +75,8 @@ $(document).ready(function () {
         required: true
       },
       fechaNacimiento: {
-        required: true
+        required: true,
+        validarFecha: true
       },
       correoElectronico: {
         required: true,

@@ -43,8 +43,8 @@
               <div class="input-group date">
                 <div class="input-group-addon">
                   <i class="fa fa-calendar"></i>
-                </div>                                
-                {{ Form::text("fechaNacimiento", null, ["id" => "fecha-nacimiento", "class" => "form-control  pull-right"]) }}
+                </div>                          
+                {{ Form::text("fechaNacimiento", NULL, ["id" => "fecha-nacimiento", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
               </div>
             </div>
           </div>            

@@ -37,7 +37,7 @@
           </div>  
           <div class="form-group">
             {{ Form::label("telefono", "Teléfono (*): ", ["class" => "col-sm-2 control-label"]) }}
-            <div class="col-sm-10">
+            <div class="col-sm-3">
               {{ Form::text("telefono", (isset($interesado) ? $interesado->telefono : NULL), ["class" => "form-control", "maxlength" =>"30"]) }}
             </div>
           </div>                 
@@ -48,17 +48,21 @@
                 <div class="input-group-addon">
                   <i class="fa fa-calendar"></i>
                 </div>                                
-                {{ Form::text("fechaNacimiento", NULL, ["id" => "fecha-nacimiento", "class" => "form-control  pull-right"]) }}
+                {{ Form::text("fechaNacimiento", NULL, ["id" => "fecha-nacimiento", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
               </div>
+            </div>
+            {{ Form::label("sexo", "Sexo: ", ["class" => "col-sm-1 control-label"]) }}
+            <div class="col-sm-2">
+              {{ Form::select("sexo", $sexos, NULL, ["class" => "form-control"]) }}
             </div>
           </div>            
           <div class="form-group">
             {{ Form::label("numeroDocumento", "Doc. de identidad (*): ", ["class" => "col-sm-2 control-label"]) }}
-            <div class="col-sm-3">
+            <div class="col-sm-3" style="display:none">
               {{ Form::select("idTipoDocumento", $tiposDocumentos, NULL, ["class" => "form-control"]) }}
             </div>
             <div class="col-sm-3">
-              {{ Form::number("numeroDocumento", NULL, ["class" => "form-control", "minlength" =>"8", "maxlength" =>"20"]) }}
+              {{ Form::number("numeroDocumento", NULL, ["class" => "form-control", "minlength" =>"8", "maxlength" =>"8"]) }}
             </div>                    
           </div> 
           <div class="form-group">
@@ -88,7 +92,13 @@
             <div class="col-sm-10">
               {{ Form::text("direccion", NULL, ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
-          </div> 
+          </div>
+          <div class="form-group">
+            {{ Form::label("numeroDepartamento", "Depto./Int: ", ["class" => "col-sm-2 control-label"]) }}
+            <div class="col-sm-10">
+              {{ Form::text("numeroDepartamento", NULL, ["class" => "form-control", "maxlength" =>"255"]) }}
+            </div>
+          </div>  
           <div class="form-group">
             {{ Form::label("referenciaDireccion", "Referencia: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
@@ -99,7 +109,7 @@
             {{ Form::label("geoLocalizacion", "Ubicación mapa: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10 sec-mapa">
               @include("util.ubicacionMapa")
-              <div>Sugerimos seleccionar la ubicación exacta en el mapa del lugar donde se realizarán las clases.</div>
+              <div><b>Sugerimos seleccionar la ubicación exacta en el mapa del lugar donde se realizarán las clases.</b></div>
             </div>
             {{ Form::hidden("geoLatitud", NULL) }} 
             {{ Form::hidden("geoLongitud", NULL) }} 
@@ -136,7 +146,7 @@
             <h4>En casa o en su oficina usted cuenta con:</h4>
           </div>
           <div class="form-group">
-            <div class="col-sm-2">
+            <div class="col-sm-3 col-sm-offset-1">
               <div class="checkbox">
                 <label class="checkbox-custom" data-initialize="checkbox">
                   {{ Form::label("conComputadora", "Con computadora: ", ["class" => "checkbox-label"]) }}
@@ -144,7 +154,7 @@
                 </label>
               </div>
             </div>                        
-            <div class="col-sm-2">
+            <div class="col-sm-8">
               <div class="checkbox">
                 <label class="checkbox-custom" data-initialize="checkbox">
                   {{ Form::label("conInternet", "Con internet: ", ["class" => "checkbox-label"]) }}
@@ -152,7 +162,7 @@
                 </label>
               </div>
             </div>    
-            <div class="col-sm-3">
+            <div class="col-sm-3 col-sm-offset-1">
               <div class="checkbox">
                 <label class="checkbox-custom" data-initialize="checkbox">
                   {{ Form::label("conPlumonPizarra", "Pizarra / plumones: ", ["class" => "checkbox-label"]) }}
@@ -160,7 +170,7 @@
                 </label>
               </div>
             </div>
-            <div class="col-sm-5">
+            <div class="col-sm-8">
               <div class="checkbox">
                 <label class="checkbox-custom" data-initialize="checkbox">
                   {{ Form::label("conAmbienteClase", "Un ambiente adecuado para la realización de la clase: ", ["class" => "checkbox-label"]) }}
@@ -189,10 +199,23 @@
               <div class="input-group date">
                 <div class="input-group-addon">
                   <i class="fa fa-calendar"></i>
-                </div>                                
-                {{ Form::text("fechaInicioClase", NULL, ["id" => "fecha-inicio-clase", "class" => "form-control  pull-right"]) }}
+                </div>                                    
+                {{ Form::text("fechaInicioClase", NULL, ["id" => "fecha-inicio-clase", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
               </div>
             </div>
+            @if(isset($interesado))
+              {{ Form::hidden("costoHoraClase", $interesado->costoHoraClase) }} 
+            @else
+              {{ Form::label("costoHoraClase", "Costo hora de clase (*): ", ["class" => "col-sm-3 control-label"]) }}
+              <div class="col-sm-2">
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <b>S/.</b>
+                  </span>
+                  {{ Form::text("costoHoraClase", NULL, ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
+                </div>
+              </div>
+            @endif 
           </div><br/>
           <div class="form-group">
             <h4>Horario disponible (*):</h4>
@@ -218,18 +241,19 @@
               <span>(*) Campos obligatorios</span>
             </div>
             <div class="col-sm-6">   
-              <button id="btn-guardar" type="button" class="btn btn-primary btn-next pull-right" data-last="{!! ((isset($modo) && $modo == "registrar") ? "Registrar" : "Guardar") !!} datos">
-                      Siguiente
-            </button>
-            <button type="button" class="btn btn-default btn-prev pull-right">
-              Anterior
-            </button>
+              <button id="btn-guardar" type="button" class="btn btn-primary btn-next pull-right" data-last="{{ ((isset($modo) && $modo == "registrar") ? "Registrar" : "Guardar") }} datos">
+                Siguiente
+              </button>
+              <button type="button" class="btn btn-default btn-prev pull-right">
+                Anterior
+              </button>
+            </div>
           </div>
-        </div>
-      </div>                
-      {{ Form::hidden("modoEditarRegistrar", 1) }} 
-      {{ Form::hidden("idInteresado", (isset($interesado) ? $interesado->idEntidad : NULL)) }} 
-    </div>
-  </div>       
-</div>
+        </div>                
+        {{ Form::hidden("modoEditarRegistrar", 1) }} 
+        {{ Form::hidden("idInteresado", (isset($interesado) ? $interesado->idEntidad : NULL)) }}  
+        {{ Form::hidden("codigoVerificacion", (isset($codigoVerificacion) ? $codigoVerificacion : NULL)) }}
+      </div>
+    </div>       
+  </div>
 </div>

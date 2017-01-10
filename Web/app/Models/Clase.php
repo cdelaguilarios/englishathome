@@ -26,7 +26,7 @@ class Clase extends Model {
     return $nombreTabla;
   }
 
-  protected static function obtenerXId($idAlumno, $id) {
+  public static function obtenerXId($idAlumno, $id) {
     $nombreTabla = Clase::nombreTabla();
     return Clase::select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", "historial.id AS idHistorial")
                     ->leftJoin(Entidad::nombreTabla() . " as entidadProfesor", $nombreTabla . ".idProfesor", "=", "entidadProfesor.id")
@@ -40,7 +40,7 @@ class Clase extends Model {
                     ->firstOrFail();
   }
 
-  protected static function listarXAlumno($idAlumno, $numeroPeriodo) {
+  public static function listarXAlumno($idAlumno, $numeroPeriodo) {
     $nombreTabla = Clase::nombreTabla();
     $clases = Clase::select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", "historial.id AS idHistorial")
                     ->leftJoin(Entidad::nombreTabla() . " as entidadProfesor", $nombreTabla . ".idProfesor", "=", "entidadProfesor.id")
@@ -54,7 +54,7 @@ class Clase extends Model {
                     ->orderBy($nombreTabla . ".fechaInicio", "ASC")->get();
     foreach ($clases as $clase) {
       $pagoProfesor = PagoProfesor::ObtenerXClase($clase["id"]);
-      $pagoAlumno = PagoAlumno::ObtenerXClase($clase["id"]);
+      $pagoAlumno = PagoAlumno::ObtenerXClase($idAlumno, $clase["id"]);
 
       $clase->estadoPagoProfesor = (!is_null($pagoProfesor) ? $pagoProfesor["estado"] : NULL);
       $clase->estadoPagoAlumno = (!is_null($pagoAlumno) ? $pagoAlumno["estado"] : NULL);
@@ -62,7 +62,7 @@ class Clase extends Model {
     return $clases;
   }
 
-  protected static function listarXProfesor($idProfesor) {
+  public static function listarXProfesor($idProfesor) {
     $nombreTabla = Clase::nombreTabla();
     return Clase::select($nombreTabla . ".*", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", "historial.id AS idHistorial", "pago.estado AS estadoPago")
                     ->leftJoin(Entidad::nombreTabla() . " as entidadAlumno", $nombreTabla . ".idAlumno", "=", "entidadAlumno.id")
@@ -77,24 +77,24 @@ class Clase extends Model {
                     })
                     ->where(function ($q) use ($idProfesor) {
                       $q->whereNull("pagoProfesor.idProfesor")->orWhere("pagoProfesor.idProfesor", $idProfesor);
-                    })  
+                    })
                     ->orderBy($nombreTabla . ".fechaInicio", "ASC");
   }
 
-  protected static function listarPeriodos($idAlumno) {
+  public static function listarPeriodos($idAlumno) {
     return Clase::select("numeroPeriodo", DB::raw("min(fechaInicio) AS fechaInicio, max(fechaFin) AS fechaFin, sum(duracion) AS horasTotal"))->where("idAlumno", $idAlumno)->where("eliminado", 0)->groupBy("numeroPeriodo");
   }
 
-  protected static function totalPeriodos($idAlumno) {
-    return count(Clase::groupBy("numeroPeriodo")->selectRaw("count(*) as total")->where("idAlumno", $idAlumno)->get()->toArray());
+  public static function totalPeriodos($idAlumno) {
+    return count(Clase::selectRaw("count(*) as total")->where("idAlumno", $idAlumno)->where("eliminado", 0)->groupBy("numeroPeriodo")->get()->toArray());
   }
 
-  protected static function listarIdsEntidadesXRangoFecha($fechaInicio, $fechaFin, $idsProfesores = FALSE) {
+  public static function listarIdsEntidadesXRangoFecha($fechaInicio, $fechaFin, $idsProfesores = FALSE) {
     $clases = Clase::where("fechaInicio", "<=", $fechaInicio)->where("fechaFin", ">=", $fechaFin)->lists("idProfesor");
     return ($idsProfesores ? $clases->lists("idProfesor") : $clases->lists("idAlumno"));
   }
 
-  protected static function generarXDatosPago($idAlumno, $datos) {
+  public static function generarXDatosPago($idAlumno, $datos) {
     $duracionTotalSeg = 0;
     $clasesGeneradas = [];
 
@@ -112,7 +112,6 @@ class Clase extends Model {
           $fechaFin = (($tiempoAdicionalSeg > 0) ? $preFechaFin->subSeconds($tiempoAdicionalSeg) : $preFechaFin);
           $duracion = $fechaFin->diffInSeconds($fechaInicio);
           $clasesGeneradas[] = ["fechaInicio" => $fechaInicio, "fechaFin" => $fechaFin, "duracion" => $duracion, "tiempoAdicional" => ($tiempoAdicionalSeg > 0 ? $tiempoAdicionalSeg : 0)];
-
           $duracionTotalSeg += $duracion;
         }
       }
@@ -121,38 +120,7 @@ class Clase extends Model {
     return $clasesGeneradas + ["montoRestante" => ($datos["monto"] - ($horasPagadas * (float) $datos["costoHoraClase"]))];
   }
 
-  protected static function registrarActualizar($idAlumno, $datos) {
-    if (!(isset($datos["fechaInicio"]) && isset($datos["fechaFin"]))) {
-      $datos["fechaInicio"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00")->addSeconds($datos["horaInicio"]);
-      $datos["fechaFin"] = clone $datos["fechaInicio"];
-      $datos["fechaFin"]->addSeconds($datos["duracion"]);
-    }
-    $datos["idAlumno"] = $idAlumno;
-    $datos["idProfesor"] = $datos["idDocente"];
-
-    if (isset($datos["idClase"])) {
-      $clase = Clase::obtenerXId($idAlumno, $datos["idClase"]);
-      $clase->update($datos);
-    } else {
-      $clase = new Clase($datos);
-      $clase->save();
-    }
-
-    if ($datos["notificar"] == 1) {
-      $tituloHistorial = str_replace(["[DIAS]"], ["1 día"], (!is_null($datos["idDocente"]) ? MensajesHistorial::TituloCorreoAlumnoClase : MensajesHistorial::TituloCorreoAlumnoClaseSinProfesor));
-      $mensajeHistorial = str_replace(["[FECHA]", "[PERIODO]", "[DURACION]"], [$datos["fechaInicio"]->format("d/m/Y H:i:s"), $datos["numeroPeriodo"], gmdate("H:i", $datos["duracion"])], (!is_null($datos["idDocente"]) ? MensajesHistorial::MensajeCorreoAlumnoClase : MensajesHistorial::MensajeCorreoAlumnoClaseSinProfesor));
-      Historial::Registrar([$idAlumno, $datos["idDocente"], Auth::user()->idEntidad], $tituloHistorial, $mensajeHistorial, NULL, TRUE, FALSE, NULL, $clase["id"], $datos["fechaInicio"]->subDays(1), TiposHistorial::Correo);
-    }
-    return $clase["id"];
-  }
-
-  protected static function actualizarEstado($idAlumno, $datos) {
-    $clase = Clase::obtenerXId($idAlumno, $datos["idClase"]);
-    $clase->estado = $datos["estado"];
-    $clase->save();
-  }
-
-  protected static function registrarXDatosPago($idAlumno, $idPago, $datos) {
+  public static function registrarXDatosPago($idAlumno, $idPago, $datos) {
     $datosClases = Clase::generarXDatosPago($idAlumno, $datos);
     $datosNotificacionClases = json_decode($datos["datosNotificacionClases"]);
 
@@ -172,7 +140,44 @@ class Clase extends Model {
     }
   }
 
-  protected static function cancelar($idAlumno, $datos) {
+  public static function registrarActualizar($idAlumno, $datos) {
+    if (!(isset($datos["fechaInicio"]) && isset($datos["fechaFin"]))) {
+      $datos["fechaInicio"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00")->addSeconds($datos["horaInicio"]);
+      $datos["fechaFin"] = clone $datos["fechaInicio"];
+      $datos["fechaFin"]->addSeconds($datos["duracion"]);
+    }
+    $datos["idAlumno"] = $idAlumno;
+    $datos["idProfesor"] = $datos["idDocente"];
+    $datos["costoHoraProfesor"] = $datos["costoHoraDocente"];
+
+    $notificar = ($datos["notificar"] == 1);
+    $claseAnt = ((isset($datos["idClase"])) ? Clase::obtenerXId($idAlumno, $datos["idClase"]) : NULL);
+    if($claseAnt !== NULL){
+      $notificar = ($notificar && $claseAnt->idNotificar == NULL);
+    }    
+    if (isset($datos["idClase"])) {
+      $clase = Clase::obtenerXId($idAlumno, $datos["idClase"]);
+      $clase->update($datos);
+    } else {
+      $clase = new Clase($datos);
+      $clase->save();
+    }
+
+    if ($notificar) {
+      $tituloHistorial = str_replace(["[DIAS]"], ["1 día"], (!is_null($datos["idDocente"]) ? MensajesHistorial::TituloCorreoAlumnoClase : MensajesHistorial::TituloCorreoAlumnoClaseSinProfesor));
+      $mensajeHistorial = str_replace(["[FECHA]", "[PERIODO]", "[DURACION]"], [$datos["fechaInicio"]->format("d/m/Y H:i:s"), $datos["numeroPeriodo"], gmdate("H:i", $datos["duracion"])], (!is_null($datos["idDocente"]) ? MensajesHistorial::MensajeCorreoAlumnoClase : MensajesHistorial::MensajeCorreoAlumnoClaseSinProfesor));
+      Historial::Registrar([$idAlumno, $datos["idDocente"], Auth::user()->idEntidad], $tituloHistorial, $mensajeHistorial, NULL, TRUE, FALSE, NULL, $clase["id"], $datos["fechaInicio"]->subDays(1), TiposHistorial::Correo);
+    }
+    return $clase["id"];
+  }
+
+  public static function actualizarEstado($idAlumno, $datos) {
+    $clase = Clase::obtenerXId($idAlumno, $datos["idClase"]);
+    $clase->estado = $datos["estado"];
+    $clase->save();
+  }
+
+  public static function cancelar($idAlumno, $datos) {
     $claseCancelada = Clase::obtenerXId($idAlumno, $datos["idClase"]);
     if ($claseCancelada !== EstadosClase::Cancelada && $claseCancelada !== EstadosClase::Realizada) {
       $claseCancelada->tipoCancelacion = $datos["tipoCancelacion"];
@@ -183,7 +188,7 @@ class Clase extends Model {
       if ($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionAlumno && isset($datos["idProfesor"]) && isset($datos["pagoProfesor"])) {
         PagoProfesor::registrarXDatosClaseCancelada($datos["idProfesor"], $datos["idClase"], $datos["pagoProfesor"]);
       }
-      
+
       if (($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionAlumno && $datos["reprogramarCancelacionAlumno"] == 1) ||
               ($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionProfesor && $datos["reprogramarCancelacionProfesor"] == 1)) {
         unset($datos["idClase"]);
@@ -197,20 +202,27 @@ class Clase extends Model {
     }
   }
 
-  protected static function eliminar($idAlumno, $id) {
-    $clase = Clase::obtenerXId($idAlumno, $id);
-    $clase->eliminado = 1;
-    $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
-    $clase->save();
-  }
-
-  protected static function verificarExistencia($idAlumno, $id) {
+  public static function verificarExistencia($idAlumno, $id) {
     try {
       Clase::obtenerXId($idAlumno, $id);
     } catch (Exception $ex) {
       return FALSE;
     }
     return TRUE;
+  }
+
+  public static function eliminadXIdPago($idAlumno, $idPago) {
+    $pagosClases = PagoClase::obtenerXIdPago($idPago);
+    foreach ($pagosClases as $pagoClase) {
+      Clase::eliminar($idAlumno, $pagoClase->idClase);
+    }
+  }
+
+  public static function eliminar($idAlumno, $id) {
+    $clase = Clase::obtenerXId($idAlumno, $id);
+    $clase->eliminado = 1;
+    $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+    $clase->save();
   }
 
 }

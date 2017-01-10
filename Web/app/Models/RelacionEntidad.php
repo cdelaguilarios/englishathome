@@ -17,13 +17,21 @@ class RelacionEntidad extends Model {
     return $nombreTabla;
   }
 
-  protected static function registrar($idEntidadA, $idEntidadB, $tipo) {
+  public static function registrar($idEntidadA, $idEntidadB, $tipo) {
     $relacionEntidad = new RelacionEntidad([
         "idEntidadA" => $idEntidadA,
         "idEntidadB" => $idEntidadB,
         "tipo" => $tipo
     ]);
     $relacionEntidad->save();
+  }
+
+  public static function obtenerXIdEntidadA($idInteresado) {
+    return RelacionEntidad::where("idEntidadA", $idInteresado)->get();
+  }
+  
+  public static function obtenerXIdEntidadB($idInteresado) {
+    return RelacionEntidad::where("idEntidadB", $idInteresado)->get();
   }
 
 }

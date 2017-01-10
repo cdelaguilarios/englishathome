@@ -23,7 +23,7 @@ class Profesor extends Model {
     return $nombreTabla;
   }
 
-  protected static function listar() {
+  public static function listar() {
     $nombreTabla = Profesor::nombreTabla();
     return Profesor::select($nombreTabla . ".*", "entidad.*", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))
                     ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
@@ -31,7 +31,7 @@ class Profesor extends Model {
                     ->where("entidad.eliminado", 0);
   }
 
-  protected static function ObtenerXId($id, $simple = FALSE) {
+  public static function ObtenerXId($id, $simple = FALSE) {
     $nombreTabla = Profesor::nombreTabla();
     $profesor = Profesor::select($nombreTabla . ".*", "entidad.*")
                     ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")

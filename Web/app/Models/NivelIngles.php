@@ -9,7 +9,7 @@ class NivelIngles extends Model {
   public $timestamps = false;
   protected $table = "nivelIngles";
 
-  protected static function listarSimple() {
+  public static function listarSimple() {
     return NivelIngles::where("eliminado", 0)->lists("nombre", "id");
   }
 

@@ -20,11 +20,6 @@
     vertical-align: middle;
     float: none;
   }
-  @media (max-width: 768px){
-    input[type=file] {
-      max-width: 200px;
-    }
-  }
 </style>
 @endsection
 @endif
@@ -39,13 +34,13 @@
 @endsection
 
 @section("content") 
-@if(isset($interesado) && $interesado->estado == App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado)
+@include("partials/errors")
+@if(isset($vistaExterna) && $vistaExterna && isset($interesado) && $interesado->estado == App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado)
 <div class="row text-center">
-  <h4>Muchas gracias por registrar tus datos, pronto nos estaremos comunicando con usted.</h4>
+  <h4>Muchas gracias por registrar sus datos, pronto nos estaremos comunicando con usted.</h4>
 </div>
 @else
-@include("partials/errors")
-{{ Form::open(["url" => "alumnos", "id" => "formulario-alumno", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
+{{ Form::open(["url" => route("alumnos.registrar" . (isset($vistaExterna) && $vistaExterna && isset($interesado) ? ".externo" : "")), "id" => "formulario-alumno", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
 @include("alumno.formulario", ["modo" => "registrar"])
 {{ Form::close() }}
 @endif

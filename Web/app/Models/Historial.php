@@ -22,7 +22,7 @@ class Historial extends Model {
     return $nombreTabla;
   }
 
-  protected static function obtener($numeroCarga, $idEntidad) {
+  public static function obtener($numeroCarga, $idEntidad) {
     if ($idEntidad == NULL) {
       return [];
     }
@@ -51,7 +51,7 @@ class Historial extends Model {
     return ["datos" => Historial::FormatearDatosHistorial($historialSel), "mostrarBotonCargar" => (((((int) $numeroCarga) + 1) * Historial::numeroMensajesXCarga) < $historialTotal)];
   }
 
-  protected static function Registrar($idsEntidades, $titulo, $mensaje, $rutasImagenes = NULL, $enviarCorreo = FALSE, $mostrarEnPerfil = TRUE, $idPago = NULL, $idClase = NULL, $fechaNotificacion = NULL, $tipo = TiposHistorial::Notificacion) {
+  public static function Registrar($idsEntidades, $titulo, $mensaje, $rutasImagenes = NULL, $enviarCorreo = FALSE, $mostrarEnPerfil = TRUE, $idPago = NULL, $idClase = NULL, $fechaNotificacion = NULL, $tipo = TiposHistorial::Notificacion) {
     $idEntidadesSel = (is_array($idsEntidades) ? $idsEntidades : [$idsEntidades]);
     if (count($idEntidadesSel) > 0) {
       $historial = new Historial([

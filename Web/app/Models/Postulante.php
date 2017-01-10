@@ -18,7 +18,7 @@ class Postulante extends Model {
     return $nombreTabla;
   }
 
-  protected static function Listar() {
+  public static function Listar() {
     $nombreTabla = Postulante::NombreTabla();
     return Postulante::select($nombreTabla . ".*", "entidad.*", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))
                     ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
@@ -26,11 +26,11 @@ class Postulante extends Model {
                     ->where("entidad.eliminado", 0);
   }
 
-  protected static function ListarSimple() {
+  public static function ListarSimple() {
     return Postulante::Listar()->lists("nombreCompleto", "entidad.id");
   }
 
-  protected static function ObtenerXId($id) {
+  public static function ObtenerXId($id) {
     $nombreTabla = Postulante::NombreTabla();
     return Postulante::select($nombreTabla . ".*", "entidad.*")
                     ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")

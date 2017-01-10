@@ -17,18 +17,18 @@ class CancelarRequest extends Request {
 
   protected function getValidatorInstance() {
     $datos = $this->all();
-    $datos["idClase"] = (isset($datos["idClase"]) && $datos["idClase"] != "" ? $datos["idClase"] : NULL);
-    $datos["idAlumno"] = (isset($datos["idAlumno"]) && $datos["idAlumno"] != "" ? $datos["idAlumno"] : NULL);
-    $datos["idProfesor"] = (isset($datos["idProfesor"]) && $datos["idProfesor"] != "" ? $datos["idProfesor"] : NULL);
-    $datos["pagoProfesor"] = (isset($datos["pagoProfesor"]) ? $datos["pagoProfesor"] : NULL);
-    $datos["tipoCancelacion"] = (isset($datos["tipoCancelacion"]) ? $datos["tipoCancelacion"] : NULL);
+    $datos["idClase"] = ReglasValidacion::formatoDato($datos, "idClase");
+    $datos["idAlumno"] = ReglasValidacion::formatoDato($datos, "idAlumno");
+    $datos["idProfesor"] = ReglasValidacion::formatoDato($datos, "idProfesor");
+    $datos["pagoProfesor"] = ReglasValidacion::formatoDato($datos, "pagoProfesor");
+    $datos["tipoCancelacion"] = ReglasValidacion::formatoDato($datos, "tipoCancelacion");
     $datos["reprogramarCancelacionAlumno"] = (isset($datos["reprogramarCancelacionAlumno"]) ? 1 : 0);
     $datos["reprogramarCancelacionProfesor"] = (isset($datos["reprogramarCancelacionProfesor"]) ? 1 : 0);
-    $datos["fecha"] = (isset($datos["fecha"]) ? $datos["fecha"] : NULL);
-    $datos["horaInicio"] = (isset($datos["horaInicio"]) ? $datos["horaInicio"] : NULL);
-    $datos["duracion"] = (isset($datos["duracion"]) ? $datos["duracion"] : NULL);
-    $datos["idDocente"] = (isset($datos["idDocente"]) && $datos["idDocente"] != "" ? $datos["idDocente"] : NULL);
-    $datos["costoHoraDocente"] = (isset($datos["costoHoraDocente"]) ? $datos["costoHoraDocente"] : NULL);
+    $datos["fecha"] = ReglasValidacion::formatoDato($datos, "fecha");
+    $datos["horaInicio"] = ReglasValidacion::formatoDato($datos, "horaInicio");
+    $datos["duracion"] = ReglasValidacion::formatoDato($datos, "duracion");
+    $datos["idDocente"] = ReglasValidacion::formatoDato($datos, "idDocente");
+    $datos["costoHoraDocente"] = ReglasValidacion::formatoDato($datos, "costoHoraDocente");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -42,10 +42,10 @@ class CancelarRequest extends Request {
     ];
 
     $listaTiposCancelacion = TiposCancelacionClase::listar();
-    if (!(!is_null($datos["tipoCancelacion"]) && array_key_exists($datos["tipoCancelacion"], $listaTiposCancelacion))) {
+    if (!array_key_exists($datos["tipoCancelacion"], $listaTiposCancelacion)) {
       $reglasValidacion["tipoCancelacionNoValido"] = "required";
     }
-    if (!is_null($datos["idAlumno"]) && !is_null($datos["idClase"]) && !Clase::verificarExistencia($datos["idAlumno"], $datos["idClase"])) {
+    if (!Clase::verificarExistencia($datos["idAlumno"], $datos["idClase"])) {
       $reglasValidacion["claseNoValida"] = "required";
     }
     //Profesor de la clase cancelada

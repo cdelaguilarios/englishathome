@@ -35,14 +35,14 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     return $nombreTabla;
   }
 
-  protected static function Listar() {
+  public static function Listar() {
     $nombreTabla = Usuario::NombreTabla();
     return Usuario::select($nombreTabla . ".*", "entidad.*")
                     ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
                     ->where("entidad.eliminado", 0);
   }
 
-  protected static function ObtenerXId($id) {
+  public static function ObtenerXId($id) {
     $nombreTabla = Usuario::NombreTabla();
     return Usuario::select($nombreTabla . ".*", "entidad.*")
                     ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
@@ -50,7 +50,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
                     ->where("entidad.eliminado", 0)->firstOrFail();
   }
 
-  protected static function Registrar($req) {
+  public static function Registrar($req) {
     $datos = $req->all();
     $datos["correoElectronico"] = $datos["email"];
 
@@ -71,7 +71,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     return $entidad["id"];
   }
 
-  protected static function Actualizar($id, $req) {
+  public static function Actualizar($id, $req) {
     $datos = $req->all();
     $datos["correoElectronico"] = $datos["email"];
 
@@ -97,7 +97,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     $usuario->update($datos);
   }
 
-  protected static function Eliminar($id) {
+  public static function Eliminar($id) {
     $entidad = Entidad::ObtenerXId($id);
     $usuario = Usuario::ObtenerXId($id);
 
@@ -115,7 +115,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     $usuario->save();
   }
 
-  protected static function UsuarioUnicoPrincipal($id) {
+  public static function UsuarioUnicoPrincipal($id) {
     $datosUsuario = Usuario::where("rol", RolesUsuario::Principal)->count();
     if ($datosUsuario > 1) {
       return FALSE;
@@ -124,12 +124,12 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     return ($usuario->rol == RolesUsuario::Principal);
   }
 
-  protected static function UsuarioEliminado($id) {
+  public static function UsuarioEliminado($id) {
     $entidad = Entidad::ObtenerXId($id);
     return ($entidad->eliminado == 0);
   }
 
-  protected static function UsuarioActivo($id) {
+  public static function UsuarioActivo($id) {
     $entidad = Entidad::ObtenerXId($id);
     return ($entidad->estado == EstadosUsuario::Activo);
   }

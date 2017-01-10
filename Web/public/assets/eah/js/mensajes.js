@@ -14,6 +14,7 @@ function agregarMensaje(tipo, mensaje, mostrarTemporalmente, idSecContenedor) {
   $("div" + (idSecContenedor !== undefined ? idSecContenedor : ".contenedor-alerta")).append(plantillaMen);
   if (mostrarTemporalmente)
     establecerTiempoMensajeVisible(idSecContenedor);
+  $("div" + (idSecContenedor !== undefined ? idSecContenedor : ".contenedor-alerta"))[0].focus();
 }
 function establecerTiempoMensajeVisible(idSecContenedor) {
   idSecContenedor = (idSecContenedor !== undefined ? idSecContenedor : ".contenedor-alerta");

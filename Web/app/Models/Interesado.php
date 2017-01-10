@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Mail;
 use Crypt;
-use Carbon\Carbon;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\EstadosInteresado;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +14,7 @@ class Interesado extends Model {
   public $timestamps = false;
   protected $primaryKey = "idEntidad";
   protected $table = "interesado";
-  protected $fillable = ["consulta", "cursoInteres", "codigoVerificacion"];
+  protected $fillable = ["consulta", "cursoInteres", "codigoVerificacion", "costoHoraClase"];
 
   public static function nombreTabla() {
     $modeloInteresado = new Interesado();
@@ -24,75 +23,83 @@ class Interesado extends Model {
     return $nombreTabla;
   }
 
-  protected static function listar($datos = NULL) {
+  public static function listar($datos = NULL) {
     $nombreTabla = Interesado::nombreTabla();
-    $interesados = Interesado::select($nombreTabla . ".*", "entidad.*")
-            ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
-            ->where("entidad.eliminado", 0);
-
+    $interesados = Interesado::leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")->where("entidad.eliminado", 0);
     if (isset($datos["estado"])) {
       $interesados->where("entidad.estado", $datos["estado"]);
     }
     return $interesados;
   }
 
-  protected static function obtenerXId($id) {
-    return Interesado::listar()->where("entidad.id", $id)->firstOrFail();
+  public static function obtenerXId($id, $simple = FALSE) {
+    $interesado = Interesado::listar()->where("entidad.id", $id)->firstOrFail();
+    if (!$simple) {
+      $entidadCurso = EntidadCurso::listar($id)->get();
+      $interesado->idCurso = ((count($entidadCurso) > 0) ? $entidadCurso[0]->idCurso : NULL);
+    }
+    return $interesado;
   }
 
-  protected static function registrar($datos) {
-    $entidad = new Entidad($datos);
-    $entidad->tipo = TiposEntidad::Interesado;
-    $entidad->estado = EstadosInteresado::PendienteInformacion;
-    $entidad->save();
+  public static function registrar($datos) {
+    $idEntidad = Entidad::registrar($datos, TiposEntidad::Interesado, ((isset($datos["estado"])) ? $datos["estado"] : EstadosInteresado::PendienteInformacion));
+    EntidadCurso::registrarActualizar($idEntidad, $datos["idCurso"]);
 
     $interesado = new Interesado($datos);
-    $interesado->idEntidad = $entidad->id;
+    $interesado->idEntidad = $idEntidad;
     $interesado->save();
-    return $entidad->id;
+    return $idEntidad;
   }
 
-  protected static function actualizar($id, $datos) {
-    $entidad = Entidad::ObtenerXId($id);
-    $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
-    $entidad->update($datos);
+  public static function actualizar($id, $datos) {
+    Entidad::Actualizar($id, $datos, TiposEntidad::Interesado, $datos["estado"]);
+    EntidadCurso::registrarActualizar($id, $datos["idCurso"]);
 
-    $interesado = Interesado::obtenerXId($id);
+    $interesado = Interesado::obtenerXId($id, TRUE);
     $interesado->update($datos);
   }
 
-  protected static function actualizarEstado($id, $estado) {
+  public static function actualizarEstado($id, $estado) {
+    Interesado::obtenerXId($id, TRUE);
     Entidad::actualizarEstado($id, $estado);
   }
 
-  protected static function envioCotizacion($id, $datos) {
+  public static function enviarCotizacion($id, $datos) {
     $entidad = Entidad::ObtenerXId($id);
-    $entidad->estado = EstadosInteresado::CotizacionEnviada;
-    $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
-    $entidad->save();
+    if (!isset($datos["correoCotizacionPrueba"])) {
+      Interesado::actualizarEstado($id, EstadosInteresado::CotizacionEnviada);
+    }
+    
+    $interesado = Interesado::obtenerXId($id, TRUE);
+    $interesado->costoHoraClase = $datos["costoHoraClase"];
+    $interesado->save();
 
     $curso = Curso::obtenerXId($datos["idCurso"]);
     $datos["titulo"] = $curso->nombre;
     $datos["curso"] = $curso->nombre;
-    $datos["urlInscripcion"] = route("usuarios.crear.externo", ["codigoVerificacion" => Crypt::encrypt($entidad->id)]);
-    $correo = (!is_null($datos["correoCotizacionPrueba"]) ? $datos["correoCotizacionPrueba"] : $entidad->correoElectronico);
-    $nombreDestinatario = (!is_null($datos["correoCotizacionPrueba"]) ? "" : $entidad->nombre . " " . $entidad->apellido);
+    $datos["urlInscripcion"] = route("alumnos.crear.externo", ["codigoVerificacion" => Crypt::encrypt($entidad->id)]);
+    $correo = (isset($datos["correoCotizacionPrueba"]) ? $datos["correoCotizacionPrueba"] : $entidad->correoElectronico);
+    $nombreDestinatario = (isset($datos["correoCotizacionPrueba"]) ? "" : $entidad->nombre . " " . $entidad->apellido);
 
-    Mail::send('plantillaCorreo.cotizacion', $datos, function ($m) use ($correo, $nombreDestinatario) {
-      $m->to($correo, $nombreDestinatario)->subject('English at home - Cotización');
+    Mail::send("interesado.plantillaCorreo.cotizacion", $datos, function ($m) use ($correo, $nombreDestinatario) {
+      $m->to($correo, $nombreDestinatario)->subject("English at home - Cotización");
     });
   }
 
-  protected static function alumnoRegistrado($id, $idAlumno) {
-    RelacionEntidad::registrar($idAlumno, $id, TiposRelacionEntidad::AlumnoInteresado);
-    $entidad = Entidad::ObtenerXId($id);
-    $entidad->estado = EstadosInteresado::AlumnoRegistrado;
-    $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
-    $entidad->save();
+  public static function esAlumnoRegistrado($id) {
+    Interesado::obtenerXId($id, TRUE);
+    $relacionEntidad = RelacionEntidad::obtenerXIdEntidadB($id);
+    return (count($relacionEntidad) > 0);
   }
 
-  protected static function eliminar($id) {
-    Interesado::obtenerXId($id);
+  public static function registrarAlumno($id, $idAlumno) {
+    Interesado::obtenerXId($id, TRUE);
+    RelacionEntidad::registrar($idAlumno, $id, TiposRelacionEntidad::AlumnoInteresado);
+    Interesado::actualizarEstado($id, EstadosInteresado::AlumnoRegistrado);
+  }
+
+  public static function eliminar($id) {
+    Interesado::obtenerXId($id, TRUE);
     Entidad::eliminar($id);
   }
 

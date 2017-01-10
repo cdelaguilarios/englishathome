@@ -53,8 +53,8 @@
         <div class="wrapper" style="display: none;">
           <header class="main-header">
             <a href="{{ route("/")}}" class="logo">
-              <span class="logo-mini"><b>A</b>EH</span>
-              <span class="logo-lg"><b>Administrador</b> EH</span>
+              <span class="logo-mini"><b>EAH</b></span>
+              <span class="logo-lg"><b>Administrador</b> EAH</span>
             </a>
             <nav class="navbar navbar-static-top">
               <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
@@ -147,7 +147,8 @@
             <i class="fa fa-refresh fa-spin"></i>
           </div>
         </div>  
-      @endif
+        <div id="sec-not-mobile"></div>
+      @endif      
       <script src="{{ asset("assets/plugins/jquery/jquery.min.js") }}"></script>
       <script src="{{ asset("assets/plugins/jQueryUI/jquery-ui.min.js") }}"></script>
       <script src="{{ asset("assets/plugins/jquery/jquery-migrate.min.js") }}"></script>
@@ -158,6 +159,7 @@
       <script src="{{ asset("assets/plugins/fastclick/fastclick.js") }}"></script>          
       <script src="{{ asset("assets/plugins/basic-schedule/src/index.js") }}"></script> 
       <script src="{{ asset("assets/dist/js/app.min.js") }}"></script>
+      <script src="{{ asset("assets/plugins/ckeditor/ckeditor.js") }}"></script>
       <script src="{{ asset("assets/plugins/datatables/jquery.dataTables.min.js") }}"></script>
       <script src="{{ asset("assets/plugins/datatables/dataTables.bootstrap.min.js") }}"></script>
       <script src="{{ asset("assets/plugins/datatables/extensions/Responsive/js/dataTables.responsive.min.js") }}"></script>
@@ -177,10 +179,10 @@
         var estadoClaseRealizada = "{{ $estadoClaseRealizada }}";
         var estadoClaseCancelada = "{{ $estadoClaseCancelada }}";
         var tipoCancelacionClaseAlumno = "{{ $tipoCancelacionClaseAlumno }}";
-        var motivosPago = {!!  json_encode($motivosPago) !!};
+        var motivosPago = {!!  json_encode(App\Helpers\Enum\MotivosPago::listar()) !!};
         var urlPerfilProfesor = "{{ route("profesores.perfil", ["id" => 0]) }}";
         var urlPerfilAlumno = "{{ route("alumnos.perfil", ["id" => 0]) }}";
-        var estadosPago = {!!  json_encode($estadosPago) !!};
+        var estadosPago = {!!  json_encode(App\Helpers\Enum\EstadosPago::listar()) !!};
         var estadoPagoRealizado = "{{  $estadoPagoRealizado }}";
       </script>
       <script src="{{ asset("assets/eah/js/util.js") }}"></script>

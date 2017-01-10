@@ -22,19 +22,21 @@ class EntidadCurso extends Model {
     return ($entidadCurso != NULL ? $entidadCurso->idCurso : NULL);
   }
 
-  protected static function listar($idEntidad) {
+  public static function listar($idEntidad) {
     return EntidadCurso::where("idEntidad", $idEntidad);
   }
 
-  protected static function registrarActualizar($idEntidad, $idCursos) {
+  public static function registrarActualizar($idEntidad, $idCursos) {
     EntidadCurso::where("idEntidad", $idEntidad)->delete();
-    $idCursosSel = (is_array($idCursos) ? $idCursos : [$idCursos]);
-    foreach ($idCursosSel as $idCurso) {
-      $entidadCurso = new EntidadCurso([
-          "idEntidad" => $idEntidad,
-          "idCurso" => $idCurso
-      ]);
-      $entidadCurso->save();
+    if (isset($idCursos)) {
+      $idCursosSel = (is_array($idCursos) ? $idCursos : [$idCursos]);
+      foreach ($idCursosSel as $idCurso) {
+        $entidadCurso = new EntidadCurso([
+            "idEntidad" => $idEntidad,
+            "idCurso" => $idCurso
+        ]);
+        $entidadCurso->save();
+      }
     }
   }
 

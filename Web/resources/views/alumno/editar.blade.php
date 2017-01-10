@@ -12,7 +12,7 @@
 
 @section("content") 
 @include("partials/errors")
-{{ Form::model($alumno, ["method" => "PATCH", "action" => ["AlumnoController@update", $alumno->id], "id" => "formulario-alumno", "class" => "form-horizontal", "files" => true]) }}
+{{ Form::model($alumno, ["method" => "PATCH", "action" => ["AlumnoController@actualizar", $alumno->id], "id" => "formulario-alumno", "class" => "form-horizontal", "files" => true]) }}
 @include("alumno.formulario")
 {{ Form::close() }}
 @endsection

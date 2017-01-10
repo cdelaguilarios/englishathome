@@ -38,6 +38,18 @@ function limpiarCampos() {
   $("form  .help-block-error").remove();
   return false;
 }
+function obtenerParametroUrlXNombre(nombre, url) {
+  if (!url)
+    url = window.location.href;
+  nombre = nombre.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + nombre + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+  if (!results)
+    return null;
+  if (!results[2])
+    return '';
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
 
 $.validator.addMethod("validarDecimal", validarDecimal, "Ingreso no valido.");
 function validarDecimal(value, element, param) {
@@ -72,6 +84,10 @@ $.validator.addMethod("validarAlfabetico", validarAlfabetico, "Por favor solo in
 function validarAlfabetico(value, element, param) {
   return this.optional(element) || /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/i.test(value);
 }
+$.validator.addMethod("validarFecha", validarFecha, "Por favor ingrese una fecha válida (formato válido: dd/mm/aaaa)");
+function validarFecha(value, element, param) {
+  return this.optional(element) || /(^(((0[1-9]|1[0-9]|2[0-8])[\/](0[1-9]|1[012]))|((29|30|31)[\/](0[13578]|1[02]))|((29|30)[\/](0[4,6,9]|11)))[\/](19|[2-9][0-9])\d\d$)|(^29[\/]02[\/](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)/i.test(value);
+}
 
 //CALENDARIO (DATEPICKER)
 var meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio", 8: "Agosto", 9: "Setiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"};
@@ -79,9 +95,9 @@ var meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Ju
   $.fn.datepicker.defaults.language = "es";
 });
 function establecerCalendario(idElemento, soloFechasPasadas, soloFechasFuturas, funcionCierre) {
-  $("#" + idElemento).keydown(function () {
-    return false;
-  });
+  /*$("#" + idElemento).keydown(function () {
+   return false;
+   });*/
 
   if (soloFechasPasadas) {
     var fechaFin = new Date();
@@ -125,12 +141,12 @@ function establecerCampoHorario(idElementoSel, tiempoSegundosDefecto) {
 }
 function establecerCampoHoras(idElementoSel, min, max, intervalo, tiempoSegundosDefecto) {
   $("#" + idElementoSel).html("");
-  var valorDefecto = (parseInt(min) * 3600);
-  var cont = parseInt(min);
+  var valorDefecto = (parseFloat(min) * 3600);
+  var cont = parseFloat(min);
 
   while (cont <= parseInt(max) && cont <= 24) {
     $("#" + idElementoSel).append('<option value="' + (cont * 3600) + '">' + formatoHora(cont * 3600) + '</option>');
-    if (tiempoSegundosDefecto && (parseInt(tiempoSegundosDefecto) === cont * 3600)) {
+    if (tiempoSegundosDefecto && (parseFloat(tiempoSegundosDefecto) === cont * 3600)) {
       valorDefecto = (cont * 3600);
     }
     cont += intervalo;

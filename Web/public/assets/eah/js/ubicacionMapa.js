@@ -22,7 +22,6 @@ function inicializarMapa() {
     });
   }
 
-
   if ($("#mapa-bus").length > 0) {
     var iBusqueda = document.getElementById("mapa-bus");
     var cajaBusqueda = new google.maps.places.SearchBox(iBusqueda);

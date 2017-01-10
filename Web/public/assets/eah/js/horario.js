@@ -42,13 +42,21 @@ function cargarHorario() {
         horarioSel[dia].push($(selected[i]).data("time"));
       }
     });
-    $("#btnHorario").click(function () {
+    $("#btn-horario").click(function () {
       $("#mod-horario").modal("show");
+    });
+    $("#btn-instrucciones-horario").click(function(){
+      $("#sec-horario").hide();
+      $("#sec-instrucciones-horario").show();
+    });
+    $("#btn-regresar-horario").click(function(){
+      $("#sec-horario").show();
+      $("#sec-instrucciones-horario").hide();
     });
     $("#btn-confirmar-horario").click(function () {
       simplificarHorario();
       mostrarTextoHorario();
-      $("input[name='horario']").val(JSON.stringify(horarioFin));
+      $("input[name='horario']").val(JSON.stringify(horarioFin)).trigger('change');;
       $("#mod-horario").modal("hide");
     });
     $("#btn-limpiar-seleccion").click(function () {

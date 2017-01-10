@@ -1,4 +1,3 @@
-
 <div class="box-header">
   <h3 class="box-title with-border">Cancelar clase</h3>                
 </div>  
@@ -17,13 +16,15 @@
   </div>
   <div id="sec-clase-31" class="box-body">
     <div class="form-group">
-      {{ Form::label("pagoProfesor", "Pago al profesor por clase cancelada: ", ["class" => "col-sm-4 control-label"]) }}
-      <div class="col-sm-3">
-        <div class="input-group">
-          <span class="input-group-addon">
-            <b>S/.</b>
-          </span>
-          {{ Form::text("pagoProfesor", NULL, ["class" => "form-control", "maxlength" => "19"]) }}
+      <div id="sec-clase-campo-pago-profesor">
+        {{ Form::label("pagoProfesor", "Pago al profesor por clase cancelada: ", ["class" => "col-sm-4 control-label"]) }}
+        <div class="col-sm-3">
+          <div class="input-group">
+            <span class="input-group-addon">
+              <b>S/.</b>
+            </span>
+            {{ Form::text("pagoProfesor", NULL, ["class" => "form-control", "maxlength" => "19"]) }}
+          </div>
         </div>
       </div>
       <div class="col-sm-3">
@@ -63,7 +64,7 @@
           <div class="input-group-addon">
             <i class="fa fa-calendar"></i>
           </div>                                
-          {{ Form::text("fecha", NULL, ["id" => "fecha-clase-reprogramada", "class" => "form-control  pull-right"]) }}
+          {{ Form::text("fecha", NULL, ["id" => "fecha-clase-reprogramada", "class" => "form-control", "placeholder" => "dd/mm/aaaa"]) }}
         </div>
       </div>                        
     </div>

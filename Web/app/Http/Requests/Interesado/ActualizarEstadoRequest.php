@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Interesado;
 
 use App\Http\Requests\Request;
+use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\EstadosInteresado;
 
 class ActualizarEstadoRequest extends Request {
@@ -13,7 +14,7 @@ class ActualizarEstadoRequest extends Request {
 
   protected function getValidatorInstance() {
     $datos = $this->all();
-    $data["estado"] = (isset($data["estado"]) ? $data["estado"] : NULL);
+    $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -43,7 +44,7 @@ class ActualizarEstadoRequest extends Request {
 
   public function messages() {
     return [
-        "estadoNoValido.required" => "El estado seleccionado no es válido"
+        "estadoNoValido.required" => "El estado seleccionado no es válido."
     ];
   }
 

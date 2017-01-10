@@ -17,11 +17,21 @@ class Horario extends Model {
     return $nombreTabla;
   }
 
-  protected static function obtener($idEntidad) {
+  public static function listarIdsEntidadesXRangoFecha($numeroDiaSemana, $horaInicio, $horaFin, $tipoEntidad) {
+    $nombreTabla = Horario::nombreTabla();
+    return Horario::leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
+                    ->where("entidad.tipo", $tipoEntidad)
+                    ->where($nombreTabla . ".numeroDiaSemana", $numeroDiaSemana)
+                    ->where($nombreTabla . ".horaInicio", "<=", $horaInicio)
+                    ->where($nombreTabla . ".horaFin", ">=", $horaFin)
+                    ->lists($nombreTabla . ".idEntidad");
+  }
+
+  public static function obtener($idEntidad) {
     return Horario::where("idEntidad", $idEntidad)->orderBy("numeroDiaSemana", "asc")->get();
   }
 
-  protected static function obtenerFormatoJson($idEntidad) {
+  public static function obtenerFormatoJson($idEntidad) {
     $horarioSel = [];
     $horario = Horario::obtener($idEntidad);
     foreach ($horario as $datHorario) {
@@ -44,9 +54,8 @@ class Horario extends Model {
     return json_encode($horarioSel);
   }
 
-  protected static function registrarActualizar($idEntidad, $datosJsonHorario) {
+  public static function registrarActualizar($idEntidad, $datosJsonHorario) {
     $datosHorario = json_decode($datosJsonHorario);
-
     Horario::where("idEntidad", $idEntidad)->delete();
     foreach ($datosHorario as $horario) {
       $dias = explode(",", $horario->dias);
@@ -64,16 +73,6 @@ class Horario extends Model {
         }
       }
     }
-  }
-
-  protected static function listarIdsEntidadesXRangoFecha($numeroDiaSemana, $horaInicio, $horaFin, $tipoEntidad) {
-    $nombreTabla = Horario::nombreTabla();
-    return Horario::leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
-                    ->where("entidad.tipo", $tipoEntidad)
-                    ->where($nombreTabla . ".numeroDiaSemana", $numeroDiaSemana)
-                    ->where($nombreTabla . ".horaInicio", "<=", $horaInicio)
-                    ->where($nombreTabla . ".horaFin", ">=", $horaFin)
-                    ->lists($nombreTabla . ".idEntidad");
   }
 
 }

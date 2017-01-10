@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use App\Helpers\Enum\TiposEntidad;
-use App\Helpers\Enum\GenerosEntidad;
+use App\Helpers\Enum\SexosEntidad;
 use Illuminate\Database\Eloquent\Model;
 
 class Docente extends Model {
 
-  protected static function listarDisponiblesXDatosPago($idAlumno, $datos) {
+  public static function listarDisponiblesXDatosPago($idAlumno, $datos) {
     $idsDisponiblesSel = [];
     $auxCont = 1;
 
@@ -21,18 +21,18 @@ class Docente extends Model {
         $auxCont++;
       }
     }
-    $generoDocentePago = $datos["generoDocente"];
+    $sexoDocentePago = $datos["sexoDocente"];
     $idCursoDocentePago = $datos["idCursoDocente"];
     $docentes = ($datos["tipoDocente"] == TiposEntidad::Profesor ? Profesor::listar() : Postulante::Listar());
 
-    return $docentes->where(function ($q) use ($generoDocentePago) {
-              $q->whereNull("entidad.genero")->orWhereIn("entidad.genero", ($generoDocentePago != "" ? [$generoDocentePago] : array_keys(GenerosEntidad::listar())));
+    return $docentes->where(function ($q) use ($sexoDocentePago) {
+              $q->whereNull("entidad.sexo")->orWhereIn("entidad.sexo", ($sexoDocentePago != "" ? [$sexoDocentePago] : array_keys(SexosEntidad::listar())));
             })->where(function ($q) use ($idCursoDocentePago) {
               $q->whereNull("entidadCurso.idCurso")->orWhereIn("entidadCurso.idCurso", ($idCursoDocentePago != "" ? [$idCursoDocentePago] : array_keys(Curso::listarSimple()->toArray())));
             })->where("entidad.tipo", $datos["tipoDocente"])->whereIn("entidad.id", $idsDisponiblesSel);
   }
 
-  protected static function listarDisponiblesXDatosClase($datos) {
+  public static function listarDisponiblesXDatosClase($datos) {
     $fechaInicio = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00")->addSeconds($datos["horaInicio"]);
     $fechaFin = clone $fechaInicio;
     $fechaFin->addSeconds($datos["duracion"]);
@@ -41,18 +41,18 @@ class Docente extends Model {
     $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($fechaInicio->dayOfWeek, $fechaInicio->format("H:i:s"), $fechaFin->format("H:i:s"), $datos["tipoDocente"]);
     $idsDisponiblesSel = array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray());
 
-    $generoDocenteClase = $datos["generoDocente"];
+    $sexoDocenteClase = $datos["sexoDocente"];
     $idCursoDocenteClase = $datos["idCursoDocente"];
     $docentes = ($datos["tipoDocente"] == TiposEntidad::Profesor ? Profesor::listar() : Postulante::Listar());
 
-    return $docentes->where(function ($q) use ($generoDocenteClase) {
-              $q->whereNull("entidad.genero")->orWhereIn("entidad.genero", ($generoDocenteClase != "" ? [$generoDocenteClase] : array_keys(GenerosEntidad::listar())));
+    return $docentes->where(function ($q) use ($sexoDocenteClase) {
+              $q->whereNull("entidad.sexo")->orWhereIn("entidad.sexo", ($sexoDocenteClase != "" ? [$sexoDocenteClase] : array_keys(SexosEntidad::listar())));
             })->where(function ($q) use ($idCursoDocenteClase) {
               $q->whereNull("entidadCurso.idCurso")->orWhereIn("entidadCurso.idCurso", ($idCursoDocenteClase != "" ? [$idCursoDocenteClase] : array_keys(Curso::listarSimple()->toArray())));
             })->where("entidad.tipo", $datos["tipoDocente"])->whereIn("entidad.id", $idsDisponiblesSel);
   }
 
-  protected static function verificarExistencia($idEntidad) {
+  public static function verificarExistencia($idEntidad) {
     if (!(isset($idEntidad) && $idEntidad != "" && is_numeric($idEntidad))) {
       return FALSE;
     }

@@ -19,7 +19,7 @@
         </table>
       </div>
       <div style="display: none">
-        {{ Form::select("", $estadosPago, NULL, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
+        {{ Form::select("", App\Helpers\Enum\EstadosPago::listarSimple(), NULL, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
       </div>
     </div>        
     {{ Form::open(["url" => route("profesores.pagos.registrar", ["id" => $idProfesor]), "id" => "formulario-pago", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}

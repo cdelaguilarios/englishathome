@@ -19,11 +19,11 @@ class Pago extends Model {
     return $nombreTabla;
   }
 
-  protected static function obtenerXId($id) {
+  public static function obtenerXId($id) {
     return Pago::findOrFail($id);
   }
 
-  protected static function registrar($datos, $estado, $request) {
+  public static function registrar($datos, $estado, $request) {
     $pago = new Pago($datos);
     $pago->saldoFavorUtilizado = (isset($datos["saldoFavor"]) && $datos["saldoFavor"] != "" ? TRUE : NULL);
     $pago->estado = $estado;
@@ -39,19 +39,19 @@ class Pago extends Model {
       if (isset($imagenDocumentoVerificacion) && $imagenDocumentoVerificacion != "") {
         $rutaImagenesComprobantes .= "," . Util::guardarImagen($pago["id"] . "_idv_", $imagenDocumentoVerificacion, FALSE);
       }
-      $pago->rutasImagenesComprobante .= $rutaImagenesComprobantes;
+      $pago->rutasImagenesComprobante = $rutaImagenesComprobantes;
       $pago->save();
     }
     return $pago;
   }
 
-  protected static function actualizarEstado($id, $estado) {
+  public static function actualizarEstado($id, $estado) {
     $pago = Pago::obtenerXId($id);
     $pago->estado = $estado;
     $pago->save();
   }
 
-  protected static function eliminar($id) {
+  public static function eliminar($id) {
     $pago = Pago::obtenerXId($id);
     $pago->eliminado = 1;
     $pago->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();

@@ -1,6 +1,6 @@
 {{--*/ $mensajes = Mensajes::obtenerMensajes() /*--}}  
 <div class="box-default">
-  <div class="box-body contenedor-alerta">
+  <div class="box-body contenedor-alerta" tabindex="1">
     @foreach($mensajes["exitosos"] as $mensaje)   
     <div class="alert alert-success alert-dismissible" role="alert">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
