@@ -3,11 +3,13 @@
 
 @section("section_script")
 <script type="text/javascript">
-  var urlListar = "{{ route("usuarios.listar") }}";
-  var urlEditar = "{{ route("usuarios.editar", ["id" => 0]) }}";
-  var urlEliminar = "{{ route("usuarios.destroy", ["id" => 0]) }}";
+  var urlListar = "{{ route('usuarios.listar') }}";
+  var urlEditar = "{{ route('usuarios.editar', ['id' => 0]) }}";
+  var urlActualizarEstado = "{{ route('usuarios.actualizar.estado', ['id' => 0]) }}";
+  var urlEliminar = "{{ route('usuarios.eliminar', ['id' => 0]) }}";
   var roles = {!!  json_encode($roles) !!};
-  var estados = {!!  json_encode(App\Helpers\Enum\EstadosUsuario::listar()) !!};</script>
+  var estados = {!!  json_encode(App\Helpers\Enum\EstadosUsuario::listar()) !!};
+</script>
 <script src="{{ asset("assets/eah/js/modulos/usuario.js")}}"></script>
 @endsection
 
@@ -20,23 +22,43 @@
   <div class="col-sm-12">
     <div class="box box-info">
       <div class="box-header">
-        <h3 class="box-title">Lista de usuarios</h3>
-        <a href="{{ route("usuarios.nuevo")}}" class="btn btn-primary btn-clean">Nuevo usuario</a>   
+        <h3 class="box-title">Filtros de búsquedad</h3> 
       </div>         
       <div class="box-body">
-        <table id="tab_lista" class="table table-bordered table-hover">
+        <div class="form-group">          
+          {{ Form::label("bus-estado", "Búsqueda por estado: ", ["class" => "col-sm-2 control-label"]) }}
+          <div class="col-sm-3">
+            {{ Form::select("estado", App\Helpers\Enum\EstadosUsuario::listarSimple(), App\Helpers\Enum\EstadosUsuario::Activo, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos"]) }}
+          </div>
+        </div> 
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <div class="box box-info">
+      <div class="box-header">
+        <h3 class="box-title">Lista de usuarios</h3>
+        <a href="{{ route("usuarios.crear")}}" class="btn btn-primary btn-clean">Nuevo usuario</a>   
+      </div>         
+      <div class="box-body">
+        <table id="tab-lista" class="table table-bordered table-hover">
           <thead>
             <tr>
               <th>Nombre completo</th>     
               <th>Correo electrónico</th>
               <th>Rol</th>
               <th>Estado</th>
-              <th class="col-sm-1">&nbsp;</th>
+              <th class="all">Opciones</th>
             </tr>
           </thead>
         </table>
       </div>
     </div>
   </div>
+</div>
+<div style="display: none">
+  {{ Form::select("", App\Helpers\Enum\EstadosUsuario::listarSimple(), NULL, ["id" => "sel-estados", "class" => "form-control"]) }}
 </div>
 @endsection

@@ -108,8 +108,10 @@
           <div class="form-group">
             {{ Form::label("geoLocalizacion", "Ubicación mapa: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10 sec-mapa">
-              @include("util.ubicacionMapa")
-              <div><b>Sugerimos seleccionar la ubicación exacta en el mapa del lugar donde se realizarán las clases.</b></div>
+              @include("util.ubicacionMapa")              
+            </div>
+            <div class="col-sm-10 col-sm-offset-2">
+              <b>Sugerimos seleccionar la ubicación exacta en el mapa del lugar donde se realizarán las clases.</b>
             </div>
             {{ Form::hidden("geoLatitud", NULL) }} 
             {{ Form::hidden("geoLongitud", NULL) }} 

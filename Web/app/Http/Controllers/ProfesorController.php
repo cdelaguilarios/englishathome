@@ -9,8 +9,13 @@ use App\Models\Clase;
 use App\Models\Profesor;
 use App\Models\PagoProfesor;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProfesorRequest;
-use App\Http\Requests\Profesor\Pago as PagoReq;
+use App\Http\Requests\Profesor\BusquedaRequest;
+use App\Http\Requests\Profesor\FormularioRequest;
+use App\Http\Requests\Profesor\ActualizarEstadoRequest;
+use App\Http\Requests\Profesor\ActualizarHorarioRequest;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Http\Requests\Profesor\Pago as PagoRequest;
+use App\Http\Requests\Profesor\Clase as ClaseRequest;
 
 class ProfesorController extends Controller {
 
@@ -25,15 +30,17 @@ class ProfesorController extends Controller {
     return view("profesor.lista", $this->data);
   }
 
-  public function listar() {
-    return Datatables::of(Profesor::listar())->make(true);
+  public function listar(BusquedaRequest $req) {
+    return Datatables::of(Profesor::listar($req->all()))->filterColumn("entidad.nombre", function($q, $k) {
+              $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
+            })->make(true);
   }
 
-  public function create() {
+  public function crear() {
     return view("profesor.crear", $this->data);
   }
 
-  public function store(ProfesorRequest $req) {
+  public function registrar(FormularioRequest $req) {
     try {
       $idProfesor = Profesor::registrar($req);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
@@ -41,33 +48,33 @@ class ProfesorController extends Controller {
     } catch (\Exception $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
-      return redirect(route("profesores.nuevo"));
+      return redirect(route("profesores.crear"));
     }
   }
 
-  public function show($id) {
+  public function perfil($id) {
     try {
       $this->data["profesor"] = Profesor::ObtenerXId($id);
     } catch (ModelNotFoundException $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("No se encontraron datos del profesor seleccionado.");
-      return redirect("profesores");
+      return redirect(route("profesores"));
     }
     return view("profesor.perfil", $this->data);
   }
 
-  public function edit($id) {
+  public function editar($id) {
     try {
       $this->data["profesor"] = Profesor::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("No se encontraron datos del profesor seleccionado.");
-      return redirect("profesores");
+      return redirect(route("profesores"));
     }
     return view("profesor.editar", $this->data);
   }
 
-  public function update($id, ProfesorRequest $req) {
+  public function actualizar($id, FormularioRequest $req) {
     try {
       Profesor::actualizar($id, $req);
       Mensajes::agregarMensajeExitoso("Actualización exitosa.");
@@ -78,7 +85,29 @@ class ProfesorController extends Controller {
     return redirect(route("profesores.editar", ["id" => $id]));
   }
 
-  public function destroy($id) {
+  public function actualizarEstado($id, ActualizarEstadoRequest $req) {
+    try {
+      $datos = $req->all();
+      Profesor::actualizarEstado($id, $datos["estado"]);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
+    }
+    return response()->json(["mensaje" => "Actualización exitosa."], 200);
+  }
+
+  public function actualizarHorario($id, ActualizarHorarioRequest $req) {
+    try {
+      $datos = $req->all();
+      Profesor::actualizarHorario($id, $datos["horario"]);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
+    }
+    return response()->json(["mensaje" => "Actualización exitosa."], 200);
+  }
+
+  public function eliminar($id) {
     try {
       Profesor::eliminar($id);
     } catch (ModelNotFoundException $e) {
@@ -94,26 +123,25 @@ class ProfesorController extends Controller {
     return Datatables::of(PagoProfesor::listar($id))->make(true);
   }
 
-  public function registrarPago($id, PagoReq\PagoRequest  $request) {
+  public function actualizarEstadoPago($id, PagoRequest\ActualizarEstadoRequest $req) {
     try {
-      PagoProfesor::registrar($id, $request);
-      Mensajes::agregarMensajeExitoso("Registro exitoso.");
-    } catch (\Exception $e) {
-      Log::error($e);
-      Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
-    }
-    return redirect(route("profesores.perfil", ["id" => $id]));
-  }
-
-  public function actualizarEstadoPago($id, PagoReq\ActualizarEstadoRequest $request) {
-    try {
-      $datos = $request->all();
-      PagoProfesor::actualizarEstado($id, $datos);
+      PagoProfesor::actualizarEstado($id, $req->all());
     } catch (ModelNotFoundException $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
     }
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
+  }
+
+  public function registrarPago($id, PagoRequest\FormularioRequest $req) {
+    try {
+      PagoProfesor::registrar($id, $req);
+      Mensajes::agregarMensajeExitoso("Registro exitoso.");
+    } catch (\Exception $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
+    }
+    return redirect(route("profesores.perfil", ["id" => $id, "sec" => "pago"]));
   }
 
   public function datosPago($id, $idPago) {
@@ -132,20 +160,19 @@ class ProfesorController extends Controller {
 
   // </editor-fold>
   // <editor-fold desc="Clases">
-  public function listarClases($id) {
-    return Datatables::of(Clase::listarXProfesor($id))->make(true);
+  public function listarClases($id, ClaseRequest\BusquedaRequest $req) {
+    return Datatables::of(Clase::listarXProfesor($id, $req->all()))->make(true);
   }
 
-  public function registrarPagoXClases($id, PagoRequest $request) {
-    PagoProfesor::registrar($id, $request);
-    Mensajes::agregarMensajeExitoso("Registro exitoso.");
+  public function registrarPagoXClases($id, PagoRequest\FormularioRequest $req) {
     try {
-      
+      PagoProfesor::registrar($id, $req);
+      Mensajes::agregarMensajeExitoso("Registro exitoso.");
     } catch (\Exception $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
     }
-    return redirect(route("profesores.perfil", ["id" => $id]));
+    return redirect(route("profesores.perfil", ["id" => $id, "sec" => "clase"]));
   }
 
   // </editor-fold>

@@ -24,10 +24,10 @@ class AuthController extends Controller {
     }
 
     public function authenticated($request, $user) {
-        if (!Usuario::UsuarioEliminado($user["idEntidad"])) {
+        if (!Usuario::usuarioEliminado($user["idEntidad"])) {
             Auth::logout();
             Mensajes::agregarMensajeAdvertencia("Su cuenta ha sido eliminada.");
-        } else if (!Usuario::UsuarioActivo($user["idEntidad"])) {
+        } else if (!Usuario::usuarioActivo($user["idEntidad"])) {
             Auth::logout();
             Mensajes::agregarMensajeAdvertencia("Su cuenta ha sido desactivada.");
         }
@@ -36,7 +36,7 @@ class AuthController extends Controller {
 
     protected function validator(array $data) {
         return Validator::make($data, [
-                    "email" => "required|email|max:255|unique:" . Usuario::NombreTabla(),
+                    "email" => "required|email|max:255|unique:" . Usuario::nombreTabla(),
                     "password" => "required|min:6|confirmed",
         ]);
     }

@@ -2,6 +2,9 @@
 @section("titulo", "Profesores")
 
 @section("section_script")
+<script>
+  var urlActualizarHorario = "{{ route('profesores.actualizar.horario', ['id' => $profesor->idEntidad]) }}";
+</script>
 <script src="{{ asset("assets/eah/js/modulos/profesor/profesor.js") }}"></script>
 @endsection
 
@@ -11,45 +14,51 @@
 @endsection
 
 @section("content")
+@include("partials/errors")
 <div class="row">
   <div class="col-sm-3">
     <div class="box box-primary">
       <div class="box-body box-profile">
         <img class="profile-user-img img-responsive img-circle" src="{{ route("imagenes", ["rutaImagen" => (isset($profesor->rutaImagenPerfil) && $profesor->rutaImagenPerfil != "" ? $profesor->rutaImagenPerfil : "-")]) }}" alt="User profile picture">
-        <h3 class="profile-username">Profesor {!! $profesor->nombre . " " .  $profesor->apellido !!}</h3>
-        <p class="text-muted">{!! $profesor->correoElectronico !!}</p>
-        <span class="label {!! $estadosProfesor[$profesor->estado][1] !!} btn_estado">{!! $estadosProfesor[$profesor->estado][0] !!}</span>
+        <h3 class="profile-username">Profesor{{ $profesor->sexo == "F" ? "a" : "" }} {{ $profesor->nombre . " " .  $profesor->apellido }}</h3>
+        <p class="text-muted">{{ $profesor->correoElectronico }}</p>
+        <span class="label {{ $estadosProfesor[$profesor->estado][1] }} btn-estado">{{ $estadosProfesor[$profesor->estado][0] }}</span>
       </div>
     </div>
     <div class="sec-datos box box-primary">
       <div class="box-header with-border">
-        <h3 class="box-title">Datos principales del profesor</h3>
+        <h3 class="box-title">Datos principales del profesor{{ $profesor->sexo == "F" ? "a" : "" }}</h3>
       </div>
       <div class="box-body">
         <strong><i class="fa fa-fw fa-calendar"></i> Horario</strong>
         <p class="text-muted">
           @include("util.horario", ["horario" => $profesor->horario, "modo" => "visualizar"])
         </p>
+        <hr>        
+        <strong><i class="fa fa-fw flaticon-favorite-book"></i> Cursos</strong>
+        @foreach($profesor->cursos as $curso)
+        <p class="text-muted">{{ $cursos[$curso->idCurso] }}</p>
+        @endforeach
         <hr>
         <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
-        <p class="text-muted">{!! $profesor->direccion !!}<br/>{!! $profesor->direccionUbicacion !!}</p>
+        <p class="text-muted">{{ $profesor->direccion }}<br/>{{ $profesor->direccionUbicacion }}</p>
         <p class="text-muted">
           @include("util.ubicacionMapa", ["geoLatitud" => $profesor->geoLatitud, "geoLongitud" => $profesor->geoLongitud, "modo" => "visualizar"])
         </p>
         <hr>
-        <strong><i class="fa fa-user margin-r-5"></i> {!! $tiposDocumentos[$profesor->idTipoDocumento] !!}</strong>
+        <strong><i class="fa fa-user margin-r-5"></i> {{ $tiposDocumentos[$profesor->idTipoDocumento] }}</strong>
         <p class="text-muted">
-          {!! $profesor->numeroDocumento !!}
+          {{ $profesor->numeroDocumento }}
         </p>
         <hr>
         <strong><i class="fa fa-phone margin-r-5"></i> Teléfono</strong>
         <p class="text-muted">
-          {!! $profesor->telefono !!}
+          {{ $profesor->telefono }}
         </p>
         <hr>
         <strong><i class="fa fa-birthday-cake margin-r-5"></i> Fecha de nacimiento</strong>
         <p class="text-muted">
-          {!! \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $profesor->fechaNacimiento)->format("d/m/Y") !!}
+          {{ \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $profesor->fechaNacimiento)->format("d/m/Y") }}
         </p>
         <hr>                              
         <a href="{{ route("profesores.editar", $profesor->id)}}" class="btn btn-primary btn-block"><b>Editar datos</b></a>

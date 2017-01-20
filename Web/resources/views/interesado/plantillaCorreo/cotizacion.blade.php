@@ -321,49 +321,53 @@
         list-style-position: initial;
       }
 
-      .sec-inversion .contenido {
+      .sec-inversion table {
+        padding: 0 10px;
         font-size: 12px !important;
         line-height: 1.3 !important;
         width: 80% !important;
-      }
-      .sec-inversion .titulo-cuota {
-        margin: 20px 15px;
-      }
-      .sec-inversion .titulo-cuota span {
-        font-size: 12px;
-        color: #FFF;
-        background-color: rgb(28,69,135);
-        font-weight: inherit;
-        padding: 5px 100px 5px 5px;
-      }
-      .sec-inversion .contenido table {
         border-collapse: collapse;
       }
-      .sec-inversion .contenido table tr{
+      .sec-inversion table tr{
         height:17px;
       }
-      .sec-inversion .contenido table tr td{
+      .sec-inversion table tr td{
         padding:2px 3px;
         vertical-align:bottom;
         border:1px solid rgb(0,0,0);
         font-weight:bold;
         text-align:center
       }
-      .sec-inversion .contenido table tr.fila-impar td{ 
+      .sec-inversion table tr.fila-impar td{ 
         background-color:#FFF; 
         color:#000;
       }
-      .sec-inversion .contenido table tr.fila-par td { 
+      .sec-inversion table tr.fila-par td { 
         background-color:rgb(255,0,0);
         color:rgb(255,255,255); 
       }
-      .sec-inversion .contenido table tr.fila-cabecera td{
+      .sec-inversion table tr.fila-cabecera td{
         background-color:rgb(17,85,204); 
         color:rgb(255,255,255);
       }
-      .sec-inversion .contenido table tr.fila-total td{
+      .sec-inversion table tr.fila-total td{
         background-color:rgb(28,69,135) !important; 
         color:rgb(255,255,255) !important;
+      }      
+      .sec-inversion-cuotas p{        
+        padding:5px;
+        font-size:12px;
+        text-align:left;
+        margin: 20px 15px;
+      }
+      .sec-inversion-cuotas p span {
+        font-size: 12px;
+        color: #FFF;
+        background-color: rgb(28,69,135);
+        font-weight: inherit;
+        padding: 5px 100px 5px 5px;        
+        line-height: 1.3;
+        text-align: left;
       }
 
       .sec-proceso-inscripcion ol {
@@ -527,11 +531,11 @@
                   <div class="sec-inversion">
                     <p class="left">					
                       <span class="sub-title"><strong>Inversión</strong></span>
-                    </p>
-                    <div class="contenido">		
-                      {!! $inversion !!}
-                    </div>	
-                    {!! $inversionCuotas !!}       
+                    </p>	
+                    {!! $inversion !!} 	     
+                  </div>                  
+                  <div class="sec-inversion sec-inversion-cuotas">
+                    {!! $inversionCuotas !!}      
                   </div>
                   <div class="sec-proceso-inscripcion">
                     <p class="left">					

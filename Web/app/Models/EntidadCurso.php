@@ -17,9 +17,9 @@ class EntidadCurso extends Model {
     return $nombreTabla;
   }
 
-  public static function obtenerXEntidad($idEntidad) {
-    $entidadCurso = EntidadCurso::where("idEntidad", $idEntidad)->first();
-    return ($entidadCurso != NULL ? $entidadCurso->idCurso : NULL);
+  public static function obtenerXEntidad($idEntidad, $primerCurso = TRUE) {
+    $entidadCursos = EntidadCurso::where("idEntidad", $idEntidad)->select("idCurso")->get();
+    return (count($entidadCursos) > 0 ? ($primerCurso ? $entidadCursos[0] : $entidadCursos) : NULL);
   }
 
   public static function listar($idEntidad) {

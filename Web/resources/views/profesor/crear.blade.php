@@ -12,7 +12,7 @@
 
 @section("content") 
 @include("partials/errors")
-{{ Form::open(["url" => "profesores", "id" => "formulario-profesor", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
+{{ Form::open(["url" => route("profesores.registrar"), "id" => "formulario-profesor", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
 @include("profesor.formulario", ["modo" => "registrar"])
 {{ Form::close() }}
 @endsection

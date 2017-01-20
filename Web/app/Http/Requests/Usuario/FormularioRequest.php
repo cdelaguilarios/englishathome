@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Usuario;
 
 use App\Models\Usuario;
 use App\Http\Requests\Request;
@@ -8,49 +8,47 @@ use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\RolesUsuario;
 use App\Helpers\Enum\EstadosUsuario;
 
-class UsuarioRequest extends Request {
+class FormularioRequest extends Request {
 
   public function authorize() {
     return true;
   }
 
   protected function getValidatorInstance() {
-    $data = $this->all();
-
-    $data["id"] = (isset($data["id"]) ? $data["id"] : 0);
-    $data["nombre"] = (isset($data["nombre"]) ? $data["nombre"] : "");
-    $data["apellido"] = (isset($data["apellido"]) ? $data["apellido"] : "");
-    $data["password"] = (isset($data["password"]) ? $data["password"] : NULL);
-    $data["password_confirmation"] = (isset($data["password_confirmation"]) ? $data["password_confirmation"] : NULL);
-    $data["rol"] = (isset($data["rol"]) ? $data["rol"] : NULL);
-    $data["estado"] = (isset($data["estado"]) ? $data["estado"] : NULL);
-
-    $this->getInputSource()->replace($data);
+    $datos = $this->all();
+    $datos["id"] = ReglasValidacion::formatoDato($datos, "id", 0);
+    $datos["nombre"] = ReglasValidacion::formatoDato($datos, "nombre", "");
+    $datos["apellido"] = ReglasValidacion::formatoDato($datos, "apellido", "");
+    $datos["password"] = ReglasValidacion::formatoDato($datos, "password");
+    $datos["password_confirmation"] = ReglasValidacion::formatoDato($datos, "password_confirmation");
+    $datos["rol"] = ReglasValidacion::formatoDato($datos, "rol");
+    $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
+    $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
 
   public function rules() {
-    $data = $this->all();
+    $datos = $this->all();
     $modoEdicion = ($this->method() == "PATCH");
-    $idUsuario = $data["id"];
+    $idUsuario = $datos["id"];
 
     $reglasValidacion = [
         "nombre" => ["max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
         "apellido" => ["max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
-        "email" => "required|email|max:245|unique:" . Usuario::NombreTabla() . ",email" .
+        "email" => "required|email|max:245|unique:" . Usuario::nombreTabla() . ",email" .
         ($modoEdicion && !is_null($idUsuario) && is_numeric($idUsuario) ? "," . $idUsuario . ",idEntidad" : ""),
         "imagenPerfil" => "image"
     ];
 
     $roles = RolesUsuario::listar();
-    if (!array_key_exists($data["rol"], $roles)) {
+    if (!array_key_exists($datos["rol"], $roles)) {
       $reglasValidacion["rolNoValido"] = "required";
     }
     $estados = EstadosUsuario::listar(TRUE);
-    if (!array_key_exists($data["estado"], $estados)) {
+    if (!array_key_exists($datos["estado"], $estados)) {
       $reglasValidacion["estadoNoValido"] = "required";
     }
-    if (!$modoEdicion || (!is_null($data["password"]) && $data["password"] != "")) {
+    if (!$modoEdicion || (!is_null($datos["password"]) && $datos["password"] != "")) {
       $reglasValidacion["password"] = "required|confirmed|min:6|max:30";
     }
 
@@ -73,8 +71,8 @@ class UsuarioRequest extends Request {
   public function messages() {
     return [
         "email.unique" => "El correo electrónico ingresado ya esta siendo utilizado.",
-        "rolNoValido.required" => "El rol seleccionado no es válido",
-        "estadoNoValido.required" => "El estado seleccionado no es válido"
+        "rolNoValido.required" => "El rol seleccionado no es válido.",
+        "estadoNoValido.required" => "El estado seleccionado no es válido."
     ];
   }
 

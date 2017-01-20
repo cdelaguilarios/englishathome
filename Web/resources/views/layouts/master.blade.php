@@ -12,7 +12,8 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css" />  
     <link rel="stylesheet" href="{{ asset("assets/eah/css/iconos-educacion/flaticon.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/datatables/dataTables.bootstrap.css") }}" />    
-    <link rel="stylesheet" href="{{ asset("assets/plugins/datatables/extensions/Responsive/css/dataTables.responsive.css") }}" />
+    <link rel="stylesheet" href="{{ asset("assets/plugins/datatables/extensions/Responsive/css/dataTables.responsive.css") }}" />    
+    <link rel="stylesheet" href="{{ asset("assets/plugins/select2/select2.min.css") }}" />    
     <link rel="stylesheet" href="{{ asset("assets/dist/css/AdminLTE.min.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/dist/css/skins/_all-skins.min.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/datepicker/datepicker3.css") }}" />
@@ -106,17 +107,20 @@
             <section class="sidebar">
               <ul class="sidebar-menu">
                 <li class="header">Menú</li>
+                <li class="{{ ((isset($seccion) && $seccion == "interesados") ? "active" : "") }}">
+                  <a href="{{ route("interesados")}}"><i class="fa flaticon-questioning"></i> <span>Interesados</span></a>
+                </li>
                 <li class="{{ ((isset($seccion) && $seccion == "alumnos") ? "active" : "") }}">
                   <a href="{{ route("alumnos")}}"><i class="fa fa-mortar-board"></i> <span>Alumnos</span></a>
                 </li> 
-                <li class="{{ ((isset($seccion) && $seccion == "interesados") ? "active" : "") }}">
-                  <a href="{{ route("interesados")}}"><i class="fa flaticon-questioning"></i> <span>Interesados</span></a>
+                <li class="{{ ((isset($seccion) && $seccion == "postulantes") ? "active" : "") }}">
+                  <a href="{{ route("postulantes")}}">CV&nbsp;&nbsp;&nbsp;<span>Postulantes</span></a>
                 </li>
                 <li class="{{ ((isset($seccion) && $seccion == "profesores") ? "active" : "") }}">
                   <a href="{{ route("profesores")}}"><i class="fa flaticon-teach"></i> <span>Profesores</span></a>
                 </li>
-                <li class="{{ ((isset($seccion) && $seccion == "postulantes") ? "active" : "") }}">
-                  <a href="{{ route("interesados")}}">CV&nbsp;&nbsp;&nbsp;<span>Postulantes</span></a>
+                <li class="{{ ((isset($seccion) && $seccion == "clases") ? "active" : "") }}">
+                  <a href="{{ route("clases")}}"><i class="fa flaticon-student-in-front-of-a-stack-of-books"></i> <span>Clases</span></a>
                 </li>
                 <li class="{{ ((isset($seccion) && $seccion == "usuarios") ? "active" : "") }}">
                   <a href="{{ route("usuarios")}}"><i class="fa fa-users"></i> <span>Usuarios del sistema</span></a>
@@ -153,7 +157,8 @@
       <script src="{{ asset("assets/plugins/jQueryUI/jquery-ui.min.js") }}"></script>
       <script src="{{ asset("assets/plugins/jquery/jquery-migrate.min.js") }}"></script>
       <script src="{{ asset("assets/plugins/jquery/globalize.js") }}"></script>
-      <script src="{{ asset("assets/bootstrap/js/bootstrap.min.js") }}"></script>
+      <script src="{{ asset("assets/bootstrap/js/bootstrap.min.js") }}"></script>      
+      <script src="{{ asset("assets/plugins/select2/select2.full.min.js") }}"></script>      
       <script src="{{ asset("assets/fuelux/3.13.0/js/fuelux.min.js") }}"></script>
       <script src="{{ asset("assets/plugins/slimScroll/jquery.slimscroll.min.js") }}"></script>         
       <script src="{{ asset("assets/plugins/fastclick/fastclick.js") }}"></script>          

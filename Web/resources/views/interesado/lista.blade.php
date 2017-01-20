@@ -39,7 +39,7 @@
   <div class="col-sm-12">
     <div class="box box-info">
       <div class="box-header">
-        <h3 class="box-title">Interesados</h3>
+        <h3 class="box-title">Lista de interesados</h3>
         <a href="{{ route("interesados.crear")}}" class="btn btn-primary btn-clean">Nuevo interesado</a>   
       </div>         
       <div class="box-body">

@@ -62,6 +62,12 @@
   color: #039BE5;
   opacity: 1 !important;
 }
+.table td{
+  word-break: break-all;
+}
+.table td:not(.text-center){
+  text-align: justify !important;
+}
 .table i{
   width: 100%;
   text-align: center;
@@ -102,6 +108,7 @@ table.table-bordered tbody th, table.table-bordered tbody td {
 }
 table.dataTable.dtr-inline.collapsed > tbody > tr > td:first-child:before, table.dataTable.dtr-inline.collapsed > tbody > tr > th:first-child:before{
   background-color: #3c8dbc;
+  top: 35%;
 }
 div.dataTables_info{
   white-space: inherit;
@@ -313,4 +320,8 @@ textarea{
 
 #sec-instrucciones-horario img{
   width: 100%;
+}
+
+.input-group {
+    margin-bottom: 2px;
 }

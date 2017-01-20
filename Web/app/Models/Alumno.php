@@ -26,7 +26,7 @@ class Alumno extends Model {
 
   public static function listar($datos = NULL) {
     $nombreTabla = Alumno::nombreTabla();
-    $alumnos = Alumno::leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")->where("entidad.eliminado", 0);
+    $alumnos = Alumno::leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")->where("entidad.eliminado", 0)->distinct();
     if (isset($datos["estado"])) {
       $alumnos->where("entidad.estado", $datos["estado"]);
     }
@@ -39,10 +39,9 @@ class Alumno extends Model {
       $alumno->horario = Horario::obtenerFormatoJson($id);
       $alumno->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($alumno->codigoUbigeo);
       $alumno->numeroPeriodos = Clase::totalPeriodos($id);
-      $alumno->idCurso = EntidadCurso::listar($id)->firstOrFail()->idCurso;
       $alumno->totalSaldoFavor = PagoAlumno::totalSaldoFavor($id);
       $alumno->idNivelIngles = EntidadNivelIngles::obtenerXEntidad($id);
-      $alumno->idCurso = EntidadCurso::obtenerXEntidad($id);
+      $alumno->idCurso = EntidadCurso::obtenerXEntidad($id)->idCurso;
     }
     return $alumno;
   }

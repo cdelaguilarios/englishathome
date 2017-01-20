@@ -34,7 +34,7 @@
 </div>
 <script>
   var urlListarPeriodos = "{{ route('alumnos.periodos.clases.listar', ['id' => $idAlumno]) }}";
-  var urlListarClases = "{{ route('alumnos.periodo.clases.listar', ['id' => $idAlumno, "numeroPeriodo" => 0]) }}";
+  var urlListarClases = "{{ route('alumnos.periodo.clases.listar', ['id' => $idAlumno, 'numeroPeriodo' => 0]) }}";
   var urlActualizarEstadoClase = "{{ route('alumnos.clases.actualizar.estado', ['id' => $idAlumno]) }}";
   var urlListarDocentesDisponiblesClase = "{{ route('alumnos.clases.docentesDisponibles.listar', ['id' => $idAlumno]) }}";
   var urlDatosClase = "{{ route('alumnos.clases.datos', ['id' => $idAlumno, 'idClase' => 0]) }}";

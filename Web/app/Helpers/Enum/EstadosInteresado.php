@@ -13,8 +13,7 @@ class EstadosInteresado {
     return [
         EstadosInteresado::PendienteInformacion => "Pendiente de información",
         EstadosInteresado::Contactado => "Contactado",
-        EstadosInteresado::CotizacionEnviada => "Cotización enviada",
-        EstadosInteresado::AlumnoRegistrado => "Alumno registrado"
+        EstadosInteresado::CotizacionEnviada => "Cotización enviada"
     ];
   }
 

@@ -30,7 +30,6 @@
             <a id="dat-imagen-comprobante-pago" href="{{ route("imagenes", ["rutaImagen" => "0"]) }}" target="_blank">
               <img class="img-responsive" src="{{ route("imagenes", ["rutaImagen" => "0"]) }}" alt="Imagen comprobante"> 
             </a>
-
           </div>
         </div>
       </div>

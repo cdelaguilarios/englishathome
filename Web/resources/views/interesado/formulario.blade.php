@@ -60,8 +60,7 @@
           <div class="col-sm-6">
             <span>(*) Campos obligatorios</span>
           </div>
-          <div class="col-sm-6">   
-            
+          <div class="col-sm-6">            
             <button id="btn-guardar" type="submit" class="btn btn-success pull-right">
               {{ ((isset($modo) && $modo == "registrar") ? "Registrar" : "Guardar") }}
             </button>

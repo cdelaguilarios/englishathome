@@ -12,9 +12,7 @@ class HistorialRequest extends Request {
 
   protected function getValidatorInstance() {
     $data = $this->all();
-
     $data["numeroCarga"] = (isset($data["numeroCarga"]) ? $data["numeroCarga"] : 0);
-
     $this->getInputSource()->replace($data);
     return parent::getValidatorInstance();
   }
@@ -26,15 +24,13 @@ class HistorialRequest extends Request {
 
     switch ($this->method()) {
       case "GET":
-      case "DELETE": {
+      case "DELETE":
+      case "PUT":
+      case "PATCH": {
           return [];
         }
       case "POST": {
           return $reglasValidacion;
-        }
-      case "PUT":
-      case "PATCH": {
-          return [];
         }
       default:break;
     }

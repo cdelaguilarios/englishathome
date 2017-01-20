@@ -47,10 +47,14 @@
                 {{ Form::text("fechaNacimiento", NULL, ["id" => "fecha-nacimiento", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
               </div>
             </div>
+            {{ Form::label("sexo", "Sexo: ", ["class" => "col-sm-1 control-label"]) }}
+            <div class="col-sm-2">
+              {{ Form::select("sexo", $sexos, NULL, ["class" => "form-control"]) }}
+            </div>
           </div>            
           <div class="form-group">
             {{ Form::label("numeroDocumento", "Doc. de identidad (*): ", ["class" => "col-sm-2 control-label"]) }}
-            <div class="col-sm-3">
+            <div class="col-sm-3" style="display:none">
               {{ Form::select("idTipoDocumento", $tiposDocumentos, null, ["class" => "form-control"]) }}
             </div>
             <div class="col-sm-3">
@@ -84,7 +88,13 @@
             <div class="col-sm-10">
               {{ Form::text("direccion", null, ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
-          </div> 
+          </div>
+          <div class="form-group">
+            {{ Form::label("numeroDepartamento", "Depto./Int: ", ["class" => "col-sm-2 control-label"]) }}
+            <div class="col-sm-10">
+              {{ Form::text("numeroDepartamento", NULL, ["class" => "form-control", "maxlength" =>"255"]) }}
+            </div>
+          </div>  
           <div class="form-group">
             {{ Form::label("referenciaDireccion", "Referencia: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
@@ -94,8 +104,10 @@
           <div class="form-group">
             {{ Form::label("geoLocalizacion", "Ubicación mapa: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10 sec-mapa">
-              @include("util.ubicacionMapa", ["modo" => (isset($modo) ? $modo : "editar")])
-              <div>Sugerimos seleccionar la ubicación exacta en el mapa del lugar donde se realizarán las clases.</div>
+              @include("util.ubicacionMapa")              
+            </div>
+            <div class="col-sm-10 col-sm-offset-2">
+              <b>Sugerimos seleccionar la ubicación exacta en el mapa del lugar donde se realizarán las clases.</b>
             </div>
             {{ Form::hidden("geoLatitud", null) }} 
             {{ Form::hidden("geoLongitud", null) }} 
@@ -106,10 +118,11 @@
             <h4>Cursos asignados:</h4>
           </div>
           <div class="form-group">
-            {{ Form::label("idCurso", "Curso de interes (*): ", ["class" => "col-sm-2 control-label"]) }}
-            <div class="col-sm-3">
-              {{ Form::select("idCurso", $cursos, null, ["class" => "form-control"]) }}
-            </div>                   
+            {{ Form::label("idCursos", "Cursos de interes (*): ", ["class" => "col-sm-2 control-label"]) }}
+            <div class="col-sm-5">
+              {{ Form::select("idCursos[]", $cursos, null, ["id" => "curso-interes", "class" => "form-control", "multiple" => "multiple", "style" => "width: 100%;"]) }}
+            </div>    
+            {{ Form::hidden("cursos", (isset($profesor) ? $profesor->cursos : NULL)) }}                
           </div>
           <div class="form-group">
             <h4>Horario disponible (*):</h4>
@@ -121,14 +134,20 @@
             </div>                                        
           </div>
         </div>
-        <div class="box-footer">    
-          <span>(*) Campos obligatorios</span>
-          <button type="button" class="btn btn-success btn-next pull-right" data-last="Registrar datos">
-            Siguiente
-          </button>
-          <button type="button" class="btn btn-default btn-prev pull-right">
-            Anterior
-          </button>
+        <div class="box-footer">   
+          <div class="form-group">
+            <div class="col-sm-6">
+              <span>(*) Campos obligatorios</span>
+            </div>
+            <div class="col-sm-6">   
+              <button id="btn-guardar" type="button" class="btn btn-primary btn-next pull-right" data-last="{{ ((isset($modo) && $modo == "registrar") ? "Registrar" : "Guardar") }} datos">
+                Siguiente
+              </button>
+              <button type="button" class="btn btn-default btn-prev pull-right">
+                Anterior
+              </button>
+            </div>
+          </div>
         </div>                
         {{ Form::hidden("modoEditarRegistrar", 1) }} 
       </div>

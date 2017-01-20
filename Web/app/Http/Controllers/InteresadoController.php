@@ -26,8 +26,7 @@ class InteresadoController extends Controller {
   }
 
   public function listar(BusquedaRequest $req) {
-    $datos = $req->all();
-    return Datatables::of(Interesado::listar($datos))->filterColumn("entidad.nombre", function($q, $k) {
+    return Datatables::of(Interesado::listar($req->all()))->filterColumn("entidad.nombre", function($q, $k) {
               $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
             })->make(true);
   }
@@ -38,8 +37,7 @@ class InteresadoController extends Controller {
 
   public function registrar(FormularioRequest $req) {
     try {
-      $datos = $req->all();
-      Interesado::registrar($datos);
+      Interesado::registrar($req->all());
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
       return redirect(route("interesados"));
     } catch (\Exception $e) {
@@ -73,8 +71,7 @@ class InteresadoController extends Controller {
 
   public function actualizar($id, FormularioRequest $req) {
     try {
-      $datos = $req->all();
-      Interesado::actualizar($id, $datos);
+      Interesado::actualizar($id, $req->all());
       Mensajes::agregarMensajeExitoso("Actualización exitosa.");
     } catch (\Exception $e) {
       Log::error($e->getMessage());

@@ -12,7 +12,7 @@
 
 @section("content") 
 @include("partials/errors")
-{!! Form::open(["url" => "usuarios", "id" => "formulario_usuario", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) !!}
+{{ Form::open(["url" => route("usuarios.registrar"), "id" => "formulario-usuario", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
 @include("usuario.formulario", ["modo" => "registrar"])
-{!! Form::close() !!}
+{{ Form::close() }}
 @endsection

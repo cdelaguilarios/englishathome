@@ -51,7 +51,7 @@ class Entidad extends Model {
   public static function registrarActualizarImagenPerfil($id, $imagenPerfil) {
     if (isset($imagenPerfil) && !is_null($imagenPerfil) && $imagenPerfil != "") {
       $entidad = Entidad::ObtenerXId($id);
-      $entidad->rutaImagenPerfil = Util::guardarImagen($entidad->id . "_ia_", $imagenPerfil);
+      $entidad->rutaImagenPerfil = Util::guardarImagen($entidad->id . "_ip_", $imagenPerfil);
       $entidad->save();
     }
   }

@@ -13,8 +13,12 @@ function cargarSeccionPagos() {
 
   //Común   
   if (obtenerParametroUrlXNombre("sec") === "pago") {
-    $("a[href='#pago']").tab("show");
+    $("a[href='#pago']").trigger("click");
   }
+  $("a[href='#pago']").click(function () {
+    $(this).tab("show");
+    $("#tab-lista-pagos").DataTable().responsive.recalc();
+  });
 }
 
 //Lista
@@ -46,25 +50,21 @@ function cargarListaPago() {
             return formatoFecha(d.fechaRegistro, true);
           }},
         {data: "estado", name: "pago.estado", render: function (e, t, d, m) {
-            return '<div class="sec-btn-editar-estado-pago"><a href="javascript:void(0);" class="btn-editar-estado-pago" data-idpago="' + d.id + '" data-idalumno="' + d.idAlumno + '" data-estado="' + d.estado + '"><span class="label ' + estadosPago[d.estado][1] + ' btn_estado">' + estadosPago[d.estado][0] + '</span></a></div>';
-          }},
+            return '<div class="sec-btn-editar-estado-pago"><a href="javascript:void(0);" class="btn-editar-estado-pago" data-idpago="' + d.id + '" data-idalumno="' + d.idAlumno + '" data-estado="' + d.estado + '"><span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span></a></div>';
+          }, className:"text-center"},
         {data: "id", name: "id", orderable: false, searchable: false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
                 '<li>' +
                 '<a href="javascript:void(0);" onclick="verDatosPago(' + d.id + ');" title="Ver datos del pago"><i class="fa fa-eye"></i></a>' +
                 '</li>' +
                 '<li>' +
-                '<a href="javascript:void(0);" title="Eliminar pago" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?, considere que los datos de las clases relacionadas a este pago también serán eliminados\', \'tab-lista-pagos\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' +
+                '<a href="javascript:void(0);" title="Eliminar pago" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?, considere que los datos de las clases relacionadas a este pago también serán eliminados.\', \'tab-lista-pagos\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' +
                 '<i class="fa fa-trash"></i>' +
                 '</a>' +
                 '</li>' +
                 '</ul>';
-          }}
-      ],
-      createdRow: function (r, d, i) {
-        $("td", r).eq(3).addClass("text-center");
-        $("td", r).eq(4).addClass("text-center");
-      }
+          }, className:"text-center"}
+      ]
     });
 
     $(window).click(function (e) {
@@ -83,13 +83,10 @@ function cargarListaPago() {
       if (urlActualizarEstadoPago !== "" && $(this).data("estado") !== $(this).val()) {
         llamadaAjax(urlActualizarEstadoPago, "POST", {"idPago": idpago, "idAlumno": idAlumno, "estado": $(this).val()}, true);
       }
-      $(this).closest(".sec-btn-editar-estado-pago").append('<a href="javascript:void(0);" class="btn-editar-estado-pago" data-idpago="' + idpago + '" data-idalumno="' + idAlumno + '" data-estado="' + $(this).val() + '"><span class="label ' + estadosPago[$(this).val()][1] + ' btn_estado">' + estadosPago[$(this).val()][0] + '</span></a>');
+      $(this).closest(".sec-btn-editar-estado-pago").append('<a href="javascript:void(0);" class="btn-editar-estado-pago" data-idpago="' + idpago + '" data-idalumno="' + idAlumno + '" data-estado="' + $(this).val() + '"><span class="label ' + estadosPago[$(this).val()][1] + ' btn-estado">' + estadosPago[$(this).val()][0] + '</span></a>');
       $(this).remove();
     });
   }
-}
-function eliminarPago() {
-
 }
 
 //Formulario
@@ -354,9 +351,9 @@ function verDatosPago(idPago) {
           $("#dat-motivo-pago").text(motivosPago[d.motivo]);
           $("#dat-descripcion-pago").text(d.descripcion);
           $("#dat-monto-pago").html('S/. ' + redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="saldo-favor-utilizado">utilizado</span>)' : '') + '</b></small>' : ''));
-          $("#dat-estado-pago").html('<span class="label ' + estadosPago[d.estado][1] + ' btn_estado">' + estadosPago[d.estado][0] + '</span>');
+          $("#dat-estado-pago").html('<span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span>');
           $("#dat-fecha-registro-pago").text(formatoFecha(d.fechaRegistro, true));
-          if (d.rutasImagenesComprobante !== "") {
+          if (d.rutasImagenesComprobante !== null && d.rutasImagenesComprobante !== "") {
             var rutaImagen = urlImagenes.replace("/0", "/" + d.rutasImagenesComprobante);
             $("#dat-imagen-comprobante-pago").attr("href", rutaImagen);
             $("#dat-imagen-comprobante-pago").find("img").attr("src", rutaImagen);

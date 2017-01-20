@@ -50,7 +50,7 @@ class ActualizarEstadoRequest extends Request {
 
   public function messages() {
     return [
-        "pagoNoValida.required" => "El pago seleccionado no es válido.",
+        "pagoNoValido.required" => "El pago seleccionado no es válido.",
         "estadoNoValido.required" => "El estado seleccionado no es válido."
     ];
   }

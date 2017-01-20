@@ -16,7 +16,7 @@
 
 @section("content") 
 @include("partials/errors")
-{!! Form::model($usuario, ["method" => "PATCH", "action" => ["UsuarioController@update", $usuario->id], "id" => "formulario_usuario", "class" => "form-horizontal", "files" => true]) !!}
+{{ Form::model($usuario, ["method" => "PATCH", "action" => ["UsuarioController@actualizar", $usuario->id], "id" => "formulario-usuario", "class" => "form-horizontal", "files" => true]) }}
 @include("usuario.formulario")
-{!! Form::close() !!}
+{{ Form::close() }}
 @endsection

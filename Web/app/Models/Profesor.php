@@ -23,12 +23,17 @@ class Profesor extends Model {
     return $nombreTabla;
   }
 
-  public static function listar() {
+  public static function listar($datos = NULL) {
     $nombreTabla = Profesor::nombreTabla();
-    return Profesor::select($nombreTabla . ".*", "entidad.*", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))
-                    ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
-                    ->leftJoin(EntidadCurso::NombreTabla() . " as entidadCurso", $nombreTabla . ".idEntidad", "=", "entidadCurso.idEntidad")
-                    ->where("entidad.eliminado", 0);
+    $profesores = Profesor::select($nombreTabla . ".*", "entidad.*", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))
+            ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
+            ->leftJoin(EntidadCurso::NombreTabla() . " as entidadCurso", $nombreTabla . ".idEntidad", "=", "entidadCurso.idEntidad")
+            ->where("entidad.eliminado", 0)->distinct();
+
+    if (isset($datos["estado"])) {
+      $profesores->where("entidad.estado", $datos["estado"]);
+    }
+    return $profesores;
   }
 
   public static function ObtenerXId($id, $simple = FALSE) {
@@ -40,6 +45,7 @@ class Profesor extends Model {
     if (!$simple) {
       $profesor->horario = Horario::obtenerFormatoJson($id);
       $profesor->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($profesor->codigoUbigeo);
+      $profesor->cursos = EntidadCurso::obtenerXEntidad($id, FALSE);
     }
     return $profesor;
   }
@@ -50,7 +56,7 @@ class Profesor extends Model {
 
     $idEntidad = Entidad::registrar($datos, TiposEntidad::Profesor, EstadosProfesor::Registrado);
     Entidad::registrarActualizarImagenPerfil($idEntidad, $req->file("imagenPerfil"));
-    EntidadCurso::registrarActualizar($idEntidad, $datos["idCurso"]);
+    EntidadCurso::registrarActualizar($idEntidad, $datos["idCursos"]);
     Horario::registrarActualizar($idEntidad, $datos["horario"]);
 
     $profesor = new Profesor();
@@ -65,13 +71,26 @@ class Profesor extends Model {
     $datos = $req->all();
     $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
 
-    Entidad::Actualizar($id, $datos, TiposEntidad::Profesor, EstadosProfesor::Registrado);
+    Entidad::Actualizar($id, $datos, TiposEntidad::Profesor, $datos["estado"]);
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
-    EntidadCurso::registrarActualizar($id, $datos["idCurso"]);
+    EntidadCurso::registrarActualizar($id, $datos["idCursos"]);
     Horario::registrarActualizar($id, $datos["horario"]);
+
+    Profesor::obtenerXId($id, TRUE);
+  }
+
+  public static function actualizarEstado($id, $estado) {
+    Profesor::obtenerXId($id, TRUE);
+    Entidad::actualizarEstado($id, $estado);
+  }
+
+  public static function actualizarHorario($id, $horario) {
+    Profesor::obtenerXId($id, TRUE);
+    Horario::registrarActualizar($id, $horario);
   }
 
   public static function eliminar($id) {
+    Profesor::obtenerXId($id, TRUE);
     Entidad::eliminar($id);
   }
 

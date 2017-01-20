@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use Auth;
-use Carbon\Carbon;
-use App\Helpers\Util;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\RolesUsuario;
 use App\Helpers\Enum\EstadosUsuario;
@@ -28,62 +26,50 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
   protected $fillable = ["email", "rol"];
   protected $hidden = ["password", "remember_token"];
 
-  public static function NombreTabla() {
+  public static function nombreTabla() {
     $modeloUsuario = new Usuario();
     $nombreTabla = $modeloUsuario->getTable();
     unset($modeloUsuario);
     return $nombreTabla;
   }
 
-  public static function Listar() {
-    $nombreTabla = Usuario::NombreTabla();
-    return Usuario::select($nombreTabla . ".*", "entidad.*")
-                    ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
-                    ->where("entidad.eliminado", 0);
+  public static function listar($datos = NULL) {
+    $nombreTabla = Usuario::nombreTabla();
+    $usuarios = Usuario::select($nombreTabla . ".*", "entidad.*")
+            ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
+            ->where("entidad.eliminado", 0);
+    if (isset($datos["estado"])) {
+      $usuarios->where("entidad.estado", $datos["estado"]);
+    }
+    return $usuarios;
   }
 
-  public static function ObtenerXId($id) {
-    $nombreTabla = Usuario::NombreTabla();
-    return Usuario::select($nombreTabla . ".*", "entidad.*")
-                    ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
-                    ->where("entidad.id", $id)
-                    ->where("entidad.eliminado", 0)->firstOrFail();
+  public static function obtenerXId($id) {
+    return Usuario::listar()->where("entidad.id", $id)->firstOrFail();
   }
 
-  public static function Registrar($req) {
+  public static function registrar($req) {
     $datos = $req->all();
     $datos["correoElectronico"] = $datos["email"];
 
-    $entidad = new Entidad($datos);
-    $entidad->tipo = TiposEntidad::Usuario;
-    $entidad->save();
+    $idEntidad = Entidad::registrar($datos, TiposEntidad::Usuario, ((isset($datos["estado"])) ? $datos["estado"] : EstadosUsuario::Activo));
+    Entidad::registrarActualizarImagenPerfil($idEntidad, $req->file("imagenPerfil"));
 
     $usuario = new Usuario($datos);
     $usuario->password = bcrypt($datos["password"]);
-    $usuario->idEntidad = $entidad["id"];
+    $usuario->idEntidad = $idEntidad;
     $usuario->save();
-
-    $imagenPerfil = $req->file("imagenPerfil");
-    if (isset($imagenPerfil) && !is_null($imagenPerfil) && $imagenPerfil != "") {
-      $entidad->rutaImagenPerfil = Util::guardarImagen($entidad["id"] . "_iu_", $imagenPerfil);
-      $entidad->save();
-    }
-    return $entidad["id"];
+    return $idEntidad;
   }
 
-  public static function Actualizar($id, $req) {
+  public static function actualizar($id, $req) {
     $datos = $req->all();
     $datos["correoElectronico"] = $datos["email"];
 
-    $entidad = Entidad::ObtenerXId($id);
-    $usuario = Usuario::ObtenerXId($id);
+    Entidad::Actualizar($id, $datos, TiposEntidad::Usuario, $datos["estado"]);
+    Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
 
-    $imagenPerfil = $req->file("imagenPerfil");
-    if (isset($imagenPerfil) && !is_null($imagenPerfil) && $imagenPerfil != "") {
-      $entidad->rutaImagenPerfil = Util::guardarImagen($id . "_iu_", $imagenPerfil);
-    }
-
-
+    $usuario = Usuario::obtenerXId($id);
     if (isset($datos["password"]) && !is_null($datos["password"]) && $datos["password"] != "") {
       $usuario->password = bcrypt($datos["password"]);
     }
@@ -91,47 +77,43 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     if ($rol != RolesUsuario::Principal) {
       $datos["rol"] = $usuario->rol;
     }
-
-    $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
-    $entidad->update($datos);
     $usuario->update($datos);
   }
 
-  public static function Eliminar($id) {
+  public static function actualizarEstado($id, $estado) {
+    Usuario::obtenerXId($id);
+    Entidad::actualizarEstado($id, $estado);
+  }
+
+  public static function usuarioUnicoPrincipal($id) {
+    $datosUsuario = Usuario::where("rol", RolesUsuario::Principal)->count();
+    if ($datosUsuario > 1) {
+      return FALSE;
+    }
+    $usuario = Usuario::obtenerXId($id);
+    return ($usuario->rol == RolesUsuario::Principal);
+  }
+
+  public static function usuarioEliminado($id) {
     $entidad = Entidad::ObtenerXId($id);
-    $usuario = Usuario::ObtenerXId($id);
+    return ($entidad->eliminado == 0);
+  }
+
+  public static function usuarioActivo($id) {
+    $entidad = Entidad::ObtenerXId($id);
+    return ($entidad->estado == EstadosUsuario::Activo);
+  }
+
+  public static function eliminar($id) {
+    $usuario = Usuario::obtenerXId($id);
+    Entidad::eliminar($id);
 
     $correoElectronicoEliminacion = mb_substr($usuario->email . "_e_" . rand(1, 9999999), 0, 255);
     while (Usuario::where("email", $correoElectronicoEliminacion)->count() > 0 || Entidad::where("correoElectronico", $correoElectronicoEliminacion)->count() > 0) {
       $correoElectronicoEliminacion = mb_substr($usuario->email . "_e_" . rand(1, 9999999), 0, 255);
     }
-
-    $entidad->correoElectronico = $correoElectronicoEliminacion;
-    $entidad->eliminado = 1;
-    $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
-    $entidad->save();
-
     $usuario->email = $correoElectronicoEliminacion;
     $usuario->save();
-  }
-
-  public static function UsuarioUnicoPrincipal($id) {
-    $datosUsuario = Usuario::where("rol", RolesUsuario::Principal)->count();
-    if ($datosUsuario > 1) {
-      return FALSE;
-    }
-    $usuario = Usuario::ObtenerXId($id);
-    return ($usuario->rol == RolesUsuario::Principal);
-  }
-
-  public static function UsuarioEliminado($id) {
-    $entidad = Entidad::ObtenerXId($id);
-    return ($entidad->eliminado == 0);
-  }
-
-  public static function UsuarioActivo($id) {
-    $entidad = Entidad::ObtenerXId($id);
-    return ($entidad->estado == EstadosUsuario::Activo);
   }
 
 }

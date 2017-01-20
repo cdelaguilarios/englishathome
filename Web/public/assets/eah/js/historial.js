@@ -52,8 +52,10 @@ function  cargarHistorial() {
                 if (datHistorial[i].rutasImagenes !== null) {
                   var rutasImagenes = datHistorial[i].rutasImagenes.split(",");
                   $.each(rutasImagenes, function (e, v) {
-                    var rutaImagen = urlImagenesHistorial.replace("/0", "/" + v);
-                    htmlHistorial += '<a href="' + rutaImagen + '" target="_blank"><img src="' + rutaImagen + '" class="margin" width="100"></a>';
+                    if(v !== null && v !== ""){
+                      var rutaImagen = urlImagenesHistorial.replace("/0", "/" + v);
+                      htmlHistorial += '<a href="' + rutaImagen + '" target="_blank"><img src="' + rutaImagen + '" class="margin" width="100"></a>';
+                    }
                   });
                 }
                 htmlHistorial += '</div>';

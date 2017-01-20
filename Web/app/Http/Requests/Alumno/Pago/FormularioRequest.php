@@ -38,7 +38,7 @@ class FormularioRequest extends Request {
     ];
 
     $listaMotivosPago = MotivosPago::listar();
-    if (!(!is_null($datos["motivo"]) && array_key_exists($datos["motivo"], $listaMotivosPago))) {
+    if (!array_key_exists($datos["motivo"], $listaMotivosPago)) {
       $reglasValidacion["motivoNoValido"] = "required";
     }
 

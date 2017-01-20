@@ -8,7 +8,7 @@ use App\Http\Requests\Request;
 use App\Helpers\Enum\MotivosPago;
 use App\Helpers\ReglasValidacion;
 
-class PagoRequest extends Request {
+class FormularioRequest extends Request {
 
   public function authorize() {
     return true;
@@ -16,9 +16,9 @@ class PagoRequest extends Request {
 
   protected function getValidatorInstance() {
     $datos = $this->all();
-    $datos["motivo"] = (isset($datos["motivo"]) ? $datos["motivo"] : NULL);
-    $datos["monto"] = (isset($datos["monto"]) ? $datos["monto"] : NULL);
-    $datos["datosClases"] = (isset($datos["datosClases"]) ? $datos["datosClases"] : "");
+    $datos["motivo"] = ReglasValidacion::formatoDato($datos, "motivo");
+    $datos["monto"] = ReglasValidacion::formatoDato($datos, "monto");
+    $datos["datosClases"] = ReglasValidacion::formatoDato($datos, "datosClases");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -27,18 +27,17 @@ class PagoRequest extends Request {
     $datos = $this->all();
     $reglasValidacion = [
         "descripcion" => "max:255",
-        "monto" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
-        "imagenComprobante" => "image"
+        "imagenComprobante" => "image",
+        "monto" => ["required", "regex:" . ReglasValidacion::RegexDecimal]
     ];
 
     $listaMotivosPago = MotivosPago::listar();
-    if (!(!is_null($datos["motivo"]) && array_key_exists($datos["motivo"], $listaMotivosPago))) {
+    if (!array_key_exists($datos["motivo"], $listaMotivosPago)) {
       $reglasValidacion["motivoNoValido"] = "required";
     }
 
     if ($datos["motivo"] == MotivosPago::Clases) {
       $reglasValidacion["imagenDocumentoVerificacion"] = "required|image";
-
       $datosClases = explode(",", $datos["datosClases"]);
       $datosClasesValidas = (count($datosClases) > 0);
       $totalClasesValidas = 0;
@@ -75,8 +74,8 @@ class PagoRequest extends Request {
 
   public function messages() {
     return [
-        "motivoNoValido.required" => "El motivo seleccionado del pago no es válido",
-        "datosClasesNoValidos.required" => "Los datos de las clases seleccionadas nos son válidas"
+        "motivoNoValido.required" => "El motivo seleccionado del pago no es válido.",
+        "datosClasesNoValidos.required" => "Los datos de las clases seleccionadas nos son válidas."
     ];
   }
 

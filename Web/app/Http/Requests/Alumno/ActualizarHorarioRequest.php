@@ -4,7 +4,6 @@ namespace App\Http\Requests\Alumno;
 
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
-use App\Helpers\Enum\EstadosAlumno;
 
 class ActualizarHorarioRequest extends Request {
 

@@ -22,6 +22,13 @@ class PagoProfesor extends Model {
     return $nombreTabla;
   }
 
+  public static function listar($idProfesor) {
+    $nombreTabla = PagoProfesor::nombreTabla();
+    return PagoProfesor::leftJoin(Pago::nombreTabla() . " as pago", $nombreTabla . ".idPago", "=", "pago.id")
+                    ->where("pago.eliminado", 0)
+                    ->where($nombreTabla . ".idProfesor", $idProfesor);
+  }
+
   public static function obtenerXId($idProfesor, $id) {
     $nombreTabla = PagoProfesor::nombreTabla();
     return PagoProfesor::select("pago.*")
@@ -38,13 +45,6 @@ class PagoProfesor extends Model {
                     ->leftJoin(PagoClase::NombreTabla() . " as pagoClase", $nombreTabla . ".idPago", "=", "pagoClase.idPago")
                     ->where("pago.eliminado", 0)
                     ->where("pagoClase.idClase", $idClase)->first();
-  }
-
-  public static function listar($idProfesor) {
-    $nombreTabla = PagoProfesor::nombreTabla();
-    return PagoProfesor::leftJoin(Pago::nombreTabla() . " as pago", $nombreTabla . ".idPago", "=", "pago.id")
-                    ->where("pago.eliminado", 0)
-                    ->where($nombreTabla . ".idProfesor", $idProfesor);
   }
 
   public static function registrar($idProfesor, $request) {
@@ -84,17 +84,12 @@ class PagoProfesor extends Model {
     $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$datos["motivo"], "", number_format((float) ($datos["monto"]), 2, ".", "")], MensajesHistorial::MensajeProfesorRegistroPago);
     Historial::Registrar([$idProfesor, Auth::user()->idEntidad], MensajesHistorial::TituloProfesorRegistroPago, $mensajeHistorial, NULL, FALSE, TRUE, $datosPago["id"], NULL, NULL, TiposHistorial::Pago);
   }
-  
+
   public static function actualizarEstado($idProfesor, $datos) {
+    PagoProfesor::obtenerXId($idProfesor, $datos["idPago"]);
     Pago::actualizarEstado($datos["idPago"], $datos["estado"]);
   }
 
-  public static function eliminar($idProfesor, $id) {
-    PagoProfesor::obtenerXId($idProfesor, $id);
-    Pago::eliminar($id);
-  }
-
-  
   public static function verificarExistencia($idProfesor, $id) {
     try {
       PagoProfesor::obtenerXId($idProfesor, $id);
@@ -103,4 +98,10 @@ class PagoProfesor extends Model {
     }
     return TRUE;
   }
+
+  public static function eliminar($idProfesor, $id) {
+    PagoProfesor::obtenerXId($idProfesor, $id);
+    Pago::eliminar($id);
+  }
+
 }

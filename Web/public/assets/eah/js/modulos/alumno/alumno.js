@@ -34,8 +34,8 @@ function cargarLista() {
           }},
         {data: "correoElectronico", name: "entidad.correoElectronico"},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
-            return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn_estado">' + estados[d.estado][0] + '</span></a></div>';
-          }},
+            return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
+          }, className:"text-center"},
         {data: "id", name: "id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
                 '<li>' +
@@ -50,12 +50,8 @@ function cargarLista() {
                 '</a>' +
                 '</li>' +
                 '</ul>';
-          }}
-      ],
-      "createdRow": function (r, data, index) {
-        $("td", r).eq(2).addClass("text-center");
-        $("td", r).eq(3).addClass("text-center");
-      }
+          }, className:"text-center"}
+      ]
     });
     $("#bus-estado").change(function () {
       $("#tab-lista").DataTable().ajax.reload();
@@ -75,7 +71,7 @@ function cargarLista() {
       if (urlActualizarEstado !== "" && $(this).data("estado") !== $(this).val()) {
         llamadaAjax(urlActualizarEstado.replace("/0", "/" + id), "POST", {"estado": $(this).val()}, true);
       }
-      $(this).closest(".sec-btn-editar-estado").append('<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + id + '" data-estado="' + $(this).val() + '"><span class="label ' + estados[$(this).val()][1] + ' btn_estado">' + estados[$(this).val()][0] + '</span></a>');
+      $(this).closest(".sec-btn-editar-estado").append('<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + id + '" data-estado="' + $(this).val() + '"><span class="label ' + estados[$(this).val()][1] + ' btn-estado">' + estados[$(this).val()][0] + '</span></a>');
       $(this).remove();
     });
   }
@@ -144,13 +140,13 @@ function cargarFormulario() {
         validarDecimal: true
       }
     },
-    submitHandler: function (form) {
+    submitHandler: function (f) {
       if ($.parseJSON($("input[name='horario']").val()) !== null && $.parseJSON($("input[name='horario']").val()).length > 0) {
         if (confirm($("#btn-guardar").text().trim() === "Guardar datos"
             ? "¿Está seguro que desea guardar los cambios de los datos del alumno?"
             : "¿Está seguro que desea registrar estos datos?")) {
           $.blockUI({message: "<h4>" + ($("#btn-guardar").text().trim() === "Guardar datos" ? "Guardando" : "Registrando") + " datos...</h4>"});
-          form.submit();
+          f.submit();
         }
       } else {
         agregarMensaje("advertencias", "Debe ingresar un horario disponible para sus clases", true, "#sec-men-alerta-horario");

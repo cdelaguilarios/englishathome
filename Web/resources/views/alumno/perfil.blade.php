@@ -22,7 +22,7 @@
         <img class="profile-user-img img-responsive img-circle" src="{{ route("imagenes", ["rutaImagen" => (isset($alumno->rutaImagenPerfil) && $alumno->rutaImagenPerfil != "" ? $alumno->rutaImagenPerfil : "-")]) }}" alt="User profile picture">
         <h3 class="profile-username">Alumn{{ $alumno->sexo == "F" ? "a" : "o" }} {{ $alumno->nombre . " " .  $alumno->apellido }}</h3>
         <p class="text-muted">{{ $alumno->correoElectronico }}</p>
-        <span class="label {{ $estadosAlumno[$alumno->estado][1] }} btn_estado">{{ $estadosAlumno[$alumno->estado][0] }}</span>
+        <span class="label {{ $estadosAlumno[$alumno->estado][1] }} btn-estado">{{ $estadosAlumno[$alumno->estado][0] }}</span>
       </div>
     </div>
     <div class="sec-datos box box-primary">
@@ -35,7 +35,7 @@
           @include("util.horario", ["horario" => $alumno->horario, "modo" => "visualizar"])
         </p>
         <hr>        
-        <strong><i class="fa fa-fw fa-calendar"></i> Curso</strong>
+        <strong><i class="fa fa-fw flaticon-favorite-book"></i> Curso</strong>
         <p class="text-muted">{{ $cursos[$alumno->idCurso] }}</p>
         <hr>
         <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>

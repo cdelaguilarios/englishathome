@@ -5,6 +5,7 @@ namespace App\Http\Requests\Profesor\Pago;
 use App\Models\PagoProfesor;
 use App\Http\Requests\Request;
 use App\Helpers\Enum\EstadosPago;
+use App\Helpers\ReglasValidacion;
 
 class ActualizarEstadoRequest extends Request {
 
@@ -14,10 +15,9 @@ class ActualizarEstadoRequest extends Request {
 
   protected function getValidatorInstance() {
     $datos = $this->all();
-    $datos["idPago"] = (isset($datos["idPago"]) && $datos["idPago"] != "" ? $datos["idPago"] : NULL);
-    $datos["idProfesor"] = (isset($datos["idProfesor"]) && $datos["idProfesor"] != "" ? $datos["idProfesor"] : NULL);
-    $data["estado"] = (isset($data["estado"]) ? $data["estado"] : NULL);
-
+    $datos["idPago"] = ReglasValidacion::formatoDato($datos, "idPago");
+    $datos["idProfesor"] = ReglasValidacion::formatoDato($datos, "idProfesor");
+    $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -26,8 +26,7 @@ class ActualizarEstadoRequest extends Request {
     $datos = $this->all();
     $reglasValidacion = [];
 
-
-    if (!is_null($datos["idPago"]) && !is_null($datos["idProfesor"]) && !PagoProfesor::verificarExistencia($datos["idProfesor"], $datos["idPago"])) {
+    if (!PagoProfesor::verificarExistencia($datos["idProfesor"], $datos["idPago"])) {
       $reglasValidacion["pagoNoValido"] = "required";
     }
     $estados = EstadosPago::listarSimple();
@@ -51,8 +50,8 @@ class ActualizarEstadoRequest extends Request {
 
   public function messages() {
     return [
-        "pagoNoValida.required" => "El pago seleccionado no es válido",
-        "estadoNoValido.required" => "El estado seleccionado no es válido"
+        "pagoNoValido.required" => "El pago seleccionado no es válido.",
+        "estadoNoValido.required" => "El estado seleccionado no es válido."
     ];
   }
 

@@ -7,27 +7,27 @@
       </div>
       <div class="box-body">
         <div class="form-group">
-          {!! Form::label("nombre", "Nombres: ", ["class" => "col-sm-2 control-label"]) !!}
+          {{ Form::label("nombre", "Nombres: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {!! Form::text("nombre", null, ["class" => "form-control", "maxlength" =>"255"]) !!}
+            {{ Form::text("nombre", null, ["class" => "form-control", "maxlength" =>"255"]) }}
           </div>
         </div>
         <div class="form-group">
-          {!! Form::label("apellido", "Apellidos: ", ["class" => "col-sm-2 control-label"]) !!}
+          {{ Form::label("apellido", "Apellidos: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {!! Form::text("apellido", null, ["class" => "form-control", "maxlength" =>"255"]) !!}
+            {{ Form::text("apellido", null, ["class" => "form-control", "maxlength" =>"255"]) }}
           </div>
         </div>
         <div class="form-group">
-          {!! Form::label("email", "Correo electrónico (*): ", ["class" => "col-sm-2 control-label"]) !!}
+          {{ Form::label("email", "Correo electrónico (*): ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {!! Form::email("email", null, ["class" => "form-control", "maxlength" =>"245"]) !!}
+            {{ Form::email("email", null, ["class" => "form-control", "maxlength" =>"245"]) }}
           </div>
         </div>
         <div class="form-group">
-          {!! Form::label("imagenPerfil", "Imagen de perfil: ", ["class" => "col-sm-2 control-label"]) !!}
+          {{ Form::label("imagenPerfil", "Imagen de perfil: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-4">
-            {!! Form::file("imagenPerfil", null) !!}
+            {{ Form::file("imagenPerfil", null) }}
           </div>
           @if (isset($usuario->rutaImagenPerfil) && !empty($usuario->rutaImagenPerfil) && $usuario->rutaImagenPerfil != "NULL")
           <div class="col-sm-3">
@@ -38,45 +38,49 @@
           @endif
         </div>
         <div class="form-group">
-          {!! Form::hidden("ModoEdicion", ((isset($modo) && $modo == "registrar") ? "0" : "1"), ["id" => "ModoEdicion"]) !!}
-          {!! Form::label("password", ((isset($modo) && $modo == "registrar") ? "Contraseña (*): " : "Nueva contraseña: "), ["class" => "col-sm-2 control-label"]) !!}
+          {{ Form::hidden("ModoEdicion", ((isset($modo) && $modo == "registrar") ? "0" : "1"), ["id" => "ModoEdicion"]) }}
+          {{ Form::label("password", ((isset($modo) && $modo == "registrar") ? "Contraseña (*): " : "Nueva contraseña: "), ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {!! Form::password("password", ["class" => "form-control", "minlength" =>"6", "maxlength" =>"30"]) !!}
+            {{ Form::password("password", ["class" => "form-control", "minlength" =>"6", "maxlength" =>"30"]) }}
           </div>
         </div>
         <div class="form-group">
-          {!! Form::label("password_confirmation", "Confirmar contraseña" . ((isset($modo) && $modo == "registrar") ? " (*): " : ": "), ["class" => "col-sm-2 control-label"]) !!}
+          {{ Form::label("password_confirmation", "Confirmar contraseña" . ((isset($modo) && $modo == "registrar") ? " (*): " : ": "), ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {!! Form::password("password_confirmation", ["class" => "form-control", "minlength" =>"6", "maxlength" =>"30"]) !!}
+            {{ Form::password("password_confirmation", ["class" => "form-control", "minlength" =>"6", "maxlength" =>"30"]) }}
           </div>
         </div>
         @if($usuarioActual->rol == App\Helpers\Enum\RolesUsuario::Principal)
         <div class="form-group">
-          {!! Form::label("rol", "Rol de usuario: ", ["class" => "col-sm-2 control-label"]) !!}
+          {{ Form::label("rol", "Rol de usuario: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {!! Form::select("rol", $roles,
-            (isset($usuario) ? $usuario->rol : App\Helpers\Enum\RolesUsuario::Principal)
-            , ["class" => "form-control"]) !!}
+            {{ Form::select("rol", $roles, (isset($usuario) ? $usuario->rol : App\Helpers\Enum\RolesUsuario::Principal), ["class" => "form-control"]) }}
           </div>
         </div>
         <div class="form-group">
-          {!! Form::label("estado", "Estado: ", ["class" => "col-sm-2 control-label"]) !!}
+          {{ Form::label("estado", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {!! Form::select("estado", $estados,
-            (isset($usuario) ? $usuario->estado : App\Helpers\Enum\EstadosUsuario::Activo)
-            , ["class" => "form-control"]) !!}
+            {{ Form::select("estado", $estados, (isset($usuario) ? $usuario->estado : App\Helpers\Enum\EstadosUsuario::Activo), ["class" => "form-control"]) }}
           </div>
         </div>
         @else
-        {!! Form::hidden("rol", (isset($usuario) ? $usuario->rol : App\Helpers\Enum\RolesUsuario::Secundario)) !!} 
-        {!! Form::hidden("estado", (isset($usuario) ? $usuario->estado : App\Helpers\Enum\EstadosUsuario::Activo)) !!}    
+        ]] Form::hidden("rol", (isset($usuario) ? $usuario->rol : App\Helpers\Enum\RolesUsuario::Secundario)) }} 
+        {{ Form::hidden("estado", (isset($usuario) ? $usuario->estado : App\Helpers\Enum\EstadosUsuario::Activo)) }}    
         @endif
-        {!! Form::hidden("id") !!}
+        {{ Form::hidden("id") }}
       </div>
       <div class="box-footer">    
-        <span>(*) Campos obligatorios</span>
-        <button id="btn-guardar" type="submit" class="btn btn-success pull-right" >{!! ((isset($modo) && $modo == "registrar") ? "Registrar" : "Guardar") !!}</button>
-        <a href="{{ route("usuarios") }}" type="button" class="btn btn-default pull-right" >Cancelar</a>
+        <div class="form-group">
+          <div class="col-sm-6">
+            <span>(*) Campos obligatorios</span>
+          </div>
+          <div class="col-sm-6">               
+            <button id="btn-guardar" type="submit" class="btn btn-success pull-right">
+              {{ ((isset($modo) && $modo == "registrar") ? "Registrar" : "Guardar") }}
+            </button>
+            <a href="{{ route("usuarios") }}" type="button" class="btn btn-default pull-right" >Cancelar</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>

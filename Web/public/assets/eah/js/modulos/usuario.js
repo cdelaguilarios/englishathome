@@ -3,61 +3,83 @@ function validarPassword(value, element, param) {
   return (($("#ModoEdicion") === undefined && value.trim() !== "") ||
       ($("#ModoEdicion") !== undefined && ($("#ModoEdicion").val() === "1" || ($("#ModoEdicion").val() === "0" && value.trim() !== ""))));
 }
-
 $(document).ready(function () {
+  cargarLista();
+  cargarFormulario();
+});
+function cargarLista() {
   urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
+  urlActualizarEstado = (typeof (urlActualizarEstado) === "undefined" ? "" : urlActualizarEstado);
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   roles = (typeof (roles) === "undefined" ? "" : roles);
   estados = (typeof (estados) === "undefined" ? "" : estados);
 
-  if (urlListar !== "" && urlEditar !== "" && urlEliminar !== "" && roles !== "" && estados !== "") {
-    $("#tab_lista").DataTable({
-      "processing": true,
-      "serverSide": true,
-      "ajax": {
-        "url": urlListar,
-        "type": "POST",
-        "data": function (d) {
+  if (urlListar !== "" && urlEditar !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && roles !== "" && estados !== "") {
+    $("#tab-lista").DataTable({
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: urlListar,
+        type: "POST",
+        data: function (d) {
           d._token = $("meta[name=_token]").attr("content");
+          d.estado = $("#bus-estado").val();
         }
       },
       autoWidth: false,
+      responsive: true,
       columns: [
-        {data: "nombre", name: "nombre"},
-        {data: "email", name: "email"},
-        {data: "rol", name: "rol"},
-        {data: "estado", name: "estado"},
-        {data: "id", name: "id", orderable: false, "searchable": false, width: "7%"}
-      ],
-      "createdRow": function (row, data, index) {
-        //Nombre completo        
-        $("td", row).eq(0).html((data.nombre !== null ? data.nombre : "") + " " + (data.apellido !== null ? data.apellido : ""));
-
-        //Rol
-        $("td", row).eq(2).html(roles[data.rol]);
-
-        //Estado
-        $("td", row).eq(3).html('<span class="label ' + estados[data.estado][1] + ' btn_estado">' + estados[data.estado][0] + '</span>');
-
-        //Botones
-        var tBotones = "<ul class='buttons'>" +
-            "<li>" +
-            "<a href='" + (urlEditar.replace("/0", "/" + data.id)) + "' title='Editar datos'><i class='fa fa-pencil'></i></a>" +
-            "</li>" +
-            "<li>" +
-            "<a href='javascript:void(0);' title='Eliminar usuario' onclick='eliminarElemento(this, \"¿Está seguro que desea eliminar los datos de este usuario?\", \"tab_lista\")' data-id='" + data.id + "' data-urleliminar='" + ((urlEliminar.replace("/0", "/" + data.id))) + "'>" +
-            "<i class='fa fa-trash'></i>" +
-            "</a>" +
-            "</li>" +
-            "</ul>";
-        $("td", row).eq(4).html(tBotones);
+        {data: "nombre", name: "entidad.nombre", render: function (e, t, d, m) {
+            return (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "");
+          }},
+        {data: "email", name: "usuario.email"},
+        {data: "rol", name: "usuario.rol", render: function (e, t, d, m) {
+            return roles[d.rol];
+          }},
+        {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
+            return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
+          }, className: "text-center"},
+        {data: "id", name: "id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
+            return '<ul class="buttons">' +
+                '<li>' +
+                '<a href="' + (urlEditar.replace("/0", "/" + d.id)) + '" title="Editar datos"><i class="fa fa-pencil"></i></a>' +
+                '</li>' +
+                '<li>' +
+                '<a href="javascript:void(0);" title="Eliminar usuario" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este usuario?\', \'tab-lista\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminar.replace("/0", "/" + d.id))) + '">' +
+                '<i class="fa fa-trash"></i>' +
+                '</a>' +
+                '</li>' +
+                '</ul>';
+          }, className: "text-center"}
+      ]
+    });
+    $("#bus-estado").change(function () {
+      $("#tab-lista").DataTable().ajax.reload();
+    });
+    $(window).click(function (e) {
+      if (!$(e.target).closest(".sec-btn-editar-estado").length) {
+        $(".sec-btn-editar-estado select").trigger("change");
       }
     });
+    $(".btn-editar-estado").live("click", function () {
+      $("#sel-estados").clone().val($(this).data("estado")).data("id", $(this).data("id")).data("estado", $(this).data("estado")).appendTo($(this).closest(".sec-btn-editar-estado"));
+      $(this).remove();
+      event.stopPropagation();
+    });
+    $(".sec-btn-editar-estado select").live("change", function () {
+      var id = $(this).data("id");
+      if (urlActualizarEstado !== "" && $(this).data("estado") !== $(this).val()) {
+        llamadaAjax(urlActualizarEstado.replace("/0", "/" + id), "POST", {"estado": $(this).val()}, true);
+      }
+      $(this).closest(".sec-btn-editar-estado").append('<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + id + '" data-estado="' + $(this).val() + '"><span class="label ' + estados[$(this).val()][1] + ' btn-estado">' + estados[$(this).val()][0] + '</span></a>');
+      $(this).remove();
+    });
   }
-
-  $("#formulario_usuario").validate({
-    ignore: "",
+}
+function cargarFormulario() {
+  $("#formulario-usuario").validate({
+    ignore: ":hidden",
     rules: {
       nombre: {
         validarAlfabetico: true
@@ -80,11 +102,13 @@ $(document).ready(function () {
         equalTo: "#password"
       }
     },
-    submitHandler: function (form) {
-      if (confirm($("#btn-guardar").text() === "Guardar"
+    submitHandler: function (f) {
+      if (confirm($("#btn-guardar").text().trim() === "Guardar"
           ? "¿Está seguro que desea guardar los cambios de los datos del usuario?"
-          : "¿Está seguro que desea registrar los datos de este usuario?"))
-        form.submit();
+          : "¿Está seguro que desea registrar los datos de este usuario?")) {
+        $.blockUI({message: "<h4>" + ($("#btn-guardar").text().trim() === "Guardar" ? "Guardando" : "Registrando") + " datos...</h4>"});
+        f.submit();
+      }
     },
     highlight: function () {
     },
@@ -102,4 +126,4 @@ $(document).ready(function () {
       }
     }
   });
-});
+}
