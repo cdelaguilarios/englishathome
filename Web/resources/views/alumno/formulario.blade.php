@@ -189,14 +189,14 @@
             <div class="col-sm-3">
               {{ Form::select("idCurso", $cursos, (isset($alumno) ? $alumno->idCurso : NULL), ["class" => "form-control"]) }}
             </div>
-            {{ Form::label("numeroHorasClase", "Número de horas por clase (*): ", ["class" => "col-sm-3 control-label"]) }}
+            {{ Form::label("numero-horas-clase", "Número de horas por clase (*): ", ["class" => "col-sm-3 control-label"]) }}
             <div class="col-sm-2">
               {{ Form::select("numeroHorasClase", [], (isset($alumno->numeroHorasClase) ? $alumno->numeroHorasClase : NULL), ["id" => "numero-horas-clase", "class" => "form-control"]) }}     
               {{ Form::hidden("auxNumeroHorasClase", (isset($alumno->numeroHorasClase) ? $alumno->numeroHorasClase : NULL)) }}             
             </div>                    
           </div>
           <div class="form-group">
-            {{ Form::label("fechaInicioClase", "Inicio de clases (*): ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("fecha-inicio-clase", "Inicio de clases (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3">
               <div class="input-group date">
                 <div class="input-group-addon">
@@ -208,7 +208,7 @@
             @if(isset($interesado))
               {{ Form::hidden("costoHoraClase", $interesado->costoHoraClase) }} 
             @else
-              {{ Form::label("costoHoraClase", "Costo hora de clase (*): ", ["class" => "col-sm-3 control-label"]) }}
+              {{ Form::label("costo-hora-clase", "Costo hora de clase (*): ", ["class" => "col-sm-3 control-label"]) }}
               <div class="col-sm-2">
                 <div class="input-group">
                   <span class="input-group-addon">

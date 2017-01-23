@@ -12,7 +12,8 @@ function cargarLista() {
   urlCotizar = (typeof (urlCotizar) === "undefined" ? "" : urlCotizar);
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   estados = (typeof (estados) === "undefined" ? "" : estados);
-  if (urlListar !== "" && urlEditar !== "" && urlCotizar !== "" && urlEliminar !== "" && estados !== "") {
+  estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
+  if (urlListar !== "" && urlEditar !== "" && urlCotizar !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -26,15 +27,25 @@ function cargarLista() {
       },
       autoWidth: false,
       responsive: true,
+      order: [[4, "desc"]],
       columns: [
         {data: "nombre", name: "entidad.nombre", render: function (e, t, d, m) {
-            return (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "");
+            return '<a href="' + (urlEditar.replace("/0", "/" + d.id)) + '">' + (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "") + '</a>';
           }},
         {data: "telefono", name: "entidad.telefono"},
         {data: "correoElectronico", name: "entidad.correoElectronico"},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
-            return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
-          }, className:"text-center"},
+            if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined) {
+              return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
+            } else if (estados[d.estado] !== undefined) {
+              return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>';
+            } else {
+              return "";
+            }
+          }, className: "text-center"},
+        {data: "fechaRegistro", name: "entidad.fechaRegistro", render: function (e, t, d, m) {
+            return formatoFecha(d.fechaRegistro, true);
+          }, className: "text-center"},
         {data: "id", name: "id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
                 '<li>' +
@@ -49,7 +60,7 @@ function cargarLista() {
                 '</a>' +
                 '</li>' +
                 '</ul>';
-          }, className:"text-center"}
+          }, className: "text-center"}
       ]
     });
     $("#bus-estado").change(function () {
@@ -97,12 +108,20 @@ function cargarFormulario() {
       },
       cursoInteres: {
         required: true
+      },
+      costoHoraClase: {
+        required: true,
+        validarDecimal: true
       }
     },
     submitHandler: function (f) {
-      if (confirm($("#btn-guardar").text().trim() === "Guardar"
-          ? "¿Está seguro que desea guardar los cambios de los datos de la persona interesada?"
-          : "¿Está seguro que desea registrar los datos de esta persona interesada?")) {
+      var mensajeConfirmacion = "¿Está seguro que desea registrar a esta persona interesada como un alumno?";
+      if ($("input[name='registrarComoAlumno']").val() !== "1") {
+        mensajeConfirmacion = ($("#btn-guardar").text().trim() === "Guardar"
+            ? "¿Está seguro que desea guardar los cambios de los datos de la persona interesada?"
+            : "¿Está seguro que desea registrar los datos de esta persona interesada?");
+      }
+      if (confirm(mensajeConfirmacion)) {
         $.blockUI({message: "<h4>" + ($("#btn-guardar").text().trim() === "Guardar" ? "Guardando" : "Registrando") + " datos...</h4>"});
         f.submit();
       }
@@ -123,8 +142,27 @@ function cargarFormulario() {
       }
     }
   });
+
+  $("#btn-registrar-alumno").click(function () {
+    $("input[name='registrarComoAlumno']").val("1");
+    $("#formulario-interesado").submit();
+  });
+  $("#btn-guardar").click(function () {
+    $("input[name='registrarComoAlumno']").val("0");
+    $("#formulario-interesado").submit();
+  });
 }
 
+$.validator.addMethod("validarCkEditor", validarCkEditor, "Este campo es obligatorio.");
+function validarCkEditor(value, element, param) {
+  CKEDITOR.instances[$(element).attr("id")].updateElement();
+  if ($(element).val().trim() !== "") {
+    return true;
+  } else {
+    $(window).scrollTop($("#cke_" + $(element).attr("id")).offset().top);
+    return false;
+  }
+}
 function cargarFormularioCotizacion() {
   if ($("#descripcion-curso").length === 0) {
     return;
@@ -135,36 +173,24 @@ function cargarFormularioCotizacion() {
       idCurso: {
         required: true
       },
+      textoIntroductorio: {
+        validarCkEditor: true
+      },
       descripcionCurso: {
-        required: function ()
-        {
-          CKEDITOR.instances["descripcion-curso"].updateElement();
-        }
+        validarCkEditor: true
       },
       metodologia: {
-        required: function ()
-        {
-          CKEDITOR.instances["metodologia"].updateElement();
-        }
+        validarCkEditor: true
       },
       cursoIncluye: {
-        required: function ()
-        {
-          CKEDITOR.instances["curso-incluye"].updateElement();
-        }
+        validarCkEditor: true
       },
       inversion: {
-        required: function ()
-        {
-          CKEDITOR.instances["inversion"].updateElement();
-        }
+        validarCkEditor: true
       },
       inversionCuotas: {
-        required: function ()
-        {
-          CKEDITOR.instances["inversion-cuotas"].updateElement();
-        }
-      },      
+        validarCkEditor: true
+      },
       costoHoraClase: {
         required: true,
         validarDecimal: true
@@ -239,6 +265,7 @@ function cargarFormularioCotizacion() {
       );
     }
   });
+  CKEDITOR.replace("texto-introductorio");
   CKEDITOR.replace("descripcion-curso");
   CKEDITOR.replace("metodologia");
   CKEDITOR.replace("curso-incluye");

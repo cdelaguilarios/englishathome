@@ -36,6 +36,8 @@ class AlumnoController extends Controller {
   public function listar(BusquedaRequest $req) {
     return Datatables::of(Alumno::listar($req->all()))->filterColumn("entidad.nombre", function($q, $k) {
               $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
+            })->filterColumn("entidad.fechaRegistro", function($q, $k) {
+              $q->whereRaw("DATE_FORMAT(entidad.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
             })->make(true);
   }
 

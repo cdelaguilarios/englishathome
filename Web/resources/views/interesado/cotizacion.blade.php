@@ -54,13 +54,19 @@
     </div>  
     <div>
       <div class="form-group">
-        {{ Form::label("idCurso", "Curso de interes: ", ["class" => "col-sm-2 control-label"]) }}
+        {{ Form::label("id-curso", "Curso de interes: ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-3">
           {{ Form::select("idCurso", $cursos, $interesado->idCurso, ["id" => "id-curso", "class" => "form-control"]) }}
         </div>                   
       </div>
       <div class="form-group">
-        {{ Form::label("descripcionCurso", "Descripción curso: ", ["class" => "col-sm-2 control-label"]) }}
+        {{ Form::label("texto-introductorio", "Texto introductorio: ", ["class" => "col-sm-2 control-label"]) }}
+        <div class="col-sm-10">
+          {{ Form::textarea("textoIntroductorio", NULL, ["id" => "texto-introductorio", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+        </div>                                        
+      </div>
+      <div class="form-group">
+        {{ Form::label("descripcion-curso", "Descripción curso: ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10">
           {{ Form::textarea("descripcionCurso", NULL, ["id" => "descripcion-curso", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div>                                        
@@ -72,7 +78,7 @@
         </div>                                        
       </div>
       <div class="form-group">
-        {{ Form::label("cursoIncluye", "Curso incluye: ", ["class" => "col-sm-2 control-label"]) }}
+        {{ Form::label("curso-incluye", "Curso incluye: ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10">
           {{ Form::textarea("cursoIncluye", NULL, ["id" => "curso-incluye", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div>                                        
@@ -90,7 +96,7 @@
         </div>                                        
       </div> 
       <div class="form-group">  
-          {{ Form::label("costoHoraClase", "Costo por hora de clase(*): ", ["class" => "col-sm-2 control-label"]) }}   
+          {{ Form::label("costo-hora-clase", "Costo por hora de clase(*): ", ["class" => "col-sm-2 control-label"]) }}   
           <div class="col-sm-3">
             <div class="input-group">
               <span class="input-group-addon">
@@ -131,7 +137,7 @@
       </div>
       <div class="modal-body">
         <div class="form-group">
-          {{ Form::label("correoCotizacionPrueba", "Correo: ", ["class" => "col-sm-2 control-label"]) }}
+          {{ Form::label("correo-cotizacion-prueba", "Correo: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-5">
             {{ Form::text("correoCotizacionPrueba", null, ["id" => "correo-cotizacion-prueba", "class" => "form-control", "maxlength" =>"245", ""]) }}
           </div> 

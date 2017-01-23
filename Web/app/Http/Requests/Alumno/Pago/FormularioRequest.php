@@ -6,6 +6,7 @@ use App\Models\Docente;
 use App\Http\Requests\Request;
 use App\Helpers\Enum\MotivosPago;
 use App\Helpers\ReglasValidacion;
+use App\Helpers\Enum\CuentasBancoPago;
 
 class FormularioRequest extends Request {
 
@@ -16,6 +17,7 @@ class FormularioRequest extends Request {
   protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["motivo"] = ReglasValidacion::formatoDato($datos, "motivo");
+    $datos["cuenta"] = ReglasValidacion::formatoDato($datos, "cuenta");
     $datos["monto"] = ReglasValidacion::formatoDato($datos, "monto");
     $datos["costoHoraClase"] = ReglasValidacion::formatoDato($datos, "costoHoraClase");
     $datos["usarSaldoFavor"] = (isset($datos["usarSaldoFavor"]) ? 1 : 0);
@@ -40,6 +42,11 @@ class FormularioRequest extends Request {
     $listaMotivosPago = MotivosPago::listar();
     if (!array_key_exists($datos["motivo"], $listaMotivosPago)) {
       $reglasValidacion["motivoNoValido"] = "required";
+    }
+    
+    $listaCuentasBancoPago = CuentasBancoPago::listar();
+    if (!array_key_exists($datos["cuenta"], $listaCuentasBancoPago)) {
+      $reglasValidacion["cuentaNoValida"] = "required";
     }
 
     if ($datos["motivo"] == MotivosPago::Clases) {
@@ -82,6 +89,7 @@ class FormularioRequest extends Request {
   public function messages() {
     return [
         "motivoNoValido.required" => "El motivo seleccionado del pago no es válido",
+        "cuentaNoValida.required" => "La cuenta de banco seleccionada del pago no es válida",
         "docenteNoValido.required" => "El docente seleccionado no es válido",
         "datosNotificacionClasesNoValido.required" => "Los datos de notificación de la clases seleccionadas no son válidas"
     ];

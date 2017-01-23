@@ -9,6 +9,7 @@
   var urlActualizarEstado = "{{ route('alumnos.actualizar.estado', ['id' => 0]) }}";
   var urlEliminar = "{{ route('alumnos.eliminar', ['id' => 0]) }}";
   var estados = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listar()) !!};
+  var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listarCambio()) !!};
 </script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/alumno.js") }}"></script>
 @endsection
@@ -26,9 +27,9 @@
       </div>         
       <div class="box-body">
         <div class="form-group">          
-          {{ Form::label("bus-estado", "Búsqueda por estado: ", ["class" => "col-sm-2 control-label"]) }}
+          {{ Form::label("bus-estado", "Estado: ", ["class" => "col-sm-1 control-label"]) }}
           <div class="col-sm-3">
-            {{ Form::select("estado", App\Helpers\Enum\EstadosAlumno::listarSimple(), App\Helpers\Enum\EstadosAlumno::Activo, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos"]) }}
+            {{ Form::select("estado", App\Helpers\Enum\EstadosAlumno::listarBusqueda(), App\Helpers\Enum\EstadosAlumno::Activo, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos"]) }}
           </div>
         </div> 
       </div>
@@ -49,6 +50,7 @@
               <th>Nombre completo</th>     
               <th>Correo electrónico</th>
               <th>Estado</th>
+              <th>Fecha registro</th>
               <th class="all">Opciones</th>
             </tr>
           </thead>
@@ -58,6 +60,6 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosAlumno::listarSimple(), NULL, ["id" => "sel-estados", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosAlumno::listarCambio(), NULL, ["id" => "sel-estados", "class" => "form-control"]) }}
 </div>
 @endsection

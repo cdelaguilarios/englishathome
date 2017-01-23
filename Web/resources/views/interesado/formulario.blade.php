@@ -45,15 +45,37 @@
             <span>{{ (isset($interesado) && $interesado->cursoInteres != "" ? "(" . $interesado->cursoInteres . ")" : "") }}</span>
           </div>
         </div> 
-        @include("util.ubigeo")       
+        @include("util.ubigeo")     
         <div class="form-group">
           {{ Form::label("estado", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-3">
-            {{ Form::select("estado", App\Helpers\Enum\EstadosInteresado::listarSimple(),
+            @if(!isset($interesado) || (isset($interesado) && array_key_exists($interesado->estado, App\Helpers\Enum\EstadosInteresado::listarCambio())))
+            {{ Form::select("estado", App\Helpers\Enum\EstadosInteresado::listarCambio(),
             (isset($interesado) ? $interesado->estado : App\Helpers\Enum\EstadosInteresado::PendienteInformacion)
             , ["class" => "form-control"]) }}
+            @else
+            {!! $estadosInteresado[$interesado->estado][0] !!}
+            @endif
           </div>
         </div>
+        <div class="form-group">  
+          {{ Form::label("costo-hora-clase", "Costo por hora de clase(*): ", ["class" => "col-sm-2 control-label"]) }}   
+          <div class="col-sm-3">
+            <div class="input-group">
+              <span class="input-group-addon">
+                <b>S/.</b>
+              </span>
+              {{ Form::text("costoHoraClase", (isset($interesado->costoHoraClase) ? number_format($interesado->costoHoraClase, 2, ".", ",") : NULL), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
+            </div>
+          </div> 
+        </div>
+        <div class="form-group">
+          {{ Form::label("comentarioAdicional", "Comentarios adicionales: ", ["class" => "col-sm-2 control-label"]) }}
+          <div class="col-sm-10">
+            {{ Form::textarea("comentarioAdicional", NULL, ["class" => "form-control", "rows" => "2", "maxlength" =>"255"]) }}
+          </div>                                        
+        </div>
+        {{ Form::hidden("registrarComoAlumno", NULL) }}
       </div>
       <div class="box-footer">    
         <div class="form-group">
@@ -61,11 +83,13 @@
             <span>(*) Campos obligatorios</span>
           </div>
           <div class="col-sm-6">            
-            <button id="btn-guardar" type="submit" class="btn btn-success pull-right">
+            <button id="btn-guardar" type="button" class="btn btn-success pull-right">
               {{ ((isset($modo) && $modo == "registrar") ? "Registrar" : "Guardar") }}
             </button>
-            <a href="{{ route("interesados") }}" type="button" class="btn btn-default pull-right" >Cancelar</a>
             @if(isset($interesado))
+            @if($interesado->estado != App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado)
+            <button id="btn-registrar-alumno"  type="button" class="btn btn-primary pull-right" ><i class="fa fa-mortar-board"></i> Registrar como alumno</button>
+            @endif
             <a href="{{ route("interesados.cotizar", ["id" => $interesado->idEntidad]) }}" type="button" class="btn btn-primary pull-right" ><i class="fa fa-dollar"></i> Enviar cotización</a>
             @endIf
           </div>

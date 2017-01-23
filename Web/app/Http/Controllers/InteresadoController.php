@@ -28,6 +28,8 @@ class InteresadoController extends Controller {
   public function listar(BusquedaRequest $req) {
     return Datatables::of(Interesado::listar($req->all()))->filterColumn("entidad.nombre", function($q, $k) {
               $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
+            })->filterColumn("entidad.fechaRegistro", function($q, $k) {
+              $q->whereRaw("DATE_FORMAT(entidad.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
             })->make(true);
   }
 
@@ -71,8 +73,15 @@ class InteresadoController extends Controller {
 
   public function actualizar($id, FormularioRequest $req) {
     try {
-      Interesado::actualizar($id, $req->all());
-      Mensajes::agregarMensajeExitoso("Actualización exitosa.");
+      $datos = $req->all();
+      Interesado::actualizar($id, $datos);
+      if ($datos["registrarComoAlumno"] == 1) {
+        Interesado::registrarAlumno($id);
+        Mensajes::agregarMensajeExitoso("El interesado seleccionado ha sido registrado como alumno.");
+        return redirect(route("interesados"));
+      } else {
+        Mensajes::agregarMensajeExitoso("Actualización exitosa.");
+      }
     } catch (\Exception $e) {
       Log::error($e->getMessage());
       Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");

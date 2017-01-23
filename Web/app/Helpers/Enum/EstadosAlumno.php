@@ -4,27 +4,42 @@ namespace App\Helpers\Enum;
 
 class EstadosAlumno {
   
-  const Nuevo = "NUEVO";
-  const PendientePago = "PENDIENTE-PAGO";
+  const PorConfirmar = "POR-CONFIRMAR";
+  const CuotaProgramada = "CUOTA-PROGRAMADA";
+  const StandBy = "STAND-BY";
   const Activo = "ACTIVO";
   const Inactivo = "INACTIVO";
 
-  public static function listarSimple() {
-    return [
-        EstadosAlumno::Nuevo => "Nuevo",
-        EstadosAlumno::PendientePago => "Pendiente de pago",
-        EstadosAlumno::Activo => "Activo",
-        EstadosAlumno::Inactivo => "Inactivo"
-    ];
-  }
-
   public static function listar() {
     return [
-        EstadosAlumno::Nuevo => ["Nuevo", "label-primary"],
-        EstadosAlumno::PendientePago => ["Pendiente de pago", "label-warning"],
+        EstadosAlumno::PorConfirmar => ["Por confirmar", "label-primary"],
+        EstadosAlumno::CuotaProgramada => ["Cuota programada", "label-warning"],
+        EstadosAlumno::StandBy => ["Stand by", "label-warning"],
         EstadosAlumno::Activo => ["Activo", "label-success"],
         EstadosAlumno::Inactivo => ["Inactivo", "label-danger"]
     ];
+  }
+  
+  
+  public static function listarBusqueda() {
+    $estados = EstadosAlumno::listar();
+    $estadosBusqueda = [];
+    foreach ($estados as $k => $v) {
+      $estadosBusqueda[$k] = $v[0];
+    }
+    return $estadosBusqueda;
+  }
+
+  public static function listarCambio() {
+    $estadosBusqueda = EstadosAlumno::listarBusqueda();
+    $estadosDisponibleCambio = [EstadosAlumno::StandBy, EstadosAlumno::Activo, EstadosAlumno::Inactivo];
+    $estadosCambio = [];
+    foreach ($estadosBusqueda as $k => $v) {
+      if (in_array($k, $estadosDisponibleCambio)) {
+        $estadosCambio[$k] = $v;
+      }
+    }
+    return $estadosCambio;
   }
 
 }

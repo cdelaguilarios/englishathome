@@ -4,6 +4,7 @@ function verificarJqueryPago() {
 }
 function cargarSeccionPagos() {
   motivosPago = (typeof (motivosPago) === "undefined" ? "" : motivosPago);
+  cuentasBanco = (typeof (cuentasBanco) === "undefined" ? "" : cuentasBanco);
   estadosPago = (typeof (estadosPago) === "undefined" ? "" : estadosPago);
   urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
 
@@ -26,7 +27,7 @@ function cargarListaPago() {
   urlListarPagos = (typeof (urlListarPagos) === "undefined" ? "" : urlListarPagos);
   urlActualizarEstadoPago = (typeof (urlActualizarEstadoPago) === "undefined" ? "" : urlActualizarEstadoPago);
   urlEliminarPago = (typeof (urlEliminarPago) === "undefined" ? "" : urlEliminarPago);
-  if (urlListarPagos !== "" && urlActualizarEstadoPago !== "" && urlEliminarPago !== "" && motivosPago !== "" && estadosPago !== "") {
+  if (urlListarPagos !== "" && urlActualizarEstadoPago !== "" && urlEliminarPago !== "" && motivosPago !== "" && cuentasBanco !== "" && estadosPago !== "") {
     $("#tab-lista-pagos").DataTable({
       processing: true,
       serverSide: true,
@@ -43,12 +44,15 @@ function cargarListaPago() {
         {data: "motivo", name: "pago.motivo", render: function (e, t, d, m) {
             return motivosPago[d.motivo];
           }},
+        {data: "cuenta", name: "pago.cuenta", render: function (e, t, d, m) {
+            return cuentasBanco[d.cuenta];
+          }},
         {data: "monto", name: "pago.monto", render: function (e, t, d, m) {
             return 'S/. ' + redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="saldo-favor-utilizado">utilizado</span>)' : '') + '</b></small>' : '');
           }},
         {data: "fechaRegistro", name: "pago.fechaRegistro", render: function (e, t, d, m) {
             return formatoFecha(d.fechaRegistro, true);
-          }},
+          }, className:"text-center"},
         {data: "estado", name: "pago.estado", render: function (e, t, d, m) {
             return '<div class="sec-btn-editar-estado-pago"><a href="javascript:void(0);" class="btn-editar-estado-pago" data-idpago="' + d.id + '" data-idalumno="' + d.idAlumno + '" data-estado="' + d.estado + '"><span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span></a></div>';
           }, className:"text-center"},
@@ -340,7 +344,7 @@ function limpiarCamposPago(soloCamposDocente) {
 function verDatosPago(idPago) {
   urlDatosPago = (typeof (urlDatosPago) === "undefined" ? "" : urlDatosPago);
   urlImagenes = (typeof (urlImagenes) === "undefined" ? "" : urlImagenes);
-  if (urlDatosPago !== "" && motivosPago !== "" && urlImagenes !== "" && estadosPago !== "") {
+  if (urlDatosPago !== "" && motivosPago !== "" && cuentasBanco !== "" && urlImagenes !== "" && estadosPago !== "") {
     $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
     llamadaAjax(urlDatosPago.replace("/0", "/" + idPago), "POST", {}, true,
         function (d) {
@@ -349,6 +353,7 @@ function verDatosPago(idPago) {
             $("#sec-descripcion-pago").show();
           }
           $("#dat-motivo-pago").text(motivosPago[d.motivo]);
+          $("#dat-cuenta-pago").text(cuentasBanco[d.cuenta]);
           $("#dat-descripcion-pago").text(d.descripcion);
           $("#dat-monto-pago").html('S/. ' + redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="saldo-favor-utilizado">utilizado</span>)' : '') + '</b></small>' : ''));
           $("#dat-estado-pago").html('<span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span>');

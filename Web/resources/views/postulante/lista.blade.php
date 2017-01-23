@@ -25,7 +25,7 @@
       </div>         
       <div class="box-body">
         <div class="form-group">          
-          {{ Form::label("bus-estado", "Búsqueda por estado: ", ["class" => "col-sm-2 control-label"]) }}
+          {{ Form::label("bus-estado", "Estado: ", ["class" => "col-sm-1 control-label"]) }}
           <div class="col-sm-3">
             {{ Form::select("estado", App\Helpers\Enum\EstadosPostulante::listarSimple(), App\Helpers\Enum\EstadosPostulante::Activo, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos"]) }}
           </div>
@@ -48,6 +48,7 @@
               <th>Nombre completo</th>     
               <th>Correo electrónico</th>
               <th>Estado</th>
+              <th>Fecha registro</th>
               <th class="all">Opciones</th>
             </tr>
           </thead>

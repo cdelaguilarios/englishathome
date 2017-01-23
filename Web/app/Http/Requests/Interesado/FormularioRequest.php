@@ -19,6 +19,8 @@ class FormularioRequest extends Request {
     $datos["idCurso"] = ReglasValidacion::formatoDato($datos, "idCurso");
     $datos["codigoUbigeo"] = ReglasValidacion::formatoDato($datos, "codigoUbigeo");
     $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
+    $datos["comentarioAdicional"] = ReglasValidacion::formatoDato($datos, "comentarioAdicional");
+    $datos["registrarComoAlumno"] = ReglasValidacion::formatoDato($datos, "registrarComoAlumno", 0);
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -31,7 +33,8 @@ class FormularioRequest extends Request {
         "telefono" => "required|max:30",
         "correoElectronico" => "required|email|max:245",
         "consulta" => "max:255",
-        "cursoInteres" => "max:255"
+        "cursoInteres" => "max:255",
+        "comentarioAdicional" => "max:255"
     ];
 
     $listaCursos = Curso::listarSimple();
@@ -43,7 +46,7 @@ class FormularioRequest extends Request {
       $reglasValidacion["ubigeoNoValido"] = "required";
     }
     
-    $estados = EstadosInteresado::listar(TRUE);
+    $estados = EstadosInteresado::listarCambio();
     if (!is_null($datos["estado"]) && !array_key_exists($datos["estado"], $estados)) {
       $reglasValidacion["estadoNoValido"] = "required";
     }

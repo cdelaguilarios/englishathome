@@ -51,7 +51,7 @@ class Alumno extends Model {
     $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
     $datos["fechaInicioClase"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaInicioClase"] . " 00:00:00")->toDateTimeString();
 
-    $idEntidad = Entidad::registrar($datos, TiposEntidad::Alumno, EstadosAlumno::Nuevo);
+    $idEntidad = Entidad::registrar($datos, TiposEntidad::Alumno, EstadosAlumno::PorConfirmar);
     Entidad::registrarActualizarImagenPerfil($idEntidad, $req->file("imagenPerfil"));
     EntidadNivelIngles::registrarActualizar($idEntidad, $datos["idNivelIngles"]);
     EntidadCurso::registrarActualizar($idEntidad, $datos["idCurso"]);
@@ -92,8 +92,10 @@ class Alumno extends Model {
   }
 
   public static function actualizarEstado($id, $estado) {
-    Alumno::obtenerXId($id, TRUE);
-    Entidad::actualizarEstado($id, $estado);
+    $alumno = Alumno::obtenerXId($id, TRUE);
+    if (!($alumno->estado == EstadosAlumno::Activo && $estado == EstadosAlumno::CuotaProgramada)) {
+      Entidad::actualizarEstado($id, $estado);
+    }
   }
 
   public static function actualizarHorario($id, $horario) {

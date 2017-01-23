@@ -14,16 +14,18 @@
             <div class="box-body sec-datos">
               <strong><i class="fa  fa-check-square margin-r-5"></i> Motivo</strong>
               <p id="dat-motivo-pago" class="text-muted"></p>
+              <strong><i class="fa  fa-check-square margin-r-5"></i> Cuenta</strong>
+              <p id="dat-cuenta-pago" class="text-muted"></p>
               <div id="sec-descripcion-pago">
                 <strong><i class="fa  fa-check-square margin-r-5"></i> Descripción</strong>
                 <p id="dat-descripcion-pago" class="text-muted"></p>
               </div>
               <strong><i class="fa  fa-check-square margin-r-5"></i> Monto</strong>
-              <p id="dat-monto-pago" class="text-muted"></p>
-              <strong><i class="fa  fa-check-square margin-r-5"></i> Estado</strong>
-              <p id="dat-estado-pago" class="text-muted"></p>   
+              <p id="dat-monto-pago" class="text-muted"></p>  
               <strong><i class="fa  fa-check-square margin-r-5"></i> Fecha registro</strong>
               <p id="dat-fecha-registro-pago" class="text-muted"></p>
+              <strong><i class="fa  fa-check-square margin-r-5"></i> Estado</strong>
+              <p id="dat-estado-pago" class="text-muted"></p> 
             </div>
           </div>
           <div class="col-sm-6">

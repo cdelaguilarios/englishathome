@@ -10,7 +10,7 @@ class Pago extends Model {
 
   public $timestamps = false;
   protected $table = "pago";
-  protected $fillable = ["motivo", "descripcion", "monto", "rutasImagenesComprobante", "saldoFavor", "saldoFavorUtilizado", "estado"];
+  protected $fillable = ["motivo", "descripcion", "monto", "rutasImagenesComprobante", "saldoFavor", "saldoFavorUtilizado", "cuenta", "estado"];
 
   public static function nombreTabla() {
     $modeloPago = new Pago();

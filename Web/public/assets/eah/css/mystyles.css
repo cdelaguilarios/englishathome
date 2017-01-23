@@ -325,3 +325,8 @@ textarea{
 .input-group {
     margin-bottom: 2px;
 }
+
+table.dataTable > tbody > tr.child span.dtr-title {
+    float: left;
+    margin-right: 2px;
+}

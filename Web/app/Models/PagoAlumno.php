@@ -5,6 +5,7 @@ namespace App\Models;
 use Auth;
 use App\Helpers\Enum\MotivosPago;
 use App\Helpers\Enum\EstadosPago;
+use App\Helpers\Enum\EstadosAlumno;
 use App\Helpers\Enum\TiposHistorial;
 use App\Helpers\Enum\MensajesHistorial;
 use Illuminate\Database\Eloquent\Model;
@@ -71,6 +72,7 @@ class PagoAlumno extends Model {
     $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$listaMotivosPago[$datos["motivo"]], (isset($datos["descripcion"]) && $datos["descripcion"] != "" ? "<br/><strong>Descripción:</strong> " . $datos["descripcion"] : ""), number_format((float) ($datos["monto"]), 2, ".", "")], MensajesHistorial::MensajeAlumnoRegistroPago);
     Historial::Registrar([$idAlumno, Auth::user()->idEntidad], MensajesHistorial::TituloAlumnoRegistroPago, $mensajeHistorial, $datosPago["rutasImagenesComprobante"], FALSE, TRUE, $datosPago["id"], NULL, NULL, TiposHistorial::Pago);
 
+    Alumno::actualizarEstado($idAlumno, EstadosAlumno::CuotaProgramada);
     if ($datos["motivo"] == MotivosPago::Clases) {
       Clase::registrarXDatosPago($idAlumno, $datosPago["id"], $datos);
     }

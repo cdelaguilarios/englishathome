@@ -15,6 +15,7 @@ class FormularioCotizacionRequest extends Request {
   protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["idCurso"] = ReglasValidacion::formatoDato($datos, "idCurso");
+    $datos["textoIntroductorio"] = ReglasValidacion::formatoDato($datos, "textoIntroductorio");
     $datos["descripcionCurso"] = ReglasValidacion::formatoDato($datos, "descripcionCurso");
     $datos["metodologia"] = ReglasValidacion::formatoDato($datos, "metodologia");
     $datos["cursoIncluye"] = ReglasValidacion::formatoDato($datos, "cursoIncluye");
@@ -30,6 +31,7 @@ class FormularioCotizacionRequest extends Request {
     $datos = $this->all();
 
     $reglasValidacion = [
+        "textoIntroductorio" => "required|max:4000",
         "descripcionCurso" => "required|max:4000",
         "metodologia" => "required|max:4000",
         "cursoIncluye" => "required|max:4000",

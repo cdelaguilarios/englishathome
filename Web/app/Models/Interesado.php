@@ -5,6 +5,7 @@ namespace App\Models;
 use Mail;
 use Crypt;
 use App\Helpers\Enum\TiposEntidad;
+use App\Helpers\Enum\EstadosAlumno;
 use App\Helpers\Enum\EstadosInteresado;
 use Illuminate\Database\Eloquent\Model;
 use App\Helpers\Enum\TiposRelacionEntidad;
@@ -14,7 +15,7 @@ class Interesado extends Model {
   public $timestamps = false;
   protected $primaryKey = "idEntidad";
   protected $table = "interesado";
-  protected $fillable = ["consulta", "cursoInteres", "codigoVerificacion", "costoHoraClase"];
+  protected $fillable = ["consulta", "cursoInteres", "codigoVerificacion", "costoHoraClase", "comentarioAdicional"];
 
   public static function nombreTabla() {
     $modeloInteresado = new Interesado();
@@ -69,7 +70,7 @@ class Interesado extends Model {
     if (!isset($datos["correoCotizacionPrueba"])) {
       Interesado::actualizarEstado($id, EstadosInteresado::CotizacionEnviada);
     }
-    
+
     $interesado = Interesado::obtenerXId($id, TRUE);
     $interesado->costoHoraClase = $datos["costoHoraClase"];
     $interesado->save();
@@ -92,8 +93,29 @@ class Interesado extends Model {
     return (count($relacionEntidad) > 0);
   }
 
-  public static function registrarAlumno($id, $idAlumno) {
-    Interesado::obtenerXId($id, TRUE);
+  public static function registrarAlumno($id, $idAlumno = NULL) {
+    $datos = Interesado::obtenerXId($id, TRUE)->toArray();
+    if (!($datos->estado != EstadosInteresado::AlumnoRegistrado && !esAlumnoRegistrado($id))) {
+      return;
+    }
+    if (is_null($idAlumno)) {
+      $idEntidad = Entidad::registrar($datos, TiposEntidad::Alumno, EstadosAlumno::PorConfirmar);
+      $datos += [
+          "conComputadora" => 0,
+          "conInternet" => 0,
+          "conPlumonPizarra" => 0,
+          "conAmbienteClase" => 0,
+          "numeroHorasClase" => 2
+      ];
+      $entidadCurso = EntidadCurso::listar($id)->get();
+      if (count($entidadCurso) > 0) {
+        EntidadCurso::registrarActualizar($idEntidad, $entidadCurso[0]->idCurso);
+      }
+      $alumno = new Alumno($datos);
+      $alumno->idEntidad = $idEntidad;
+      $alumno->save();
+      $idAlumno = $idEntidad;
+    }
     RelacionEntidad::registrar($idAlumno, $id, TiposRelacionEntidad::AlumnoInteresado);
     Interesado::actualizarEstado($id, EstadosInteresado::AlumnoRegistrado);
   }

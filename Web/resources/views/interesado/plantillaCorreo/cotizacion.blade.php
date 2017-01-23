@@ -430,6 +430,13 @@
     </style>
   </head>
   <body bgcolor="#FFFFFF" topmargin="0" leftmargin="0" marginheight="0" marginwidth="0">
+    <table>
+      <tr>
+        <td>
+          {!! $textoIntroductorio !!}
+        </td>
+      </tr>
+    </table>
     <table class="head-wrap" bgcolor="#084C9E">
       <tr>
         <td>
