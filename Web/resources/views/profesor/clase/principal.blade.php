@@ -15,7 +15,7 @@
         <div class="form-group">          
           {{ Form::label("bus-estado-clase-pago", "Estado de pago: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-3">
-            {{ Form::select("estadoClasePago", App\Helpers\Enum\EstadosPago::listarSimple(), NULL, ["id"=>"bus-estado-clase-pago", "class" => "form-control", "placeholder" => "Todos"]) }}
+            {{ Form::select("estadoClasePago", App\Helpers\Enum\EstadosPago::listarCambio(), NULL, ["id"=>"bus-estado-clase-pago", "class" => "form-control", "placeholder" => "Todos"]) }}
           </div>
         </div> 
       </div>

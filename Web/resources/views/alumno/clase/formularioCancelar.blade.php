@@ -16,7 +16,7 @@
   </div>
   <div id="sec-clase-31" class="box-body">
     <div class="form-group">
-      <div id="sec-clase-campo-pago-profesor">
+      <div id="sec-campo-pago-profesor">
         {{ Form::label("pagoProfesor", "Pago al profesor por clase cancelada: ", ["class" => "col-sm-4 control-label"]) }}
         <div class="col-sm-3">
           <div class="input-group">

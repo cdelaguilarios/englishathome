@@ -29,7 +29,7 @@ class ActualizarEstadoRequest extends Request {
     if (!PagoProfesor::verificarExistencia($datos["idProfesor"], $datos["idPago"])) {
       $reglasValidacion["pagoNoValido"] = "required";
     }
-    $estados = EstadosPago::listarSimple();
+    $estados = EstadosPago::listarCambio();
     if (!array_key_exists($datos["estado"], $estados)) {
       $reglasValidacion["estadoNoValido"] = "required";
     }

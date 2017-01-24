@@ -28,14 +28,22 @@ class Clase extends Model {
 
   public static function obtenerXId($idAlumno, $id) {
     $nombreTabla = Clase::nombreTabla();
-    return Clase::select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", "historial.id AS idHistorial")
+    return Clase::select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.id) AS idPago"))
                     ->leftJoin(Entidad::nombreTabla() . " as entidadProfesor", $nombreTabla . ".idProfesor", "=", "entidadProfesor.id")
                     ->leftJoin(Historial::NombreTabla() . " as historial", $nombreTabla . ".id", "=", "historial.idClase")
+                    ->leftJoin(PagoClase::NombreTabla() . " as pagoClase", $nombreTabla . ".id", "=", "pagoClase.idClase")
+                    ->leftJoin(PagoAlumno::NombreTabla() . " as pagoAlumno", "pagoClase.idPago", "=", "pagoAlumno.idPago")
+                    ->leftJoin(Pago::NombreTabla() . " as pago", "pagoAlumno.idPago", "=", "pago.id")
                     ->where($nombreTabla . ".idAlumno", $idAlumno)
                     ->where($nombreTabla . ".id", $id)
+                    ->where($nombreTabla . ".eliminado", 0)
                     ->where(function ($q) {
                       $q->whereNull("historial.id")->orWhere("historial.enviarCorreo", 1);
                     })
+                    ->where(function ($q) use ($idAlumno) {
+                      $q->whereNull("pagoAlumno.idAlumno")->orWhere("pagoAlumno.idAlumno", $idAlumno);
+                    })
+                    ->groupBy($nombreTabla . ".id")
                     ->orderBy($nombreTabla . ".fechaInicio", "ASC")
                     ->firstOrFail();
   }
@@ -173,7 +181,7 @@ class Clase extends Model {
       $datos["notificar"] = (($datosNotificacionClases[$i]->notificar != "" && $datosNotificacionClases[$i]->notificar) ? 1 : 0);
       $datos["estado"] = EstadosClase::Programada;
       $idClase = Clase::registrarActualizar($idAlumno, $datos);
-      PagoClase::registrar($idPago, $idClase);
+      PagoClase::registrarActualizar($idPago, $idClase);
     }
   }
 
@@ -197,7 +205,11 @@ class Clase extends Model {
       $clase->update($datos);
     } else {
       $clase = new Clase($datos);
-      $clase->save();
+      $clase->save();     
+    }
+    
+    if(isset($datos["idPago"])){      
+      PagoClase::registrarActualizar($datos["idPago"], $clase["id"]);
     }
 
     if ($notificar) {

@@ -41,6 +41,7 @@ function cargarListaPago() {
       autoWidth: false,
       responsive: true,
       columns: [
+        {data: "id", name: "pago.id"},
         {data: "motivo", name: "pago.motivo", render: function (e, t, d, m) {
             return motivosPago[d.motivo];
           }},
@@ -52,10 +53,10 @@ function cargarListaPago() {
           }},
         {data: "fechaRegistro", name: "pago.fechaRegistro", render: function (e, t, d, m) {
             return formatoFecha(d.fechaRegistro, true);
-          }, className:"text-center"},
+          }, className: "text-center"},
         {data: "estado", name: "pago.estado", render: function (e, t, d, m) {
             return '<div class="sec-btn-editar-estado-pago"><a href="javascript:void(0);" class="btn-editar-estado-pago" data-idpago="' + d.id + '" data-idalumno="' + d.idAlumno + '" data-estado="' + d.estado + '"><span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span></a></div>';
-          }, className:"text-center"},
+          }, className: "text-center"},
         {data: "id", name: "id", orderable: false, searchable: false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
                 '<li>' +
@@ -67,7 +68,7 @@ function cargarListaPago() {
                 '</a>' +
                 '</li>' +
                 '</ul>';
-          }, className:"text-center"}
+          }, className: "text-center"}
       ]
     });
 
@@ -344,38 +345,26 @@ function limpiarCamposPago(soloCamposDocente) {
 function verDatosPago(idPago) {
   urlDatosPago = (typeof (urlDatosPago) === "undefined" ? "" : urlDatosPago);
   urlImagenes = (typeof (urlImagenes) === "undefined" ? "" : urlImagenes);
-  if (urlDatosPago !== "" && motivosPago !== "" && cuentasBanco !== "" && urlImagenes !== "" && estadosPago !== "") {
-    $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
-    llamadaAjax(urlDatosPago.replace("/0", "/" + idPago), "POST", {}, true,
-        function (d) {
-          $("#sec-descripcion-pago").hide();
-          if (d.descripcion !== null && d.descripcion.trim() !== "") {
-            $("#sec-descripcion-pago").show();
-          }
-          $("#dat-motivo-pago").text(motivosPago[d.motivo]);
-          $("#dat-cuenta-pago").text(cuentasBanco[d.cuenta]);
-          $("#dat-descripcion-pago").text(d.descripcion);
-          $("#dat-monto-pago").html('S/. ' + redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="saldo-favor-utilizado">utilizado</span>)' : '') + '</b></small>' : ''));
-          $("#dat-estado-pago").html('<span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span>');
-          $("#dat-fecha-registro-pago").text(formatoFecha(d.fechaRegistro, true));
-          if (d.rutasImagenesComprobante !== null && d.rutasImagenesComprobante !== "") {
-            var rutaImagen = urlImagenes.replace("/0", "/" + d.rutasImagenesComprobante);
-            $("#dat-imagen-comprobante-pago").attr("href", rutaImagen);
-            $("#dat-imagen-comprobante-pago").find("img").attr("src", rutaImagen);
-          }
-          $("#mod-datos-pago").modal("show");
-          $("body").unblock();
-        },
-        function (d) {
-        },
-        function (de) {
-          $("body").unblock({
-            onUnblock: function () {
-              agregarMensaje("errores", "Ocurrió un problema durante la carga de datos del pago seleccionado. Por favor inténtelo nuevamente.", true, "#sec-mensajes-mod-datos-pago");
-            }
-          });
-        }
-    );
+  if (motivosPago !== "" && cuentasBanco !== "" && urlImagenes !== "" && estadosPago !== "") {
+    obtenerDatosPago(idPago, function (d) {
+      $("#sec-descripcion-pago").hide();
+      if (d.descripcion !== null && d.descripcion.trim() !== "") {
+        $("#sec-descripcion-pago").show();
+      }
+      $("#dat-motivo-pago").text(motivosPago[d.motivo]);
+      $("#dat-cuenta-pago").text(cuentasBanco[d.cuenta]);
+      $("#dat-descripcion-pago").text(d.descripcion);
+      $("#dat-monto-pago").html('S/. ' + redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="saldo-favor-utilizado">utilizado</span>)' : '') + '</b></small>' : ''));
+      $("#dat-estado-pago").html('<span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span>');
+      $("#dat-fecha-registro-pago").text(formatoFecha(d.fechaRegistro, true));
+      if (d.rutasImagenesComprobante !== null && d.rutasImagenesComprobante !== "") {
+        var rutaImagen = urlImagenes.replace("/0", "/" + d.rutasImagenesComprobante);
+        $("#dat-imagen-comprobante-pago").attr("href", rutaImagen);
+        $("#dat-imagen-comprobante-pago").find("img").attr("src", rutaImagen);
+      }
+      $("#mod-datos-pago").modal("show");
+      $("body").unblock();
+    });
   }
 }
 
@@ -390,5 +379,26 @@ function mostrarSeccionPago(numSecciones) {
   for (var i = 0; i < numSecciones.length; i++) {
     $("#sec-pago-" + auxSec + "" + numSecciones[i]).show();
     auxSec += "" + numSecciones[i];
+  }
+}
+function obtenerDatosPago(idPago, funcionRetorno) {
+  urlDatosPago = (typeof (urlDatosPago) === "undefined" ? "" : urlDatosPago);
+  if (urlDatosPago !== "") {
+    $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
+    llamadaAjax(urlDatosPago.replace("/0", "/" + idPago), "POST", {}, true,
+        function (d) {
+          if (funcionRetorno !== undefined)
+            funcionRetorno(d);
+          $("body").unblock();
+        },
+        function (d) {},
+        function (de) {
+          $('body').unblock({
+            onUnblock: function () {
+              agregarMensaje("errores", "Ocurrió un problema durante la carga de datos del pago seleccionado. Por favor inténtelo nuevamente.", true, "#sec-mensajes-pago");
+            }
+          });
+        }
+    );
   }
 }

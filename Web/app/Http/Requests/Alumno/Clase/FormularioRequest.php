@@ -5,6 +5,7 @@ namespace App\Http\Requests\Alumno\Clase;
 use Config;
 use App\Models\Clase;
 use App\Models\Docente;
+use App\Models\PagoAlumno;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\EstadosClase;
@@ -26,6 +27,7 @@ class FormularioRequest extends Request {
     $datos["horaInicio"] = ReglasValidacion::formatoDato($datos, "horaInicio");
     $datos["duracion"] = ReglasValidacion::formatoDato($datos, "duracion");
     $datos["costoHora"] = ReglasValidacion::formatoDato($datos, "costoHora");
+    $datos["idPago"] = ReglasValidacion::formatoDato($datos, "idPago");
     $datos["idDocente"] = ReglasValidacion::formatoDato($datos, "idDocente");
     $datos["costoHoraDocente"] = ReglasValidacion::formatoDato($datos, "costoHoraDocente");
     $this->getInputSource()->replace($datos);
@@ -49,6 +51,9 @@ class FormularioRequest extends Request {
     $estados = EstadosClase::listarSimple(TRUE);
     if (!array_key_exists($datos["estado"], $estados)) {
       $reglasValidacion["estadoNoValido"] = "required";
+    }
+    if (!is_null($datos["idPago"]) && !PagoAlumno::verificarExistencia($datos["idAlumno"], $datos["idPago"])) {
+      $reglasValidacion["pagoNoValido"] = "required";
     }
     if (!is_null($datos["idDocente"]) && !Docente::verificarExistencia($datos["idDocente"])) {
       $reglasValidacion["docenteNoValido"] = "required";
@@ -74,6 +79,7 @@ class FormularioRequest extends Request {
     return [
         "claseNoValida.required" => "La clase seleccionada no es válida",
         "estadoNoValido.required" => "El estado seleccionado no es válido",
+        "pagoNoValido.required" => "El pago seleccionado no es válido",
         "docenteNoValido.required" => "El docente seleccionado no es válido"
     ];
   }

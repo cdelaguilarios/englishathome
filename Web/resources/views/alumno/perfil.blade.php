@@ -80,6 +80,7 @@
         <div class="tab-pane" id="clase">
           @include("alumno.clase.principal", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase])
         </div>
+        @include("alumno.pago.datos") 
       </div>
     </div>
   </div>

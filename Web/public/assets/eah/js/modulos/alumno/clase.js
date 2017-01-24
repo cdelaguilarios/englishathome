@@ -341,6 +341,7 @@ function editarClase(idClase) {
     $("#hora-inicio-clase").val(tiempoSegundos(d.fechaInicio));
     $("#duracion-clase").val(d.duracion);
     $("#costo-hora-clase").val(redondear(d.costoHora, 2));
+    $("#id-pago-clase").val(d.idPago);
     $("input[name='idClase']").val(d.id);
     $("#btn-guardar").text("Guardar");
 
@@ -373,6 +374,11 @@ function obtenerDatosClase(idClase, funcionRetorno) {
           });
         }
     );
+  }
+}
+function verDatosPagosClase(){
+  if($("#id-pago-clase").val() !== ""){
+    verDatosPago($("#id-pago-clase").val());
   }
 }
 
@@ -443,10 +449,10 @@ function cancelarClase(idClase) {
     limpiarCamposClase();
     $("input[name='idClase']").val(d.id);
     if (d.idProfesor !== null) {
-      $("#sec-clase-campo-pago-profesor").show();
+      $("#sec-campo-pago-profesor").show();
       $("input[name='idProfesorClaseCancelada']").val(d.idProfesor);
     }else{
-      $("#sec-clase-campo-pago-profesor").hide();      
+      $("#sec-campo-pago-profesor").hide();      
     }
     $("#hora-inicio-clase-reprogramada").val(tiempoSegundos(d.fechaInicio));
     $("#duracion-clase-reprogramada").val(d.duracion);

@@ -12,7 +12,13 @@
     <div class="form-group">
       {{ Form::label("cuenta", "Cuenta: ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-3">
-        {{ Form::select("cuenta", App\Helpers\Enum\CuentasBancoPago::listar(), NULL, ["id" => "cuenta", "class" => "form-control"]) }}
+        {{ Form::select("cuenta", App\Helpers\Enum\CuentasBancoPago::listar(), NULL, ["class" => "form-control"]) }}
+      </div>   
+    </div>
+    <div class="form-group">
+      {{ Form::label("estado", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
+      <div class="col-sm-3">
+        {{ Form::select("estado", App\Helpers\Enum\EstadosPago::listarCambio(), NULL, ["class" => "form-control"]) }}
       </div>   
     </div>
     <div class="form-group">

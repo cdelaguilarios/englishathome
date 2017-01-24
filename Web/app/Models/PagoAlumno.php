@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Auth;
 use App\Helpers\Enum\MotivosPago;
-use App\Helpers\Enum\EstadosPago;
 use App\Helpers\Enum\EstadosAlumno;
 use App\Helpers\Enum\TiposHistorial;
 use App\Helpers\Enum\MensajesHistorial;
@@ -51,7 +50,7 @@ class PagoAlumno extends Model {
 
   public static function registrar($idAlumno, $request) {
     $datos = $request->all();
-    $datosPago = Pago::registrar($datos, EstadosPago::Realizado, $request);
+    $datosPago = Pago::registrar($datos, $datos["estado"], $request);
     $pagoAlumno = new PagoAlumno([
         "idPago" => $datosPago["id"],
         "idAlumno" => $idAlumno

@@ -63,7 +63,7 @@ class PagoProfesor extends Model {
           continue;
         }
         $idClaseAlumno = explode("-", $datClase);
-        PagoClase::registrar($datosPago["id"], $idClaseAlumno[1]);
+        PagoClase::registrarActualizar($datosPago["id"], $idClaseAlumno[1]);
       }
     }
 
@@ -80,7 +80,7 @@ class PagoProfesor extends Model {
         "idProfesor" => $idProfesor
     ]);
     $pagoProfesor->save();
-    PagoClase::registrar($datosPago["id"], $idClaseCancelada);
+    PagoClase::registrarActualizar($datosPago["id"], $idClaseCancelada);
     $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$datos["motivo"], "", number_format((float) ($datos["monto"]), 2, ".", "")], MensajesHistorial::MensajeProfesorRegistroPago);
     Historial::Registrar([$idProfesor, Auth::user()->idEntidad], MensajesHistorial::TituloProfesorRegistroPago, $mensajeHistorial, NULL, FALSE, TRUE, $datosPago["id"], NULL, NULL, TiposHistorial::Pago);
   }

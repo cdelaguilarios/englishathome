@@ -9,6 +9,7 @@
         <table id="tab-lista-pagos" class="table table-bordered table-hover">
           <thead>
             <tr>
+              <th>Código</th> 
               <th>Motivo</th>  
               <th>Cuenta</th>     
               <th>Monto</th>
@@ -20,7 +21,7 @@
         </table>
       </div>
       <div style="display: none">
-        {{ Form::select("", App\Helpers\Enum\EstadosPago::listarSimple(), NULL, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
+        {{ Form::select("", App\Helpers\Enum\EstadosPago::listarCambio(), NULL, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
       </div>
     </div>      
     <div id="sec-pago-2" style="display: none;">
@@ -31,7 +32,6 @@
   </div>
 </div>
 @include("alumno.util.docentesDisponibles", ["seccion" => "pago"])
-@include("alumno.pago.datos") 
 <script>
   var urlListarPagos = "{{ route('alumnos.pagos.listar', ['id' => $idAlumno]) }}";
   var urlActualizarEstadoPago = "{{ route('alumnos.pagos.actualizar.estado', ['id' => $idAlumno]) }}";

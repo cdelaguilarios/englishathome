@@ -6,6 +6,7 @@ use App\Models\Docente;
 use App\Http\Requests\Request;
 use App\Helpers\Enum\MotivosPago;
 use App\Helpers\ReglasValidacion;
+use App\Helpers\Enum\EstadosPago;
 use App\Helpers\Enum\CuentasBancoPago;
 
 class FormularioRequest extends Request {
@@ -18,6 +19,7 @@ class FormularioRequest extends Request {
     $datos = $this->all();
     $datos["motivo"] = ReglasValidacion::formatoDato($datos, "motivo");
     $datos["cuenta"] = ReglasValidacion::formatoDato($datos, "cuenta");
+    $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $datos["monto"] = ReglasValidacion::formatoDato($datos, "monto");
     $datos["costoHoraClase"] = ReglasValidacion::formatoDato($datos, "costoHoraClase");
     $datos["usarSaldoFavor"] = (isset($datos["usarSaldoFavor"]) ? 1 : 0);
@@ -47,6 +49,11 @@ class FormularioRequest extends Request {
     $listaCuentasBancoPago = CuentasBancoPago::listar();
     if (!array_key_exists($datos["cuenta"], $listaCuentasBancoPago)) {
       $reglasValidacion["cuentaNoValida"] = "required";
+    }
+    
+    $listaEstadosPago = EstadosPago::listar();
+    if (!array_key_exists($datos["estado"], $listaEstadosPago)) {
+      $reglasValidacion["estadoNoValido"] = "required";
     }
 
     if ($datos["motivo"] == MotivosPago::Clases) {
@@ -90,6 +97,7 @@ class FormularioRequest extends Request {
     return [
         "motivoNoValido.required" => "El motivo seleccionado del pago no es válido",
         "cuentaNoValida.required" => "La cuenta de banco seleccionada del pago no es válida",
+        "estadoNoValido.required" => "El estado seleccionado del pago no es válido",
         "docenteNoValido.required" => "El docente seleccionado no es válido",
         "datosNotificacionClasesNoValido.required" => "Los datos de notificación de la clases seleccionadas no son válidas"
     ];

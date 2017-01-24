@@ -4,11 +4,11 @@
 <div class="box-body">    
   <div class="form-group">    
     {{ Form::label("numeroPeriodo", "Período (*): ", ["class" => "col-sm-2 control-label"]) }}
-    <div class="col-sm-2">
+    <div class="col-sm-3">
       {{ Form::number("numeroPeriodo", "", ["id" => "numero-periodo-clase", "class" => "form-control", "maxlength" =>"11", "min" =>"1"]) }}
     </div>
-    {{ Form::label("estado", "Estado: ", ["class" => "col-sm-1 col-sm-offset-1 control-label"]) }}
-    <div class="col-sm-4">
+    {{ Form::label("estado", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
+    <div class="col-sm-3">
       {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarSimple(), NULL, ["id" => "estado-clase", "class" => "form-control"]) }}
     </div>
     <div class="col-sm-2">
@@ -41,7 +41,7 @@
         {{ Form::select("horaInicio", [], NULL, ["id" => "hora-inicio-clase", "class" => "form-control"]) }}
       </div>
     </div>
-    {{ Form::label("duracion", "Duración: ", ["class" => "col-sm-1 control-label"]) }}
+    {{ Form::label("duracion", "Duración: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-2">
       <div class="input-group date">
         <div class="input-group-addon">
@@ -61,6 +61,13 @@
         {{ Form::text("costoHora", number_format($costoHoraClase, 2, ".", ","), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
       </div>
     </div> 
+    {{ Form::label("idPago", "Código de pago: ", ["class" => "col-sm-2 control-label"]) }}
+    <div class="col-sm-3">
+      {{ Form::select("idPago", App\Models\PagoAlumno::listar($idAlumno)->lists("id", "id")->toArray(), NULL, ["id" => "id-pago-clase", "class" => "form-control", "placeholder" => "Seleccionar código de pago"]) }}
+    </div>
+    <div class="col-sm-2">
+      <a href="javascript:void(0);" onclick="verDatosPagosClase();"><i class="fa fa-eye"></i></a>
+    </div>
   </div>
   <div class="box-body">                        
     <div class="form-group">
