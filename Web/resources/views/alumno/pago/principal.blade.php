@@ -28,6 +28,11 @@
       {{ Form::open(["url" => route("alumnos.pagos.registrar", ["id" => $idAlumno]), "id" => "formulario-pago", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
       @include("alumno.pago.formulario") 
       {{ Form::close() }}
+    </div>     
+    <div id="sec-pago-3" style="display: none;">
+      {{ Form::open(["url" => route("alumnos.pagos.actualizar", ["id" => $idAlumno]), "id" => "formulario-actualizar-pago", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
+      @include("alumno.pago.formularioActualizar") 
+      {{ Form::close() }}
     </div>
   </div>
 </div>

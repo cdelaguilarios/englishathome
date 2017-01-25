@@ -391,7 +391,7 @@ function cargarFormularioCancelarClase() {
       rules: {
         pagoProfesor: {
           required: true,
-          validarDecimal: true
+          validarDecimalNegativo: true
         },
         fecha: {
           required: true,
@@ -437,11 +437,7 @@ function cargarFormularioCancelarClase() {
     establecerCalendario("fecha-clase-reprogramada", false, true);
     establecerCampoHorario("hora-inicio-clase-reprogramada");
     establecerCampoDuracion("duracion-clase-reprogramada");
-    $("#tipo-cancelacion-clase").change(function () {
-      (($(this).val() === tipoCancelacionClaseAlumno) ? mostrarSeccionClase([3, 1]) : mostrarSeccionClase([3, 2]));
-      verificarSeccionReprogramarClase();
-    });
-    $("#reprogramar-clase-can-alu, #reprogramar-clase-can-pro").change(verificarSeccionReprogramarClase);
+    $("#reprogramar-clase-cancelacion").change(verificarSeccionReprogramarClase);
   }
 }
 function cancelarClase(idClase) {
@@ -460,10 +456,9 @@ function cancelarClase(idClase) {
   });
 }
 function verificarSeccionReprogramarClase() {
-  var repClaseAlu = $("#reprogramar-clase-can-alu");
-  var repClasePro = $("#reprogramar-clase-can-pro");
-  (((repClaseAlu.is(":visible") && repClaseAlu.is(":checked")) || (repClasePro.is(":visible") && repClasePro.is(":checked"))) ? $("#sec-clase-33").show() : $("#sec-clase-33").hide());
-  (($("#sec-clase-33").is(":visible") && $(".id-docente-clase").val() !== "") ? $("#sec-clase-331").show() : $("#sec-clase-331").hide());
+  var repClase= $("#reprogramar-clase-cancelacion");
+  ((repClase.is(":visible") && repClase.is(":checked")) ? $("#sec-clase-32").show() : $("#sec-clase-32").hide());
+  (($("#sec-clase-32").is(":visible") && $(".id-docente-clase").val() !== "") ? $("#sec-clase-321").show() : $("#sec-clase-321").hide());
 }
 
 //Común - Util

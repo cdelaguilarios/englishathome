@@ -25,7 +25,6 @@ class Pago extends Model {
 
   public static function registrar($datos, $estado, $request) {
     $pago = new Pago($datos);
-    $pago->saldoFavorUtilizado = (isset($datos["saldoFavor"]) && $datos["saldoFavor"] != "" ? TRUE : NULL);
     $pago->estado = $estado;
     $pago->save();
 
@@ -45,6 +44,25 @@ class Pago extends Model {
     return $pago;
   }
 
+  public static function actualizar($id, $datos, $request) {
+    $pago = Pago::obtenerXId($id);
+    $pago->update($datos);
+    
+    if (isset($request)) {
+      $rutaImagenesComprobantes = NULL;
+      $imagenComprobantePago = $request->file("imagenComprobante");
+      if (isset($imagenComprobantePago) && $imagenComprobantePago != "") {
+        $rutaImagenesComprobantes = Util::guardarImagen($pago["id"] . "_icp_", $imagenComprobantePago, FALSE);
+      }
+      $imagenDocumentoVerificacion = $request->file("imagenDocumentoVerificacion");
+      if (isset($imagenDocumentoVerificacion) && $imagenDocumentoVerificacion != "") {
+        $rutaImagenesComprobantes .= "," . Util::guardarImagen($pago["id"] . "_idv_", $imagenDocumentoVerificacion, FALSE);
+      }
+      $pago->rutasImagenesComprobante = $rutaImagenesComprobantes;
+      $pago->save();
+    }
+  }
+  
   public static function actualizarEstado($id, $estado) {
     $pago = Pago::obtenerXId($id);
     $pago->estado = $estado;

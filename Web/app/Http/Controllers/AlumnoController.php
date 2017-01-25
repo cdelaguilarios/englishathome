@@ -182,6 +182,17 @@ class AlumnoController extends Controller {
     }
     return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "pago"]));
   }
+  
+  public function actualizarPago($id, PagoRequest\FormularioActualizarRequest $req) {
+    try {
+      PagoAlumno::actualizar($id, $req);
+      Mensajes::agregarMensajeExitoso("Actualización exitosa.");
+    } catch (\Exception $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");
+    }
+    return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "pago"]));
+  }
 
   public function datosPago($id, $idPago) {
     return response()->json(PagoAlumno::obtenerXId($id, $idPago), 200);

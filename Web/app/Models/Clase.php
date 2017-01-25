@@ -26,6 +26,20 @@ class Clase extends Model {
     return $nombreTabla;
   }
 
+  private static function listarBase() {
+    $nombreTabla = Clase::nombreTabla();
+    return Clase::leftJoin(Entidad::nombreTabla() . " as entidadAlumno", $nombreTabla . ".idAlumno", "=", "entidadAlumno.id")
+                    ->leftJoin(Entidad::nombreTabla() . " as entidadProfesor", $nombreTabla . ".idProfesor", "=", "entidadProfesor.id")
+                    ->leftJoin(Historial::NombreTabla() . " as historial", $nombreTabla . ".id", "=", "historial.idClase")
+                    ->leftJoin(PagoClase::NombreTabla() . " as pagoClase", $nombreTabla . ".id", "=", "pagoClase.idClase")
+                    ->where($nombreTabla . ".eliminado", 0)
+                    ->where(function ($q) {
+                      $q->whereNull("historial.id")->orWhere("historial.enviarCorreo", 1);
+                    })
+                    ->groupBy($nombreTabla . ".id")
+                    ->orderBy($nombreTabla . ".fechaInicio", "ASC")->distinct();
+  }
+
   public static function obtenerXId($idAlumno, $id) {
     $nombreTabla = Clase::nombreTabla();
     return Clase::select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.id) AS idPago"))
@@ -50,19 +64,10 @@ class Clase extends Model {
 
   public static function listar($datos = NULL) {
     $nombreTabla = Clase::nombreTabla();
-    $clases = Clase::select($nombreTabla . ".*", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.estado) AS estadoPago"))
-                    ->leftJoin(Entidad::nombreTabla() . " as entidadAlumno", $nombreTabla . ".idAlumno", "=", "entidadAlumno.id")
-                    ->leftJoin(Entidad::nombreTabla() . " as entidadProfesor", $nombreTabla . ".idProfesor", "=", "entidadProfesor.id")
-                    ->leftJoin(Historial::NombreTabla() . " as historial", $nombreTabla . ".id", "=", "historial.idClase")
-                    ->leftJoin(PagoClase::NombreTabla() . " as pagoClase", $nombreTabla . ".id", "=", "pagoClase.idClase")
-                    ->leftJoin(PagoProfesor::NombreTabla() . " as pagoProfesor", "pagoClase.idPago", "=", "pagoProfesor.idPago")
-                    ->leftJoin(Pago::NombreTabla() . " as pago", "pagoProfesor.idPago", "=", "pago.id")
-                    ->where($nombreTabla . ".eliminado", 0)
-                    ->where(function ($q) {
-                      $q->whereNull("historial.id")->orWhere("historial.enviarCorreo", 1);
-                    })
-                    ->groupBy($nombreTabla . ".id")
-                    ->orderBy($nombreTabla . ".fechaInicio", "ASC")->distinct();
+    $clases = Clase::listarBase()
+            ->select($nombreTabla . ".*", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.estado) AS estadoPago"))
+            ->leftJoin(PagoProfesor::NombreTabla() . " as pagoProfesor", "pagoClase.idPago", "=", "pagoProfesor.idPago")
+            ->leftJoin(Pago::NombreTabla() . " as pago", "pagoProfesor.idPago", "=", "pago.id");
 
     if (isset($datos["estado"])) {
       $clases->where($nombreTabla . ".estado", $datos["estado"]);
@@ -77,17 +82,11 @@ class Clase extends Model {
 
   public static function listarXAlumno($idAlumno, $numeroPeriodo) {
     $nombreTabla = Clase::nombreTabla();
-    $clases = Clase::select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"))
-                    ->leftJoin(Entidad::nombreTabla() . " as entidadProfesor", $nombreTabla . ".idProfesor", "=", "entidadProfesor.id")
-                    ->leftJoin(Historial::NombreTabla() . " as historial", $nombreTabla . ".id", "=", "historial.idClase")
-                    ->where($nombreTabla . ".idAlumno", $idAlumno)
-                    ->where($nombreTabla . ".eliminado", 0)
-                    ->where($nombreTabla . ".numeroPeriodo", $numeroPeriodo)
-                    ->where(function ($q) {
-                      $q->whereNull("historial.id")->orWhere("historial.enviarCorreo", 1);
-                    })
-                    ->groupBy($nombreTabla . ".id")
-                    ->orderBy($nombreTabla . ".fechaInicio", "ASC")->distinct()->get();
+    $clases = Clase::listarBase()
+            ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"))
+            ->where($nombreTabla . ".numeroPeriodo", $numeroPeriodo)
+            ->where($nombreTabla . ".idAlumno", $idAlumno)->get();
+    
     foreach ($clases as $clase) {
       $pagoProfesor = PagoProfesor::ObtenerXClase($clase["id"]);
       $pagoAlumno = PagoAlumno::ObtenerXClase($idAlumno, $clase["id"]);
@@ -100,22 +99,14 @@ class Clase extends Model {
 
   public static function listarXProfesor($idProfesor, $datos = NULL) {
     $nombreTabla = Clase::nombreTabla();
-    $clases = Clase::select($nombreTabla . ".*", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.estado) AS estadoPago"))
-                    ->leftJoin(Entidad::nombreTabla() . " as entidadAlumno", $nombreTabla . ".idAlumno", "=", "entidadAlumno.id")
-                    ->leftJoin(Historial::NombreTabla() . " as historial", $nombreTabla . ".id", "=", "historial.idClase")
-                    ->leftJoin(PagoClase::NombreTabla() . " as pagoClase", $nombreTabla . ".id", "=", "pagoClase.idClase")
-                    ->leftJoin(PagoProfesor::NombreTabla() . " as pagoProfesor", "pagoClase.idPago", "=", "pagoProfesor.idPago")
-                    ->leftJoin(Pago::NombreTabla() . " as pago", "pagoProfesor.idPago", "=", "pago.id")
-                    ->where($nombreTabla . ".idProfesor", $idProfesor)
-                    ->where($nombreTabla . ".eliminado", 0)
-                    ->where(function ($q) {
-                      $q->whereNull("historial.id")->orWhere("historial.enviarCorreo", 1);
-                    })
-                    ->where(function ($q) use ($idProfesor) {
-                      $q->whereNull("pagoProfesor.idProfesor")->orWhere("pagoProfesor.idProfesor", $idProfesor);
-                    })
-                    ->groupBy($nombreTabla . ".id")
-                    ->orderBy($nombreTabla . ".fechaInicio", "ASC")->distinct();
+    $clases = Clase::listarBase()
+            ->select($nombreTabla . ".*", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.estado) AS estadoPago"))
+            ->leftJoin(PagoProfesor::NombreTabla() . " as pagoProfesor", "pagoClase.idPago", "=", "pagoProfesor.idPago")
+            ->leftJoin(Pago::NombreTabla() . " as pago", "pagoProfesor.idPago", "=", "pago.id")
+            ->where(function ($q) use ($idProfesor) {
+              $q->whereNull("pagoProfesor.idProfesor")->orWhere("pagoProfesor.idProfesor", $idProfesor);
+            })
+            ->where($nombreTabla . ".idProfesor", $idProfesor);
 
     if (isset($datos["estadoClase"])) {
       $clases->where($nombreTabla . ".estado", $datos["estadoClase"]);
@@ -135,8 +126,8 @@ class Clase extends Model {
   }
 
   public static function listarIdsEntidadesXRangoFecha($fechaInicio, $fechaFin, $idsProfesores = FALSE) {
-    $clases = Clase::where("fechaInicio", "<=", $fechaInicio)->where("fechaFin", ">=", $fechaFin)->lists("idProfesor");
-    return ($idsProfesores ? $clases->lists("idProfesor") : $clases->lists("idAlumno"));
+    $clases = Clase::where("fechaInicio", "<=", $fechaInicio)->where("fechaFin", ">=", $fechaFin);
+    return ($idsProfesores ? $clases->groupBy("idProfesor")->lists("idProfesor") : $clases->groupBy("idAlumno")->lists("idAlumno"));
   }
 
   public static function generarXDatosPago($idAlumno, $datos) {
@@ -205,10 +196,10 @@ class Clase extends Model {
       $clase->update($datos);
     } else {
       $clase = new Clase($datos);
-      $clase->save();     
+      $clase->save();
     }
-    
-    if(isset($datos["idPago"])){      
+
+    if (isset($datos["idPago"])) {
       PagoClase::registrarActualizar($datos["idPago"], $clase["id"]);
     }
 
@@ -238,8 +229,7 @@ class Clase extends Model {
         PagoProfesor::registrarXDatosClaseCancelada($datos["idProfesor"], $datos["idClase"], $datos["pagoProfesor"]);
       }
 
-      if (($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionAlumno && $datos["reprogramarCancelacionAlumno"] == 1) ||
-              ($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionProfesor && $datos["reprogramarCancelacionProfesor"] == 1)) {
+      if ($datos["reprogramarCancelacion"] == 1) {
         unset($datos["idClase"]);
         $datos["numeroPeriodo"] = $claseCancelada["numeroPeriodo"];
         $datos["costoHora"] = $claseCancelada["costoHora"];

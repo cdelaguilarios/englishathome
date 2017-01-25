@@ -30,26 +30,14 @@
       <div class="col-sm-3">
         <div class="checkbox">
           <label class="checkbox-custom" data-initialize="checkbox">
-            {{ Form::label("reprogramar-clase-can-alu", "Reprogramar clase ") }}
-            {{ Form::checkbox("reprogramarCancelacionAlumno", null, FALSE, ["id" => "reprogramar-clase-can-alu"]) }}
-          </label>
-        </div>
-      </div> 
-    </div>
-  </div>      
-  <div id="sec-clase-32" class="box-body">
-    <div class="form-group">
-      <div class="col-sm-3">
-        <div class="checkbox">
-          <label class="checkbox-custom" data-initialize="checkbox">
-            {{ Form::label("reprogramar-clase-can-pro", "Reprogramar clase ") }}
-            {{ Form::checkbox("reprogramarCancelacionProfesor", null, FALSE, ["id" => "reprogramar-clase-can-pro"]) }}
+            {{ Form::label("reprogramar-clase-cancelacion", "Reprogramar clase ") }}
+            {{ Form::checkbox("reprogramarCancelacion", null, FALSE, ["id" => "reprogramar-clase-cancelacion"]) }}
           </label>
         </div>
       </div> 
     </div>
   </div>    
-  <div id="sec-clase-33">
+  <div id="sec-clase-32">
     <div class="form-group">
       <div class="col-sm-12">
         <label class="control-label">
@@ -94,7 +82,7 @@
           <button type="button" class="btn btn-primary btn-sm btn-docentes-disponibles-clase">Elegir profesor disponible</button> 
         </div>
       </div>
-      <div id="sec-clase-331">
+      <div id="sec-clase-321">
         <div class="form-group">
           {{ Form::label("", "", ["class" => "col-sm-4 control-label nombre-docente-clase"]) }}
         </div>

@@ -14,8 +14,8 @@ class Docente extends Model {
     $auxCont = 1;
 
     foreach (Clase::generarXDatosPago($idAlumno, $datos) as $claseGenerada) {
-      if (isset($claseGenerada["fechaInicio"]) && isset($claseGenerada["fechaInicio"])) {
-        $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($claseGenerada["fechaInicio"], $claseGenerada["fechaFin"], TRUE);
+      if (isset($claseGenerada["fechaInicio"]) && isset($claseGenerada["fechaFin"])) {
+        $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($claseGenerada["fechaInicio"], $claseGenerada["fechaFin"], TRUE);       
         $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($claseGenerada["fechaInicio"]->dayOfWeek, $claseGenerada["fechaInicio"]->format("H:i:s"), $claseGenerada["fechaFin"]->format("H:i:s"), $datos["tipoDocente"]);
         $idsDisponiblesSel = (count($idsDisponiblesSel) == 0 && $auxCont == 1 ? array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray()) : array_intersect($idsDisponiblesSel, array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray())));
         $auxCont++;

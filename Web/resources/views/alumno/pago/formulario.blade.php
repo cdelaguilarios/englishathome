@@ -40,7 +40,7 @@
           <span class="input-group-addon">
             <b>S/.</b>
           </span>
-          {{ Form::text("monto", NULL, ["id" => "monto-pago", "class" => "form-control", "maxlength" =>"19"]) }}
+          {{ Form::text("monto", NULL, ["class" => "monto-pago form-control", "maxlength" =>"19", "data-modo" =>"registrar"]) }}
         </div>
       </div>
       @if($totalSaldoFavor > 0)
@@ -48,7 +48,7 @@
         <div class="checkbox">
           <label class="checkbox-custom" data-initialize="checkbox">
             {{ Form::label("usarSaldoFavor", "Utilizar saldo a favor total (S/. " . number_format($totalSaldoFavor, 2, ".", ",") . ")", ["class" => "checkbox-label"]) }}
-            {{ Form::checkbox("usarSaldoFavor", NULL, FALSE, ["id" => "usar-saldo-favor"]) }}
+            {{ Form::checkbox("usarSaldoFavor", NULL, FALSE, ["class" => "usar-saldo-favor", "data-modo" =>"registrar"]) }}
           </label>
         </div>
       </div> 
@@ -143,7 +143,7 @@
   </div>
 </div> 
 <div class="box-footer">    
-  <button id="btn-cancelar-pago" type="button" class="btn btn-default">Cancelar</button>
+  <button type="button" class="btn-cancelar-pago btn btn-default">Cancelar</button>
   <button id="btn-generar-clases-pago" type="button" class="btn btn-primary pull-right">Generar clases</button>
   <button id="btn-registrar-pago" type="submit" class="btn btn-success pull-right">Registrar pago</button>
   <button id="btn-anterior-pago"  type="button" class="btn btn-primary pull-right">Anterior</button>

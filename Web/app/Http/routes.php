@@ -49,6 +49,7 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("alumno/{id}/pago/generarClases", ["uses" => "AlumnoController@generarClasesXPago", "as" => "alumnos.pagos.generarClases"]);
     Route::post("alumno/{id}/pago/docentesDisponibles", ["uses" => "AlumnoController@listarDocentesDisponiblesXPago", "as" => "alumnos.pagos.docentesDisponibles.listar"]);
     Route::post("alumno/{id}/pago/registrar", ["uses" => "AlumnoController@registrarPago", "as" => "alumnos.pagos.registrar"]);
+    Route::post("alumno/{id}/pago/actualizar", ["uses" => "AlumnoController@actualizarPago", "as" => "alumnos.pagos.actualizar"]);
     Route::post("alumno/{id}/pago/{idPago}/datos", ["uses" => "AlumnoController@datosPago", "as" => "alumnos.pagos.datos"]);
     Route::delete("alumno/{id}/pago/{idPago}/eliminar", ["uses" => "AlumnoController@eliminarPago", "as" => "alumnos.pagos.eliminar"]);
     // </editor-fold>

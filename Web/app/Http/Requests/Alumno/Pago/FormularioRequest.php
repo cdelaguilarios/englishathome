@@ -26,6 +26,7 @@ class FormularioRequest extends Request {
     $datos["fechaInicioClases"] = ReglasValidacion::formatoDato($datos, "fechaInicioClases");
     $datos["periodoClases"] = ReglasValidacion::formatoDato($datos, "periodoClases");
     $datos["idDocente"] = ReglasValidacion::formatoDato($datos, "idDocente");
+    $datos["saldoFavor"] = ReglasValidacion::formatoDato($datos, "saldoFavor");
     $datos["costoHoraDocente"] = ReglasValidacion::formatoDato($datos, "costoHoraDocente");
     $datos["datosNotificacionClases"] = ReglasValidacion::formatoDato($datos, "datosNotificacionClases");
     $this->getInputSource()->replace($datos);

@@ -76,6 +76,21 @@ class PagoAlumno extends Model {
       Clase::registrarXDatosPago($idAlumno, $datosPago["id"], $datos);
     }
   }
+  
+  public static function actualizar($idAlumno, $request) {
+    $datos = $request->all();
+    Pago::actualizar($datos["idPago"], $datos, $request);
+
+    if ($datos["usarSaldoFavor"] == 1) {
+      Pago::whereIn("id", function($q) use ($idAlumno) {
+        $nombreTabla = PagoAlumno::nombreTabla();
+        $q->select($nombreTabla . ".idPago")
+                ->from($nombreTabla)
+                ->where($nombreTabla . ".idAlumno", $idAlumno)
+                ->where($nombreTabla . ".eliminado", 0);
+      })->update(["saldoFavorUtilizado" => 1]);
+    }
+  }
 
   public static function actualizarEstado($idAlumno, $datos) {
     PagoAlumno::obtenerXId($idAlumno, $datos["idPago"]);

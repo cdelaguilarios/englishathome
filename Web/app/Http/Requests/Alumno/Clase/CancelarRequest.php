@@ -22,8 +22,7 @@ class CancelarRequest extends Request {
     $datos["idProfesor"] = ReglasValidacion::formatoDato($datos, "idProfesor");
     $datos["pagoProfesor"] = ReglasValidacion::formatoDato($datos, "pagoProfesor");
     $datos["tipoCancelacion"] = ReglasValidacion::formatoDato($datos, "tipoCancelacion");
-    $datos["reprogramarCancelacionAlumno"] = (isset($datos["reprogramarCancelacionAlumno"]) ? 1 : 0);
-    $datos["reprogramarCancelacionProfesor"] = (isset($datos["reprogramarCancelacionProfesor"]) ? 1 : 0);
+    $datos["reprogramarCancelacion"] = (isset($datos["reprogramarCancelacion"]) ? 1 : 0);
     $datos["fecha"] = ReglasValidacion::formatoDato($datos, "fecha");
     $datos["horaInicio"] = ReglasValidacion::formatoDato($datos, "horaInicio");
     $datos["duracion"] = ReglasValidacion::formatoDato($datos, "duracion");
@@ -54,7 +53,7 @@ class CancelarRequest extends Request {
     }
 
     //Reprogramación
-    if ($datos["reprogramarCancelacionAlumno"] == 1 || $datos["reprogramarCancelacionProfesor"] == 1) {
+    if ($datos["reprogramarCancelacion"] == 1) {
       $reglasValidacion += [
           "fecha" => "required|date_format:d/m/Y",
           "horaInicio" => "required|numeric|between:" . ((int) Config::get("eah.minHorario") * 3600) . "," . ((int) Config::get("eah.maxHorario") * 3600),

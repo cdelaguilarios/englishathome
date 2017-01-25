@@ -58,6 +58,13 @@ function validarDecimal(value, element, param) {
   var filter2 = /^[\d]{1,14}(\.[\d]{1,4})?$/;
   return filter2.test(value);
 }
+$.validator.addMethod("validarDecimalNegativo", validarDecimalNegativo, "Ingreso no valido.");
+function validarDecimalNegativo(value, element, param) {
+  if (value.trim() === "")
+    return true;
+  var filter2 = /^-?[\d]{1,14}(\.[\d]{1,4})?$/;
+  return filter2.test(value);
+}
 $.validator.addMethod("validarPorcentaje", validarPorcentaje, "Ingreso no valido.");
 function validarPorcentaje(value, element, param) {
   if (value.trim() === "")
