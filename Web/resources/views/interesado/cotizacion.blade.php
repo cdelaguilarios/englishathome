@@ -4,6 +4,7 @@
 @section("section_script")
 <script>
   var urlDatosCurso = "{{ route("cursos.datos", ["id" => 0]) }}";
+  var urlCotizar = "{{ route('interesados.cotizar', ['id' => 0]) }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/interesado.js")}}"></script>
 @endsection
@@ -15,6 +16,22 @@
 
 @section("content") 
 @include("partials/errors")
+<div class="row">
+  <div class="col-sm-12">
+    <div class="box box-primary">        
+      <div class="box-body">
+        <div class="form-group">
+          <div class="col-sm-8">
+            <a href="{{ route("interesados.crear")}}" class="btn btn-primary btn-clean">Nuevo interesado</a>
+          </div>           
+          <div class="col-sm-4">
+            {{ Form::select("",App\Models\Interesado::listarBusqueda(), $interesado->id, ["id"=>"sel-interesado", "class" => "form-control", "data-seccion" => "cotizar", "style" => "width: 100%;"]) }}
+          </div>
+        </div> 
+      </div>
+    </div>
+  </div>
+</div>
 {{ Form::open(["url" => route("interesados.enviar.cotizacion", ["id" => $interesado->idEntidad]), "id" => "formulario-interesado-cotizacion", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
 <div class="row">
   <div class="col-sm-12">

@@ -4,6 +4,17 @@ var uto = null;
 $(document).ready(function () {
   cargarLista();
   cargarFormulario();
+  
+  urlPerfil = (typeof (urlPerfil) === "undefined" ? "" : urlPerfil);
+  urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
+  $("#sel-alumno").select2();
+  $("#sel-alumno").change(function () {
+    if ($(this).data("seccion") === "perfil" && urlPerfil !== "") {
+      window.location.href = urlPerfil.replace("/0", "/" + $(this).val());
+    } else if (urlEditar !== "") {
+      window.location.href = urlEditar.replace("/0", "/" + $(this).val());
+    }
+  });
 });
 
 function cargarLista() {
@@ -177,7 +188,10 @@ function cargarFormulario() {
       } else {
         error.insertAfter(element);
       }
-    }
+    },
+    onfocusout: false,
+    onkeyup: false,
+    onclick: false
   });
   if ($("input[name='modoEditarRegistrar']").val() === "1") {
     $("#wiz-registro-alumno").wizard();

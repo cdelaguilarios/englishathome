@@ -36,6 +36,10 @@ class Profesor extends Model {
     return $profesores;
   }
 
+  public static function listarBusqueda() {
+    return Profesor::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))->lists("nombreCompleto", "entidad.id");
+  }
+
   public static function ObtenerXId($id, $simple = FALSE) {
     $nombreTabla = Profesor::nombreTabla();
     $profesor = Profesor::select($nombreTabla . ".*", "entidad.*")

@@ -4,6 +4,7 @@
 @section("section_script")
 <script>
   var urlActualizarHorario = "{{ route('alumnos.actualizar.horario', ['id' => $alumno->idEntidad]) }}";
+  var urlPerfil = "{{ route('alumnos.perfil', ['id' => 0]) }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/alumno.js") }}"></script>
 @endsection
@@ -34,17 +35,19 @@
         <p class="text-muted">
           @include("util.horario", ["horario" => $alumno->horario, "modo" => "visualizar"])
         </p>
-        <hr>        
+        <hr>  
+        @if(isset($alumno->idCurso))
         <strong><i class="fa fa-fw flaticon-favorite-book"></i> Curso</strong>
         <p class="text-muted">{{ $cursos[$alumno->idCurso] }}</p>
-        <hr>
+        <hr> 
+        @endif
         <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
         <p class="text-muted">{{ $alumno->direccion }}<br/>{{ $alumno->direccionUbicacion }}</p>
         <p class="text-muted">
           @include("util.ubicacionMapa", ["geoLatitud" => $alumno->geoLatitud, "geoLongitud" => $alumno->geoLongitud, "modo" => "visualizar"])
         </p>
         <hr>
-        <strong><i class="fa fa-user margin-r-5"></i> {{ $tiposDocumentos[$alumno->idTipoDocumento] }}</strong>
+        <strong><i class="fa fa-user margin-r-5"></i> {{ (isset($alumno->idTipoDocumento) ? $tiposDocumentos[$alumno->idTipoDocumento] : "") }}</strong>
         <p class="text-muted">
           {{ $alumno->numeroDocumento }}
         </p>
@@ -54,33 +57,51 @@
           {{ $alumno->telefono }}
         </p>
         <hr>
+        @if(isset($alumno->fechaNacimiento))
         <strong><i class="fa fa-birthday-cake margin-r-5"></i> Fecha de nacimiento</strong>
         <p class="text-muted">
           {{ \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaNacimiento)->format("d/m/Y") }}
         </p>
-        <hr>                              
+        <hr>    
+        @endif                          
         <a href="{{ route("alumnos.editar", $alumno->id)}}" class="btn btn-primary btn-block"><b>Editar datos</b></a>
       </div>
     </div>
   </div>
   <div class="col-sm-9">
-    <div class="nav-tabs-custom">
-      <ul class="nav nav-tabs">
-        <li class="active"><a href="#historial" data-toggle="tab">Historial</a></li>
-        <li><a href="#pago" data-toggle="tab">Pagos</a></li>
-        <li><a href="#clase" data-toggle="tab">Clases</a></li>
-      </ul>
-      <div class="tab-content">
-        <div class="active tab-pane" id="historial">
-          @include("util.historial", ["idEntidad" => $alumno->id]) 
+    <div class="col-sm-12">
+      <div class="box box-primary">        
+        <div class="box-body">
+          <div class="form-group">
+            <div class="col-sm-8">
+            <a href="{{ route("alumnos.crear")}}" class="btn btn-primary btn-clean">Nuevo alumno</a> 
+            </div>           
+            <div class="col-sm-4">
+              {{ Form::select("",App\Models\Alumno::listarBusqueda(), $alumno->id, ["id"=>"sel-alumno", "class" => "form-control", "data-seccion" => "perfil", "style" => "width: 100%;"]) }}
+            </div>
+          </div> 
         </div>
-        <div class="tab-pane" id="pago">
-          @include("alumno.pago.principal", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "totalSaldoFavor" => $alumno->totalSaldoFavor]) 
+      </div>
+    </div>
+    <div class="col-sm-12">
+      <div class="nav-tabs-custom">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#historial" data-toggle="tab">Historial</a></li>
+          <li><a href="#pago" data-toggle="tab">Pagos</a></li>
+          <li><a href="#clase" data-toggle="tab">Clases</a></li>
+        </ul>
+        <div class="tab-content">
+          <div class="active tab-pane" id="historial">
+            @include("util.historial", ["idEntidad" => $alumno->id]) 
+          </div>
+          <div class="tab-pane" id="pago">
+            @include("alumno.pago.principal", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "totalSaldoFavor" => $alumno->totalSaldoFavor]) 
+          </div>
+          <div class="tab-pane" id="clase">
+            @include("alumno.clase.principal", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase])
+          </div>
+          @include("alumno.pago.datos") 
         </div>
-        <div class="tab-pane" id="clase">
-          @include("alumno.clase.principal", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase])
-        </div>
-        @include("alumno.pago.datos") 
       </div>
     </div>
   </div>

@@ -86,12 +86,6 @@
             <button id="btn-guardar" type="button" class="btn btn-success pull-right">
               {{ ((isset($modo) && $modo == "registrar") ? "Registrar" : "Guardar") }}
             </button>
-            @if(isset($interesado))
-            @if($interesado->estado != App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado)
-            <button id="btn-registrar-alumno"  type="button" class="btn btn-primary pull-right" ><i class="fa fa-mortar-board"></i> Registrar como alumno</button>
-            @endif
-            <a href="{{ route("interesados.cotizar", ["id" => $interesado->idEntidad]) }}" type="button" class="btn btn-primary pull-right" ><i class="fa fa-dollar"></i> Enviar cotización</a>
-            @endIf
           </div>
         </div>
       </div>

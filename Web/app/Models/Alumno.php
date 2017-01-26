@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DB;
 use Auth;
 use Crypt;
 use Carbon\Carbon;
@@ -33,6 +34,10 @@ class Alumno extends Model {
     return $alumnos;
   }
 
+  public static function listarBusqueda() {
+    return Alumno::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))->lists("nombreCompleto", "entidad.id");
+  }
+
   public static function obtenerXId($id, $simple = FALSE) {
     $alumno = Alumno::listar()->where("entidad.id", $id)->firstOrFail();
     if (!$simple) {
@@ -41,7 +46,9 @@ class Alumno extends Model {
       $alumno->numeroPeriodos = Clase::totalPeriodos($id);
       $alumno->totalSaldoFavor = PagoAlumno::totalSaldoFavor($id);
       $alumno->idNivelIngles = EntidadNivelIngles::obtenerXEntidad($id);
-      $alumno->idCurso = EntidadCurso::obtenerXEntidad($id)->idCurso;
+      
+      $entidadCurso = EntidadCurso::obtenerXEntidad($id);
+      $alumno->idCurso = (isset($entidadCurso) ? $entidadCurso->idCurso : NULL);
     }
     return $alumno;
   }

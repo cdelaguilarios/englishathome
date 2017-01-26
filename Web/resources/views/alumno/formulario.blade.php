@@ -62,7 +62,7 @@
               {{ Form::select("idTipoDocumento", $tiposDocumentos, NULL, ["class" => "form-control"]) }}
             </div>
             <div class="col-sm-3">
-              {{ Form::number("numeroDocumento", NULL, ["class" => "form-control", "minlength" =>"8", "maxlength" =>"8"]) }}
+              {{ Form::number("numeroDocumento", NULL, ["class" => "form-control", "minlength" =>"8", "maxlength" =>"20"]) }}
             </div>                    
           </div> 
           <div class="form-group">

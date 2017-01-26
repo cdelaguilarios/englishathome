@@ -61,7 +61,7 @@ class FormularioRequest extends Request {
         "apellido" => ["required", "max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
         "telefono" => "required|max:30",
         "fechaNacimiento" => "required|date_format:d/m/Y",
-        "numeroDocumento" => "required|numeric|digits_between:8,8",
+        "numeroDocumento" => "required|numeric|digits_between:8,20",
         "correoElectronico" => "required|email|max:245",
         "imagenPerfil" => "image",
         "direccion" => "required|max:255",

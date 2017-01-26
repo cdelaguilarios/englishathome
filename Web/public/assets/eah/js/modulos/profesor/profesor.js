@@ -4,6 +4,17 @@ var uto = null;
 $(document).ready(function () {
   cargarLista();
   cargarFormulario();
+
+  urlPerfil = (typeof (urlPerfil) === "undefined" ? "" : urlPerfil);
+  urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
+  $("#sel-profesor").select2();
+  $("#sel-profesor").change(function () {
+    if ($(this).data("seccion") === "perfil" && urlPerfil !== "") {
+      window.location.href = urlPerfil.replace("/0", "/" + $(this).val());
+    } else if (urlEditar !== "") {
+      window.location.href = urlEditar.replace("/0", "/" + $(this).val());
+    }
+  });
 });
 
 function cargarLista() {
@@ -30,7 +41,7 @@ function cargarLista() {
       responsive: true,
       order: [[3, "desc"]],
       columns: [
-        {data: "nombre", name: "entidad.nombre", render: function (e, t, d, m) { 
+        {data: "nombre", name: "entidad.nombre", render: function (e, t, d, m) {
             return '<a href="' + (urlPerfil.replace("/0", "/" + d.id)) + '">' + (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "") + '</a>';
           }},
         {data: "correoElectronico", name: "entidad.correoElectronico"},
@@ -158,7 +169,10 @@ function cargarFormulario() {
       } else {
         error.insertAfter(element);
       }
-    }
+    },
+    onfocusout: false,
+    onkeyup: false,
+    onclick: false
   });
   if ($("input[name='modoEditarRegistrar']").val() === "1") {
     $("#wiz-registro-profesor").wizard();

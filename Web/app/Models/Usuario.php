@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DB;
 use Auth;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\RolesUsuario;
@@ -42,6 +43,10 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
       $usuarios->where("entidad.estado", $datos["estado"]);
     }
     return $usuarios;
+  }
+
+  public static function listarBusqueda() {
+    return Usuario::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))->lists("nombreCompleto", "entidad.id");
   }
 
   public static function obtenerXId($id) {

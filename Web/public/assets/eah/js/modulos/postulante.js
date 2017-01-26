@@ -4,6 +4,14 @@ var uto = null;
 $(document).ready(function () {
   cargarLista();
   cargarFormulario();
+
+  urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
+  $("#sel-postulante").select2();
+  $("#sel-postulante").change(function () {
+    if (urlEditar !== "") {
+      window.location.href = urlEditar.replace("/0", "/" + $(this).val());
+    }
+  });
 });
 
 function cargarLista() {
@@ -154,7 +162,10 @@ function cargarFormulario() {
       } else {
         error.insertAfter(element);
       }
-    }
+    },
+    onfocusout: false,
+    onkeyup: false,
+    onclick: false
   });
   if ($("input[name='modoEditarRegistrar']").val() === "1") {
     $("#wiz-registro-postulante").wizard();

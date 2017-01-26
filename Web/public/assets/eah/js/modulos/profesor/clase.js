@@ -116,7 +116,10 @@ function cargarFormularioPagoClase() {
       } else {
         error.insertAfter(element);
       }
-    }
+    },
+    onfocusout: false,
+    onkeyup: false,
+    onclick: false
   });
   $("#btn-registrar-pago-clase").click(function () {
     limpiarCamposPagoClase();

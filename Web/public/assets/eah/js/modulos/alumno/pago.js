@@ -174,9 +174,12 @@ function cargarFormularioPago() {
       } else {
         error.insertAfter(element);
       }
-    }
+    },
+    onfocusout: false,
+    onkeyup: false,
+    onclick: false
   });
-  establecerCalendario("fecha-inicio-clases-pago", false, true);
+  establecerCalendario("fecha-inicio-clases-pago", false, false);
   $("#btn-nuevo-pago").click(function () {
     limpiarCamposPago();
     $("#btn-anterior-pago, #btn-registrar-pago").hide();
@@ -368,7 +371,10 @@ function cargarFormularioActualizarPago() {
       } else {
         error.insertAfter(element);
       }
-    }
+    },
+    onfocusout: false,
+    onkeyup: false,
+    onclick: false
   });
 }
 function editarPago(idPago) {

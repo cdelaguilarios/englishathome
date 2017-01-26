@@ -316,10 +316,13 @@ function cargarFormularioClase() {
       } else {
         error.insertAfter(element);
       }
-    }
+    },
+    onfocusout: false,
+    onkeyup: false,
+    onclick: false
   });
   //Registrar
-  establecerCalendario("fecha-clase", false, true);
+  establecerCalendario("fecha-clase", false, false);
   establecerCampoHorario("hora-inicio-clase");
   establecerCampoDuracion("duracion-clase");
   $("#btn-nuevo-clase").click(function () {
@@ -376,8 +379,8 @@ function obtenerDatosClase(idClase, funcionRetorno) {
     );
   }
 }
-function verDatosPagosClase(){
-  if($("#id-pago-clase").val() !== ""){
+function verDatosPagosClase() {
+  if ($("#id-pago-clase").val() !== "") {
     verDatosPago($("#id-pago-clase").val());
   }
 }
@@ -432,9 +435,12 @@ function cargarFormularioCancelarClase() {
         } else {
           error.insertAfter(element);
         }
-      }
+      },
+      onfocusout: false,
+      onkeyup: false,
+      onclick: false
     });
-    establecerCalendario("fecha-clase-reprogramada", false, true);
+    establecerCalendario("fecha-clase-reprogramada", false, false);
     establecerCampoHorario("hora-inicio-clase-reprogramada");
     establecerCampoDuracion("duracion-clase-reprogramada");
     $("#reprogramar-clase-cancelacion").change(verificarSeccionReprogramarClase);
@@ -447,8 +453,8 @@ function cancelarClase(idClase) {
     if (d.idProfesor !== null) {
       $("#sec-campo-pago-profesor").show();
       $("input[name='idProfesorClaseCancelada']").val(d.idProfesor);
-    }else{
-      $("#sec-campo-pago-profesor").hide();      
+    } else {
+      $("#sec-campo-pago-profesor").hide();
     }
     $("#hora-inicio-clase-reprogramada").val(tiempoSegundos(d.fechaInicio));
     $("#duracion-clase-reprogramada").val(d.duracion);
@@ -456,7 +462,7 @@ function cancelarClase(idClase) {
   });
 }
 function verificarSeccionReprogramarClase() {
-  var repClase= $("#reprogramar-clase-cancelacion");
+  var repClase = $("#reprogramar-clase-cancelacion");
   ((repClase.is(":visible") && repClase.is(":checked")) ? $("#sec-clase-32").show() : $("#sec-clase-32").hide());
   (($("#sec-clase-32").is(":visible") && $(".id-docente-clase").val() !== "") ? $("#sec-clase-321").show() : $("#sec-clase-321").hide());
 }

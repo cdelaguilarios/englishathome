@@ -120,7 +120,10 @@ function cargarFormularioPago() {
       } else {
         error.insertAfter(element);
       }
-    }
+    },
+    onfocusout: false,
+    onkeyup: false,
+    onclick: false
   });
   $("#btn-nuevo-pago").click(function () {
     limpiarCamposPago();
@@ -140,7 +143,7 @@ function limpiarCamposPago() {
       }
     }
   });
-} 
+}
 
 //Datos
 function verDatosPago(idPago) {
@@ -161,7 +164,7 @@ function verDatosPago(idPago) {
           $("#dat-fecha-registro-pago").text(formatoFecha(d.fechaRegistro, true));
           if (d.rutasImagenesComprobante !== null && d.rutasImagenesComprobante !== "") {
             var imagenes = d.rutasImagenesComprobante.split(",");
-            if(imagenes[0] !== null && imagenes[0] !== ""){              
+            if (imagenes[0] !== null && imagenes[0] !== "") {
               var rutaImagen = urlImagenes.replace("/0", "/" + imagenes[0]);
               $("#dat-imagen-comprobante-pago").attr("href", rutaImagen);
               $("#dat-imagen-comprobante-pago").find("img").attr("src", rutaImagen);

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DB;
 use Mail;
 use Crypt;
 use App\Helpers\Enum\TiposEntidad;
@@ -31,6 +32,10 @@ class Interesado extends Model {
       $interesados->where("entidad.estado", $datos["estado"]);
     }
     return $interesados;
+  }
+
+  public static function listarBusqueda() {
+    return Interesado::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))->lists("nombreCompleto", "entidad.id");
   }
 
   public static function obtenerXId($id, $simple = FALSE) {

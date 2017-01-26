@@ -35,6 +35,10 @@ class Postulante extends Model {
     }
     return $postulantes;
   }
+
+  public static function listarBusqueda() {
+    return Postulante::listar()->lists("nombreCompleto", "entidad.id");
+  }
   
   public static function ObtenerXId($id, $simple = FALSE) {
     $nombreTabla = Postulante::nombreTabla();

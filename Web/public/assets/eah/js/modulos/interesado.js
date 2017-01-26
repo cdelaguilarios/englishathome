@@ -3,6 +3,17 @@ $(document).ready(function () {
   cargarLista();
   cargarFormulario();
   cargarFormularioCotizacion();
+
+  urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
+  urlCotizar = (typeof (urlCotizar) === "undefined" ? "" : urlCotizar);
+  $("#sel-interesado").select2();
+  $("#sel-interesado").change(function () {
+    if ($(this).data("seccion") === "cotizar" && urlCotizar !== "") {
+      window.location.href = urlCotizar.replace("/0", "/" + $(this).val());
+    } else if (urlEditar !== "") {
+      window.location.href = urlEditar.replace("/0", "/" + $(this).val());
+    }
+  });
 });
 
 function cargarLista() {
@@ -140,7 +151,10 @@ function cargarFormulario() {
       } else {
         error.insertAfter(element);
       }
-    }
+    },
+    onfocusout: false,
+    onkeyup: false,
+    onclick: false
   });
 
   $("#btn-registrar-alumno").click(function () {
@@ -247,7 +261,10 @@ function cargarFormularioCotizacion() {
       } else {
         error.insertAfter(element);
       }
-    }
+    },
+    onfocusout: false,
+    onkeyup: false,
+    onclick: false
   });
   $("#id-curso").change(function () {
     urlDatosCurso = (typeof (urlDatosCurso) === "undefined" ? "" : urlDatosCurso);

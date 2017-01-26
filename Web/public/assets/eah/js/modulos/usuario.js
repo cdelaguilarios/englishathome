@@ -6,6 +6,14 @@ function validarPassword(value, element, param) {
 $(document).ready(function () {
   cargarLista();
   cargarFormulario();
+
+  urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
+  $("#sel-usuario").select2();
+  $("#sel-usuario").change(function () {
+    if (urlEditar !== "") {
+      window.location.href = urlEditar.replace("/0", "/" + $(this).val());
+    }
+  });
 });
 function cargarLista() {
   urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
@@ -128,6 +136,9 @@ function cargarFormulario() {
       } else {
         error.insertAfter(element);
       }
-    }
+    },
+    onfocusout: false,
+    onkeyup: false,
+    onclick: false
   });
 }
