@@ -15,7 +15,7 @@ class PagoProfesor extends Model {
   protected $table = "pagoProfesor";
   protected $fillable = ["idProfesor", "idPago"];
 
-  public static function NombreTabla() {
+  public static function nombreTabla() {
     $modeloPagoProfesor = new PagoProfesor();
     $nombreTabla = $modeloPagoProfesor->getTable();
     unset($modeloPagoProfesor);
@@ -42,7 +42,7 @@ class PagoProfesor extends Model {
     $nombreTabla = PagoProfesor::nombreTabla();
     return PagoProfesor::select("pago.*")
                     ->leftJoin(Pago::nombreTabla() . " as pago", $nombreTabla . ".idPago", "=", "pago.id")
-                    ->leftJoin(PagoClase::NombreTabla() . " as pagoClase", $nombreTabla . ".idPago", "=", "pagoClase.idPago")
+                    ->leftJoin(PagoClase::nombreTabla() . " as pagoClase", $nombreTabla . ".idPago", "=", "pagoClase.idPago")
                     ->where("pago.eliminado", 0)
                     ->where("pagoClase.idClase", $idClase)->first();
   }
@@ -69,7 +69,7 @@ class PagoProfesor extends Model {
 
     $listaMotivosPago = MotivosPago::listar();
     $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$listaMotivosPago[$datos["motivo"]], "", number_format((float) ($datos["monto"]), 2, ".", "")], MensajesHistorial::MensajeProfesorRegistroPago);
-    Historial::Registrar([$idProfesor, Auth::user()->idEntidad], MensajesHistorial::TituloProfesorRegistroPago, $mensajeHistorial, $datosPago["rutasImagenesComprobante"], FALSE, TRUE, $datosPago["id"], NULL, NULL, TiposHistorial::Pago);
+    Historial::registrar([$idProfesor, Auth::user()->idEntidad], MensajesHistorial::TituloProfesorRegistroPago, $mensajeHistorial, $datosPago["rutasImagenesComprobante"], FALSE, TRUE, $datosPago["id"], NULL, NULL, TiposHistorial::Pago);
   }
 
   public static function registrarXDatosClaseCancelada($idProfesor, $idClaseCancelada, $monto) {
@@ -82,7 +82,7 @@ class PagoProfesor extends Model {
     $pagoProfesor->save();
     PagoClase::registrarActualizar($datosPago["id"], $idClaseCancelada);
     $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$datos["motivo"], "", number_format((float) ($datos["monto"]), 2, ".", "")], MensajesHistorial::MensajeProfesorRegistroPago);
-    Historial::Registrar([$idProfesor, Auth::user()->idEntidad], MensajesHistorial::TituloProfesorRegistroPago, $mensajeHistorial, NULL, FALSE, TRUE, $datosPago["id"], NULL, NULL, TiposHistorial::Pago);
+    Historial::registrar([$idProfesor, Auth::user()->idEntidad], MensajesHistorial::TituloProfesorRegistroPago, $mensajeHistorial, NULL, FALSE, TRUE, $datosPago["id"], NULL, NULL, TiposHistorial::Pago);
   }
 
   public static function actualizarEstado($idProfesor, $datos) {

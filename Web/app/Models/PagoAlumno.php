@@ -42,7 +42,7 @@ class PagoAlumno extends Model {
     $nombreTabla = PagoAlumno::nombreTabla();
     return PagoAlumno::select("pago.*")
                     ->leftJoin(Pago::nombreTabla() . " as pago", $nombreTabla . ".idPago", "=", "pago.id")
-                    ->leftJoin(PagoClase::NombreTabla() . " as pagoClase", $nombreTabla . ".idPago", "=", "pagoClase.idPago")
+                    ->leftJoin(PagoClase::nombreTabla() . " as pagoClase", $nombreTabla . ".idPago", "=", "pagoClase.idPago")
                     ->where("pago.eliminado", 0)
                     ->where($nombreTabla . ".idAlumno", $idAlumno)
                     ->where("pagoClase.idClase", $idClase)->first();
@@ -69,7 +69,7 @@ class PagoAlumno extends Model {
 
     $listaMotivosPago = MotivosPago::listar();
     $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$listaMotivosPago[$datos["motivo"]], (isset($datos["descripcion"]) && $datos["descripcion"] != "" ? "<br/><strong>Descripción:</strong> " . $datos["descripcion"] : ""), number_format((float) ($datos["monto"]), 2, ".", "")], MensajesHistorial::MensajeAlumnoRegistroPago);
-    Historial::Registrar([$idAlumno, Auth::user()->idEntidad], MensajesHistorial::TituloAlumnoRegistroPago, $mensajeHistorial, $datosPago["rutasImagenesComprobante"], FALSE, TRUE, $datosPago["id"], NULL, NULL, TiposHistorial::Pago);
+    Historial::registrar([$idAlumno, Auth::user()->idEntidad], MensajesHistorial::TituloAlumnoRegistroPago, $mensajeHistorial, $datosPago["rutasImagenesComprobante"], FALSE, TRUE, $datosPago["id"], NULL, NULL, TiposHistorial::Pago);
 
     Alumno::actualizarEstado($idAlumno, EstadosAlumno::CuotaProgramada);
     if ($datos["motivo"] == MotivosPago::Clases) {

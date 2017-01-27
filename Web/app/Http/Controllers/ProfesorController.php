@@ -56,7 +56,7 @@ class ProfesorController extends Controller {
 
   public function perfil($id) {
     try {
-      $this->data["profesor"] = Profesor::ObtenerXId($id);
+      $this->data["profesor"] = Profesor::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("No se encontraron datos del profesor seleccionado.");

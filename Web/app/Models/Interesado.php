@@ -58,7 +58,7 @@ class Interesado extends Model {
   }
 
   public static function actualizar($id, $datos) {
-    Entidad::Actualizar($id, $datos, TiposEntidad::Interesado, $datos["estado"]);
+    Entidad::actualizar($id, $datos, TiposEntidad::Interesado, $datos["estado"]);
     EntidadCurso::registrarActualizar($id, $datos["idCurso"]);
 
     $interesado = Interesado::obtenerXId($id, TRUE);

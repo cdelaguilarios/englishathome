@@ -10,7 +10,7 @@ class EntidadNivelIngles extends Model {
   protected $table = "entidadNivelIngles";
   protected $fillable = ["idEntidad", "idNivelIngles"];
 
-  public static function NombreTabla() {
+  public static function nombreTabla() {
     $modeloEntidadNivelIngles = new EntidadNivelIngles();
     $nombreTabla = $modeloEntidadNivelIngles->getTable();
     unset($modeloEntidadNivelIngles);

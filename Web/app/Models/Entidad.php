@@ -31,7 +31,7 @@ class Entidad extends Model {
     return $entidad->id;
   }
 
-  public static function Actualizar($id, $datos, $tipo, $estado) {
+  public static function actualizar($id, $datos, $tipo, $estado) {
     $entidad = Entidad::ObtenerXId($id);
     $entidad->tipo = $tipo;
     if (isset($estado)) {

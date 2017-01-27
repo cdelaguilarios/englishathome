@@ -10,7 +10,7 @@ class PagoClase extends Model {
   protected $table = "pagoClase";
   protected $fillable = ["idPago", "idClase"];
 
-  public static function NombreTabla() {
+  public static function nombreTabla() {
     $modeloPagoClase = new PagoClase();
     $nombreTabla = $modeloPagoClase->getTable();
     unset($modeloPagoClase);
@@ -25,7 +25,7 @@ class PagoClase extends Model {
 
   public static function totalXProfesor($idClase) {
     $nombreTabla = PagoClase::nombreTabla();
-    return PagoClase::leftJoin(PagoProfesor::NombreTabla() . " as pagoProfesor", $nombreTabla . ".idPago", "=", "pagoProfesor.idPago")
+    return PagoClase::leftJoin(PagoProfesor::nombreTabla() . " as pagoProfesor", $nombreTabla . ".idPago", "=", "pagoProfesor.idPago")
                     ->whereNotNull("pagoProfesor.idProfesor")
                     ->where($nombreTabla . ".idClase", $idClase)->count();
   }

@@ -27,7 +27,7 @@ class Profesor extends Model {
     $nombreTabla = Profesor::nombreTabla();
     $profesores = Profesor::select($nombreTabla . ".*", "entidad.*", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))
             ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
-            ->leftJoin(EntidadCurso::NombreTabla() . " as entidadCurso", $nombreTabla . ".idEntidad", "=", "entidadCurso.idEntidad")
+            ->leftJoin(EntidadCurso::nombreTabla() . " as entidadCurso", $nombreTabla . ".idEntidad", "=", "entidadCurso.idEntidad")
             ->where("entidad.eliminado", 0)->distinct();
 
     if (isset($datos["estado"])) {
@@ -40,7 +40,7 @@ class Profesor extends Model {
     return Profesor::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))->lists("nombreCompleto", "entidad.id");
   }
 
-  public static function ObtenerXId($id, $simple = FALSE) {
+  public static function obtenerXId($id, $simple = FALSE) {
     $nombreTabla = Profesor::nombreTabla();
     $profesor = Profesor::select($nombreTabla . ".*", "entidad.*")
                     ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
@@ -67,7 +67,7 @@ class Profesor extends Model {
     $profesor->idEntidad = $idEntidad;
     $profesor->save();
 
-    Historial::Registrar([$idEntidad, Auth::user()->idEntidad], MensajesHistorial::TituloProfesorRegistroXUsuario, "");
+    Historial::registrar([$idEntidad, Auth::user()->idEntidad], MensajesHistorial::TituloProfesorRegistroXUsuario, "");
     return $idEntidad;
   }
 
@@ -75,7 +75,7 @@ class Profesor extends Model {
     $datos = $req->all();
     $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
 
-    Entidad::Actualizar($id, $datos, TiposEntidad::Profesor, $datos["estado"]);
+    Entidad::actualizar($id, $datos, TiposEntidad::Profesor, $datos["estado"]);
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($id, $datos["idCursos"]);
     Horario::registrarActualizar($id, $datos["horario"]);

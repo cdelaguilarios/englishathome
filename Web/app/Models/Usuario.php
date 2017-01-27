@@ -71,7 +71,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     $datos = $req->all();
     $datos["correoElectronico"] = $datos["email"];
 
-    Entidad::Actualizar($id, $datos, TiposEntidad::Usuario, $datos["estado"]);
+    Entidad::actualizar($id, $datos, TiposEntidad::Usuario, $datos["estado"]);
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
 
     $usuario = Usuario::obtenerXId($id);

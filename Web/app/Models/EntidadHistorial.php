@@ -10,7 +10,7 @@ class EntidadHistorial extends Model {
   protected $table = "entidadHistorial";
   protected $fillable = ["idEntidad", "idHistorial"];
 
-  public static function NombreTabla() {
+  public static function nombreTabla() {
     $modeloEntidadHistorial = new EntidadHistorial();
     $nombreTabla = $modeloEntidadHistorial->getTable();
     unset($modeloEntidadHistorial);

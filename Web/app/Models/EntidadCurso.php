@@ -10,7 +10,7 @@ class EntidadCurso extends Model {
   protected $table = "entidadCurso";
   protected $fillable = ["idEntidad", "idCurso"];
 
-  public static function NombreTabla() {
+  public static function nombreTabla() {
     $modeloEntidadCurso = new EntidadCurso();
     $nombreTabla = $modeloEntidadCurso->getTable();
     unset($modeloEntidadCurso);

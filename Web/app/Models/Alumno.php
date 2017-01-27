@@ -68,7 +68,7 @@ class Alumno extends Model {
     $alumno->idEntidad = $idEntidad;
     $alumno->save();
 
-    Historial::Registrar([$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)], (Auth::guest() ? MensajesHistorial::TituloAlumnoRegistro : MensajesHistorial::TituloAlumnoRegistroXUsuario), "");
+    Historial::registrar([$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)], (Auth::guest() ? MensajesHistorial::TituloAlumnoRegistro : MensajesHistorial::TituloAlumnoRegistroXUsuario), "");
     return $idEntidad;
   }
 
@@ -88,7 +88,7 @@ class Alumno extends Model {
     $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
     $datos["fechaInicioClase"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaInicioClase"] . " 00:00:00")->toDateTimeString();
 
-    Entidad::Actualizar($id, $datos, TiposEntidad::Alumno, $datos["estado"]);
+    Entidad::actualizar($id, $datos, TiposEntidad::Alumno, $datos["estado"]);
     EntidadNivelIngles::registrarActualizar($id, $datos["idNivelIngles"]);
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($id, $datos["idCurso"]);

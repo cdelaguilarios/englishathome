@@ -10,7 +10,7 @@ class RelacionEntidad extends Model {
   protected $table = "relacionEntidad";
   protected $fillable = ["idEntidadA", "idEntidadB", "tipo"];
 
-  public static function NombreTabla() {
+  public static function nombreTabla() {
     $modeloRelacionEntidad = new RelacionEntidad();
     $nombreTabla = $modeloRelacionEntidad->getTable();
     unset($modeloRelacionEntidad);
