@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Historial;
 
 use App\Http\Requests\Request;
 
-class HistorialRequest extends Request {
+class ListaRequest extends Request {
 
   public function authorize() {
     return true;

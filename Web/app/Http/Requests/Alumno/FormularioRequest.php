@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Alumno;
 
+use Auth;
 use Config;
 use App\Models\Curso;
 use App\Models\NivelIngles;
@@ -18,8 +19,11 @@ class FormularioRequest extends Request {
 
   protected function getValidatorInstance() {
     $datos = $this->all();
+    $datos["telefono"] = ReglasValidacion::formatoDato($datos, "telefono");
+    $datos["fechaNacimiento"] = ReglasValidacion::formatoDato($datos, "fechaNacimiento");
     $datos["sexo"] = ReglasValidacion::formatoDato($datos, "sexo", "");
     $datos["idTipoDocumento"] = ReglasValidacion::formatoDato($datos, "idTipoDocumento");
+    $datos["numeroDocumento"] = ReglasValidacion::formatoDato($datos, "numeroDocumento");
     $datos["imagenPerfil"] = ReglasValidacion::formatoDato($datos, "imagenPerfil");
 
     $datos["codigoDepartamento"] = ReglasValidacion::formatoDato($datos, "codigoDepartamento");
@@ -59,9 +63,9 @@ class FormularioRequest extends Request {
     $reglasValidacion = [
         "nombre" => ["required", "max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
         "apellido" => ["required", "max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
-        "telefono" => "required|max:30",
-        "fechaNacimiento" => "required|date_format:d/m/Y",
-        "numeroDocumento" => "required|numeric|digits_between:8,20",
+        "telefono" => (Auth::guest() ? "required|" : "") . "max:30",
+        "fechaNacimiento" => (Auth::guest() ? "required|" : "") . "date_format:d/m/Y",
+        "numeroDocumento" => (Auth::guest() ? "required|" : "") . "numeric|digits_between:8,20",
         "correoElectronico" => "required|email|max:245",
         "imagenPerfil" => "image",
         "direccion" => "required|max:255",

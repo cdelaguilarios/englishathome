@@ -98,18 +98,13 @@ function cargarFormulario() {
         required: true,
         validarAlfabetico: true
       },
-      telefono: {
-        required: true
-      },
       fechaNacimiento: {
-        required: true,
         validarFecha: true
       },
       idTipoDocumento: {
         required: true
       },
       numeroDocumento: {
-        required: true,
         number: true
       },
       correoElectronico: {

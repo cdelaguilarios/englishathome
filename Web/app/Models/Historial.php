@@ -78,20 +78,13 @@ class Historial extends Model {
     return $datosHistorial;
   }
 
-  public static function registrar($idsEntidades, $titulo, $mensaje, $rutasImagenes = NULL, $enviarCorreo = FALSE, $mostrarEnPerfil = TRUE, $idPago = NULL, $idClase = NULL, $fechaNotificacion = NULL, $tipo = TiposHistorial::Notificacion) {
-    $idEntidadesSel = (is_array($idsEntidades) ? $idsEntidades : [$idsEntidades]);
+  public static function registrar($datos) {
+    $idEntidadesSel = (is_array($datos["idEntidades"]) ? $datos["idEntidades"] : [$datos["idEntidades"]]);
     if (count($idEntidadesSel) > 0) {
-      $historial = new Historial([
-          "idPago" => $idPago,
-          "idClase" => $idClase,
-          "titulo" => $titulo,
-          "mensaje" => $mensaje,
-          "rutasImagenes" => $rutasImagenes,
-          "enviarCorreo" => ($enviarCorreo ? 1 : 0),
-          "mostrarEnPerfil" => ($mostrarEnPerfil ? 1 : 0),
-          "fechaNotificacion" => (!is_null($fechaNotificacion) ? $fechaNotificacion : Carbon::now()->toDateTimeString()),
-          "tipo" => $tipo
-      ]);
+      $datos["fechaNotificacion"] = (isset($datos["fechaNotificacion"]) ? $datos["fechaNotificacion"] : Carbon::now()->toDateTimeString());
+      $datos["tipo"] = (isset($datos["tipo"]) ? $datos["tipo"] : TiposHistorial::Notificacion);
+      
+      $historial = new Historial($datos);
       $historial->save();
 
       foreach ($idEntidadesSel as $idEntidad) {

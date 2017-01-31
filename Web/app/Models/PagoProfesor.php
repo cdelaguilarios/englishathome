@@ -69,7 +69,14 @@ class PagoProfesor extends Model {
 
     $listaMotivosPago = MotivosPago::listar();
     $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$listaMotivosPago[$datos["motivo"]], "", number_format((float) ($datos["monto"]), 2, ".", "")], MensajesHistorial::MensajeProfesorRegistroPago);
-    Historial::registrar([$idProfesor, Auth::user()->idEntidad], MensajesHistorial::TituloProfesorRegistroPago, $mensajeHistorial, $datosPago["rutasImagenesComprobante"], FALSE, TRUE, $datosPago["id"], NULL, NULL, TiposHistorial::Pago);
+    Historial::registrar([
+        "idEntidades" => [$idProfesor, Auth::user()->idEntidad],
+        "titulo" => MensajesHistorial::TituloProfesorRegistroPago,
+        "mensaje" => $mensajeHistorial,
+        "rutasImagenes" => $datosPago["rutasImagenesComprobante"],
+        "idPago" => $datosPago["id"],
+        "tipo" => TiposHistorial::Pago
+    ]);
   }
 
   public static function registrarXDatosClaseCancelada($idProfesor, $idClaseCancelada, $monto) {
@@ -82,7 +89,13 @@ class PagoProfesor extends Model {
     $pagoProfesor->save();
     PagoClase::registrarActualizar($datosPago["id"], $idClaseCancelada);
     $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$datos["motivo"], "", number_format((float) ($datos["monto"]), 2, ".", "")], MensajesHistorial::MensajeProfesorRegistroPago);
-    Historial::registrar([$idProfesor, Auth::user()->idEntidad], MensajesHistorial::TituloProfesorRegistroPago, $mensajeHistorial, NULL, FALSE, TRUE, $datosPago["id"], NULL, NULL, TiposHistorial::Pago);
+    Historial::registrar([
+        "idEntidades" => [$idProfesor, Auth::user()->idEntidad],
+        "titulo" => MensajesHistorial::TituloProfesorRegistroPago,
+        "mensaje" => $mensajeHistorial,
+        "idPago" => $datosPago["id"],
+        "tipo" => TiposHistorial::Pago
+    ]);
   }
 
   public static function actualizarEstado($idProfesor, $datos) {

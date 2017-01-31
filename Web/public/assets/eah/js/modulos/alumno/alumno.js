@@ -116,17 +116,17 @@ function cargarFormulario() {
         validarAlfabetico: true
       },
       telefono: {
-        required: true
+        required: ($("input[name='usuarioNoLogueado']").val() === "1")
       },
       fechaNacimiento: {
-        required: true,
+        required: ($("input[name='usuarioNoLogueado']").val() === "1"),
         validarFecha: true
       },
       idTipoDocumento: {
         required: true
       },
       numeroDocumento: {
-        required: true,
+        required: ($("input[name='usuarioNoLogueado']").val() === "1"),
         number: true
       },
       correoElectronico: {

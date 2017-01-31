@@ -3,7 +3,7 @@
 
 @section("section_script")
 <script>
-  var urlDatosCurso = "{{ route("cursos.datos", ["id" => 0]) }}";
+  var urlDatosCurso = "{{ route('cursos.datos', ['id' => 0]) }}";
   var urlCotizar = "{{ route('interesados.cotizar', ['id' => 0]) }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/interesado.js")}}"></script>

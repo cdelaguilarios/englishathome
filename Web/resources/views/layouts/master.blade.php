@@ -179,14 +179,14 @@
         var maxHorasClase = "{{ $maxHorasClase }}";
         var minHorario = "{{ $minHorario }}";
         var maxHorario = "{{ $maxHorario}}";
-        var urlImagenes = "{{ route("imagenes", ["rutaImagen" => "0"]) }}";
+        var urlImagenes = "{{ route('imagenes', ['rutaImagen' => '0']) }}";
         var estadosClase = {!!  json_encode($estadosClase) !!};
         var estadoClaseRealizada = "{{ $estadoClaseRealizada }}";
         var estadoClaseCancelada = "{{ $estadoClaseCancelada }}";
         var tipoCancelacionClaseAlumno = "{{ $tipoCancelacionClaseAlumno }}";
         var motivosPago = {!!  json_encode(App\Helpers\Enum\MotivosPago::listar()) !!};
-        var urlPerfilProfesor = "{{ route("profesores.perfil", ["id" => 0]) }}";
-        var urlPerfilAlumno = "{{ route("alumnos.perfil", ["id" => 0]) }}";
+        var urlPerfilProfesor = "{{ route('profesores.perfil', ['id' => 0]) }}";
+        var urlPerfilAlumno = "{{ route('alumnos.perfil', ['id' => 0]) }}";
         var estadosPago = {!!  json_encode(App\Helpers\Enum\EstadosPago::listar()) !!};
         var estadoPagoRealizado = "{{  $estadoPagoRealizado }}";
       </script>

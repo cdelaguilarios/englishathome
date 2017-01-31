@@ -3,25 +3,25 @@
 </div>  
 <div class="box-body">
   <div class="form-group">
-    {{ Form::label("motivo", "Motivo (*): ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("motivo-actualizar-pago", "Motivo (*): ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       {{ Form::select("motivo", App\Helpers\Enum\MotivosPago::listar(), NULL, ["id" => "motivo-actualizar-pago", "class" => "form-control"]) }}
     </div>                  
   </div> 
   <div class="form-group">
-    {{ Form::label("cuenta", "Cuenta: ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("cuenta-actualizar-pago", "Cuenta: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       {{ Form::select("cuenta", App\Helpers\Enum\CuentasBancoPago::listar(), NULL, ["id" => "cuenta-actualizar-pago", "class" => "form-control"]) }}
     </div>   
   </div>
   <div class="form-group">
-    {{ Form::label("estado", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("estado-actualizar-pago", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       {{ Form::select("estado", App\Helpers\Enum\EstadosPago::listarCambio(), NULL, ["id" => "estado-actualizar-pago", "class" => "form-control"]) }}
     </div>   
   </div>
   <div class="form-group">
-    {{ Form::label("descripcion", "Descripción: ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("descripcion-actualizar-pago", "Descripción: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-10">
       {{ Form::text("descripcion", NULL, ["id" => "descripcion-actualizar-pago", "class" => "form-control", "maxlength" =>"255"]) }}
     </div>
@@ -38,7 +38,7 @@
     </div>
   </div> 
   <div class="form-group">
-    {{ Form::label("monto", "Monto total (*): ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("monto-actualizar-pago", "Monto total (*): ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       <div class="input-group">
         <span class="input-group-addon">

@@ -29,7 +29,7 @@ class Postulante extends Model {
                     ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
                     ->leftJoin(EntidadCurso::nombreTabla() . " as entidadCurso", $nombreTabla . ".idEntidad", "=", "entidadCurso.idEntidad")
                     ->where("entidad.eliminado", 0)->distinct();
-    
+
     if (isset($datos["estado"])) {
       $postulantes->where("entidad.estado", $datos["estado"]);
     }
@@ -39,7 +39,7 @@ class Postulante extends Model {
   public static function listarBusqueda() {
     return Postulante::listar()->lists("nombreCompleto", "entidad.id");
   }
-  
+
   public static function obtenerXId($id, $simple = FALSE) {
     $nombreTabla = Postulante::nombreTabla();
     $postulante = Postulante::select($nombreTabla . ".*", "entidad.*")
@@ -53,10 +53,12 @@ class Postulante extends Model {
     }
     return $postulante;
   }
-  
+
   public static function registrar($req) {
     $datos = $req->all();
-    $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
+    if (isset($datos["fechaNacimiento"])) {
+      $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
+    }
 
     $idEntidad = Entidad::registrar($datos, TiposEntidad::Postulante, EstadosPostulante::Registrado);
     Entidad::registrarActualizarImagenPerfil($idEntidad, $req->file("imagenPerfil"));
@@ -67,14 +69,19 @@ class Postulante extends Model {
     $postulante->idEntidad = $idEntidad;
     $postulante->save();
 
-    Historial::registrar([$idEntidad, Auth::user()->idEntidad], MensajesHistorial::TituloPostulanteRegistroXUsuario, "");
+    Historial::registrar([
+        "idEntidades" => [$idEntidad, Auth::user()->idEntidad],
+        "titulo" => MensajesHistorial::TituloPostulanteRegistroXUsuario,
+        "mensaje" => ""
+    ]);
     return $idEntidad;
   }
 
   public static function actualizar($id, $req) {
     $datos = $req->all();
-    $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
-
+    if (isset($datos["fechaNacimiento"])) {
+      $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
+    }
     Entidad::actualizar($id, $datos, TiposEntidad::Postulante, $datos["estado"]);
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($id, $datos["idCursos"]);

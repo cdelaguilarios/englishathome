@@ -56,7 +56,7 @@
     </div>                     
     <div id="sec-pago-211">
       <div class="form-group">  
-        {{ Form::label("costoHoraClase", "Costo por hora (*): ", ["class" => "col-sm-2 control-label"]) }}   
+        {{ Form::label("costo-hora-clase-pago", "Costo por hora (*): ", ["class" => "col-sm-2 control-label"]) }}   
         <div class="col-sm-3">
           <div class="input-group">
             <span class="input-group-addon">
@@ -67,7 +67,7 @@
         </div> 
       </div>
       <div class="form-group">
-        {{ Form::label("fechaInicioClases", "Inicio de clases (*): ", ["class" => "col-sm-2 control-label"]) }}
+        {{ Form::label("fecha-inicio-clases-pago", "Inicio de clases (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-3">
           <div class="input-group date">
             <div class="input-group-addon">
@@ -77,7 +77,7 @@
           </div>
         </div>
 
-        {{ Form::label("periodoClases", "Período (*): ", ["class" => "col-sm-2 control-label"]) }}
+        {{ Form::label("periodo-clases-pago", "Período (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-2">
           {{ Form::number("periodoClases", (((int) $numeroPeriodos) +1), ["id" => "periodo-clases-pago", "class" => "form-control", "maxlength" =>"11", "min" =>"1"]) }}
         </div>
@@ -121,7 +121,7 @@
         {{ Form::label("", "", ["id" => "nombre-docente-pago", "class" => "col-sm-4 control-label"]) }}
       </div>
       <div class="form-group">
-        {{ Form::label("costoHoraDocente", "Pago por hora al profesor (*): ", ["class" => "col-sm-3 control-label"]) }}
+        {{ Form::label("costo-hora-docente-pago", "Pago por hora al profesor (*): ", ["class" => "col-sm-3 control-label"]) }}
         <div class="col-sm-4">
           <div class="input-group">
             <span class="input-group-addon">

@@ -32,19 +32,19 @@
             </div>
           </div>  
           <div class="form-group">
-            {{ Form::label("telefono", "Teléfono (*): ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("telefono", "Teléfono: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
               {{ Form::text("telefono", null, ["class" => "form-control", "maxlength" =>"30"]) }}
             </div>
           </div>                 
           <div class="form-group">
-            {{ Form::label("fechaNacimiento", "Fecha nacimiento (*): ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("fecha-nacimiento", "Fecha nacimiento: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3">
               <div class="input-group date">
                 <div class="input-group-addon">
                   <i class="fa fa-calendar"></i>
                 </div>                          
-                {{ Form::text("fechaNacimiento", NULL, ["id" => "fecha-nacimiento", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
+                {{ Form::text("fechaNacimiento", (isset($profesor->fechaNacimiento) ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $profesor->fechaNacimiento)->format("d/m/Y") : NULL), ["id" => "fecha-nacimiento", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
               </div>
             </div>
             {{ Form::label("sexo", "Sexo: ", ["class" => "col-sm-1 control-label"]) }}
@@ -53,7 +53,7 @@
             </div>
           </div>            
           <div class="form-group">
-            {{ Form::label("numeroDocumento", "Doc. de identidad (*): ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("numeroDocumento", "Doc. de identidad: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3" style="display:none">
               {{ Form::select("idTipoDocumento", $tiposDocumentos, null, ["class" => "form-control"]) }}
             </div>
@@ -118,7 +118,7 @@
             <h4>Cursos asignados:</h4>
           </div>
           <div class="form-group">
-            {{ Form::label("idCursos", "Cursos de interes (*): ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("curso-interes", "Cursos de interes (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-5">
               {{ Form::select("idCursos[]", $cursos, null, ["id" => "curso-interes", "class" => "form-control", "multiple" => "multiple", "style" => "width: 100%;"]) }}
             </div>    

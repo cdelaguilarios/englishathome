@@ -48,17 +48,21 @@
         <p class="text-muted">
           @include("util.ubicacionMapa", ["geoLatitud" => $profesor->geoLatitud, "geoLongitud" => $profesor->geoLongitud, "modo" => "visualizar"])
         </p>
-        <hr>
+        <hr>        
+        @if(isset($profesor->numeroDocumento))
         <strong><i class="fa fa-user margin-r-5"></i> {{ (isset($profesor->idTipoDocumento) ? $tiposDocumentos[$profesor->idTipoDocumento] : "") }}</strong>
         <p class="text-muted">
           {{ $profesor->numeroDocumento }}
         </p>
-        <hr>
+        <hr> 
+        @endif
+        @if(isset($profesor->telefono))
         <strong><i class="fa fa-phone margin-r-5"></i> Teléfono</strong>
         <p class="text-muted">
           {{ $profesor->telefono }}
         </p>
         <hr>
+        @endif
         @if(isset($profesor->fechaNacimiento))
         <strong><i class="fa fa-birthday-cake margin-r-5"></i> Fecha de nacimiento</strong>
         <p class="text-muted">

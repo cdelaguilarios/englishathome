@@ -3,25 +3,25 @@
 </div>  
 <div class="box-body">    
   <div class="form-group">    
-    {{ Form::label("numeroPeriodo", "Período (*): ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("numero-periodo-clase", "Período (*): ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       {{ Form::number("numeroPeriodo", "", ["id" => "numero-periodo-clase", "class" => "form-control", "maxlength" =>"11", "min" =>"1"]) }}
     </div>
-    {{ Form::label("estado", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("estado-clase", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarSimple(), NULL, ["id" => "estado-clase", "class" => "form-control"]) }}
     </div>
     <div class="col-sm-2">
       <div class="checkbox">
         <label class="checkbox-custom" data-initialize="checkbox">
-          {{ Form::label("notificar", "Notificar", ["class" => "checkbox-label"]) }}
+          {{ Form::label("notificar-clase", "Notificar", ["class" => "checkbox-label"]) }}
           {{ Form::checkbox("notificar", null, FALSE, ["id" => "notificar-clase"]) }} 
         </label>
       </div>
     </div> 
   </div>
   <div class="form-group"> 
-    {{ Form::label("fecha", "Fecha (*): ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("fecha-clase", "Fecha (*): ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       <div class="input-group date">
         <div class="input-group-addon">
@@ -32,7 +32,7 @@
     </div> 
   </div>
   <div class="form-group">    
-    {{ Form::label("horaInicio", "Hora inicio: ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("hora-inicio-clase", "Hora inicio: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       <div class="input-group date">
         <div class="input-group-addon">
@@ -41,7 +41,7 @@
         {{ Form::select("horaInicio", [], NULL, ["id" => "hora-inicio-clase", "class" => "form-control"]) }}
       </div>
     </div>
-    {{ Form::label("duracion", "Duración: ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("duracion-clase", "Duración: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-2">
       <div class="input-group date">
         <div class="input-group-addon">
@@ -52,7 +52,7 @@
     </div>
   </div>
   <div class="form-group">  
-    {{ Form::label("costoHora", "Costo por hora (*): ", ["class" => "col-sm-2 control-label"]) }}   
+    {{ Form::label("costo-hora-clase", "Costo por hora (*): ", ["class" => "col-sm-2 control-label"]) }}   
     <div class="col-sm-3">
       <div class="input-group">
         <span class="input-group-addon">
@@ -61,7 +61,7 @@
         {{ Form::text("costoHora", number_format($costoHoraClase, 2, ".", ","), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
       </div>
     </div> 
-    {{ Form::label("idPago", "Código de pago: ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("id-pago-clase", "Código de pago: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       {{ Form::select("idPago", App\Models\PagoAlumno::listar($idAlumno)->lists("id", "id")->toArray(), NULL, ["id" => "id-pago-clase", "class" => "form-control", "placeholder" => "Seleccionar código de pago"]) }}
     </div>
@@ -80,7 +80,7 @@
         {{ Form::label("", "", ["class" => "col-sm-4 control-label nombre-docente-clase"]) }}
       </div>
       <div class="form-group">
-        {{ Form::label("costoHoraDocente", "Pago por hora al profesor (*): ", ["class" => "col-sm-3 control-label"]) }}
+        {{ Form::label("costo-hora-docente", "Pago por hora al profesor (*): ", ["class" => "col-sm-3 control-label"]) }}
         <div class="col-sm-4">
           <div class="input-group">
             <span class="input-group-addon">

@@ -46,7 +46,7 @@
       </div>
     </div>           
     <div class="form-group">
-      {{ Form::label("fecha", "Fecha: ", ["class" => "col-sm-2 control-label"]) }}
+      {{ Form::label("fecha-clase-reprogramada", "Fecha: ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-3">
         <div class="input-group date">
           <div class="input-group-addon">
@@ -57,7 +57,7 @@
       </div>                        
     </div>
     <div class="form-group">
-      {{ Form::label("horaInicio", "Hora inicio: ", ["class" => "col-sm-2 control-label"]) }}
+      {{ Form::label("hora-inicio-clase-reprogramada", "Hora inicio: ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-3">
         <div class="input-group date">
           <div class="input-group-addon">
@@ -66,7 +66,7 @@
           {{ Form::select("horaInicio", [], NULL, ["id" => "hora-inicio-clase-reprogramada", "class" => "form-control"]) }}
         </div>
       </div>
-      {{ Form::label("duracion", "Duración: ", ["class" => "col-sm-1 control-label"]) }}
+      {{ Form::label("duracion-clase-reprogramada", "Duración: ", ["class" => "col-sm-1 control-label"]) }}
       <div class="col-sm-2">
         <div class="input-group date">
           <div class="input-group-addon">

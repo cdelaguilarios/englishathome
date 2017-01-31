@@ -100,7 +100,7 @@ class Interesado extends Model {
 
   public static function registrarAlumno($id, $idAlumno = NULL) {
     $datos = Interesado::obtenerXId($id, TRUE)->toArray();
-    if (!($datos->estado != EstadosInteresado::AlumnoRegistrado && !esAlumnoRegistrado($id))) {
+    if (!($datos["estado"] != EstadosInteresado::AlumnoRegistrado && !Interesado::esAlumnoRegistrado($id))) {
       return;
     }
     if (is_null($idAlumno)) {

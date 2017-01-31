@@ -36,19 +36,19 @@
             </div>
           </div>  
           <div class="form-group">
-            {{ Form::label("telefono", "Teléfono (*): ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("telefono", "Teléfono" . ((Auth::guest()) ? " (*)" : "") . ": ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3">
               {{ Form::text("telefono", (isset($interesado) ? $interesado->telefono : NULL), ["class" => "form-control", "maxlength" =>"30"]) }}
             </div>
           </div>                 
           <div class="form-group">
-            {{ Form::label("fechaNacimiento", "Fecha nacimiento (*): ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("fecha-nacimiento", "Fecha nacimiento" . ((Auth::guest()) ? " (*)" : "") . ": ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3">
               <div class="input-group date">
                 <div class="input-group-addon">
                   <i class="fa fa-calendar"></i>
                 </div>                                
-                {{ Form::text("fechaNacimiento", NULL, ["id" => "fecha-nacimiento", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
+                {{ Form::text("fechaNacimiento", (isset($alumno->fechaNacimiento) ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaNacimiento)->format("d/m/Y") : NULL), ["id" => "fecha-nacimiento", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
               </div>
             </div>
             {{ Form::label("sexo", "Sexo: ", ["class" => "col-sm-1 control-label"]) }}
@@ -57,7 +57,7 @@
             </div>
           </div>            
           <div class="form-group">
-            {{ Form::label("numeroDocumento", "Doc. de identidad (*): ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("numeroDocumento", "Doc. de identidad" . ((Auth::guest()) ? " (*)" : "") . ": ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3" style="display:none">
               {{ Form::select("idTipoDocumento", $tiposDocumentos, NULL, ["class" => "form-control"]) }}
             </div>
@@ -167,16 +167,16 @@
             <div class="col-sm-3 col-sm-offset-1">
               <div class="checkbox">
                 <label class="checkbox-custom" data-initialize="checkbox">
-                  {{ Form::label("conPlumonPizarra", "Pizarra / plumones: ", ["class" => "checkbox-label"]) }}
-                  {{ Form::checkbox("conPlumonPizarra", NULL, (isset($alumno->conPlumonPizarra) && $alumno->conPlumonPizarra == "1")) }}
+                  {{ Form::label("conAmbienteClase", "Un ambiente adecuado para la realización de la clase: ", ["class" => "checkbox-label"]) }}
+                  {{ Form::checkbox("conAmbienteClase", NULL, (isset($alumno->conAmbienteClase) && $alumno->conAmbienteClase == "1")) }}
                 </label>
               </div>
             </div>
             <div class="col-sm-8">
               <div class="checkbox">
                 <label class="checkbox-custom" data-initialize="checkbox">
-                  {{ Form::label("conAmbienteClase", "Un ambiente adecuado para la realización de la clase: ", ["class" => "checkbox-label"]) }}
-                  {{ Form::checkbox("conAmbienteClase", NULL, (isset($alumno->conAmbienteClase) && $alumno->conAmbienteClase == "1")) }}
+                  {{ Form::label("conPlumonPizarra", "Pizarra / plumones: ", ["class" => "checkbox-label"]) }}
+                  {{ Form::checkbox("conPlumonPizarra", NULL, (isset($alumno->conPlumonPizarra) && $alumno->conPlumonPizarra == "1")) }}
                 </label>
               </div>
             </div>
@@ -202,21 +202,21 @@
                 <div class="input-group-addon">
                   <i class="fa fa-calendar"></i>
                 </div>                                    
-                {{ Form::text("fechaInicioClase", NULL, ["id" => "fecha-inicio-clase", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
+                {{ Form::text("fechaInicioClase", (isset($alumno->fechaInicioClase) ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaInicioClase)->format("d/m/Y") : NULL), ["id" => "fecha-inicio-clase", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
               </div>
             </div>
             @if(isset($interesado))
-              {{ Form::hidden("costoHoraClase", $interesado->costoHoraClase) }} 
+            {{ Form::hidden("costoHoraClase", $interesado->costoHoraClase) }} 
             @else
-              {{ Form::label("costo-hora-clase", "Costo hora de clase (*): ", ["class" => "col-sm-3 control-label"]) }}
-              <div class="col-sm-2">
-                <div class="input-group">
-                  <span class="input-group-addon">
-                    <b>S/.</b>
-                  </span>
-                  {{ Form::text("costoHoraClase", NULL, ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
-                </div>
+            {{ Form::label("costo-hora-clase", "Costo hora de clase (*): ", ["class" => "col-sm-3 control-label"]) }}
+            <div class="col-sm-2">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <b>S/.</b>
+                </span>
+                {{ Form::text("costoHoraClase", NULL, ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
               </div>
+            </div>
             @endif 
           </div><br/>
           <div class="form-group">
@@ -252,6 +252,7 @@
             </div>
           </div>
         </div>                
+        {{ Form::hidden("usuarioNoLogueado", ((Auth::guest()) ? 1 : 0)) }}
         {{ Form::hidden("modoEditarRegistrar", 1) }} 
         {{ Form::hidden("idInteresado", (isset($interesado) ? $interesado->idEntidad : NULL)) }}  
         {{ Form::hidden("codigoVerificacion", (isset($codigoVerificacion) ? $codigoVerificacion : NULL)) }}

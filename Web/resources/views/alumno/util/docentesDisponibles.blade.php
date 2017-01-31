@@ -15,19 +15,19 @@
         </div>
         <div class="box-body">
           <div class="row">
-            {{ Form::label("tipoDocenteDisponible" . $seccion, "Tipo: ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("tipo-docente-disponible-" . $seccion, "Tipo: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-4">
               {{ Form::select("tipoDocenteDisponible" . $seccion, $tiposDocente, null, ["id" => "tipo-docente-disponible-" . $seccion, "class" => "form-control"]) }}
             </div> 
           </div>
           <div class="row">
-            {{ Form::label("sexoDocenteDisponible" . $seccion, "Sexo: ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("sexo-docente-disponible-" . $seccion, "Sexo: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-4">
               {{ Form::select("sexoDocenteDisponible" . $seccion, $sexos, null, ["id" => "sexo-docente-disponible-" . $seccion, "placeholder" => "Todos", "class" => "form-control"]) }}
             </div> 
           </div>
           <div class="row">
-            {{ Form::label("idCursoDocenteDisponible" . $seccion, "Curso: ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("id-curso-docente-disponible-" . $seccion, "Curso: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
               {{ Form::select("idCursoDocenteDisponible" . $seccion, $cursos, null, ["id" => "id-curso-docente-disponible-" . $seccion, "placeholder" => "Todos", "class" => "form-control"]) }}
             </div> 

@@ -46,7 +46,7 @@ class Alumno extends Model {
       $alumno->numeroPeriodos = Clase::totalPeriodos($id);
       $alumno->totalSaldoFavor = PagoAlumno::totalSaldoFavor($id);
       $alumno->idNivelIngles = EntidadNivelIngles::obtenerXEntidad($id);
-      
+
       $entidadCurso = EntidadCurso::obtenerXEntidad($id);
       $alumno->idCurso = (isset($entidadCurso) ? $entidadCurso->idCurso : NULL);
     }
@@ -55,7 +55,9 @@ class Alumno extends Model {
 
   public static function registrar($req) {
     $datos = $req->all();
-    $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
+    if (isset($datos["fechaNacimiento"])) {
+      $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
+    }
     $datos["fechaInicioClase"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaInicioClase"] . " 00:00:00")->toDateTimeString();
 
     $idEntidad = Entidad::registrar($datos, TiposEntidad::Alumno, EstadosAlumno::PorConfirmar);
@@ -68,7 +70,11 @@ class Alumno extends Model {
     $alumno->idEntidad = $idEntidad;
     $alumno->save();
 
-    Historial::registrar([$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)], (Auth::guest() ? MensajesHistorial::TituloAlumnoRegistro : MensajesHistorial::TituloAlumnoRegistroXUsuario), "");
+    Historial::registrar([
+        "idEntidades" => [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
+        "titulo" => (Auth::guest() ? MensajesHistorial::TituloAlumnoRegistro : MensajesHistorial::TituloAlumnoRegistroXUsuario),
+        "mensaje" => ""
+    ]);
     return $idEntidad;
   }
 
@@ -85,7 +91,9 @@ class Alumno extends Model {
 
   public static function actualizar($id, $req) {
     $datos = $req->all();
-    $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
+    if (isset($datos["fechaNacimiento"])) {
+      $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
+    }
     $datos["fechaInicioClase"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaInicioClase"] . " 00:00:00")->toDateTimeString();
 
     Entidad::actualizar($id, $datos, TiposEntidad::Alumno, $datos["estado"]);

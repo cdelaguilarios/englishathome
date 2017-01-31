@@ -1,10 +1,15 @@
 window.addEventListener("load", verificarJqueryHistorial, false);
 function verificarJqueryHistorial() {
-  ((window.jQuery && jQuery.ui) ? cargarHistorial() : window.setTimeout(verificarJqueryHistorial, 100));
+  ((window.jQuery && jQuery.ui) ? cargarSeccionHistorial() : window.setTimeout(verificarJqueryHistorial, 100));
+}
+function  cargarSeccionHistorial() {
+  cargarListaHistorial();
+  cargarFormularioHistorial();
 }
 
+//Lista
 var ultimaFechaCargada = "";
-function  cargarHistorial() {
+function cargarListaHistorial() {
   urlCargarHistorial = (typeof (urlCargarHistorial) === "undefined" ? "" : urlCargarHistorial);
   urlImagenesHistorial = (typeof (urlImagenesHistorial) === "undefined" ? "" : urlImagenesHistorial);
   meses = (typeof (meses) === "undefined" ? "" : meses);
@@ -52,7 +57,7 @@ function  cargarHistorial() {
                 if (datHistorial[i].rutasImagenes !== null) {
                   var rutasImagenes = datHistorial[i].rutasImagenes.split(",");
                   $.each(rutasImagenes, function (e, v) {
-                    if(v !== null && v !== ""){
+                    if (v !== null && v !== "") {
                       var rutaImagen = urlImagenesHistorial.replace("/0", "/" + v);
                       htmlHistorial += '<a href="' + rutaImagen + '" target="_blank"><img src="' + rutaImagen + '" class="margin" width="100"></a>';
                     }
@@ -83,5 +88,77 @@ function  cargarHistorial() {
         function (dataError) {
         }
     );
+  }
+}
+
+//Formulario
+function cargarFormularioHistorial() {
+  $("#formulario-registrar-historial").validate({
+    ignore: ":hidden",
+    rules: {
+      titulo: {
+        required: true
+      },
+      fechaNotificacion: {
+        validarFecha: true
+      }
+    },
+    submitHandler: function (f) {
+      if (confirm("¿Está seguro que desea registrar los datos de este evento?")) {
+        $.blockUI({message: "<h4>Registrando datos...</h4>"});
+        f.submit();
+      }
+    },
+    highlight: function () {
+    },
+    unhighlight: function () {
+    },
+    errorElement: "div",
+    errorClass: "help-block-error",
+    errorPlacement: function (error, element) {
+      if (element.closest("div[class*=col-sm-]").length > 0) {
+        element.closest("div[class*=col-sm-]").append(error);
+      } else if (element.parent(".input-group").length) {
+        error.insertAfter(element.parent());
+      } else {
+        error.insertAfter(element);
+      }
+    },
+    onfocusout: false,
+    onkeyup: false,
+    onclick: false
+  });
+  establecerCalendario("fecha-notificacion-evento-historial", false, false);
+  $("#btn-nuevo-evento-historial").click(function () {
+    limpiarCamposHistorial();
+    mostrarSeccionHistorial([2]);
+  });
+  $("#btn-cancelar-evento-historial").click(function () {
+    mostrarSeccionHistorial();
+  });
+}
+function limpiarCamposHistorial() {
+  $("#formulario-registrar-historial").find(":input, select").each(function (i, e) {
+    if (e.name !== "_token") {
+      if ($(e).is("select")) {
+        $(e).prop("selectedIndex", 0);
+      } else if ($(e).is(":checkbox")) {
+      } else {
+        e.value = "";
+      }
+    }
+  });
+}
+
+//Común - Util
+function mostrarSeccionHistorial(numSecciones) {
+  if (!numSecciones) {
+    numSecciones = [1];
+  }
+  $('[id*="sec-historial-"]').hide();
+  var auxSec = "";
+  for (var i = 0; i < numSecciones.length; i++) {
+    $("#sec-historial-" + auxSec + "" + numSecciones[i]).show();
+    auxSec += "" + numSecciones[i];
   }
 }

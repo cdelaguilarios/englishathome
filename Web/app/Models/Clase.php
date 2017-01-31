@@ -83,10 +83,10 @@ class Clase extends Model {
   public static function listarXAlumno($idAlumno, $numeroPeriodo) {
     $nombreTabla = Clase::nombreTabla();
     $clases = Clase::listarBase()
-            ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"))
-            ->where($nombreTabla . ".numeroPeriodo", $numeroPeriodo)
-            ->where($nombreTabla . ".idAlumno", $idAlumno)->get();
-    
+                    ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"))
+                    ->where($nombreTabla . ".numeroPeriodo", $numeroPeriodo)
+                    ->where($nombreTabla . ".idAlumno", $idAlumno)->get();
+
     foreach ($clases as $clase) {
       $pagoProfesor = PagoProfesor::ObtenerXClase($clase["id"]);
       $pagoAlumno = PagoAlumno::ObtenerXClase($idAlumno, $clase["id"]);
@@ -206,7 +206,16 @@ class Clase extends Model {
     if ($notificar) {
       $tituloHistorial = str_replace(["[DIAS]"], ["1 día"], (!is_null($datos["idDocente"]) ? MensajesHistorial::TituloCorreoAlumnoClase : MensajesHistorial::TituloCorreoAlumnoClaseSinProfesor));
       $mensajeHistorial = str_replace(["[FECHA]", "[PERIODO]", "[DURACION]"], [$datos["fechaInicio"]->format("d/m/Y H:i:s"), $datos["numeroPeriodo"], gmdate("H:i", $datos["duracion"])], (!is_null($datos["idDocente"]) ? MensajesHistorial::MensajeCorreoAlumnoClase : MensajesHistorial::MensajeCorreoAlumnoClaseSinProfesor));
-      Historial::registrar([$idAlumno, $datos["idDocente"], Auth::user()->idEntidad], $tituloHistorial, $mensajeHistorial, NULL, TRUE, FALSE, NULL, $clase["id"], $datos["fechaInicio"]->subDays(1), TiposHistorial::Correo);
+      Historial::registrar([
+          "idEntidades" => [$idAlumno, $datos["idDocente"], Auth::user()->idEntidad],
+          "titulo" => $tituloHistorial,
+          "mensaje" => $mensajeHistorial,
+          "enviarCorreo" => 1,
+          "mostrarEnPerfil" => 0,
+          "idClase" => $clase["id"],
+          "fechaNotificacion" => $datos["fechaInicio"]->subDays(1),
+          "tipo" => TiposHistorial::Correo
+      ]);
     }
     return $clase["id"];
   }

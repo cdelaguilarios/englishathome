@@ -114,6 +114,7 @@ Route::group(["middleware" => "auth"], function() {
     // </editor-fold>
     // <editor-fold desc="Historial">
     Route::post("historial/{id}", ["uses" => "HistorialController@historial", "as" => "historial"]);
+    Route::post("historial/{id}/registrar", ["uses" => "HistorialController@registrar", "as" => "historial.registrar"]);
     // </editor-fold>
     // <editor-fold desc="Curso">
     Route::post("curso/{id}/datos", ["uses" => "CursoController@datos", "as" => "cursos.datos"]);

@@ -8,7 +8,7 @@
     </div>                                        
   </div> 
   <div class="form-group">
-    {{ Form::label("monto", "Monto total (*): ", ["class" => "col-sm-3 control-label"]) }}
+    {{ Form::label("monto-clase-pago", "Monto total (*): ", ["class" => "col-sm-3 control-label"]) }}
     <div class="col-sm-3">
       <div class="input-group">
         <span class="input-group-addon">
