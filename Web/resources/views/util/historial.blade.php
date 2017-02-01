@@ -1,3 +1,4 @@
+<div id="sec-men-historial"></div>
 <div id="sec-historial-1">
   <div>
     <a id="btn-nuevo-evento-historial" class="btn btn-sm btn-primary pull-right">
@@ -40,16 +41,24 @@
           </label>
         </div>
       </div>                        
-      <div class="col-sm-7">
+      <div class="col-sm-3">
         <div class="checkbox">
           <label class="checkbox-custom" data-initialize="checkbox">
             {{ Form::label("mostrar-perfil-evento-historial", "Mostrar en perfil: ", ["class" => "checkbox-label"]) }}
             {{ Form::checkbox("mostrarEnPerfil", NULL, TRUE, ["id" => "mostrar-perfil-evento-historial"]) }}
           </label>
         </div>
+      </div>                        
+      <div class="col-sm-4">
+        <div class="checkbox">
+          <label class="checkbox-custom" data-initialize="checkbox">
+            {{ Form::label("notificar-inmediatamente-evento-historial", "Notificar inmediatamente: ", ["class" => "checkbox-label"]) }}
+            {{ Form::checkbox("notificarInmediatamente", NULL, TRUE, ["id" => "notificar-inmediatamente-evento-historial"]) }}
+          </label>
+        </div>
       </div>
     </div>
-    <div class="form-group"> 
+    <div id="sec-historial-21" style="display: none;" class="form-group"> 
       {{ Form::label("fecha-notificacion-evento-historial", "Fecha notificación: ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-3">
         <div class="input-group date">

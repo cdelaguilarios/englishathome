@@ -17,17 +17,23 @@ class FormularioRequest extends Request {
     $datos["mensaje"] = ReglasValidacion::formatoDato($datos, "mensaje", "");
     $datos["enviarCorreo"] = (isset($datos["enviarCorreo"]) ? 1 : 0);
     $datos["mostrarEnPerfil"] = (isset($datos["mostrarEnPerfil"]) ? 1 : 0);
+    $datos["notificarInmediatamente"] = (isset($datos["notificarInmediatamente"]) ? 1 : 0);
     $datos["fechaNotificacion"] = ReglasValidacion::formatoDato($datos, "fechaNotificacion");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
 
   public function rules() {
+    $datos = $this->all();
     $reglasValidacion = [
         "titulo" => "required|max:100",
         "mensaje" => "max:4000",
         "fechaNotificacion" => "date_format:d/m/Y"
     ];
+
+    if ($datos["enviarCorreo"] == 0 && $datos["mostrarEnPerfil"] == 0) {
+      $reglasValidacion["opcionEventoNoValido"] = "required";
+    }
 
     switch ($this->method()) {
       case "GET":
@@ -41,6 +47,12 @@ class FormularioRequest extends Request {
         }
       default:break;
     }
+  }
+
+  public function messages() {
+    return [
+        "opcionEventoNoValido.required" => "Por favor selecione por lo menos una de las siguientes opciones: \"Enviar correo\" o \"Mostrar en perfil\""
+    ];
   }
 
 }

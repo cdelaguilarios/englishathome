@@ -81,7 +81,7 @@ class Historial extends Model {
   public static function registrar($datos) {
     $idEntidadesSel = (is_array($datos["idEntidades"]) ? $datos["idEntidades"] : [$datos["idEntidades"]]);
     if (count($idEntidadesSel) > 0) {
-      $datos["fechaNotificacion"] = (isset($datos["fechaNotificacion"]) ? $datos["fechaNotificacion"] : Carbon::now()->toDateTimeString());
+      $datos["fechaNotificacion"] = (isset($datos["fechaNotificacion"]) && !(isset($datos["notificarInmediatamente"]) && $datos["notificarInmediatamente"] == 1) ? $datos["fechaNotificacion"] : Carbon::now()->toDateTimeString());
       $datos["tipo"] = (isset($datos["tipo"]) ? $datos["tipo"] : TiposHistorial::Notificacion);
       
       $historial = new Historial($datos);

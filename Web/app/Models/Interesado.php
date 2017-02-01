@@ -4,9 +4,11 @@ namespace App\Models;
 
 use DB;
 use Mail;
+use Auth;
 use Crypt;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\EstadosAlumno;
+use App\Helpers\Enum\MensajesHistorial;
 use App\Helpers\Enum\EstadosInteresado;
 use Illuminate\Database\Eloquent\Model;
 use App\Helpers\Enum\TiposRelacionEntidad;
@@ -54,6 +56,12 @@ class Interesado extends Model {
     $interesado = new Interesado($datos);
     $interesado->idEntidad = $idEntidad;
     $interesado->save();
+    
+    Historial::registrar([
+        "idEntidades" => [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
+        "titulo" => (Auth::guest() ? MensajesHistorial::TituloInteresadoRegistro : MensajesHistorial::TituloInteresadoRegistroXUsuario),
+        "mensaje" => ""
+    ]);
     return $idEntidad;
   }
 

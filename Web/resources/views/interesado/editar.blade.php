@@ -34,8 +34,23 @@
       </div>
     </div>
   </div>
+  <div class="col-sm-12">
+    <div class="nav-tabs-custom">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#datos" data-toggle="tab">Datos</a></li>
+        <li><a href="#historial" data-toggle="tab">Historial</a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="active tab-pane" id="datos">
+          {{ Form::model($interesado, ["method" => "PATCH", "action" => ["InteresadoController@actualizar", $interesado->id], "id" => "formulario-interesado", "class" => "form-horizontal", "files" => true]) }}
+          @include("interesado.formulario")
+          {{ Form::close() }}
+        </div>
+        <div class="tab-pane" id="historial">
+          @include("util.historial", ["idEntidad" => $interesado->id]) 
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-{{ Form::model($interesado, ["method" => "PATCH", "action" => ["InteresadoController@actualizar", $interesado->id], "id" => "formulario-interesado", "class" => "form-horizontal", "files" => true]) }}
-@include("interesado.formulario")
-{{ Form::close() }}
 @endsection

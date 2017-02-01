@@ -4,7 +4,7 @@ var uto = null;
 $(document).ready(function () {
   cargarLista();
   cargarFormulario();
-  
+
   urlPerfil = (typeof (urlPerfil) === "undefined" ? "" : urlPerfil);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
   $("#sel-alumno").select2();
@@ -223,6 +223,21 @@ function cargarFormulario() {
     }
     $("#direccion").focusout(verificarDatosBusquedaMapa);
     $("input[name='codigoUbigeo']").change(verificarDatosBusquedaMapa);
+
+    if ($("input[name='modoEditar']").length > 0 && $("input[name='modoEditar']").val() === "1") {
+      habilitarTodosPasos();
+      $("#wiz-registro-alumno").find('.steps-container').find('li').click(function (e) {
+        var pasoActual = $("#wiz-registro-alumno").find('.steps-container').find('li.active').data("step");
+        var campos = $("#formulario-alumno").find("#sec-wiz-alumno-" + pasoActual).find(":input, select");
+        if (!campos.valid()) {
+          e.preventDefault();
+          return false;
+        }
+      });
+      $('#wiz-registro-alumno').on('changed.fu.wizard', function (evt, data) {
+        habilitarTodosPasos();
+      });
+    }
   } else {
     $("input[name='horario']").change(function () {
       if (urlActualizarHorario !== "" && $(this).val() !== "") {
@@ -255,6 +270,14 @@ function verificarDatosBusquedaMapa() {
     buscarDireccionMapa($("#direccion").val() + " " + $("#codigo-distrito option:selected").text() +
         ", " + $("#codigo-provincia option:selected").text() + ", " + $("#codigo-departamento option:selected").text());
   }
+}
+function habilitarTodosPasos() {
+  var pasos = $("#wiz-registro-alumno").find('.steps-container').find('li');
+  $.each(pasos, function (i, v) {
+    if (!pasos.eq(i).hasClass('active')) {
+      pasos.eq(i).addClass('complete');
+    }
+  });
 }
 
 

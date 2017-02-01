@@ -254,6 +254,7 @@
         </div>                
         {{ Form::hidden("usuarioNoLogueado", ((Auth::guest()) ? 1 : 0)) }}
         {{ Form::hidden("modoEditarRegistrar", 1) }} 
+        {{ Form::hidden("modoEditar", ((isset($modo) && $modo == "registrar") ? 0: 1)) }} 
         {{ Form::hidden("idInteresado", (isset($interesado) ? $interesado->idEntidad : NULL)) }}  
         {{ Form::hidden("codigoVerificacion", (isset($codigoVerificacion) ? $codigoVerificacion : NULL)) }}
       </div>
