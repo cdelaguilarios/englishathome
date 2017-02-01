@@ -217,9 +217,14 @@ function cargarFormulario() {
     establecerCalendario("fecha-inicio-clase", false, (fechaInicioClase === ""));
     establecerCampoDuracion("numero-horas-clase", (numeroHorasClase !== "" ? numeroHorasClase : undefined));
 
-    if (fechaNacimiento !== "" && fechaInicioClase !== "") {
-      $("#fecha-nacimiento").datepicker("setDate", (new Date(fechaNacimiento)));
-      $("#fecha-inicio-clase").datepicker("setDate", (new Date(fechaInicioClase)));
+    if (!($("input[name='idInteresado']").length > 0 && $("input[name='idInteresado']").val() !== "") && fechaNacimiento !== "") {
+      var datFechaNacimiento = fechaNacimiento.split("/");
+      $("#fecha-nacimiento").datepicker("setDate", (new Date(datFechaNacimiento[1] + "/" + datFechaNacimiento[0] + "/" + datFechaNacimiento[2])));
+    }
+    if (fechaInicioClase !== "") {
+      var datFechaInicioClase = fechaInicioClase.split("/");
+      $("#fecha-inicio-clase").datepicker("setDate", (new Date(datFechaInicioClase[1] + "/" + datFechaInicioClase[0] + "/" + datFechaInicioClase[2])));
+
     }
     $("#direccion").focusout(verificarDatosBusquedaMapa);
     $("input[name='codigoUbigeo']").change(verificarDatosBusquedaMapa);

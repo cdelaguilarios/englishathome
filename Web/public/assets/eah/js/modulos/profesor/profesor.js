@@ -186,13 +186,28 @@ function cargarFormulario() {
     var fechaNacimiento = $("#fecha-nacimiento").val();
     establecerCalendario("fecha-nacimiento", true, false);
     if (fechaNacimiento !== "") {
-      $("#fecha-nacimiento").datepicker("setDate", (new Date(fechaNacimiento)));
+      var datFechaNacimiento = fechaNacimiento.split("/");
+      $("#fecha-nacimiento").datepicker("setDate", (new Date(datFechaNacimiento[1] + "/" + datFechaNacimiento[0] + "/" + datFechaNacimiento[2])));
     }
-
 
     $("#curso-interes").select2();
     $("#direccion").focusout(verificarDatosBusquedaMapa);
     $("input[name='codigoUbigeo']").change(verificarDatosBusquedaMapa);
+
+    if ($("input[name='modoEditar']").length > 0 && $("input[name='modoEditar']").val() === "1") {
+      habilitarTodosPasos();
+      $("#wiz-registro-profesor").find('.steps-container').find('li').click(function (e) {
+        var pasoActual = $("#wiz-registro-profesor").find('.steps-container').find('li.active').data("step");
+        var campos = $("#formulario-profesor").find("#sec-wiz-profesor-" + pasoActual).find(":input, select");
+        if (!campos.valid()) {
+          e.preventDefault();
+          return false;
+        }
+      });
+      $('#wiz-registro-profesor').on('changed.fu.wizard', function (evt, data) {
+        habilitarTodosPasos();
+      });
+    }
 
     if ($("input[name='cursos']").val() !== "") {
       var selCursosVal = [];
@@ -235,6 +250,14 @@ function verificarDatosBusquedaMapa() {
     buscarDireccionMapa($("#direccion").val() + " " + $("#codigo-distrito option:selected").text() +
         ", " + $("#codigo-provincia option:selected").text() + ", " + $("#codigo-departamento option:selected").text());
   }
+}
+function habilitarTodosPasos() {
+  var pasos = $("#wiz-registro-profesor").find('.steps-container').find('li');
+  $.each(pasos, function (i, v) {
+    if (!pasos.eq(i).hasClass('active')) {
+      pasos.eq(i).addClass('complete');
+    }
+  });
 }
 
 

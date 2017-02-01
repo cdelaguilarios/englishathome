@@ -150,6 +150,7 @@
           </div>
         </div>                
         {{ Form::hidden("modoEditarRegistrar", 1) }} 
+        {{ Form::hidden("modoEditar", ((isset($modo) && $modo == "registrar") ? 0: 1)) }} 
       </div>
     </div>       
   </div>
