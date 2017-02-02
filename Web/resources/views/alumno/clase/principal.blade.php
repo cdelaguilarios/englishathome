@@ -30,7 +30,7 @@
       {{ Form::close() }}
     </div> 
   </div>
-  @include("alumno.util.docentesDisponibles", ["seccion" => "clase"])
+  @include("alumno.util.docentesDisponibles", ["seccion" => "clase", "idCurso" => $idCurso])
 </div>
 <script>
   var urlListarPeriodos = "{{ route('alumnos.periodos.clases.listar', ['id' => $idAlumno]) }}";

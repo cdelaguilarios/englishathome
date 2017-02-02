@@ -9,18 +9,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class Docente extends Model {
 
-  public static function listarDisponiblesXDatosPago($idAlumno, $datos) {
+  public static function listarIdsDisponiblesXDatosClasesGeneradas($clasesGeneradas, $tipoDocente = NULL) {
     $idsDisponiblesSel = [];
     $auxCont = 1;
 
-    foreach (Clase::generarXDatosPago($idAlumno, $datos) as $claseGenerada) {
+    foreach ($clasesGeneradas as $claseGenerada) {
       if (isset($claseGenerada["fechaInicio"]) && isset($claseGenerada["fechaFin"])) {
-        $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($claseGenerada["fechaInicio"], $claseGenerada["fechaFin"], TRUE);       
-        $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($claseGenerada["fechaInicio"]->dayOfWeek, $claseGenerada["fechaInicio"]->format("H:i:s"), $claseGenerada["fechaFin"]->format("H:i:s"), $datos["tipoDocente"]);
+        $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($claseGenerada["fechaInicio"], $claseGenerada["fechaFin"], TRUE);
+        $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($claseGenerada["fechaInicio"]->dayOfWeek, $claseGenerada["fechaInicio"]->format("H:i:s"), $claseGenerada["fechaFin"]->format("H:i:s"), $tipoDocente);
         $idsDisponiblesSel = (count($idsDisponiblesSel) == 0 && $auxCont == 1 ? array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray()) : array_intersect($idsDisponiblesSel, array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray())));
         $auxCont++;
       }
     }
+    return $idsDisponiblesSel;
+  }
+
+  public static function listarDisponiblesXDatosPago($idAlumno, $datos) {
+    $idsDisponiblesSel = Docente::listarIdsDisponiblesXDatosClasesGeneradas(Clase::generarXDatosPago($idAlumno, $datos), $datos["tipoDocente"]);
     $sexoDocentePago = $datos["sexoDocente"];
     $idCursoDocentePago = $datos["idCursoDocente"];
     $docentes = ($datos["tipoDocente"] == TiposEntidad::Profesor ? Profesor::listar() : Postulante::listar());

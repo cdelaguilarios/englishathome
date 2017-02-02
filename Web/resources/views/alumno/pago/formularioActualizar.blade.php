@@ -1,5 +1,5 @@
 <div class="box-header">
-  <h3 class="box-title with-border">Nuevo pago</h3>                
+  <h3 class="box-title with-border">Editar pago</h3>                
 </div>  
 <div class="box-body">
   <div class="form-group">

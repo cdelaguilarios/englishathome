@@ -20,7 +20,9 @@ function  cargarSeccionClases() {
   if (obtenerParametroUrlXNombre("sec") === "clase") {
     $("a[href='#clase']").tab("show");
   }
-  $(".btn-docentes-disponibles-clase").click(cargarDocentesDisponiblesClase);
+  $(".btn-docentes-disponibles-clase").click(function () {
+    cargarDocentesDisponiblesClase(true);
+  });
   $("#sexo-docente-disponible-clase, #id-curso-docente-disponible-clase, #tipo-docente-disponible-clase").change(function () {
     cargarDocentesDisponiblesClase(true);
   });
@@ -500,7 +502,6 @@ function cargarDocentesDisponiblesClase(recargarListaPeriodos) {
           }
         },
         autoWidth: false,
-        responsive: true,
         columns: [
           {data: "nombreCompleto", name: "nombreCompleto", render: function (e, t, d, m) {
               return d.nombreCompleto + ' <a href=' + (urlPerfilProfesor.replace('/0', '/' + d.id)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>';

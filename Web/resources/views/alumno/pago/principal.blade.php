@@ -36,7 +36,7 @@
     </div>
   </div>
 </div>
-@include("alumno.util.docentesDisponibles", ["seccion" => "pago"])
+@include("alumno.util.docentesDisponibles", ["seccion" => "pago", "idCurso" => $idCurso])
 <script>
   var urlListarPagos = "{{ route('alumnos.pagos.listar', ['id' => $idAlumno]) }}";
   var urlActualizarEstadoPago = "{{ route('alumnos.pagos.actualizar.estado', ['id' => $idAlumno]) }}";

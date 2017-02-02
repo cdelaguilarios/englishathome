@@ -17,14 +17,16 @@ class Horario extends Model {
     return $nombreTabla;
   }
 
-  public static function listarIdsEntidadesXRangoFecha($numeroDiaSemana, $horaInicio, $horaFin, $tipoEntidad) {
+  public static function listarIdsEntidadesXRangoFecha($numeroDiaSemana, $horaInicio, $horaFin, $tipoEntidad = NULL) {
     $nombreTabla = Horario::nombreTabla();
-    return Horario::leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
-                    ->where("entidad.tipo", $tipoEntidad)
-                    ->where($nombreTabla . ".numeroDiaSemana", $numeroDiaSemana)
-                    ->where($nombreTabla . ".horaInicio", "<=", $horaInicio)
-                    ->where($nombreTabla . ".horaFin", ">=", $horaFin)
-                    ->lists($nombreTabla . ".idEntidad");
+    $idsEntidades = Horario::leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
+            ->where($nombreTabla . ".numeroDiaSemana", $numeroDiaSemana)
+            ->where($nombreTabla . ".horaInicio", "<=", $horaInicio)
+            ->where($nombreTabla . ".horaFin", ">=", $horaFin);
+    if (!is_null($tipoEntidad)) {
+      $idsEntidades->where("entidad.tipo", $tipoEntidad);
+    }
+    return $idsEntidades->lists($nombreTabla . ".idEntidad");
   }
 
   public static function obtener($idEntidad) {

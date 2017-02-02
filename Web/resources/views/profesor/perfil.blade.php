@@ -36,7 +36,7 @@
           @include("util.horario", ["horario" => $profesor->horario, "modo" => "visualizar"])
         </p>
         <hr>  
-        @if(isset($alumno->idCurso))      
+        @if(isset($profesor->cursos) && count($profesor->cursos) > 0)      
         <strong><i class="fa fa-fw flaticon-favorite-book"></i> Cursos</strong>
         @foreach($profesor->cursos as $curso)
         <p class="text-muted">{{ $cursos[$curso->idCurso] }}</p>
