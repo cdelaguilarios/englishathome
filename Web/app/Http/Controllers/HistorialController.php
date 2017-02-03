@@ -14,10 +14,19 @@ class HistorialController extends Controller {
   protected $data = array();
 
   public function __construct() {
-    
+    try {
+      if (Usuario::usuarioUnicoPrincipal($id)) {
+        return response()->json(["mensaje" => "El usuario que usted desea eliminar es el único 'Usuario principal' y sus datos no pueden ser borrados."], 400);
+      }
+      Usuario::eliminar($id);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "No se pudo eliminar el registro de datos del usuario seleccionado."], 400);
+    }
+    return response()->json(["mensaje" => "Eliminación exitosa", "id" => $id], 200);
   }
 
-  public function historial($id, ListaRequest $req) {
+  public function obtener($id, ListaRequest $req) {
     $datos = $req->all();
     $datosHistorial = Historial::obtener($datos["numeroCarga"], $id);
     return response()->json($datosHistorial, 200);

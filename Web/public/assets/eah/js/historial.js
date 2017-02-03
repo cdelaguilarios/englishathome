@@ -50,7 +50,7 @@ function cargarListaHistorial() {
               htmlHistorial += '<li>' +
                   '<i class="fa ' + datHistorial[i].icono + ' ' + datHistorial[i].claseColorIcono + '"></i>' +
                   '<div class="timeline-item">' +
-                  '<span class="time"><i class="fa fa-clock-o"></i> ' + datHistorial[i].fechaNotificacion + '</span>' +
+                  '<span class="time"><i class="fa fa-clock-o"></i> ' + datHistorial[i].horaNotificacion + '</span>' +
                   '<h3 class="timeline-header">' + datHistorial[i].titulo + '</h3>';
               if (datHistorial[i].mensaje !== "" || datHistorial[i].rutasImagenes !== null) {
                 htmlHistorial += '<div class="timeline-body">' + (datHistorial[i].mensaje !== "" ? datHistorial[i].mensaje : "");
