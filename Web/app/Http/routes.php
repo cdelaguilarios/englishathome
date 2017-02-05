@@ -14,7 +14,9 @@ Route::post("ubigeo/listarDepartamentos", ["uses" => "UbigeoController@listarDep
 Route::post("ubigeo/listarProvincias/{codigoDepartamento}", ["uses" => "UbigeoController@listarProvincias", "as" => "ubigeo.listarProvincias"]);
 Route::post("ubigeo/listarDistritos/{codigoProvincia}", ["uses" => "UbigeoController@listarDistritos", "as" => "ubigeo.listarDistritos"]);
 
+Route::get("cron/test", ["uses" => "CronController@test", "as" => "cron.test"]);
 Route::get("cron/enviarCorreos", ["uses" => "CronController@enviarCorreos", "as" => "cron.enviar.correos"]);
+Route::get("cron/sincronizarEstados", ["uses" => "CronController@sincronizarEstados", "as" => "cron.sincronizar.estados"]);
 
 Route::group(["middleware" => "auth"], function() {
   Route::get("/", ["uses" => "InicioController@inicio", "as" => "/"]);
@@ -115,8 +117,8 @@ Route::group(["middleware" => "auth"], function() {
     Route::delete("usuario/{id}/eliminar", ["uses" => "UsuarioController@eliminar", "as" => "usuarios.eliminar"]);
     // </editor-fold>
     // <editor-fold desc="Historial">
-    Route::post("historial/{id}", ["uses" => "HistorialController@obtener", "as" => "historial"]);
-    Route::post("historial/{id}/registrar", ["uses" => "HistorialController@registrar", "as" => "historial.registrar"]);
+    Route::post("historial/{idEntidad}/perfil", ["uses" => "HistorialController@obtener", "as" => "historial.perfil"]);
+    Route::post("historial/{idEntidad}/registrar", ["uses" => "HistorialController@registrar", "as" => "historial.registrar"]);
     // </editor-fold>
     // <editor-fold desc="Curso">
     Route::post("curso/{id}/datos", ["uses" => "CursoController@datos", "as" => "cursos.datos"]);

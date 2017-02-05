@@ -14,28 +14,18 @@ class HistorialController extends Controller {
   protected $data = array();
 
   public function __construct() {
-    try {
-      if (Usuario::usuarioUnicoPrincipal($id)) {
-        return response()->json(["mensaje" => "El usuario que usted desea eliminar es el único 'Usuario principal' y sus datos no pueden ser borrados."], 400);
-      }
-      Usuario::eliminar($id);
-    } catch (ModelNotFoundException $e) {
-      Log::error($e);
-      return response()->json(["mensaje" => "No se pudo eliminar el registro de datos del usuario seleccionado."], 400);
-    }
-    return response()->json(["mensaje" => "Eliminación exitosa", "id" => $id], 200);
   }
 
-  public function obtener($id, ListaRequest $req) {
+  public function obtener($idEntidad, ListaRequest $req) {
     $datos = $req->all();
-    $datosHistorial = Historial::obtener($datos["numeroCarga"], $id);
+    $datosHistorial = Historial::obtenerPerfil($datos["numeroCarga"], $idEntidad);
     return response()->json($datosHistorial, 200);
   }
 
-  public function registrar($id, FormularioRequest $req) {
+  public function registrar($idEntidad, FormularioRequest $req) {
     try {
       $datos = $req->all();
-      $datos["idEntidades"] = [$id, (Auth::guest() ? NULL : Auth::user()->idEntidad)];
+      $datos["idEntidades"] = [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)];
       Historial::registrar($datos);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
     } catch (\Exception $e) {

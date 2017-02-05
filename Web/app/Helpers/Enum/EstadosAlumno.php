@@ -3,7 +3,7 @@
 namespace App\Helpers\Enum;
 
 class EstadosAlumno {
-  
+
   const PorConfirmar = "POR-CONFIRMAR";
   const CuotaProgramada = "CUOTA-PROGRAMADA";
   const StandBy = "STAND-BY";
@@ -19,8 +19,7 @@ class EstadosAlumno {
         EstadosAlumno::Inactivo => ["Inactivo", "label-danger"]
     ];
   }
-  
-  
+
   public static function listarBusqueda() {
     $estados = EstadosAlumno::listar();
     $estadosBusqueda = [];

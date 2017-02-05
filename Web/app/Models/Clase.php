@@ -121,6 +121,11 @@ class Clase extends Model {
     }
     return $clases;
   }
+  
+  public static function listarXEstados($estados) {
+    $nombreTabla = Clase::nombreTabla();
+    return Clase::where($nombreTabla . ".eliminado", 0) ->whereIn($nombreTabla . ".estado", (is_array($estados) ? $estados : [$estados]));
+  }
 
   public static function listarPeriodos($idAlumno) {
     return Clase::select("numeroPeriodo", DB::raw("min(fechaInicio) AS fechaInicio, max(fechaFin) AS fechaFin, sum(duracion) AS horasTotal"))->where("idAlumno", $idAlumno)->where("eliminado", 0)->groupBy("numeroPeriodo");
@@ -286,6 +291,17 @@ class Clase extends Model {
     $clase->eliminado = 1;
     $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $clase->save();
+  }
+
+  public static function sincronizarEstados() {
+    $nombreTabla = Clase::nombreTabla();
+    $clasesProgramadas = Clase::listarXEstados(EstadosClase::Programada)
+            ->where($nombreTabla . ".fechaFin", "<=", Carbon::now())
+            ->get();
+    foreach ($clasesProgramadas as $claseProgramada) {
+      $claseProgramada->estado = EstadosClase::PendienteConfirmar;
+      $claseProgramada->save();
+    }
   }
 
 }

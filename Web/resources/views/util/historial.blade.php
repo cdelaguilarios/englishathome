@@ -15,7 +15,7 @@
   {{ Form::hidden("numeroCarga", 0) }} 
 </div>
 <div id="sec-historial-2" style="display: none;">
-  {{ Form::open(["url" => route("historial.registrar", ["id" => $idEntidad]), "id" => "formulario-registrar-historial", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
+  {{ Form::open(["url" => route("historial.registrar", ["idEntidad" => $idEntidad]), "id" => "formulario-registrar-historial", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
   <div class="box-header">
     <h3 class="box-title with-border">Nuevo evento</h3>                
   </div>  
@@ -77,7 +77,7 @@
   {{ Form::close() }}
 </div>
 <script>
-  var urlCargarHistorial = "{{ route('historial', ['id' => $idEntidad]) }}";
+  var urlCargarHistorial = "{{ route('historial.perfil', ['idEntidad' => $idEntidad]) }}";
   var urlImagenesHistorial = "{{ route('imagenes', ['rutaImagen' => '0']) }}";
 </script>
 <script src="{{ asset("assets/eah/js/historial.js")}}"></script>

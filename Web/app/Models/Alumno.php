@@ -7,6 +7,7 @@ use Auth;
 use Crypt;
 use Carbon\Carbon;
 use App\Helpers\Enum\TiposEntidad;
+use App\Helpers\Enum\EstadosClase;
 use App\Helpers\Enum\EstadosAlumno;
 use App\Helpers\Enum\MensajesHistorial;
 use Illuminate\Database\Eloquent\Model;
@@ -27,7 +28,7 @@ class Alumno extends Model {
 
   public static function listar($datos = NULL) {
     $nombreTabla = Alumno::nombreTabla();
-    $alumnos = Alumno::leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")->where("entidad.eliminado", 0)->distinct();
+    $alumnos = Alumno::leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")->where("entidad.eliminado", 0)->groupBy($nombreTabla . ".idEntidad")->distinct();
     if (isset($datos["estado"])) {
       $alumnos->where("entidad.estado", $datos["estado"]);
     }
@@ -107,10 +108,8 @@ class Alumno extends Model {
   }
 
   public static function actualizarEstado($id, $estado) {
-    $alumno = Alumno::obtenerXId($id, TRUE);
-    if (!($alumno->estado == EstadosAlumno::Activo && $estado == EstadosAlumno::CuotaProgramada)) {
-      Entidad::actualizarEstado($id, $estado);
-    }
+    Alumno::obtenerXId($id, TRUE);
+    Entidad::actualizarEstado($id, $estado);
   }
 
   public static function actualizarHorario($id, $horario) {
@@ -121,6 +120,19 @@ class Alumno extends Model {
   public static function eliminar($id) {
     Alumno::obtenerXId($id, TRUE);
     Entidad::eliminar($id);
+  }
+
+  public static function sincronizarEstados() {
+    Clase::sincronizarEstados();
+    $alumnos = Alumno::listar()
+            ->whereNotIn("entidad.id", Clase::listarXEstados([EstadosClase::Programada, EstadosClase::PendienteConfirmar])
+                    ->groupBy(Clase::nombreTabla() . ".idAlumno")
+                    ->lists(Clase::nombreTabla() . ".idAlumno"))
+            ->whereNotIn("entidad.estado", [EstadosAlumno::PorConfirmar, EstadosAlumno::StandBy, EstadosAlumno::Inactivo])
+            ->get();
+    foreach ($alumnos as $alumno) {
+      Alumno::actualizarEstado($alumno->idEntidad, EstadosAlumno::CuotaProgramada);
+    }
   }
 
 }
