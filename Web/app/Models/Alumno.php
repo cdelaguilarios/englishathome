@@ -120,6 +120,7 @@ class Alumno extends Model {
   public static function eliminar($id) {
     Alumno::obtenerXId($id, TRUE);
     Entidad::eliminar($id);
+    Clase::eliminadXIdAdlumno($id);
   }
 
   public static function sincronizarEstados() {

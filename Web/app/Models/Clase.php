@@ -286,6 +286,14 @@ class Clase extends Model {
     }
   }
 
+  public static function eliminadXIdAdlumno($idAlumno) {      
+    $nombreTabla = Clase::nombreTabla();
+    $clases = Clase::where($nombreTabla . ".eliminado", 0)->where($nombreTabla . ".idAlumno", $idAlumno)->get();
+    foreach ($clases as $clase) {
+      Clase::eliminar($idAlumno, $clase->id);
+    }
+  }
+
   public static function eliminar($idAlumno, $id) {
     $clase = Clase::obtenerXId($idAlumno, $id);
     $clase->eliminado = 1;
