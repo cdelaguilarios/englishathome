@@ -154,7 +154,7 @@
         <div id="sec-not-mobile"></div>
       @endif      
       <script src="{{ asset("assets/plugins/jquery/jquery.min.js") }}"></script>
-      <script src="{{ asset("assets/plugins/jQueryUI/jquery-ui.min.js") }}"></script>
+      <script src="{{ asset("assets/plugins/jquery/jquery-ui.min.js") }}"></script>
       <script src="{{ asset("assets/plugins/jquery/jquery-migrate.min.js") }}"></script>
       <script src="{{ asset("assets/plugins/jquery/globalize.js") }}"></script>
       <script src="{{ asset("assets/bootstrap/js/bootstrap.min.js") }}"></script>      

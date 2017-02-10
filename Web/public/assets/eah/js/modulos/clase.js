@@ -19,6 +19,10 @@ function cargarLista() {
         data: function (d) {
           d._token = $("meta[name=_token]").attr("content");
           d.estado = $("#bus-estado").val();
+          d.tipoBusquedaFecha = $("#bus-tipo-fecha").val();
+          d.fechaDia = $("#bus-fecha-dia").val();
+          d.fechaMes = $("#bus-fecha-mes").val();
+          d.fechaAnho = $("#bus-fecha-anho").val();
           d.fechaInicio = $("#bus-fecha-inicio").val();
           d.fechaFin = $("#bus-fecha-fin").val();
         }
@@ -46,14 +50,23 @@ function cargarLista() {
             return "S/. " + redondear(d.costoHoraProfesor, 2);
           }},
         {data: "estado", name: "estado", render: function (e, t, d, m) {
-            return '<span class="label ' + estados[d.estado][1] + ' btn-estado">Clase - ' + estados[d.estado][0] + '</span>'+ (d.estadoPago !== null ? '<br/><span class="label ' + estadosPago[d.estadoPago][1] + ' btn-estado">Pago al profesor - ' + estadosPago[d.estadoPago][0] + '</span>' : '');
+            return '<span class="label ' + estados[d.estado][1] + ' btn-estado">Clase - ' + estados[d.estado][0] + '</span>' + (d.estadoPago !== null ? '<br/><span class="label ' + estadosPago[d.estadoPago][1] + ' btn-estado">Pago al profesor - ' + estadosPago[d.estadoPago][0] + '</span>' : '');
           }, className: "text-center"}
       ]
-    });   
+    });
+
+    establecerCalendario("bus-fecha-dia");
+    establecerCalendario("bus-fecha-mes", false, false, false, true);
+    establecerCalendario("bus-fecha-anho", false, false, false, false, true);
     establecerCalendario("bus-fecha-inicio");
     establecerCalendario("bus-fecha-fin");
-    $("#bus-estado, #bus-fecha-inicio, #bus-fecha-fin").change(function () {
+    $("#bus-estado, #bus-tipo-fecha, #bus-fecha-dia, #bus-fecha-mes, #bus-fecha-anho, #bus-fecha-inicio, #bus-fecha-fin").change(function () {
       $("#tab-lista").DataTable().ajax.reload();
-    }); 
+    });
+
+    $("#bus-tipo-fecha").change(function () {
+      $('[id*="sec-bus-fecha-"]').hide();
+      $("#sec-bus-fecha-" + $(this).val()).show();
+    });
   }
 }

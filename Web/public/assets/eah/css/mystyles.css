@@ -322,10 +322,30 @@ textarea{
 }
 
 .input-group {
-    margin-bottom: 2px;
+  margin-bottom: 2px;
 }
 
 table.dataTable > tbody > tr.child span.dtr-title {
-    float: left;
-    margin-right: 2px;
+  float: left;
+  margin-right: 2px;
+}
+
+.datepicker .table>thead>tr>th, .datepicker .table>tbody>tr>th, .datepicker .table>tfoot>tr>th, .datepicker .table>thead>tr>td, .datepicker .table>tbody>tr>td, .datepicker .table>tfoot>tr>td {
+  border-top: initial;
+}
+
+.datepicker .datepicker-switch, .datepicker .next, .datepicker .prev{
+  background-color: rgba(0, 0, 0, 0.08);
+  border-radius: 75px;
+}
+
+.datepicker .day, .datepicker .month, .datepicker .year{
+  text-align: center !important;
+}
+
+.datepicker table tr td.active:hover, .datepicker table tr td.active:hover:hover, .datepicker table tr td.active.disabled:hover, .datepicker table tr td.active.disabled:hover:hover, .datepicker table tr td.active:focus, .datepicker table tr td.active:hover:focus, .datepicker table tr td.active.disabled:focus, .datepicker table tr td.active.disabled:hover:focus, .datepicker table tr td.active:active, .datepicker table tr td.active:hover:active, .datepicker table tr td.active.disabled:active, .datepicker table tr td.active.disabled:hover:active, .datepicker table tr td.active.active, .datepicker table tr td.active:hover.active, .datepicker table tr td.active.disabled.active, .datepicker table tr td.active.disabled:hover.active, .open .dropdown-toggle.datepicker table tr td.active, .open .dropdown-toggle.datepicker table tr td.active:hover, .open .dropdown-toggle.datepicker table tr td.active.disabled, .open .dropdown-toggle.datepicker table tr td.active.disabled:hover{      
+  background: rgba(0,0,0,0.5);
+  color: #ffffff;
+  background-color: #3276b1;
+  border-color: #285e8e;
 }

@@ -43,7 +43,7 @@ function obtenerParametroUrlXNombre(nombre, url) {
     url = window.location.href;
   nombre = nombre.replace(/[\[\]]/g, "\\$&");
   var regex = new RegExp("[?&]" + nombre + "(=([^&#]*)|&|#|$)"),
-          results = regex.exec(url);
+      results = regex.exec(url);
   if (!results)
     return null;
   if (!results[2])
@@ -101,7 +101,7 @@ var meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Ju
 ﻿$(document).ready(function () {
   $.fn.datepicker.defaults.language = "es";
 });
-function establecerCalendario(idElemento, soloFechasPasadas, soloFechasFuturas, funcionCierre) {
+function establecerCalendario(idElemento, soloFechasPasadas, soloFechasFuturas, funcionCierre, soloMeses, soloAnhos) {
   /*$("#" + idElemento).keydown(function () {
    return false;
    });*/
@@ -116,11 +116,13 @@ function establecerCalendario(idElemento, soloFechasPasadas, soloFechasFuturas, 
   }
 
   $("#" + idElemento).datepicker({
-    format: "dd/mm/yyyy",
+    format: (soloMeses ? "mm/yyyy" : (soloAnhos ? "yyyy" : "dd/mm/yyyy")),
+    minViewMode: (soloMeses ? 1 : (soloAnhos ? 2 : 0)),
+    maxViewMode: (soloMeses || soloAnhos ? 2 : 4),
     startDate: (soloFechasFuturas ? fechaIni : ""),
     endDate: (soloFechasPasadas ? fechaFin : ""),
     onClose: function (dateText, inst) {
-      if (funcionCierre !== undefined)
+      if (funcionCierre)
         funcionCierre($(this));
     }
   });

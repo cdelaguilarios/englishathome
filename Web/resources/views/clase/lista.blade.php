@@ -27,21 +27,56 @@
           </div>
         </div> 
         <div class="form-group">          
-          {{ Form::label("bus-fecha-inicio", "Rango de fecha: ", ["class" => "col-sm-2 control-label"]) }}
+          {{ Form::label("bus-tipo-fecha", "Fecha: ", ["class" => "col-sm-2 control-label"]) }} 
           <div class="col-sm-3">
-            <div class="input-group date">
-              <div class="input-group-addon">
-                <i class="fa fa-calendar"></i>
-              </div>  
-              {{ Form::text("fechaInicio", \Carbon\Carbon::now()->format("d/m/Y"), ["id" => "bus-fecha-inicio", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
+            {{ Form::select('tipoFecha', App\Helpers\Enum\TiposBusquedaFecha::listar(), App\Helpers\Enum\TiposBusquedaFecha::Dia, ["id"=>"bus-tipo-fecha", "class" => "form-control"]) }}
+          </div>
+          <div id="sec-bus-fecha-{{ App\Helpers\Enum\TiposBusquedaFecha::Dia }}">
+            <div class="col-sm-3">            
+              <div class="input-group date">
+                <div class="input-group-addon">
+                  <i class="fa fa-calendar"></i>
+                </div>  
+                {{ Form::text("fechaDia", \Carbon\Carbon::now()->format("d/m/Y"), ["id" => "bus-fecha-dia", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
+              </div>
             </div>
           </div>
-          <div class="col-sm-3">
-            <div class="input-group date">
-              <div class="input-group-addon">
-                <i class="fa fa-calendar"></i>
-              </div>  
-              {{ Form::text("fechain", \Carbon\Carbon::now()->format("d/m/Y"), ["id" => "bus-fecha-fin", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
+          <div id="sec-bus-fecha-{{ App\Helpers\Enum\TiposBusquedaFecha::Mes }}" style="display: none;">
+            <div class="col-sm-3">
+              <div class="input-group date">
+                <div class="input-group-addon">
+                  <i class="fa fa-calendar"></i>
+                </div>  
+                {{ Form::text("fechaMes", \Carbon\Carbon::now()->format("m/Y"), ["id" => "bus-fecha-mes", "class" => "form-control  pull-right", "placeholder" => "mm/aaaa"]) }}
+              </div>
+            </div>
+          </div>
+          <div id="sec-bus-fecha-{{ App\Helpers\Enum\TiposBusquedaFecha::Anho }}" style="display: none;">
+            <div class="col-sm-3">
+              <div class="input-group date">
+                <div class="input-group-addon">
+                  <i class="fa fa-calendar"></i>
+                </div>  
+                {{ Form::text("fechaAnho", \Carbon\Carbon::now()->format("Y"), ["id" => "bus-fecha-anho", "class" => "form-control  pull-right", "placeholder" => "aaaa"]) }}
+              </div>
+            </div>
+          </div>
+          <div id="sec-bus-fecha-{{ App\Helpers\Enum\TiposBusquedaFecha::RangoFecha }}" style="display: none;">
+            <div class="col-sm-3">
+              <div class="input-group date">
+                <div class="input-group-addon">
+                  <i class="fa fa-calendar"></i>
+                </div>  
+                {{ Form::text("fechaInicio", \Carbon\Carbon::now()->format("d/m/Y"), ["id" => "bus-fecha-inicio", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <div class="input-group date">
+                <div class="input-group-addon">
+                  <i class="fa fa-calendar"></i>
+                </div>  
+                {{ Form::text("fechain", \Carbon\Carbon::now()->format("d/m/Y"), ["id" => "bus-fecha-fin", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
+              </div>
             </div>
           </div>
         </div> 
