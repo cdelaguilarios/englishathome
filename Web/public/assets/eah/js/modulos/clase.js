@@ -21,8 +21,8 @@ function cargarLista() {
           d.estado = $("#bus-estado").val();
           d.tipoBusquedaFecha = $("#bus-tipo-fecha").val();
           d.fechaDia = $("#bus-fecha-dia").val();
-          d.fechaMes = $("#bus-fecha-mes").val();
-          d.fechaAnho = $("#bus-fecha-anho").val();
+          d.fechaMesInicio = $("#bus-fecha-mes-inicio").val();
+          d.fechaAnhoInicio = $("#bus-fecha-anho-inicio").val();
           d.fechaInicio = $("#bus-fecha-inicio").val();
           d.fechaFin = $("#bus-fecha-fin").val();
         }
@@ -56,11 +56,11 @@ function cargarLista() {
     });
 
     establecerCalendario("bus-fecha-dia");
-    establecerCalendario("bus-fecha-mes", false, false, false, true);
-    establecerCalendario("bus-fecha-anho", false, false, false, false, true);
+    establecerCalendario("bus-fecha-mes-inicio", false, false, false, true);
+    establecerCalendario("bus-fecha-anho-inicio", false, false, false, false, true);
     establecerCalendario("bus-fecha-inicio");
     establecerCalendario("bus-fecha-fin");
-    $("#bus-estado, #bus-tipo-fecha, #bus-fecha-dia, #bus-fecha-mes, #bus-fecha-anho, #bus-fecha-inicio, #bus-fecha-fin").change(function () {
+    $("#bus-estado, #bus-tipo-fecha, #bus-fecha-dia, #bus-fecha-mes-inicio, #bus-fecha-anho-inicio, #bus-fecha-inicio, #bus-fecha-fin").change(function () {
       $("#tab-lista").DataTable().ajax.reload();
     });
 
@@ -68,5 +68,6 @@ function cargarLista() {
       $('[id*="sec-bus-fecha-"]').hide();
       $("#sec-bus-fecha-" + $(this).val()).show();
     });
+    $("#bus-tipo-fecha").trigger("change");
   }
 }

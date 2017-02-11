@@ -5,12 +5,14 @@ namespace App\Models;
 use DB;
 use Auth;
 use Carbon\Carbon;
+use App\Helpers\Util;
 use App\Models\Horario;
 use App\Models\Historial;
 use App\Helpers\Enum\EstadosClase;
 use App\Helpers\Enum\TiposHistorial;
 use App\Helpers\Enum\MensajesHistorial;
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\Enum\TiposBusquedaFecha;
 use App\Helpers\Enum\TiposCancelacionClase;
 
 class Clase extends Model {
@@ -71,15 +73,7 @@ class Clase extends Model {
             ->leftJoin(PagoProfesor::nombreTabla() . " as pagoProfesor", "pagoClase.idPago", "=", "pagoProfesor.idPago")
             ->leftJoin(Pago::NombreTabla() . " as pago", "pagoProfesor.idPago", "=", "pago.id")
             ->orderBy($nombreTabla . ".fechaInicio", "ASC");
-
-    if (isset($datos["estado"])) {
-      $clases->where($nombreTabla . ".estado", $datos["estado"]);
-    }
-    if (isset($datos["fechaInicio"]) && isset($datos["fechaFin"])) {
-      $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaInicio"] . " 00:00:00");
-      $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaFin"] . " 23:59:59");
-      $clases->whereBetween($nombreTabla . ".fechaInicio", [$fechaBusIni, $fechaBusFin]);
-    }
+    Util::filtrosBusqueda($nombreTabla, $clases, "fechaInicio", $datos);
     return $clases;
   }
 
@@ -121,10 +115,10 @@ class Clase extends Model {
     }
     return $clases;
   }
-  
+
   public static function listarXEstados($estados) {
     $nombreTabla = Clase::nombreTabla();
-    return Clase::where($nombreTabla . ".eliminado", 0) ->whereIn($nombreTabla . ".estado", (is_array($estados) ? $estados : [$estados]));
+    return Clase::where($nombreTabla . ".eliminado", 0)->whereIn($nombreTabla . ".estado", (is_array($estados) ? $estados : [$estados]));
   }
 
   public static function listarPeriodos($idAlumno) {
@@ -138,6 +132,18 @@ class Clase extends Model {
   public static function listarIdsEntidadesXRangoFecha($fechaInicio, $fechaFin, $idsProfesores = FALSE) {
     $clases = Clase::where("fechaInicio", "<=", $fechaInicio)->where("fechaFin", ">=", $fechaFin);
     return ($idsProfesores ? $clases->groupBy("idProfesor")->lists("idProfesor") : $clases->groupBy("idAlumno")->lists("idAlumno"));
+  }
+
+  public static function reporte($datos) {
+    $datos["tipoBusquedaFecha"] = (isset($datos["tipoBusquedaFecha"]) && $datos["tipoBusquedaFecha"] != TiposBusquedaFecha::Dia ? $datos["tipoBusquedaFecha"] : TiposBusquedaFecha::Mes);
+    $nombreTabla = Clase::nombreTabla();
+
+    $clases = Clase::where("eliminado", 0)
+            ->select(($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes ? DB::raw("MONTH(fechaInicio) AS mes") : ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho ? DB::raw("YEAR(fechaInicio) AS anho") : "fechaInicio")), "estado", DB::raw("count(id) AS total"))
+            ->groupBy(($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes ? DB::raw("MONTH(fechaInicio)") : ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho ? DB::raw("YEAR(fechaInicio)") : "fechaInicio")), "estado")
+            ->orderBy("fechaInicio", "ASC");
+    Util::filtrosBusqueda($nombreTabla, $clases, "fechaInicio", $datos);
+    return $clases->get();
   }
 
   public static function generarXDatosPago($idAlumno, $datos) {
@@ -286,7 +292,7 @@ class Clase extends Model {
     }
   }
 
-  public static function eliminadXIdAdlumno($idAlumno) {      
+  public static function eliminadXIdAdlumno($idAlumno) {
     $nombreTabla = Clase::nombreTabla();
     $clases = Clase::where($nombreTabla . ".eliminado", 0)->where($nombreTabla . ".idAlumno", $idAlumno)->get();
     foreach ($clases as $clase) {

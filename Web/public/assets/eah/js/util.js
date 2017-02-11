@@ -120,12 +120,11 @@ function establecerCalendario(idElemento, soloFechasPasadas, soloFechasFuturas, 
     minViewMode: (soloMeses ? 1 : (soloAnhos ? 2 : 0)),
     maxViewMode: (soloMeses || soloAnhos ? 2 : 4),
     startDate: (soloFechasFuturas ? fechaIni : ""),
-    endDate: (soloFechasPasadas ? fechaFin : ""),
-    onClose: function (dateText, inst) {
-      if (funcionCierre)
-        funcionCierre($(this));
-    }
+    endDate: (soloFechasPasadas ? fechaFin : "")
   });
+  if (funcionCierre) {
+    $("#" + idElemento).datepicker().on('changeDate', funcionCierre);
+  }
   if (soloFechasPasadas) {
     $("#" + idElemento).datepicker("setDate", (new Date(1990, 0, 1)));
     $("#" + idElemento).datepicker("update");
@@ -246,7 +245,7 @@ function redondear(numero, numDecimales) {
 $(document).ready(function () {
   setTimeout(function () {
     $("#secCargandoPrincipal").fadeOut("fast", function () {
-      $(".wrapper").fadeIn("fast");
+      $(".wrapper").show();
     });
   }, 100);
 });

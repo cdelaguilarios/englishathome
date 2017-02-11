@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Datatables;
 use App\Models\Clase;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Clase\BusquedaRequest;
+use App\Http\Requests\Util\BusquedaRequest;
 
 class ClaseController extends Controller {
 

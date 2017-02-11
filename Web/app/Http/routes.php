@@ -99,11 +99,7 @@ Route::group(["middleware" => "auth"], function() {
     // <editor-fold desc="Profesores - clases">
     Route::post("profesor/{id}/clases", ["uses" => "ProfesorController@listarClases", "as" => "profesores.clases.listar"]);
     Route::post("profesor/{id}/clases/pago/registrar", ["uses" => "ProfesorController@registrarPagoXClases", "as" => "profesores.clases.pagos.registrar"]);
-    // </editor-fold>
-    // <editor-fold desc="Clases">
-    Route::get("clases", ["uses" => "ClaseController@index", "as" => "clases"]);
-    Route::post("clases/listar", ["uses" => "ClaseController@listar", "as" => "clases.listar"]);
-    // </editor-fold>    
+    // </editor-fold>   
     // <editor-fold desc="Usuarios">
     Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Principal . "],true"], function() {
       Route::get("usuarios", ["uses" => "UsuarioController@index", "as" => "usuarios"]);
@@ -123,5 +119,15 @@ Route::group(["middleware" => "auth"], function() {
     // <editor-fold desc="Curso">
     Route::post("curso/{id}/datos", ["uses" => "CursoController@datos", "as" => "cursos.datos"]);
     // </editor-fold>
+    // <editor-fold desc="Clases">
+    Route::get("clases", ["uses" => "ClaseController@index", "as" => "clases"]);
+    Route::post("clases/listar", ["uses" => "ClaseController@listar", "as" => "clases.listar"]);
+    // </editor-fold> 
+    // <editor-fold desc="Reportes">
+    Route::get("reporte/clases", ["uses" => "ReporteController@clases", "as" => "reporte.clases"]);
+    Route::post("reporte/clases/listar", ["uses" => "ReporteController@listarClases", "as" => "reporte.clases.listar"]);
+    Route::get("reporte/pagos", ["uses" => "ReporteController@pagos", "as" => "reporte.pagos"]);
+    Route::post("reporte/pagos/listar", ["uses" => "ReporteController@listarPagos", "as" => "reporte.pagos.listar"]);
+    // </editor-fold> 
   });
 });

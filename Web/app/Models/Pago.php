@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use DB;
 use Carbon\Carbon;
 use App\Helpers\Util;
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\Enum\TiposBusquedaFecha;
 
 class Pago extends Model {
 
@@ -21,6 +23,22 @@ class Pago extends Model {
 
   public static function obtenerXId($id) {
     return Pago::findOrFail($id);
+  }
+
+  public static function reporte($datos) {
+    $datos["tipoBusquedaFecha"] = (isset($datos["tipoBusquedaFecha"]) && $datos["tipoBusquedaFecha"] != TiposBusquedaFecha::Dia ? $datos["tipoBusquedaFecha"] : TiposBusquedaFecha::Mes);
+    $nombreTabla = Pago::nombreTabla();
+    $pagos = Pago::where("eliminado", 0)
+            ->select(($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes ? DB::raw("MONTH(fechaRegistro) AS mes") : ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho ? DB::raw("YEAR(fechaRegistro) AS anho") : "fechaRegistro")), "estado", DB::raw("SUM(monto) AS total"))
+            ->groupBy(($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes ? DB::raw("MONTH(fechaRegistro)") : ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho ? DB::raw("YEAR(fechaRegistro)") : "fechaRegistro")), "estado")
+            ->orderBy("fechaRegistro", "ASC");
+    if (isset($datos["tipoPago"]) && $datos["tipoPago"] !== "0") {
+      $pagos->whereIn("id", PagoProfesor::lists("idPago"));
+    } else {
+      $pagos->whereIn("id", PagoAlumno::lists("idPago"));
+    }
+    Util::filtrosBusqueda($nombreTabla, $pagos, "fechaRegistro", $datos);
+    return $pagos->get();
   }
 
   public static function registrar($datos, $estado, $request) {
@@ -47,7 +65,7 @@ class Pago extends Model {
   public static function actualizar($id, $datos, $request) {
     $pago = Pago::obtenerXId($id);
     $pago->update($datos);
-    
+
     if (isset($request)) {
       $rutaImagenesComprobantes = NULL;
       $imagenComprobantePago = $request->file("imagenComprobante");
@@ -62,7 +80,7 @@ class Pago extends Model {
       $pago->save();
     }
   }
-  
+
   public static function actualizarEstado($id, $estado) {
     $pago = Pago::obtenerXId($id);
     $pago->estado = $estado;

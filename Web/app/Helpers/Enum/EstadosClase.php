@@ -20,10 +20,10 @@ class EstadosClase {
 
   public static function listar() {
     return [
-        EstadosClase::Programada => ["Programada", "label-primary"],
-        EstadosClase::Cancelada => ["Cancelada", "label-danger"],
-        EstadosClase::PendienteConfirmar => ["Pendiente de confirmación", "label-warning"],
-        EstadosClase::Realizada => ["Realizada", "label-success"]
+        EstadosClase::Programada => ["Programada", "label-primary", "#3c8dbc"],
+        EstadosClase::Cancelada => ["Cancelada", "label-danger", "#dd4b39"],
+        EstadosClase::PendienteConfirmar => ["Pendiente de confirmación", "label-warning", "#f39c12"],
+        EstadosClase::Realizada => ["Realizada", "label-success", "#00a65a"]
     ];
   }
 
