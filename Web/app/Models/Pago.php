@@ -26,7 +26,6 @@ class Pago extends Model {
   }
 
   public static function reporte($datos) {
-    $datos["tipoBusquedaFecha"] = (isset($datos["tipoBusquedaFecha"]) && $datos["tipoBusquedaFecha"] != TiposBusquedaFecha::Dia ? $datos["tipoBusquedaFecha"] : TiposBusquedaFecha::Mes);
     $nombreTabla = Pago::nombreTabla();
     $pagos = Pago::where("eliminado", 0)
             ->select(($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes ? DB::raw("MONTH(fechaRegistro) AS mes") : ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho ? DB::raw("YEAR(fechaRegistro) AS anho") : "fechaRegistro")), "estado", DB::raw("SUM(monto) AS total"))
@@ -37,6 +36,7 @@ class Pago extends Model {
     } else {
       $pagos->whereIn("id", PagoAlumno::lists("idPago"));
     }
+    $datos["estado"] = $datos["estadoPago"];
     Util::filtrosBusqueda($nombreTabla, $pagos, "fechaRegistro", $datos);
     return $pagos->get();
   }

@@ -23,7 +23,7 @@ class BusquedaRequest extends Request {
     $datos = $this->all();
     $reglasValidacion = [];
 
-    $listaEstados = EstadosPostulante::listar();
+    $listaEstados = EstadosPostulante::listarBusqueda();
     if (!is_null($datos["estado"]) && !array_key_exists($datos["estado"], $listaEstados)) {
       $reglasValidacion["estadoNoValido"] = "required";
     }

@@ -24,6 +24,7 @@ function cargarLista() {
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   estados = (typeof (estados) === "undefined" ? "" : estados);
   estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
+  
   if (urlListar !== "" && urlEditar !== "" && urlCotizar !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "") {
     $("#tab-lista").DataTable({
       processing: true,

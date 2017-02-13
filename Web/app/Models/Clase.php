@@ -73,6 +73,7 @@ class Clase extends Model {
             ->leftJoin(PagoProfesor::nombreTabla() . " as pagoProfesor", "pagoClase.idPago", "=", "pagoProfesor.idPago")
             ->leftJoin(Pago::NombreTabla() . " as pago", "pagoProfesor.idPago", "=", "pago.id")
             ->orderBy($nombreTabla . ".fechaInicio", "ASC");
+    $datos["estado"] = $datos["estadoClase"];
     Util::filtrosBusqueda($nombreTabla, $clases, "fechaInicio", $datos);
     return $clases;
   }
@@ -106,13 +107,13 @@ class Clase extends Model {
             })
             ->where($nombreTabla . ".idProfesor", $idProfesor)
             ->orderBy($nombreTabla . ".fechaInicio", "ASC");
-
     if (isset($datos["estadoClase"])) {
       $clases->where($nombreTabla . ".estado", $datos["estadoClase"]);
     }
     if (isset($datos["estadoPago"])) {
       $clases->where("pago.estado", $datos["estadoPago"]);
     }
+    Util::filtrosBusqueda($nombreTabla, $clases, "fechaInicio", $datos);
     return $clases;
   }
 
@@ -135,13 +136,12 @@ class Clase extends Model {
   }
 
   public static function reporte($datos) {
-    $datos["tipoBusquedaFecha"] = (isset($datos["tipoBusquedaFecha"]) && $datos["tipoBusquedaFecha"] != TiposBusquedaFecha::Dia ? $datos["tipoBusquedaFecha"] : TiposBusquedaFecha::Mes);
     $nombreTabla = Clase::nombreTabla();
-
     $clases = Clase::where("eliminado", 0)
             ->select(($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes ? DB::raw("MONTH(fechaInicio) AS mes") : ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho ? DB::raw("YEAR(fechaInicio) AS anho") : "fechaInicio")), "estado", DB::raw("count(id) AS total"))
             ->groupBy(($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes ? DB::raw("MONTH(fechaInicio)") : ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho ? DB::raw("YEAR(fechaInicio)") : "fechaInicio")), "estado")
             ->orderBy("fechaInicio", "ASC");
+    $datos["estado"] = $datos["estadoClase"];
     Util::filtrosBusqueda($nombreTabla, $clases, "fechaInicio", $datos);
     return $clases->get();
   }

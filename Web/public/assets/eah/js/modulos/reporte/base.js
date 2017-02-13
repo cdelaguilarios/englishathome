@@ -7,19 +7,7 @@ function cargarReporte(datosMontos, nombreEntidad, detalleSingular, detallePlura
   nombreEntidadReporte = nombreEntidad;
   detalleSingularReporte = detalleSingular;
   detallePluralReporte = detallePlural;
-  cargarDatosGrafico();
-  establecerCalendario("bus-fecha-mes-inicio", false, false, cargarDatosGrafico, true);
-  establecerCalendario("bus-fecha-mes-fin", false, false, cargarDatosGrafico, true);
-  establecerCalendario("bus-fecha-anho-inicio", false, false, cargarDatosGrafico, false, true);
-  establecerCalendario("bus-fecha-anho-fin", false, false, cargarDatosGrafico, false, true);
-  establecerCalendario("bus-fecha-inicio", false, false, cargarDatosGrafico);
-  establecerCalendario("bus-fecha-fin", false, false, cargarDatosGrafico);
-  $("#bus-estado, #bus-tipo-fecha, #bus-tipo-pago").change(cargarDatosGrafico);
-  $("#bus-tipo-fecha").change(function () {
-    $('[id*="sec-bus-fecha-"]').hide();
-    $("#sec-bus-fecha-" + $(this).val()).show();
-  });
-  $("#bus-tipo-fecha").trigger("change");
+  cargarFiltrosBusqueda(cargarDatosGrafico);
 }
 
 function cargarDatosGrafico() {
@@ -27,17 +15,7 @@ function cargarDatosGrafico() {
   estados = (typeof (estados) === "undefined" ? "" : estados);
   meses = (typeof (meses) === "undefined" ? "" : meses);
   if (urlListar !== "" && estados !== "" && meses !== "") {
-    var datos = {};
-    datos.estado = $("#bus-estado").val();
-    datos.tipoBusquedaFecha = $("#bus-tipo-fecha").val();
-    datos.tipoPago = $("#bus-tipo-pago").val();
-    datos.fechaMesInicio = $("#bus-fecha-mes-inicio").val();
-    datos.fechaMesFin = $("#bus-fecha-mes-fin").val();
-    datos.fechaAnhoInicio = $("#bus-fecha-anho-inicio").val();
-    datos.fechaAnhoFin = $("#bus-fecha-anho-fin").val();
-    datos.fechaInicio = $("#bus-fecha-inicio").val();
-    datos.fechaFin = $("#bus-fecha-fin").val();
-
+    var datos = obtenerDatosFiltrosBusqueda();  
     $('#sec-grafico').block({message: '<h4>Cargando...</h4>'});
     llamadaAjax(urlListar, "POST", datos, true, function (d) {
       var datosBar = [];

@@ -116,7 +116,14 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("historial/{idEntidad}/perfil", ["uses" => "HistorialController@obtener", "as" => "historial.perfil"]);
     Route::post("historial/{idEntidad}/registrar", ["uses" => "HistorialController@registrar", "as" => "historial.registrar"]);
     // </editor-fold>
-    // <editor-fold desc="Curso">
+    // <editor-fold desc="Cursos">
+    Route::get("cursos", ["uses" => "CursoController@index", "as" => "cursos"]);
+    Route::post("cursos/listar", ["uses" => "CursoController@listar", "as" => "cursos.listar"]);
+    Route::get("curso/nuevo", ["uses" => "CursoController@crear", "as" => "cursos.crear"]);
+    Route::post("curso/registrar", ["uses" => "CursoController@registrar", "as" => "cursos.registrar"]);
+    Route::get("curso/{id}/editar", ["uses" => "CursoController@editar", "as" => "cursos.editar"]);
+    Route::patch("curso/{id}/actualizar", ["uses" => "CursoController@actualizar", "as" => "cursos.actualizar"]);
+    Route::delete("curso/{id}/eliminar", ["uses" => "CursoController@eliminar", "as" => "cursos.eliminar"]);
     Route::post("curso/{id}/datos", ["uses" => "CursoController@datos", "as" => "cursos.datos"]);
     // </editor-fold>
     // <editor-fold desc="Clases">

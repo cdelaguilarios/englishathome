@@ -1,27 +1,4 @@
-<div id="sec-clase-filtros-busqueda" class="row">
-  <div class="col-sm-12">
-    <div id="sec-mensajes-clase"></div>
-    <div class="">
-      <div class="box-header">
-        <h3 class="box-title">Filtros de búsquedad</h3> 
-      </div>         
-      <div class="box-body form-horizontal">
-        <div class="form-group">          
-          {{ Form::label("bus-estado-clase", "Estado de clase: ", ["class" => "col-sm-2 control-label"]) }}
-          <div class="col-sm-3">
-            {{ Form::select("estadoClase", App\Helpers\Enum\EstadosClase::listarSimple(), NULL, ["id"=>"bus-estado-clase", "class" => "form-control", "placeholder" => "Todos"]) }}
-          </div>
-        </div> 
-        <div class="form-group">          
-          {{ Form::label("bus-estado-clase-pago", "Estado de pago: ", ["class" => "col-sm-2 control-label"]) }}
-          <div class="col-sm-3">
-            {{ Form::select("estadoClasePago", App\Helpers\Enum\EstadosPago::listarCambio(), NULL, ["id"=>"bus-estado-clase-pago", "class" => "form-control", "placeholder" => "Todos"]) }}
-          </div>
-        </div> 
-      </div>
-    </div>
-  </div>
-</div>
+@include("util.filtroBusqueda", ["idSeccion" => "sec-clase-filtros-busqueda", "incluirEstadosClase" => 1, "incluirEstadosPago" => 1])
 <div class="row">
   <div class="col-sm-12">
     <div id="sec-clase-1">      

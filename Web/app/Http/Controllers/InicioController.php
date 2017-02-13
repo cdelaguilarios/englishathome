@@ -9,7 +9,7 @@ use Response;
 class InicioController extends Controller {
 
   public function inicio() {
-    return redirect(route("usuarios"));
+    return redirect(route("interesados"));
   }
 
   public function obtenerImagen($rutaImagen) {

@@ -9,6 +9,7 @@ use App\Models\Clase;
 use App\Models\Profesor;
 use App\Models\PagoProfesor;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Util as UtilRequest;
 use App\Http\Requests\Profesor\BusquedaRequest;
 use App\Http\Requests\Profesor\FormularioRequest;
 use App\Http\Requests\Profesor\ActualizarEstadoRequest;
@@ -162,7 +163,7 @@ class ProfesorController extends Controller {
 
   // </editor-fold>
   // <editor-fold desc="Clases">
-  public function listarClases($id, ClaseRequest\BusquedaRequest $req) {
+  public function listarClases($id, UtilRequest\BusquedaRequest $req) {
     return Datatables::of(Clase::listarXProfesor($id, $req->all()))->make(true);
   }
 

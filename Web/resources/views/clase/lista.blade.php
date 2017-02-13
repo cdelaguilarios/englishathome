@@ -14,7 +14,7 @@
 @endsection
 
 @section("content")
-@include("util.filtroBusqueda", ["estados" => App\Helpers\Enum\EstadosClase::listarSimple()])
+@include("util.filtroBusqueda", ["incluirEstadosClase" => 1, "incluirClaseBox" => 1])
 <div class="row">
   <div class="col-sm-12">
     <div class="box box-info">
@@ -31,7 +31,7 @@
               <th>Fecha</th>
               <th>Duración</th>
               <th>Pago por hora al profesor</th>
-              <th class="all">Estado</th>
+              <th>Estado</th>
             </tr>
           </thead>
         </table>

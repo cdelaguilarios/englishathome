@@ -20,8 +20,9 @@ function cargarLista() {
   urlActualizarEstado = (typeof (urlActualizarEstado) === "undefined" ? "" : urlActualizarEstado);
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   estados = (typeof (estados) === "undefined" ? "" : estados);
-
-  if (urlListar !== "" && urlEditar !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && estados !== "") {
+  estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
+  
+  if (urlListar !== "" && urlEditar !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -42,7 +43,13 @@ function cargarLista() {
           }},
         {data: "correoElectronico", name: "entidad.correoElectronico"},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
-            return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
+            if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined) {
+              return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
+            } else if (estados[d.estado] !== undefined) {
+              return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>';
+            } else {
+              return "";
+            }
           }, className: "text-center"},
         {data: "fechaRegistro", name: "entidad.fechaRegistro", render: function (e, t, d, m) {
             return formatoFecha(d.fechaRegistro, true);

@@ -18,13 +18,7 @@ function cargarLista() {
         type: "POST",
         data: function (d) {
           d._token = $("meta[name=_token]").attr("content");
-          d.estado = $("#bus-estado").val();
-          d.tipoBusquedaFecha = $("#bus-tipo-fecha").val();
-          d.fechaDia = $("#bus-fecha-dia").val();
-          d.fechaMesInicio = $("#bus-fecha-mes-inicio").val();
-          d.fechaAnhoInicio = $("#bus-fecha-anho-inicio").val();
-          d.fechaInicio = $("#bus-fecha-inicio").val();
-          d.fechaFin = $("#bus-fecha-fin").val();
+          $.extend(d, obtenerDatosFiltrosBusqueda());
         }
       },
       autoWidth: false,
@@ -54,20 +48,8 @@ function cargarLista() {
           }, className: "text-center"}
       ]
     });
-
-    establecerCalendario("bus-fecha-dia");
-    establecerCalendario("bus-fecha-mes-inicio", false, false, false, true);
-    establecerCalendario("bus-fecha-anho-inicio", false, false, false, false, true);
-    establecerCalendario("bus-fecha-inicio");
-    establecerCalendario("bus-fecha-fin");
-    $("#bus-estado, #bus-tipo-fecha, #bus-fecha-dia, #bus-fecha-mes-inicio, #bus-fecha-anho-inicio, #bus-fecha-inicio, #bus-fecha-fin").change(function () {
+    cargarFiltrosBusqueda(function () {
       $("#tab-lista").DataTable().ajax.reload();
     });
-
-    $("#bus-tipo-fecha").change(function () {
-      $('[id*="sec-bus-fecha-"]').hide();
-      $("#sec-bus-fecha-" + $(this).val()).show();
-    });
-    $("#bus-tipo-fecha").trigger("change");
   }
 }

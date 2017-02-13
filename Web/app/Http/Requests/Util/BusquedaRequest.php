@@ -16,7 +16,8 @@ class BusquedaRequest extends Request {
 
   protected function getValidatorInstance() {
     $datos = $this->all();
-    $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
+    $datos["estadoClase"] = ReglasValidacion::formatoDato($datos, "estadoClase");
+    $datos["estadoPago"] = ReglasValidacion::formatoDato($datos, "estadoPago");
     $datos["tipoBusquedaFecha"] = ReglasValidacion::formatoDato($datos, "tipoBusquedaFecha");
     $datos["tipoPago"] = ReglasValidacion::formatoDato($datos, "tipoPago", "0");
     $datos["fechaDia"] = ReglasValidacion::formatoDato($datos, "fechaDia");
@@ -35,11 +36,15 @@ class BusquedaRequest extends Request {
     $reglasValidacion = [];
 
     $listaEstadosClase = EstadosClase::listar();
-    $listaEstadosPagos = EstadosPago::listar();
-    $listaEstados = $listaEstadosClase + $listaEstadosPagos;
-    if (!is_null($datos["estado"]) && !array_key_exists($datos["estado"], $listaEstados)) {
-      $reglasValidacion["estadoNoValido"] = "required";
+    if (!is_null($datos["estadoClase"]) && !array_key_exists($datos["estadoClase"], $listaEstadosClase)) {
+      $reglasValidacion["estadoClaseNoValido"] = "required";
     }
+
+    $listaEstadosPagos = EstadosPago::listar();
+    if (!is_null($datos["estadoPago"]) && !array_key_exists($datos["estadoPago"], $listaEstadosPagos)) {
+      $reglasValidacion["estadoPagoNoValido"] = "required";
+    }
+
     $listaTiposBusquedaFecha = TiposBusquedaFecha::listar();
     if (!array_key_exists($datos["tipoBusquedaFecha"], $listaTiposBusquedaFecha)) {
       $reglasValidacion["tipoBusquedaFechaNoValido"] = "required";
@@ -73,7 +78,8 @@ class BusquedaRequest extends Request {
 
   public function messages() {
     return [
-        "estadoNoValido.required" => "El estado seleccionado no es válido.",
+        "estadoClaseNoValido.required" => "El estado de clase seleccionado no es válido.",
+        "estadoPagoNoValido.required" => "El estado de pago seleccionado no es válido.",
         "tipoBusquedaFechaNoValido.required" => "El tipo de busqueda de la fecha no es válido."
     ];
   }

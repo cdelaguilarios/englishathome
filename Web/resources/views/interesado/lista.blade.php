@@ -8,7 +8,7 @@
   var urlActualizarEstado = "{{ route('interesados.actualizar.estado', ['id' => 0]) }}";
   var urlCotizar = "{{ route('interesados.cotizar', ['id' => 0]) }}";
   var urlEliminar = "{{ route('interesados.eliminar', ['id' => 0]) }}";
-  var estados = {!!  json_encode(App\Helpers\Enum\EstadosInteresado::listar()) !!};
+  var estados = {!! json_encode(App\Helpers\Enum\EstadosInteresado::listar()) !!};
   var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosInteresado::listarCambio()) !!};
 </script>
 <script src="{{ asset("assets/eah/js/modulos/interesado.js")}}"></script>

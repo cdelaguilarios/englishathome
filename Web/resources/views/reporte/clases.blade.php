@@ -23,7 +23,7 @@
 @endsection
 
 @section("content")
-@include("util.filtroBusqueda", ["seccionReporte" => 1, "estados" => App\Helpers\Enum\EstadosClase::listarSimple()]) 
+@include("util.filtroBusqueda", ["incluirEstadosClase" => 1, "incluirClaseBox" => 1]) 
 <div class="row">
   <div class="col-sm-12">
     <div id="sec-grafico" class="box box-info">

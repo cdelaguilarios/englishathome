@@ -32,8 +32,7 @@ function cargarListaClase() {
         type: "POST",
         data: function (d) {
           d._token = $("meta[name=_token]").attr("content");
-          d.estadoClase = $("#bus-estado-clase").val();
-          d.estadoPago = $("#bus-estado-clase-pago").val();
+          $.extend(d, obtenerDatosFiltrosBusqueda());
         }
       },
       autoWidth: false,
@@ -60,7 +59,7 @@ function cargarListaClase() {
           }, className: "text-center"}
       ]
     });
-    $("#bus-estado-clase-pago, #bus-estado-clase").change(function () {
+    cargarFiltrosBusqueda(function () {
       $("#tab-lista-clases").DataTable().ajax.reload();
     });
   }

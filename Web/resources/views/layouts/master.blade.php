@@ -118,9 +118,6 @@
             </li>
             <li class="{{ ((isset($seccion) && $seccion == "profesores") ? "active" : "") }}">
               <a href="{{ route("profesores")}}"><i class="fa flaticon-teach"></i> <span>Profesores</span></a>
-            </li>
-            <li class="{{ ((isset($seccion) && $seccion == "usuarios") ? "active" : "") }}">
-              <a href="{{ route("usuarios")}}"><i class="fa fa-users"></i> <span>Usuarios del sistema</span></a>
             </li> 
             <li class="{{ ((isset($seccion) && $seccion == "clases") ? "active" : "") }}">
               <a href="{{ route("clases")}}"><i class="fa flaticon-student-in-front-of-a-stack-of-books"></i> <span>Clases</span></a>
@@ -140,6 +137,9 @@
                   <a href="{{ route("reporte.pagos")}}"><i class="fa fa-line-chart"></i> Reporte de pagos</a>
                 </li>
               </ul>
+            </li>
+            <li class="{{ ((isset($seccion) && $seccion == "usuarios") ? "active" : "") }}">
+              <a href="{{ route("usuarios")}}"><i class="fa fa-users"></i> <span>Usuarios del sistema</span></a>
             </li>
           </ul>
         </section>
