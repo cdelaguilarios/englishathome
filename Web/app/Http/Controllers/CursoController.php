@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Log;
+use Mensajes;
+use Datatables;
 use App\Models\Curso;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Curso\FormularioRequest;
@@ -18,13 +21,12 @@ class CursoController extends Controller {
     return view("curso.lista", $this->data);
   }
 
-  public function listar(BusquedaRequest $req) {
-    return Datatables::of(Curso::listar($req->all()))->make(true);
+  public function listar() {
+    return Datatables::of(Curso::listar())->make(true);
   }
 
   public function datos($id) {
-    $datosCurso = Curso::obtenerXId($id);
-    return response()->json($datosCurso, 200);
+    return response()->json(Curso::obtenerXId($id), 200);
   }
 
   public function crear() {
@@ -35,7 +37,7 @@ class CursoController extends Controller {
     try {
       $idCurso = Curso::registrar($req->all());
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
-      return redirect(route("curos.listar", ["id" => $idCurso]));
+      return redirect(route("cursos.listar", ["id" => $idCurso]));
     } catch (\Exception $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
