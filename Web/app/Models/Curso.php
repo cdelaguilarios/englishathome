@@ -16,7 +16,7 @@ class Curso extends Model {
   }
 
   public static function listarSimple() {
-    return Curso::listar()->lists("nombre", "id");
+    return Curso::listar()->where("activo", 1)->lists("nombre", "id");
   }
 
   public static function obtenerXId($id) {
