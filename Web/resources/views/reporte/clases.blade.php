@@ -1,5 +1,5 @@
 @extends("layouts.master")
-@section("titulo", "Reporte - Clases")
+@section("titulo", "Reporte de clases")
 
 @section("section_style")
 <style>
@@ -19,7 +19,7 @@
 @endsection
 
 @section("breadcrumb")
-<li class="active">Reporte - Clases</li>
+<li class="active">Reporte de clases</li>
 @endsection
 
 @section("content")

@@ -6,6 +6,7 @@ use App\Models\Pago;
 use App\Models\Clase;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Util\BusquedaRequest;
+use App\Http\Requests\Reporte\BusquedaDocenteRequest;
 
 class ReporteController extends Controller {
 
@@ -31,6 +32,15 @@ class ReporteController extends Controller {
 
   public function listarPagos(BusquedaRequest $req) {
     return response()->json(Pago::reporte($req->all()), 200);
+  }
+
+  public function docentesDisponibles() {
+    $this->data["subSeccion"] = "docentes-disponibles";
+    return view("reporte.docentesDisponibles", $this->data);
+  }
+
+  public function listarDocentesDisponibles(BusquedaDocenteRequest $req) {
+    return response()->json([], 200);
   }
 
 }

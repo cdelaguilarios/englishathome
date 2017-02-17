@@ -135,6 +135,8 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("reporte/clases/listar", ["uses" => "ReporteController@listarClases", "as" => "reporte.clases.listar"]);
     Route::get("reporte/pagos", ["uses" => "ReporteController@pagos", "as" => "reporte.pagos"]);
     Route::post("reporte/pagos/listar", ["uses" => "ReporteController@listarPagos", "as" => "reporte.pagos.listar"]);
+    Route::get("reporte/docentesDisponibles", ["uses" => "ReporteController@docentesDisponibles", "as" => "reporte.docentes.disponibles"]);
+    Route::post("reporte/docentesDisponibles/listar", ["uses" => "ReporteController@listarDocentesDisponibles", "as" => "reporte.docentes.disponibles.listar"]);
     // </editor-fold> 
   });
 });

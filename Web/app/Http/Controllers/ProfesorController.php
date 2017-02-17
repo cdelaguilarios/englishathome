@@ -16,7 +16,6 @@ use App\Http\Requests\Profesor\ActualizarEstadoRequest;
 use App\Http\Requests\Profesor\ActualizarHorarioRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Requests\Profesor\Pago as PagoRequest;
-use App\Http\Requests\Profesor\Clase as ClaseRequest;
 
 class ProfesorController extends Controller {
 
