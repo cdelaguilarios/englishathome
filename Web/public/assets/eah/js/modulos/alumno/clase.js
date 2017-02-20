@@ -342,7 +342,8 @@ function editarClase(idClase) {
       $("#notificar-clase").attr("checked", true);
       $("#notificar-clase").closest("label").addClass("checked");
     }
-    $("#fecha-clase").val(formatoFecha(d.fechaInicio));
+    var datFechaInicio = formatoFecha(d.fechaInicio).split("/");
+    $("#fecha-clase").datepicker("setDate", (new Date(datFechaInicio[1] + "/" + datFechaInicio[0] + "/" + datFechaInicio[2])));    
     $("#hora-inicio-clase").val(tiempoSegundos(d.fechaInicio));
     $("#duracion-clase").val(d.duracion);
     $("#costo-hora-clase").val(redondear(d.costoHora, 2));

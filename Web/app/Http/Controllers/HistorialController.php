@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use Mensajes;
+use Carbon\Carbon;
 use App\Models\Historial;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Historial\ListaRequest;
@@ -24,7 +25,8 @@ class HistorialController extends Controller {
 
   public function registrar($idEntidad, FormularioRequest $req) {
     try {
-      $datos = $req->all();
+      $datos = $req->all();      
+      $datos["fechaNotificacion"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNotificacion"] . " 00:00:00");
       $datos["idEntidades"] = [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)];
       Historial::registrar($datos);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
