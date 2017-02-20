@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="{{ asset("assets/dist/css/AdminLTE.min.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/dist/css/skins/_all-skins.min.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/datepicker/datepicker3.css") }}" />
+    <link rel="stylesheet" href="{{ asset("assets/plugins/datetimepicker/bootstrap-datetimepicker.min.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/eah/css/mystyles.css") }}" />
     @yield("section_style")   
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -194,7 +195,9 @@
     <script src="{{ asset("assets/plugins/jquery_validate/jquery.validate.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/jquery_validate/jquery.validate.messages_es.js") }}"></script>        
     <script src="{{ asset("assets/plugins/datepicker/bootstrap-datepicker.js") }}"></script>   
-    <script src="{{ asset("assets/plugins/datepicker/locales/bootstrap-datepicker.es.js") }}"></script>
+    <script src="{{ asset("assets/plugins/datepicker/locales/bootstrap-datepicker.es.js") }}"></script>         
+    <script src="{{ asset("assets/plugins/datetimepicker/bootstrap-datetimepicker.min.js") }}"></script>   
+    <script src="{{ asset("assets/plugins/datetimepicker/locales/bootstrap-datetimepicker.es.js") }}"></script>
     <script src="//www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
 var urlBase = "{{ url('/') }}";

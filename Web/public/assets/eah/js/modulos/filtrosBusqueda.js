@@ -1,12 +1,12 @@
 function cargarFiltrosBusqueda(funcionBusquedaCambio) {
   if (funcionBusquedaCambio !== undefined) {
-    establecerCalendario("bus-fecha-dia", false, false, funcionBusquedaCambio);
-    establecerCalendario("bus-fecha-mes-inicio", false, false, funcionBusquedaCambio, true);
-    establecerCalendario("bus-fecha-mes-fin", false, false, funcionBusquedaCambio, true);
-    establecerCalendario("bus-fecha-anho-inicio", false, false, funcionBusquedaCambio, false, true);
-    establecerCalendario("bus-fecha-anho-fin", false, false, funcionBusquedaCambio, false, true);
-    establecerCalendario("bus-fecha-inicio", false, false, funcionBusquedaCambio);
-    establecerCalendario("bus-fecha-fin", false, false, funcionBusquedaCambio);
+    establecerCalendario("bus-fecha-dia", false, false, false, funcionBusquedaCambio);
+    establecerCalendario("bus-fecha-mes-inicio", false, false, false, funcionBusquedaCambio, true);
+    establecerCalendario("bus-fecha-mes-fin", false, false, false, funcionBusquedaCambio, true);
+    establecerCalendario("bus-fecha-anho-inicio", false, false, false, funcionBusquedaCambio, false, true);
+    establecerCalendario("bus-fecha-anho-fin", false, false, false, funcionBusquedaCambio, false, true);
+    establecerCalendario("bus-fecha-inicio", false, false, false, funcionBusquedaCambio);
+    establecerCalendario("bus-fecha-fin", false, false, false, funcionBusquedaCambio);
     $("#bus-estado-clase, #bus-estado-pago, #bus-tipo-fecha, #bus-tipo-pago").change(funcionBusquedaCambio);
     $("#bus-tipo-fecha").change(function () {
       $('[id*="sec-bus-fecha-"]').hide();

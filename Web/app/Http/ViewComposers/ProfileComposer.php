@@ -58,8 +58,6 @@ class ProfileComposer {
     $view->with("estadoClaseCancelada", EstadosClase::Cancelada);
     $view->with("tipoCancelacionClaseAlumno", TiposCancelacionClase::CancelacionAlumno);
     $view->with("rolesUsuarios", RolesUsuario::listar());
-    $view->with("estadosInteresado", EstadosInteresado::listar());
-    $view->with("estadosAlumno", EstadosAlumno::listar());
     $view->with("estadosProfesor", EstadosProfesor::listar());
     $view->with("tiposDocente", TiposEntidad::listarTiposDocente());
     $view->with("estadoPagoRealizado", EstadosPago::Realizado);

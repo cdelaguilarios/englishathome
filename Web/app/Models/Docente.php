@@ -57,6 +57,32 @@ class Docente extends Model {
             })->where("entidad.tipo", $datos["tipoDocente"])->whereIn("entidad.id", $idsDisponiblesSel);
   }
 
+  public static function listarDisponiblesXFecha($datos) {
+    $fechaInicio = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaInicio"]);
+    $fechaFin = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaFin"]);
+    if ($fechaInicio >= $fechaFin) {
+      return Profesor::whereNull("idEntidad");
+    }
+
+    $idsNoDisponibles = Clase::where(function ($q) use ($fechaInicio, $fechaFin) {
+              $q->where(function ($q) use ($fechaInicio, $fechaFin) {
+                $q->where("fechaInicio", ">=", $fechaInicio)->where("fechaInicio", "<=", $fechaFin);
+              })->orWhere(function ($q) use ($fechaInicio, $fechaFin) {
+                $q->where("fechaFin", ">=", $fechaInicio)->where("fechaFin", "<=", $fechaFin);
+              });
+            })->groupBy("idProfesor")
+            ->lists("idProfesor");
+    $sexoDocenteClase = $datos["sexoDocente"];
+    $idCursoDocenteClase = $datos["idCursoDocente"];
+    $docentes = ($datos["tipoDocente"] == TiposEntidad::Profesor ? Profesor::listar() : Postulante::listar());
+
+    return $docentes->where(function ($q) use ($sexoDocenteClase) {
+              $q->whereNull("entidad.sexo")->orWhereIn("entidad.sexo", ($sexoDocenteClase != "" ? [$sexoDocenteClase] : array_keys(SexosEntidad::listar())));
+            })->where(function ($q) use ($idCursoDocenteClase) {
+              $q->whereNull("entidadCurso.idCurso")->orWhereIn("entidadCurso.idCurso", ($idCursoDocenteClase != "" ? [$idCursoDocenteClase] : array_keys(Curso::listarSimple()->toArray())));
+            })->where("entidad.tipo", $datos["tipoDocente"])->whereNotIn("entidad.id", $idsNoDisponibles);
+  }
+
   public static function verificarExistencia($idEntidad) {
     if (!(isset($idEntidad) && $idEntidad != "" && is_numeric($idEntidad))) {
       return FALSE;

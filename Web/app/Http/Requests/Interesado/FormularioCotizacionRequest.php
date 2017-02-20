@@ -29,7 +29,6 @@ class FormularioCotizacionRequest extends Request {
 
   public function rules() {
     $datos = $this->all();
-
     $reglasValidacion = [
         "textoIntroductorio" => "required|max:4000",
         "descripcionCurso" => "required|max:4000",
@@ -41,8 +40,8 @@ class FormularioCotizacionRequest extends Request {
         "correoCotizacionPrueba" => "email|max:245"
     ];
 
-    $listaCursos = Curso::listarSimple()->toArray();
-    if (!array_key_exists($datos["idCurso"], $listaCursos)) {
+    $listaCursos = Curso::listarSimple();
+    if (!array_key_exists($datos["idCurso"], $listaCursos->toArray())) {
       $reglasValidacion["cursoNoValido"] = "required";
     }
 

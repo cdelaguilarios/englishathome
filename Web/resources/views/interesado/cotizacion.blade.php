@@ -51,7 +51,7 @@
         <strong><i class="fa  fa-check-square margin-r-5"></i> Teléfono</strong>
         <p class="text-muted">{{ $interesado->telefono }}</p>
         <strong><i class="fa  fa-check-square margin-r-5"></i> Estado</strong>
-        <p class="text-muted">{{ $estadosInteresado[$interesado->estado][0] }}</p> 
+        <p class="text-muted">{{ App\Helpers\Enum\EstadosInteresado::listar()[$interesado->estado][0] }}</p> 
       </div> 
     </div>
     @if(isset($interesado->consulta) && $interesado->consulta !== "")

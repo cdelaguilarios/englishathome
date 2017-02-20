@@ -179,7 +179,7 @@ function cargarFormularioPago() {
     onkeyup: false,
     onclick: false
   });
-  establecerCalendario("fecha-inicio-clases-pago", false, false);
+  establecerCalendario("fecha-inicio-clases-pago", false, false, false);
   $("#btn-nuevo-pago").click(function () {
     limpiarCamposPago();
     $("#btn-anterior-pago, #btn-registrar-pago").hide();

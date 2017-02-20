@@ -14,11 +14,11 @@ use App\Models\Interesado;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Alumno\BusquedaRequest;
 use App\Http\Requests\Alumno\FormularioRequest;
+use App\Http\Requests\Alumno\Pago as PagoRequest;
+use App\Http\Requests\Alumno\Clase as ClaseRequest;
 use App\Http\Requests\Alumno\ActualizarEstadoRequest;
 use App\Http\Requests\Alumno\ActualizarHorarioRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Http\Requests\Alumno\Pago as PagoRequest;
-use App\Http\Requests\Alumno\Clase as ClaseRequest;
 
 class AlumnoController extends Controller {
 
@@ -140,9 +140,9 @@ class AlumnoController extends Controller {
       Alumno::eliminar($id);
     } catch (ModelNotFoundException $e) {
       Log::error($e);
-      return response()->json(["mensaje" => "No se pudo eliminar el registro de datos del alumno seleccionado."], 400);
+      return response()->json(["mensaje" => "No se encontraron datos del alumno seleccionado."], 400);
     }
-    return response()->json(["mensaje" => "Eliminación exitosa", "id" => $id], 200);
+    return response()->json(["mensaje" => "Eliminación exitosa.", "id" => $id], 200);
   }
 
   // </editor-fold>

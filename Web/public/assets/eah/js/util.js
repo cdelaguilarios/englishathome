@@ -100,8 +100,9 @@ function validarFecha(value, element, param) {
 var meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio", 8: "Agosto", 9: "Setiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"};
 ﻿$(document).ready(function () {
   $.fn.datepicker.defaults.language = "es";
+  $.fn.dataTable.ext.errMode = "none";
 });
-function establecerCalendario(idElemento, soloFechasPasadas, soloFechasFuturas, funcionCierre, soloMeses, soloAnhos) {
+function establecerCalendario(idElemento, incluirHora, soloFechasPasadas, soloFechasFuturas, funcionCierre, soloMeses, soloAnhos) {
   /*$("#" + idElemento).keydown(function () {
    return false;
    });*/
@@ -114,22 +115,41 @@ function establecerCalendario(idElemento, soloFechasPasadas, soloFechasFuturas, 
     var fechaIni = new Date();
     fechaIni.setDate(fechaIni.getDate() + 1);
   }
+  if (incluirHora) {
+    $("#" + idElemento).datetimepicker({
+      format: "dd/mm/yyyy hh:ii:ss",
+      startDate: (soloFechasFuturas ? fechaIni : ""),
+      endDate: (soloFechasPasadas ? fechaFin : "")
+    });
+    if (funcionCierre) {
+      $("#" + idElemento).datetimepicker().on("changeDate", funcionCierre);
+      $("#" + idElemento).keyup(function(){
+        $(this).datetimepicker().trigger("changeDate");
+      });
+    }
+    if (soloFechasPasadas) {
+      $("#" + idElemento).datetimepicker("setDate", (new Date(1990, 0, 1)));
+      $("#" + idElemento).datetimepicker("update");
+      $("#" + idElemento).val("");
+    }
+  } else {
+    $("#" + idElemento).datepicker({
+      format: (soloMeses ? "mm/yyyy" : (soloAnhos ? "yyyy" : "dd/mm/yyyy")),
+      minViewMode: (soloMeses ? 1 : (soloAnhos ? 2 : 0)),
+      maxViewMode: (soloMeses || soloAnhos ? 2 : 4),
+      startDate: (soloFechasFuturas ? fechaIni : ""),
+      endDate: (soloFechasPasadas ? fechaFin : "")
+    });
+    if (funcionCierre) {
+      $("#" + idElemento).datepicker().on("changeDate", funcionCierre);
+    }
+    if (soloFechasPasadas) {
+      $("#" + idElemento).datepicker("setDate", (new Date(1990, 0, 1)));
+      $("#" + idElemento).datepicker("update");
+      $("#" + idElemento).val("");
+    }
+  }
 
-  $("#" + idElemento).datepicker({
-    format: (soloMeses ? "mm/yyyy" : (soloAnhos ? "yyyy" : "dd/mm/yyyy")),
-    minViewMode: (soloMeses ? 1 : (soloAnhos ? 2 : 0)),
-    maxViewMode: (soloMeses || soloAnhos ? 2 : 4),
-    startDate: (soloFechasFuturas ? fechaIni : ""),
-    endDate: (soloFechasPasadas ? fechaFin : "")
-  });
-  if (funcionCierre) {
-    $("#" + idElemento).datepicker().on('changeDate', funcionCierre);
-  }
-  if (soloFechasPasadas) {
-    $("#" + idElemento).datepicker("setDate", (new Date(1990, 0, 1)));
-    $("#" + idElemento).datepicker("update");
-    $("#" + idElemento).val("");
-  }
 }
 function establecerCampoDuracion(idElementoSel, tiempoSegundosDefecto) {
   minHorasClase = (typeof (minHorasClase) === "undefined" ? "" : minHorasClase);

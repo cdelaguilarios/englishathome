@@ -191,7 +191,7 @@ function cargarFormulario() {
     });
 
     var fechaNacimiento = $("#fecha-nacimiento").val();
-    establecerCalendario("fecha-nacimiento", true, false);
+    establecerCalendario("fecha-nacimiento", false, true, false);
     if (fechaNacimiento !== "") {
       var datFechaNacimiento = fechaNacimiento.split("/");
       $("#fecha-nacimiento").datepicker("setDate", (new Date(datFechaNacimiento[1] + "/" + datFechaNacimiento[0] + "/" + datFechaNacimiento[2])));

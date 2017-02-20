@@ -349,3 +349,23 @@ table.dataTable > tbody > tr.child span.dtr-title {
   background-color: #3276b1;
   border-color: #285e8e;
 }
+
+.datetimepicker .table>thead>tr>th, .datetimepicker .table>tbody>tr>th, .datetimepicker .table>tfoot>tr>th, .datetimepicker .table>thead>tr>td, .datetimepicker .table>tbody>tr>td, .datetimepicker .table>tfoot>tr>td {
+  border-top: initial;
+}
+
+.datetimepicker .datetimepicker-switch, .datetimepicker .next, .datetimepicker .prev, .datetimepicker th.switch {
+  background-color: rgba(0, 0, 0, 0.08);
+  border-radius: 75px;
+}
+
+.datetimepicker .day, .datetimepicker .month, .datetimepicker .year{
+  text-align: center !important;
+}
+
+.datetimepicker table tr td.active:hover, .datetimepicker table tr td.active:hover:hover, .datetimepicker table tr td.active.disabled:hover, .datetimepicker table tr td.active.disabled:hover:hover, .datetimepicker table tr td.active:focus, .datetimepicker table tr td.active:hover:focus, .datetimepicker table tr td.active.disabled:focus, .datetimepicker table tr td.active.disabled:hover:focus, .datetimepicker table tr td.active:active, .datetimepicker table tr td.active:hover:active, .datetimepicker table tr td.active.disabled:active, .datetimepicker table tr td.active.disabled:hover:active, .datetimepicker table tr td.active.active, .datetimepicker table tr td.active:hover.active, .datetimepicker table tr td.active.disabled.active, .datetimepicker table tr td.active.disabled:hover.active, .open .dropdown-toggle.datetimepicker table tr td.active, .open .dropdown-toggle.datetimepicker table tr td.active:hover, .open .dropdown-toggle.datetimepicker table tr td.active.disabled, .open .dropdown-toggle.datetimepicker table tr td.active.disabled:hover{      
+  background: rgba(0,0,0,0.5);
+  color: #ffffff;
+  background-color: #3276b1;
+  border-color: #285e8e;
+}

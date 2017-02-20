@@ -17,6 +17,10 @@ class FormularioRequest extends Request {
     $datos = $this->all();
     $datos["consulta"] = ReglasValidacion::formatoDato($datos, "consulta");
     $datos["idCurso"] = ReglasValidacion::formatoDato($datos, "idCurso");
+    $datos["cursoInteres"] = ReglasValidacion::formatoDato($datos, "cursoInteres", "");
+    $datos["codigoDepartamento"] = ReglasValidacion::formatoDato($datos, "codigoDepartamento");
+    $datos["codigoProvincia"] = ReglasValidacion::formatoDato($datos, "codigoProvincia");
+    $datos["codigoDistrito"] = ReglasValidacion::formatoDato($datos, "codigoDistrito");
     $datos["codigoUbigeo"] = ReglasValidacion::formatoDato($datos, "codigoUbigeo");
     $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $datos["comentarioAdicional"] = ReglasValidacion::formatoDato($datos, "comentarioAdicional");
@@ -38,16 +42,16 @@ class FormularioRequest extends Request {
     ];
 
     $listaCursos = Curso::listarSimple();
-    if (!is_null($datos["idCurso"]) && !array_key_exists($datos["idCurso"], $listaCursos->toArray())) {
+    if (!array_key_exists($datos["idCurso"], $listaCursos->toArray())) {
       $reglasValidacion["cursoNoValido"] = "required";
     }
     
-    if (!is_null($datos["codigoUbigeo"]) && !ReglasValidacion::validarUbigeo($datos["codigoDepartamento"], $datos["codigoProvincia"], $datos["codigoDistrito"], $datos["codigoUbigeo"])) {
+    if (!ReglasValidacion::validarUbigeo($datos["codigoDepartamento"], $datos["codigoProvincia"], $datos["codigoDistrito"], $datos["codigoUbigeo"])) {
       $reglasValidacion["ubigeoNoValido"] = "required";
     }
     
     $estados = EstadosInteresado::listarCambio();
-    if (!is_null($datos["estado"]) && !array_key_exists($datos["estado"], $estados)) {
+    if (!array_key_exists($datos["estado"], $estados)) {
       $reglasValidacion["estadoNoValido"] = "required";
     }
 

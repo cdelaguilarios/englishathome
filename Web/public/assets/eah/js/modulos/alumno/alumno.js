@@ -212,9 +212,9 @@ function cargarFormulario() {
     var numeroHorasClase = $("input[name='auxNumeroHorasClase']").val();
 
     if (!($("input[name='idInteresado']").length > 0 && $("input[name='idInteresado']").val() !== "")) {
-      establecerCalendario("fecha-nacimiento", true, false);
+      establecerCalendario("fecha-nacimiento", false, true, false);
     }
-    establecerCalendario("fecha-inicio-clase", false, (fechaInicioClase === ""));
+    establecerCalendario("fecha-inicio-clase", false, false, (fechaInicioClase === ""));
     establecerCampoDuracion("numero-horas-clase", (numeroHorasClase !== "" ? numeroHorasClase : undefined));
 
     if (!($("input[name='idInteresado']").length > 0 && $("input[name='idInteresado']").val() !== "") && fechaNacimiento !== "") {

@@ -27,8 +27,7 @@ class Alumno extends Model {
   }
 
   public static function listar($datos = NULL) {
-    $nombreTabla = Alumno::nombreTabla();
-    $alumnos = Alumno::leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")->where("entidad.eliminado", 0)->groupBy($nombreTabla . ".idEntidad")->distinct();
+    $alumnos = Alumno::leftJoin(Entidad::nombreTabla() . " as entidad", Alumno::nombreTabla() . ".idEntidad", "=", "entidad.id")->where("entidad.eliminado", 0)->groupBy("entidad.id")->distinct();
     if (isset($datos["estado"])) {
       $alumnos->where("entidad.estado", $datos["estado"]);
     }
@@ -47,7 +46,6 @@ class Alumno extends Model {
       $alumno->numeroPeriodos = Clase::totalPeriodos($id);
       $alumno->totalSaldoFavor = PagoAlumno::totalSaldoFavor($id);
       $alumno->idNivelIngles = EntidadNivelIngles::obtenerXEntidad($id);
-
       $entidadCurso = EntidadCurso::obtenerXEntidad($id);
       $alumno->idCurso = (isset($entidadCurso) ? $entidadCurso->idCurso : NULL);
     }

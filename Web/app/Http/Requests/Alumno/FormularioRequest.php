@@ -42,8 +42,8 @@ class FormularioRequest extends Request {
 
     $datos["conComputadora"] = (isset($datos["conComputadora"]) && $datos["conComputadora"] == "on" ? 1 : 0);
     $datos["conInternet"] = (isset($datos["conInternet"]) && $datos["conInternet"] == "on" ? 1 : 0);
-    $datos["conPlumonPizarra"] = (isset($datos["conPlumonPizarra"]) && $datos["conPlumonPizarra"] == "on" ? 1 : 0);
     $datos["conAmbienteClase"] = (isset($datos["conAmbienteClase"]) && $datos["conAmbienteClase"] == "on" ? 1 : 0);
+    $datos["conPlumonPizarra"] = (isset($datos["conPlumonPizarra"]) && $datos["conPlumonPizarra"] == "on" ? 1 : 0);
     $datos["idCurso"] = ReglasValidacion::formatoDato($datos, "idCurso");
     $datos["numeroHorasClase"] = ReglasValidacion::formatoDato($datos, "numeroHorasClase");
     $datos["horario"] = ReglasValidacion::formatoDato($datos, "horario");

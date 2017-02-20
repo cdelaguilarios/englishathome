@@ -42,7 +42,7 @@
       </div>
     </div>
     {{ Form::label("duracion-clase", "Duración: ", ["class" => "col-sm-2 control-label"]) }}
-    <div class="col-sm-2">
+    <div class="col-sm-3">
       <div class="input-group date">
         <div class="input-group-addon">
           <i class="fa  fa-clock-o"></i>

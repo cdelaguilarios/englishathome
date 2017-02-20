@@ -51,8 +51,7 @@ class InteresadoController extends Controller {
 
   public function registrarExterno(FormularioRequest $req) {
     try {
-      $datos = $req->all();
-      $id = Interesado::registrar($datos);
+      $id = Interesado::registrar($req->all());
     } catch (ModelNotFoundException $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente."], 400);
@@ -113,8 +112,7 @@ class InteresadoController extends Controller {
 
   public function enviarCotizacion($id, FormularioCotizacionRequest $req) {
     try {
-      $datos = $req->all();
-      Interesado::enviarCotizacion($id, $datos);
+      Interesado::enviarCotizacion($id, $req->all());
       Mensajes::agregarMensajeExitoso("Cotización enviada.");
     } catch (\Exception $e) {
       Log::error($e->getMessage());

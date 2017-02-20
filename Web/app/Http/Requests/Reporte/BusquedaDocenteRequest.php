@@ -16,10 +16,11 @@ class BusquedaDocenteRequest extends Request {
 
   protected function getValidatorInstance() {
     $datos = $this->all();
-    $datos["fecha"] = ReglasValidacion::formatoDato($datos, "fecha");
+    $datos["fechaInicio"] = ReglasValidacion::formatoDato($datos, "fechaInicio");
+    $datos["fechaFin"] = ReglasValidacion::formatoDato($datos, "fechaFin");
     $datos["tipoDocente"] = ReglasValidacion::formatoDato($datos, "tipoDocente");
-    $datos["sexoDocente"] = ReglasValidacion::formatoDato($datos, "sexoDocente");
-    $datos["idCursoDocente"] = ReglasValidacion::formatoDato($datos, "idCursoDocente");
+    $datos["sexoDocente"] = ReglasValidacion::formatoDato($datos, "sexoDocente", "");
+    $datos["idCursoDocente"] = ReglasValidacion::formatoDato($datos, "idCursoDocente", "");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -27,7 +28,8 @@ class BusquedaDocenteRequest extends Request {
   public function rules() {
     $datos = $this->all();
     $reglasValidacion = [
-        "fecha" => "required|date_format:d/m/Y"        
+        "fechaInicio" => "required|date_format:d/m/Y H:i:s",   
+        "fechaFin" => "required|date_format:d/m/Y H:i:s"      
     ];
     $listaTiposDocente = TiposEntidad::listarTiposDocente();
     if (!(!is_null($datos["tipoDocente"]) && (array_key_exists($datos["tipoDocente"], $listaTiposDocente)))) {

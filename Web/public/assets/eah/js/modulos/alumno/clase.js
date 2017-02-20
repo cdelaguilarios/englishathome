@@ -324,7 +324,7 @@ function cargarFormularioClase() {
     onclick: false
   });
   //Registrar
-  establecerCalendario("fecha-clase", false, false);
+  establecerCalendario("fecha-clase", false, false, false);
   establecerCampoHorario("hora-inicio-clase");
   establecerCampoDuracion("duracion-clase");
   $("#btn-nuevo-clase").click(function () {
@@ -442,7 +442,7 @@ function cargarFormularioCancelarClase() {
       onkeyup: false,
       onclick: false
     });
-    establecerCalendario("fecha-clase-reprogramada", false, false);
+    establecerCalendario("fecha-clase-reprogramada", false, false, false);
     establecerCampoHorario("hora-inicio-clase-reprogramada");
     establecerCampoDuracion("duracion-clase-reprogramada");
     $("#reprogramar-clase-cancelacion").change(verificarSeccionReprogramarClase);

@@ -18,7 +18,7 @@ class Interesado extends Model {
   public $timestamps = false;
   protected $primaryKey = "idEntidad";
   protected $table = "interesado";
-  protected $fillable = ["consulta", "cursoInteres", "codigoVerificacion", "costoHoraClase", "comentarioAdicional"];
+  protected $fillable = ["consulta", "cursoInteres", "costoHoraClase", "comentarioAdicional"];
 
   public static function nombreTabla() {
     $modeloInteresado = new Interesado();
@@ -28,8 +28,7 @@ class Interesado extends Model {
   }
 
   public static function listar($datos = NULL) {
-    $nombreTabla = Interesado::nombreTabla();
-    $interesados = Interesado::leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")->where("entidad.eliminado", 0);
+    $interesados = Interesado::leftJoin(Entidad::nombreTabla() . " as entidad", Interesado::nombreTabla() . ".idEntidad", "=", "entidad.id")->where("entidad.eliminado", 0)->groupBy("entidad.id")->distinct();
     if (isset($datos["estado"])) {
       $interesados->where("entidad.estado", $datos["estado"]);
     }
@@ -56,7 +55,7 @@ class Interesado extends Model {
     $interesado = new Interesado($datos);
     $interesado->idEntidad = $idEntidad;
     $interesado->save();
-    
+
     Historial::registrar([
         "idEntidades" => [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
         "titulo" => (Auth::guest() ? MensajesHistorial::TituloInteresadoRegistro : MensajesHistorial::TituloInteresadoRegistroXUsuario),
@@ -68,7 +67,6 @@ class Interesado extends Model {
   public static function actualizar($id, $datos) {
     Entidad::actualizar($id, $datos, TiposEntidad::Interesado, $datos["estado"]);
     EntidadCurso::registrarActualizar($id, $datos["idCurso"]);
-
     $interesado = Interesado::obtenerXId($id, TRUE);
     $interesado->update($datos);
   }
