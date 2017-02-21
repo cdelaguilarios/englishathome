@@ -51,7 +51,7 @@ class FormularioRequest extends Request {
     }
     
     $estados = EstadosInteresado::listarCambio();
-    if (!array_key_exists($datos["estado"], $estados)) {
+    if (!is_null($datos["estado"]) && !array_key_exists($datos["estado"], $estados)) {
       $reglasValidacion["estadoNoValido"] = "required";
     }
 
