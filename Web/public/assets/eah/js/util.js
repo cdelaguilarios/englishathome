@@ -96,12 +96,19 @@ function validarFecha(value, element, param) {
   return this.optional(element) || /(^(((0[1-9]|1[0-9]|2[0-8])[\/](0[1-9]|1[012]))|((29|30|31)[\/](0[13578]|1[02]))|((29|30)[\/](0[4,6,9]|11)))[\/](19|[2-9][0-9])\d\d$)|(^29[\/]02[\/](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)/i.test(value);
 }
 
-//CALENDARIO (DATEPICKER)
-var meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio", 8: "Agosto", 9: "Setiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"};
 ﻿$(document).ready(function () {
   $.fn.datepicker.defaults.language = "es";
   $.fn.dataTable.ext.errMode = "none";
+
+  setTimeout(function () {
+    $("#secCargandoPrincipal").fadeOut("fast", function () {
+      $(".wrapper").show();
+    });
+  }, 100);
 });
+
+//Fechas y horarios
+var meses = {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio", 8: "Agosto", 9: "Setiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"};
 function establecerCalendario(idElemento, incluirHora, soloFechasPasadas, soloFechasFuturas, funcionCierre, soloMeses, soloAnhos) {
   /*$("#" + idElemento).keydown(function () {
    return false;
@@ -123,7 +130,7 @@ function establecerCalendario(idElemento, incluirHora, soloFechasPasadas, soloFe
     });
     if (funcionCierre) {
       $("#" + idElemento).datetimepicker().on("changeDate", funcionCierre);
-      $("#" + idElemento).keyup(function(){
+      $("#" + idElemento).keyup(function () {
         $(this).datetimepicker().trigger("changeDate");
       });
     }
@@ -216,6 +223,26 @@ $.extend(true, $.fn.dataTable.defaults, {
     "sUrl": urlBase + "/assets/plugins/datatables/languages/Spanish.json"
   }
 });
+function establecerCambiosEstados(urlActualizarEstadoDis, estadosDis) {
+  $(window).click(function (e) {
+    if (!$(e.target).closest(".sec-btn-editar-estado").length) {
+      $(".sec-btn-editar-estado select").trigger("change");
+    }
+  });
+  $(".btn-editar-estado").live("click", function () {
+    $("#sel-estados").clone().val($(this).data("estado")).data("id", $(this).data("id")).data("estado", $(this).data("estado")).appendTo($(this).closest(".sec-btn-editar-estado"));
+    $(this).remove();
+    event.stopPropagation();
+  });
+  $(".sec-btn-editar-estado select").live("change", function () {
+    var id = $(this).data("id");
+    if (urlActualizarEstadoDis !== "" && $(this).data("estado") !== $(this).val()) {
+      llamadaAjax(urlActualizarEstadoDis.replace("/0", "/" + id), "POST", {"estado": $(this).val()}, true);
+    }
+    $(this).closest(".sec-btn-editar-estado").append('<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + id + '" data-estado="' + $(this).val() + '"><span class="label ' + estadosDis[$(this).val()][1] + ' btn-estado">' + estadosDis[$(this).val()][0] + '</span></a>');
+    $(this).remove();
+  });
+}
 function eliminarElemento(ele, mensajePrevio, idTabla, noRecargarTabla, funcionCompletado) {
   mensajePrevio = (mensajePrevio !== undefined && mensajePrevio !== null && mensajePrevio.trim() !== "" ? mensajePrevio : "¿Está seguro que desea eliminar este elemento?");
   if (confirm(mensajePrevio)) {
@@ -261,11 +288,15 @@ function redondear(numero, numDecimales) {
     return 0;
   return numVal.toFixed(numDecimales);
 }
-
-$(document).ready(function () {
-  setTimeout(function () {
-    $("#secCargandoPrincipal").fadeOut("fast", function () {
-      $(".wrapper").show();
-    });
-  }, 100);
-});
+function procesarDatosFormulario(f) {
+  var datos = {};
+  var fDatos = $(f).serializeArray();
+  $(fDatos).each(function (i, o) {
+    if ($(f).find("[name='" + o.name + "']:eq(0)")[0].type === "checkbox") {
+      datos[o.name] = ($(f).find("[name='" + o.name + "']:eq(0)").is(":checked") ? "on" : "");
+    } else {
+      datos[o.name] = o.value;
+    }
+  });
+  return datos;
+}

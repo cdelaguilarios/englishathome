@@ -600,12 +600,7 @@
                             <span class="sub-title">Notas adicionales</span><br/>
                           </p>
                           <div class="sec-notas-adicionales">
-                            <ul>
-                              <li>Las sesiones de clases deben ser de 2 horas como mínimo.</li>
-                              <li>Se pueden cancelar clases hasta con 12 horas de anticipación.</li>
-                              <li>La inversión está basada en un solo participante, cualquier participante adicional pagará solo un 15% de la inversión.</li>
-                              <li>Si desea recibir una factura se le sumará el IGV al monto indicado.</li>
-                            </ul>
+                            {!! $notasAdicionales !!} 
                           </div>
                         </td>
                         <td></td>

@@ -43,6 +43,12 @@
           </div>                                        
         </div>
         <div class="form-group">
+          {{ Form::label("notas-adicionales", "Notas adicionales: ", ["class" => "col-sm-2 control-label"]) }}
+          <div class="col-sm-10 sec-inversion">
+            {{ Form::textarea("notasAdicionales", NULL, ["id" => "notas-adicionales", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+          </div>                                        
+        </div>
+        <div class="form-group">
           <div class="col-sm-7 col-sm-offset-2">
             <div class="checkbox">
               <label class="checkbox-custom" data-initialize="checkbox">

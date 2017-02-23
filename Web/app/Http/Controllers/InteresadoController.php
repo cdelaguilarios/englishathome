@@ -116,7 +116,7 @@ class InteresadoController extends Controller {
       Mensajes::agregarMensajeExitoso("Cotización enviada.");
     } catch (\Exception $e) {
       Log::error($e->getMessage());
-      Mensajes::agregarMensajeError("Ocurrió un problema durante el envio de la cotización. Por favor inténtelo nuevamente.");
+      Mensajes::agregarMensajeError("Ocurrió un problema durante el envío de la cotización. Por favor inténtelo nuevamente.");
     }
     return redirect(route("interesados.cotizar", ["id" => $id]));
   }

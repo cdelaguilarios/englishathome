@@ -77,70 +77,76 @@
         </div>                   
       </div>
       <div class="form-group">
-        {{ Form::label("texto-introductorio", "Texto introductorio: ", ["class" => "col-sm-2 control-label"]) }}
+        {{ Form::label("texto-introductorio", "Texto introductorio (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10">
           {{ Form::textarea("textoIntroductorio", NULL, ["id" => "texto-introductorio", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div>                                        
       </div>
       <div class="form-group">
-        {{ Form::label("descripcion-curso", "Descripción curso: ", ["class" => "col-sm-2 control-label"]) }}
+        {{ Form::label("descripcion-curso", "Descripción curso (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10">
           {{ Form::textarea("descripcionCurso", NULL, ["id" => "descripcion-curso", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div>                                        
       </div>
       <div class="form-group">
-        {{ Form::label("metodologia", "Metodología: ", ["class" => "col-sm-2 control-label"]) }}
+        {{ Form::label("metodologia", "Metodología (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10">
           {{ Form::textarea("metodologia", NULL, ["id" => "metodologia", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div>                                        
       </div>
       <div class="form-group">
-        {{ Form::label("curso-incluye", "Curso incluye: ", ["class" => "col-sm-2 control-label"]) }}
+        {{ Form::label("curso-incluye", "Curso incluye (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10">
           {{ Form::textarea("cursoIncluye", NULL, ["id" => "curso-incluye", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div>                                        
       </div>
       <div class="form-group">
-        {{ Form::label("inversion", "Inversión: ", ["class" => "col-sm-2 control-label"]) }}
+        {{ Form::label("inversion", "Inversión (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10 sec-inversion">
           {{ Form::textarea("inversion", NULL, ["id" => "inversion", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div>                                        
       </div>
       <div class="form-group">
-        {{ Form::label("inversion-cuotas", "Inversión en cuotas: ", ["class" => "col-sm-2 control-label"]) }}
+        {{ Form::label("inversion-cuotas", "Inversión en cuotas (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10 sec-inversion">
           {{ Form::textarea("inversionCuotas", NULL, ["id" => "inversion-cuotas", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div>                                        
       </div> 
       <div class="form-group">  
-          {{ Form::label("costo-hora-clase", "Costo por hora de clase(*): ", ["class" => "col-sm-2 control-label"]) }}   
-          <div class="col-sm-3">
-            <div class="input-group">
-              <span class="input-group-addon">
-                <b>S/.</b>
-              </span>
-              {{ Form::text("costoHoraClase", (isset($interesado->costoHoraClase) ? number_format($interesado->costoHoraClase, 2, ".", ",") : NULL), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
-            </div>
-          </div> 
-        </div>
+        {{ Form::label("costo-hora-clase", "Costo por hora de clase (*): ", ["class" => "col-sm-2 control-label"]) }}   
+        <div class="col-sm-3">
+          <div class="input-group">
+            <span class="input-group-addon">
+              <b>S/.</b>
+            </span>
+            {{ Form::text("costoHoraClase", (isset($interesado->costoHoraClase) ? number_format($interesado->costoHoraClase, 2, ".", ",") : NULL), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
+          </div>
+        </div> 
+      </div>
+      <div class="form-group">  
+        {{ Form::label("notas-adicionales", "Notas adicionales (*): ", ["class" => "col-sm-2 control-label"]) }}   
+        <div class="col-sm-10">
+          {{ Form::textarea("notasAdicionales", NULL, ["id" => "notas-adicionales", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+        </div> 
+      </div>
       <div class="form-group">     
         <div class="col-sm-10 col-sm-offset-2">
           <h4>Nota importante</h4>
-          <span>Estos contenidos serán mostrados en base al estilo actual del correo de cotización es por eso que sugerimos enviar una cotización de prueba para verificar que la información enviada sea correcta y debidamente mostrada.</span>
+          <span>Estos contenidos serán mostrados en base al estilo actual del correo de cotización es por eso que sugerimos enviar una cotización de prueba para verificar que la información contenida en dicho correo sea debidamente mostrada.</span>
         </div>                                        
       </div>  
     </div>
-  <div>    
-    <div class="form-group">
-      <div class="col-sm-6">
-        <span>(*) Campos obligatorios</span>
-      </div>
-      <div class="col-sm-6">   
-        <button id="btn-envio-cotización" type="button" class="btn btn-success pull-right">Enviar cotización</button> 
-        <button id="btn-envio-cotización-prueba" type="button" class="btn btn-primary pull-right"><i class="fa fa-shield"></i> Enviar cotización de prueba</button> 
+    <div>    
+      <div class="form-group">
+        <div class="col-sm-6">
+          <span>(*) Campos obligatorios</span>
+        </div>
+        <div class="col-sm-6">   
+          <button id="btn-envio-cotización" type="button" class="btn btn-success pull-right">Enviar cotización</button> 
+          <button id="btn-envio-cotización-prueba" type="button" class="btn btn-primary pull-right"><i class="fa fa-shield"></i> Enviar cotización de prueba</button> 
+        </div>
       </div>
     </div>
-  </div>
   </div>
 </div>
 <div id="mod-correo-cotizacion-prueba" class="modal" data-keyboard="false">

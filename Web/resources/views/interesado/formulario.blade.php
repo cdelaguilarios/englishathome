@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-sm-12">
-    <div class="box box-info">
+    <div class="{{ ((isset($modo) && $modo == "registrar") ? "box box-info" : "") }}">
       <div class="box-header with-border">
         <h3 class="box-title">Datos</h3>
         <button class="btn btn-default btn-clean pull-right" onclick="limpiarCampos();" type="button">Limpiar campos</button>

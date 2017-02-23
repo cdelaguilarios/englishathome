@@ -91,6 +91,9 @@ function cargarFormulario() {
       },
       inversionCuotas: {
         validarCkEditorCurso: true
+      },
+      notasAdicionales: {
+        validarCkEditorCurso: true
       }
     },
     submitHandler: function (f) {
@@ -126,4 +129,5 @@ function cargarFormulario() {
   CKEDITOR.replace("incluye");
   CKEDITOR.replace("inversion");
   CKEDITOR.replace("inversion-cuotas");
+  CKEDITOR.replace("notas-adicionales");
 }

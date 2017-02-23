@@ -9,7 +9,7 @@ class Curso extends Model {
 
   public $timestamps = false;
   protected $table = "curso";
-  protected $fillable = ["nombre", "descripcion", "metodologia", "incluye", "inversion", "inversionCuotas", "activo"];
+  protected $fillable = ["nombre", "descripcion", "metodologia", "incluye", "inversion", "inversionCuotas", "notasAdicionales", "activo"];
 
   public static function listar() {
     return Curso::where("eliminado", 0);
