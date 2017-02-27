@@ -493,7 +493,11 @@
               <tr>
                 <td align="center">
                   <p>
-                    <img src="{{ asset("assets/eah/img/fondo-correo-cotizacion.jpg") }}"/>
+                    @if(isset($imagenCurso))
+                    <img src="{{ $imagenCurso }}"/>
+                    @else
+                    <img src="{{ asset("assets/eah/img/curso-fondo-defecto.jpg") }}"/>
+                    @endif
                   </p>
                   <div class="sec-nuestra-empresa">
                     <p class="left">
@@ -511,13 +515,11 @@
                       {!! $descripcionCurso !!}
                     </div>
                   </div>
-                  <div class="sec-modulos">
+                  <div class="sec-inversion">
                     <p class="left">
                       <span class="sub-title"><strong>Módulos</strong></span>
-                    </p>  
-                    <div class="justify contenido">					
-                      <img src="{{ asset("assets/eah/img/tabla-modulos-horas.png")}}"/>
-                    </div>                    
+                    </p>  				
+                    {!! $modulos !!}                  
                   </div>
                   <div class="sec-nuestra-metodologia">
                     <p class="left">
@@ -637,7 +639,9 @@
                     También puede visitarnos en nuestra oficina:<br/>
                     Jr Loma de las Gardenias 235, 1° piso, Surco,<br/>
                     Ref. Entre la cdra 33 y 34 de la Av Caminos del Inca.<br/>
-                    <img src="{{ asset("assets/eah/img/boton-ver-mapa.png")}}" width="100"/>					
+                    <a href="https://www.google.com.pe/maps/place/Loma+De+Las+Cinerarias+235,+Distrito+de+Lima+15039/@-12.1428894,-76.9898311,16z/data=!4m5!3m4!1s0x9105b86bbbc9a4cd:0xc55066c28ade71f2!8m2!3d-12.1467049!4d-76.9835822?hl=es">
+                      <img src="{{ asset("assets/eah/img/boton-ver-mapa.png")}}" width="100"/>
+                    </a>
                   </p>
                 </td>
               </tr>

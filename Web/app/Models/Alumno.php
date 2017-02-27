@@ -48,6 +48,8 @@ class Alumno extends Model {
       $alumno->idNivelIngles = EntidadNivelIngles::obtenerXEntidad($id);
       $entidadCurso = EntidadCurso::obtenerXEntidad($id);
       $alumno->idCurso = (isset($entidadCurso) ? $entidadCurso->idCurso : NULL);
+      $datosProximaClase = Clase::obtenerProximaClase($id);
+      $alumno->profesorProximaClase = ((!is_null($datosProximaClase)) ? Profesor::obtenerXId($datosProximaClase->idProfesor) : NULL);
     }
     return $alumno;
   }

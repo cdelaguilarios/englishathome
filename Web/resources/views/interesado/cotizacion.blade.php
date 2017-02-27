@@ -72,9 +72,11 @@
     <div>
       <div class="form-group">
         {{ Form::label("id-curso", "Curso de interes: ", ["class" => "col-sm-2 control-label"]) }}
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           {{ Form::select("idCurso", $cursos, $interesado->idCurso, ["id" => "id-curso", "class" => "form-control"]) }}
-        </div>                   
+        </div>  
+        <div id="sec-imagen-curso" class="col-sm-6"></div>     
+        {{ Form::hidden("imagenCurso") }}
       </div>
       <div class="form-group">
         {{ Form::label("texto-introductorio", "Texto introductorio (*): ", ["class" => "col-sm-2 control-label"]) }}
@@ -86,6 +88,12 @@
         {{ Form::label("descripcion-curso", "Descripción curso (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10">
           {{ Form::textarea("descripcionCurso", NULL, ["id" => "descripcion-curso", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+        </div>                                        
+      </div>
+      <div class="form-group">
+        {{ Form::label("modulos", "Módulos (*): ", ["class" => "col-sm-2 control-label"]) }}
+        <div class="col-sm-10">
+          {{ Form::textarea("modulos", NULL, ["id" => "modulos", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div>                                        
       </div>
       <div class="form-group">
@@ -113,6 +121,21 @@
         </div>                                        
       </div> 
       <div class="form-group">  
+        {{ Form::label("notas-adicionales", "Notas adicionales (*): ", ["class" => "col-sm-2 control-label"]) }}   
+        <div class="col-sm-10">
+          {{ Form::textarea("notasAdicionales", NULL, ["id" => "notas-adicionales", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+        </div> 
+      </div> 
+      <div class="form-group">
+        {{ Form::label("adjuntos", "Adjuntos: ", ["class" => "col-sm-2 control-label"]) }}   
+        <div class="col-sm-10">
+          <div id="adjuntos">Subir</div>
+          {{ Form::hidden("nombresArchivosAdjuntos", "", ["id" => "nombres-archivos-adjuntos"]) }}
+          {{ Form::hidden("nombresOriginalesArchivosAdjuntos", "", ["id" => "nombres-originales-archivos-adjuntos"]) }}
+        </div>
+        <div class="clearfix"></div>
+      </div>
+      <div class="form-group">  
         {{ Form::label("costo-hora-clase", "Costo por hora de clase (*): ", ["class" => "col-sm-2 control-label"]) }}   
         <div class="col-sm-3">
           <div class="input-group">
@@ -122,19 +145,13 @@
             {{ Form::text("costoHoraClase", (isset($interesado->costoHoraClase) ? number_format($interesado->costoHoraClase, 2, ".", ",") : NULL), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
           </div>
         </div> 
-      </div>
-      <div class="form-group">  
-        {{ Form::label("notas-adicionales", "Notas adicionales (*): ", ["class" => "col-sm-2 control-label"]) }}   
-        <div class="col-sm-10">
-          {{ Form::textarea("notasAdicionales", NULL, ["id" => "notas-adicionales", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
-        </div> 
-      </div>
+      </div> 
       <div class="form-group">     
         <div class="col-sm-10 col-sm-offset-2">
           <h4>Nota importante</h4>
           <span>Estos contenidos serán mostrados en base al estilo actual del correo de cotización es por eso que sugerimos enviar una cotización de prueba para verificar que la información contenida en dicho correo sea debidamente mostrada.</span>
         </div>                                        
-      </div>  
+      </div>
     </div>
     <div>    
       <div class="form-group">

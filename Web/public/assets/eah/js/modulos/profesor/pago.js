@@ -162,8 +162,8 @@ function verDatosPago(idPago) {
           $("#dat-monto-pago").html('S/. ' + redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="saldo-favor-utilizado">utilizado</span>)' : '') + '</b></small>' : ''));
           $("#dat-estado-pago").html('<span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span>');
           $("#dat-fecha-registro-pago").text(formatoFecha(d.fechaRegistro, true));
-          if (d.rutasImagenesComprobante !== null && d.rutasImagenesComprobante !== "") {
-            var imagenes = d.rutasImagenesComprobante.split(",");
+          if (d.imagenesComprobante !== null && d.imagenesComprobante !== "") {
+            var imagenes = d.imagenesComprobante.split(",");
             if (imagenes[0] !== null && imagenes[0] !== "") {
               var rutaImagen = urlImagenes.replace("/0", "/" + imagenes[0]);
               $("#dat-imagen-comprobante-pago").attr("href", rutaImagen);

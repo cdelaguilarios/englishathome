@@ -4,6 +4,7 @@ namespace App\Helpers\Enum;
 
 class MensajesHistorial {
 
+  const TituloInteresadoEnvioCorreoCotizacion = "[" . TiposEntidad::Usuario . "] envió un correo de cotización a [" . TiposEntidad::Interesado . "]";
   const TituloInteresadoRegistro = "[" . TiposEntidad::Interesado . "] se registró como nuevo interesado(a)";
   const TituloInteresadoRegistroXUsuario = "[" . TiposEntidad::Usuario . "] registró a [" . TiposEntidad::Interesado . "] como nuevo interesado(a)";
   const TituloAlumnoRegistro = "[" . TiposEntidad::Alumno . "] se registró como nuevo alumno(a)";

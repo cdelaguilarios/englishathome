@@ -54,7 +54,7 @@
             (isset($interesado) ? $interesado->estado : App\Helpers\Enum\EstadosInteresado::PendienteInformacion)
             , ["class" => "form-control"]) }}
             @else
-            {!! App\Helpers\Enum\EstadosInteresado::listar()[$interesado->estado][0] !!}
+            {{ App\Helpers\Enum\EstadosInteresado::listar()[$interesado->estado][0] }}
             @endif
           </div>
         </div>

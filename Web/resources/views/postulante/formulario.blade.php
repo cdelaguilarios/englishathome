@@ -72,10 +72,10 @@
             <div class="col-sm-4">
               {{ Form::file("imagenPerfil", null) }}
             </div>
-            @if (isset($postulante->rutaImagenPerfil) && !empty($postulante->rutaImagenPerfil))
+            @if (isset($postulante->imagenPerfil) && !empty($postulante->imagenPerfil))
             <div class="col-sm-3">
-              <a href="{{ route("imagenes", ["rutaImagen" => $postulante->rutaImagenPerfil]) }}" target="_blank">
-                <img src="{{ route("imagenes", ["rutaImagen" => $postulante->rutaImagenPerfil]) }}" width="40"/>
+              <a href="{{ route("archivos", ["nombre" => $postulante->imagenPerfil]) }}" target="_blank">
+                <img src="{{ route("archivos", ["nombre" => $postulante->imagenPerfil]) }}" width="40"/>
               </a>
             </div>
             @endif

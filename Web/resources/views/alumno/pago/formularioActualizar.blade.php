@@ -32,8 +32,8 @@
       {{ Form::file("imagenComprobante", NULL) }}
     </div>
     <div class="col-sm-3">
-      <a id="imagen-comprobante-actualizar-pago" href="{{ route("imagenes", ["rutaImagen" => "0"]) }}" target="_blank">
-        <img src="{{ route("imagenes", ["rutaImagen" => "0"]) }}" width="40"/>
+      <a id="imagen-comprobante-actualizar-pago" href="{{ route("archivos", ["nombre" => "0"]) }}" target="_blank">
+        <img src="{{ route("archivos", ["nombre" => "0"]) }}" width="40"/>
       </a>
     </div>
   </div> 

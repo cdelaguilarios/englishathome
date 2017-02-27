@@ -3,14 +3,13 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use App\Helpers\Util;
 use Illuminate\Database\Eloquent\Model;
 
 class Entidad extends Model {
 
   public $timestamps = false;
   protected $table = "entidad";
-  protected $fillable = ["nombre", "apellido", "fechaNacimiento", "sexo", "telefono", "idTipoDocumento", "numeroDocumento", "correoElectronico", "rutaImagenPerfil", "direccion", "numeroDepartamento", "referenciaDireccion", "codigoUbigeo", "geoLatitud", "geoLongitud"];
+  protected $fillable = ["nombre", "apellido", "fechaNacimiento", "sexo", "telefono", "idTipoDocumento", "numeroDocumento", "correoElectronico", "imagenPerfil", "direccion", "numeroDepartamento", "referenciaDireccion", "codigoUbigeo", "geoLatitud", "geoLongitud"];
 
   public static function nombreTabla() {
     $modeloEntidad = new Entidad();
@@ -51,7 +50,7 @@ class Entidad extends Model {
   public static function registrarActualizarImagenPerfil($id, $imagenPerfil) {
     if (isset($imagenPerfil) && !is_null($imagenPerfil) && $imagenPerfil != "") {
       $entidad = Entidad::ObtenerXId($id);
-      $entidad->rutaImagenPerfil = Util::guardarImagen($entidad->id . "_ip_", $imagenPerfil);
+      $entidad->imagenPerfil = Archivo::registrar($entidad->id . "_ip_", $imagenPerfil, TRUE);
       $entidad->save();
     }
   }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Log;
 use Crypt;
+use Input;
 use Mensajes;
 use Datatables;
 use App\Models\Clase;
@@ -59,6 +60,8 @@ class AlumnoController extends Controller {
 
   public function crearExterno($codigoVerificacion) {
     try {
+      $nuevoRegistro = Input::get("nr");
+      $this->data["nuevoRegistro"] = (isset($nuevoRegistro) ? TRUE : FALSE);
       $this->data["vistaExterna"] = TRUE;
       $this->data["codigoVerificacion"] = $codigoVerificacion;
       $this->data["interesado"] = Interesado::obtenerXId(Crypt::decrypt($codigoVerificacion));
@@ -77,7 +80,7 @@ class AlumnoController extends Controller {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
     }
-    return redirect(route("alumnos.crear.externo", ["codigoVerificacion" => $datos["codigoVerificacion"]]));
+    return redirect(route("alumnos.crear.externo", ["codigoVerificacion" => $datos["codigoVerificacion"], "nr" => 1]));
   }
 
   public function perfil($id) {
@@ -173,16 +176,17 @@ class AlumnoController extends Controller {
   }
 
   public function registrarPago($id, PagoRequest\FormularioRequest $req) {
+    PagoAlumno::registrar($id, $req);
+    Mensajes::agregarMensajeExitoso("Registro exitoso.");
     try {
-      PagoAlumno::registrar($id, $req);
-      Mensajes::agregarMensajeExitoso("Registro exitoso.");
+      
     } catch (\Exception $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
     }
     return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "pago"]));
   }
-  
+
   public function actualizarPago($id, PagoRequest\FormularioActualizarRequest $req) {
     try {
       PagoAlumno::actualizar($id, $req);

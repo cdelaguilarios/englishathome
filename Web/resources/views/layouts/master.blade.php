@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="{{ asset("assets/dist/css/AdminLTE.min.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/dist/css/skins/_all-skins.min.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/datepicker/datepicker3.css") }}" />
+    <link rel="stylesheet" href="{{ asset("assets/plugins/jQueryUploadFileMaster/css/uploadfile.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/datetimepicker/bootstrap-datetimepicker.min.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/eah/css/mystyles.css") }}" />
     @yield("section_style")   
@@ -70,20 +71,20 @@
             <ul class="nav navbar-nav">
               <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  @if ($usuarioActual->rutaImagenPerfil == "NULL" || empty($usuarioActual->rutaImagenPerfil))
+                  @if ($usuarioActual->imagenPerfil == "NULL" || empty($usuarioActual->imagenPerfil))
                   <img src="{{ asset("assets/eah/img/perfil-imagen.png")}}" class="user-image" />
                   @else
-                  <img src="{{ route("imagenes", ["rutaImagen" => $usuarioActual->rutaImagenPerfil]) }}" class="user-image"/>
+                  <img src="{{ route("archivos", ["nombre" => $usuarioActual->imagenPerfil]) }}" class="user-image"/>
                   @endif
                   <span class="hidden-xs">{!! ucwords(mb_strtolower($usuarioActual->nombre)) !!} {!! ucwords(mb_strtolower($usuarioActual->apellido)) !!}</span>
                 </a>
                 <ul class="dropdown-menu">
                   <!-- User image -->
                   <li class="user-header">
-                    @if ($usuarioActual->rutaImagenPerfil == "NULL" || empty($usuarioActual->rutaImagenPerfil))
+                    @if ($usuarioActual->imagenPerfil == "NULL" || empty($usuarioActual->imagenPerfil))
                     <img src="{{ asset("assets/eah/img/perfil-imagen.png") }}" class="img-circle" />
                     @else
-                    <img src="{{ route("imagenes", ["rutaImagen" => $usuarioActual->rutaImagenPerfil]) }}" class="img-circle"/>
+                    <img src="{{ route("archivos", ["nombre" => $usuarioActual->imagenPerfil]) }}" class="img-circle"/>
                     @endif
                     <p>
                       {!! ucwords(mb_strtolower($usuarioActual->nombre)) !!} {!! ucwords(mb_strtolower($usuarioActual->apellido)) !!}
@@ -198,14 +199,18 @@
     <script src="{{ asset("assets/plugins/datepicker/locales/bootstrap-datepicker.es.js") }}"></script>         
     <script src="{{ asset("assets/plugins/datetimepicker/bootstrap-datetimepicker.min.js") }}"></script>   
     <script src="{{ asset("assets/plugins/datetimepicker/locales/bootstrap-datetimepicker.es.js") }}"></script>
+    <script src="{{ asset("assets/plugins/jQueryUploadFileMaster/js/jquery.uploadfile.min.js") }}"></script>
     <script src="//www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
 var urlBase = "{{ url('/') }}";
+var urlBaseImagen = "{{ route('archivos', ['nombre' => '[RUTA_IMAGEN]']) }}";
+var urlRegistrarArchivo = "{{ route('archivos.reqistrar') }}";
+var urlEliminarArchivo = "{{ route('archivos.eliminar') }}";
 var minHorasClase = "{{ $minHorasClase }}";
 var maxHorasClase = "{{ $maxHorasClase }}";
 var minHorario = "{{ $minHorario }}";
 var maxHorario = "{{ $maxHorario}}";
-var urlImagenes = "{{ route('imagenes', ['rutaImagen' => '0']) }}";
+var urlImagenes = "{{ route('archivos', ['nombre' => '0']) }}";
 var estadosClase = {!!  json_encode($estadosClase) !!};
 var estadoClaseRealizada = "{{ $estadoClaseRealizada }}";
 var estadoClaseCancelada = "{{ $estadoClaseCancelada }}";

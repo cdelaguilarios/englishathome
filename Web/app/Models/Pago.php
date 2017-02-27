@@ -12,7 +12,7 @@ class Pago extends Model {
 
   public $timestamps = false;
   protected $table = "pago";
-  protected $fillable = ["motivo", "descripcion", "monto", "rutasImagenesComprobante", "saldoFavor", "saldoFavorUtilizado", "cuenta", "estado"];
+  protected $fillable = ["motivo", "descripcion", "monto", "imagenesComprobante", "saldoFavor", "saldoFavorUtilizado", "cuenta", "estado"];
 
   public static function nombreTabla() {
     $modeloPago = new Pago();
@@ -50,13 +50,13 @@ class Pago extends Model {
       $rutaImagenesComprobantes = NULL;
       $imagenComprobantePago = $request->file("imagenComprobante");
       if (isset($imagenComprobantePago) && $imagenComprobantePago != "") {
-        $rutaImagenesComprobantes = Util::guardarImagen($pago["id"] . "_icp_", $imagenComprobantePago, FALSE);
+        $rutaImagenesComprobantes = Archivo::registrar($pago["id"] . "_icp_", $imagenComprobantePago);
       }
       $imagenDocumentoVerificacion = $request->file("imagenDocumentoVerificacion");
       if (isset($imagenDocumentoVerificacion) && $imagenDocumentoVerificacion != "") {
-        $rutaImagenesComprobantes .= "," . Util::guardarImagen($pago["id"] . "_idv_", $imagenDocumentoVerificacion, FALSE);
+        $rutaImagenesComprobantes .= "," . Archivo::registrar($pago["id"] . "_idv_", $imagenDocumentoVerificacion);
       }
-      $pago->rutasImagenesComprobante = $rutaImagenesComprobantes;
+      $pago->imagenesComprobante = $rutaImagenesComprobantes;
       $pago->save();
     }
     return $pago;
@@ -70,13 +70,13 @@ class Pago extends Model {
       $rutaImagenesComprobantes = NULL;
       $imagenComprobantePago = $request->file("imagenComprobante");
       if (isset($imagenComprobantePago) && $imagenComprobantePago != "") {
-        $rutaImagenesComprobantes = Util::guardarImagen($pago["id"] . "_icp_", $imagenComprobantePago, FALSE);
+        $rutaImagenesComprobantes = Archivo::registrar($pago["id"] . "_icp_", $imagenComprobantePago);
       }
       $imagenDocumentoVerificacion = $request->file("imagenDocumentoVerificacion");
       if (isset($imagenDocumentoVerificacion) && $imagenDocumentoVerificacion != "") {
-        $rutaImagenesComprobantes .= "," . Util::guardarImagen($pago["id"] . "_idv_", $imagenDocumentoVerificacion, FALSE);
+        $rutaImagenesComprobantes .= "," . Archivo::registrar($pago["id"] . "_idv_", $imagenDocumentoVerificacion);
       }
-      $pago->rutasImagenesComprobante = $rutaImagenesComprobantes;
+      $pago->imagenesComprobante = $rutaImagenesComprobantes;
       $pago->save();
     }
   }

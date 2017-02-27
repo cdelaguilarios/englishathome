@@ -76,10 +76,10 @@
             <div class="col-sm-4">
               {{ Form::file("imagenPerfil", NULL) }}
             </div>
-            @if (isset($alumno->rutaImagenPerfil) && !empty($alumno->rutaImagenPerfil))
+            @if (isset($alumno->imagenPerfil) && !empty($alumno->imagenPerfil))
             <div class="col-sm-3">
-              <a href="{{ route("imagenes", ["rutaImagen" => $alumno->rutaImagenPerfil]) }}" target="_blank">
-                <img src="{{ route("imagenes", ["rutaImagen" => $alumno->rutaImagenPerfil]) }}" width="40"/>
+              <a href="{{ route("archivos", ["nombre" => $alumno->imagenPerfil]) }}" target="_blank">
+                <img src="{{ route("archivos", ["nombre" => $alumno->imagenPerfil]) }}" width="40"/>
               </a>
             </div>
             @endif
@@ -214,7 +214,7 @@
                 <span class="input-group-addon">
                   <b>S/.</b>
                 </span>
-                {{ Form::text("costoHoraClase", NULL, ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
+                {{ Form::text("costoHoraClase", (isset($alumno) ? number_format($alumno->costoHoraClase, 2, '.', ',') : NULL), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
               </div>
             </div>
             @endif 

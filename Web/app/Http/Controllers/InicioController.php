@@ -12,11 +12,11 @@ class InicioController extends Controller {
     return redirect(route("interesados"));
   }
 
-  public function obtenerImagen($rutaImagen) {
+  public function obtenerImagen($imagen) {
     $rutaBaseAlmacenamiento = Storage::disk("local")->getDriver()->getAdapter()->getPathPrefix();
-    $rutaFin = $rutaBaseAlmacenamiento . $rutaImagen;
+    $rutaFin = $rutaBaseAlmacenamiento . $imagen;
 
-    if ($rutaImagen == "" || !File::exists($rutaFin)) {
+    if ($imagen == "" || !File::exists($rutaFin)) {
       $rutaFin = public_path() . "/assets/eah/img/no-disponible.png";
     }
     $archivo = File::get($rutaFin);

@@ -12,11 +12,10 @@ use App\Helpers\Enum\EstadosPago;
 use App\Helpers\Enum\EstadosClase;
 use App\Helpers\Enum\RolesUsuario;
 use App\Helpers\Enum\TiposEntidad;
-use App\Helpers\Enum\EstadosAlumno;
-use Illuminate\Contracts\View\View;
 use App\Helpers\Enum\SexosEntidad;
+use Illuminate\Contracts\View\View;
 use App\Helpers\Enum\EstadosProfesor;
-use App\Helpers\Enum\EstadosInteresado;
+use Illuminate\Support\Facades\Cache;
 use App\Helpers\Enum\TiposCancelacionClase;
 
 class ProfileComposer {
@@ -45,24 +44,36 @@ class ProfileComposer {
    * @return void
    */
   public function compose(View $view) {
-    $view->with("sexos", SexosEntidad::listar());
-    $view->with("cursos", Curso::listarSimple());
-    $view->with("nivelesIngles", NivelIngles::listarSimple());
-    $view->with("tiposDocumentos", TipoDocumento::listarSimple());
-    $view->with("minHorasClase", Config::get("eah.minHorasClase"));
-    $view->with("maxHorasClase", Config::get("eah.maxHorasClase"));
-    $view->with("minHorario", Config::get("eah.minHorario"));
-    $view->with("maxHorario", Config::get("eah.maxHorario"));
-    $view->with("estadosClase", EstadosClase::listar());
-    $view->with("estadoClaseRealizada", EstadosClase::Realizada);
-    $view->with("estadoClaseCancelada", EstadosClase::Cancelada);
-    $view->with("tipoCancelacionClaseAlumno", TiposCancelacionClase::CancelacionAlumno);
-    $view->with("rolesUsuarios", RolesUsuario::listar());
-    $view->with("estadosProfesor", EstadosProfesor::listar());
-    $view->with("tiposDocente", TiposEntidad::listarTiposDocente());
-    $view->with("estadoPagoRealizado", EstadosPago::Realizado);
+    if (!\Illuminate\Support\Facades\Auth::check()) {
+      return;
+    }
+    $datosExtrasVistas = Cache::get("datosExtrasVistas");
+    if (!isset($datosExtrasVistas)) {
+      $datosExtrasVistas = [
+          "sexos" => SexosEntidad::listar(),
+          "cursos" => Curso::listarSimple(),
+          "nivelesIngles" => NivelIngles::listarSimple(),
+          "tiposDocumentos" => TipoDocumento::listarSimple(),
+          "minHorasClase" => Config::get("eah.minHorasClase"),
+          "maxHorasClase" => Config::get("eah.maxHorasClase"),
+          "minHorario" => Config::get("eah.minHorario"),
+          "maxHorario" => Config::get("eah.maxHorario"),
+          "estadosClase" => EstadosClase::listar(),
+          "estadoClaseRealizada" => EstadosClase::Realizada,
+          "estadoClaseCancelada" => EstadosClase::Cancelada,
+          "tipoCancelacionClaseAlumno" => TiposCancelacionClase::CancelacionAlumno,
+          "rolesUsuarios" => RolesUsuario::listar(),
+          "estadosProfesor" => EstadosProfesor::listar(),
+          "tiposDocente" => TiposEntidad::listarTiposDocente(),
+          "estadoPagoRealizado" => EstadosPago::Realizado,
+      ];
+      Cache::put("datosExtrasVistas", $datosExtrasVistas, 1);
+    }
+    foreach ($datosExtrasVistas as $k => $v) {
+      $view->with($k, $v);
+    }
     if (!(Auth::guest())) {
-      $view->with("usuarioActual", Usuario::obtenerXId(Auth::user()->idEntidad));
+      $view->with("usuarioActual", Usuario::obtenerActual());
     }
   }
 

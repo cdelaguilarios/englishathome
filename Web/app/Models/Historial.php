@@ -13,7 +13,7 @@ class Historial extends Model {
 
   public $timestamps = false;
   protected $table = "historial";
-  protected $fillable = ["idPago", "idClase", "titulo", "mensaje", "rutasImagenes", "enviarCorreo", "mostrarEnPerfil", "fechaNotificacion", "tipo"];
+  protected $fillable = ["idPago", "idClase", "titulo", "mensaje", "imagenes", "enviarCorreo", "mostrarEnPerfil", "fechaNotificacion", "tipo"];
 
   const numeroMensajesXCarga = 10;
 

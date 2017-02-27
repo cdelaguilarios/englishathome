@@ -324,7 +324,7 @@ $.extend($.validator, {
 			function delegate(event) {
 				var validator = $.data(this[0].form, "validator"),
 					eventType = "on" + event.type.replace(/^validate/, "");
-				if (validator.settings[eventType]) {
+				if (validator !== undefined && validator.settings[eventType]) {
 					validator.settings[eventType].call(validator, this[0], event);
 				}
 			}
@@ -896,7 +896,7 @@ $.extend($.validator, {
 	staticRules: function(element) {
 		var rules = {};
 		var validator = $.data(element.form, 'validator');
-		if (validator.settings.rules) {
+		if (validator !== undefined && validator.settings.rules) {
 			rules = $.validator.normalizeRule(validator.settings.rules[element.name]) || {};
 		}
 		return rules;

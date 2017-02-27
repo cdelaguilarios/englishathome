@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use Auth;
+use Session;
+use Redirect;
 use Mensajes;
 use Validator;
 use App\Models\Usuario;
@@ -48,6 +50,12 @@ class AuthController extends Controller {
         ]);
         $usuario->save();
         return $usuario;
+    }
+
+    public function getLogout() {
+        Auth::logout();
+        Session::flush();
+        return Redirect::to('/');
     }
 
 }

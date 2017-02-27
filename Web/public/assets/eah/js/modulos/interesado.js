@@ -3,7 +3,6 @@ $(document).ready(function () {
   cargarLista();
   cargarFormulario();
   cargarFormularioCotizacion();
-
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
   urlCotizar = (typeof (urlCotizar) === "undefined" ? "" : urlCotizar);
   $("#sel-interesado").select2();
@@ -15,7 +14,6 @@ $(document).ready(function () {
     }
   });
 });
-
 function cargarLista() {
   urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
@@ -24,7 +22,6 @@ function cargarLista() {
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   estados = (typeof (estados) === "undefined" ? "" : estados);
   estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
-
   if (urlListar !== "" && urlEditar !== "" && urlCotizar !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "") {
     $("#tab-lista").DataTable({
       processing: true,
@@ -64,7 +61,7 @@ function cargarLista() {
                 '<a href="' + (urlEditar.replace("/0", "/" + d.id)) + '" title="Editar datos"><i class="fa fa-pencil"></i></a>' +
                 '</li>' +
                 '<li>' +
-                '<a href="' + (urlCotizar.replace("/0", "/" + d.id)) + '" title="Enviar cotización"><i class="fa fa-dollar"></i></a>' +
+                '<a href="' + (urlCotizar.replace("/0", "/" + d.id)) + '" title="Enviar cotización"><i class="fa fa-envelope"></i></a>' +
                 '</li>' +
                 '<li>' +
                 '<a href="javascript:void(0);" title="Eliminar interesado" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de esta persona interesada?\', \'tab-lista\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminar.replace("/0", "/" + d.id))) + '">' +
@@ -140,7 +137,6 @@ function cargarFormulario() {
     onkeyup: false,
     onclick: false
   });
-
   $("#btn-registrar-alumno").click(function () {
     $("input[name='registrarComoAlumno']").val("1");
     $("#formulario-interesado").submit();
@@ -177,6 +173,9 @@ function cargarFormularioCotizacion() {
       descripcionCurso: {
         validarCkEditor: true
       },
+      modulos: {
+        validarCkEditor: true
+      },
       metodologia: {
         validarCkEditor: true
       },
@@ -205,25 +204,29 @@ function cargarFormularioCotizacion() {
       if (confirm("¿Está seguro que desea enviar esta cotización?")) {
         $("#mod-correo-cotizacion-prueba").modal("hide");
         $.blockUI({message: "<h4>Enviando cotización...</h4>"});
-        var datos = procesarDatosFormulario(f);
-        llamadaAjax($(f).attr("action"), "POST", datos, true,
-            function (d) {
-              $("body").unblock({
-                onUnblock: function () {
-                  agregarMensaje("exitosos", "Cotización enviada.", true);
-                }
-              });
-            },
-            function (d) {
-            },
-            function (de) {
-              $("body").unblock({
-                onUnblock: function () {
-                  agregarMensaje("errores", "Ocurrió un problema durante el envio de la cotización. Por favor inténtelo nuevamente.", true);
-                }
-              });
-            }
-        );
+        if ($("#correo-cotizacion-prueba").val() !== "") {
+          var datos = procesarDatosFormulario(f);
+          llamadaAjax($(f).attr("action"), "POST", datos, true,
+              function (d) {
+                $("body").unblock({
+                  onUnblock: function () {
+                    agregarMensaje("exitosos", "Cotización enviada.", true);
+                  }
+                });
+              },
+              function (d) {
+              },
+              function (de) {
+                $("body").unblock({
+                  onUnblock: function () {
+                    agregarMensaje("errores", "Ocurrió un problema durante el envio de la cotización. Por favor inténtelo nuevamente.", true);
+                  }
+                });
+              }
+          );
+        } else {
+          f.submit();
+        }
       }
     },
     highlight: function () {
@@ -247,11 +250,16 @@ function cargarFormularioCotizacion() {
   });
   $("#id-curso").change(function () {
     urlDatosCurso = (typeof (urlDatosCurso) === "undefined" ? "" : urlDatosCurso);
-    if (urlDatosCurso !== "") {
+    urlBaseImagen = (typeof (urlBaseImagen) === "undefined" ? "" : urlBaseImagen);
+    if (urlDatosCurso !== "" && urlBaseImagen !== "") {
       $.blockUI({message: "<h4>Cargando...</h4>"});
       llamadaAjax(urlDatosCurso.replace("/0", "/" + $(this).val()), "POST", {}, true,
           function (d) {
+            var imagenCurso = (d.imagen !== null ? urlBaseImagen.replace(encodeURI("[RUTA_IMAGEN]"), d.imagen) : "");
+            $("input[name='imagenCurso']").val(imagenCurso);
+            $("#sec-imagen-curso").html(imagenCurso !== "" ? '<img src="' + imagenCurso + '" width="120"/>' : "");
             CKEDITOR.instances["descripcion-curso"].setData(d.descripcion);
+            CKEDITOR.instances["modulos"].setData(d.modulos);
             CKEDITOR.instances["metodologia"].setData(d.metodologia);
             CKEDITOR.instances["curso-incluye"].setData(d.incluye);
             CKEDITOR.instances["inversion"].setData(d.inversion);
@@ -264,6 +272,7 @@ function cargarFormularioCotizacion() {
   });
   CKEDITOR.replace("texto-introductorio");
   CKEDITOR.replace("descripcion-curso");
+  CKEDITOR.replace("modulos");
   CKEDITOR.replace("metodologia");
   CKEDITOR.replace("curso-incluye");
   CKEDITOR.replace("inversion");
@@ -286,4 +295,7 @@ function cargarFormularioCotizacion() {
     }
     $("#mod-correo-cotizacion-prueba").modal("show");
   });
+  incluirSeccionSubidaArchivos("adjuntos", {onSubmit: function () {
+      return true;
+    }, acceptFiles: "*", uploadStr: "Subir archivo"});
 }

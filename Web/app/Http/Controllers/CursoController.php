@@ -35,7 +35,7 @@ class CursoController extends Controller {
 
   public function registrar(FormularioRequest $req) {
     try {
-      $idCurso = Curso::registrar($req->all());
+      $idCurso = Curso::registrar($req);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
       return redirect(route("cursos.listar", ["id" => $idCurso]));
     } catch (\Exception $e) {
@@ -58,7 +58,7 @@ class CursoController extends Controller {
 
   public function actualizar($id, FormularioRequest $req) {
     try {
-      Curso::actualizar($id, $req->all());
+      Curso::actualizar($id, $req);
       Mensajes::agregarMensajeExitoso("Actualización exitosa.");
     } catch (\Exception $e) {
       Log::error($e->getMessage());

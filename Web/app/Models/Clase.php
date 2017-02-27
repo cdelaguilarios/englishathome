@@ -66,6 +66,16 @@ class Clase extends Model {
                     ->first();
   }
 
+  public static function obtenerProximaClase($idAlumno) {
+    $nombreTabla = Clase::nombreTabla();
+    return Clase::listarBase()
+                    ->select($nombreTabla . ".*", "entidadProfesor.id AS idProfesor", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor")
+                    ->where($nombreTabla . ".idAlumno", $idAlumno)
+                    ->where($nombreTabla . ".fechaInicio", ">=", Carbon::now())
+                    ->orderBy($nombreTabla . ".fechaInicio", "ASC")
+                    ->first();
+  }
+
   public static function listar($datos = NULL) {
     $nombreTabla = Clase::nombreTabla();
     $clases = Clase::listarBase()

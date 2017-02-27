@@ -6,6 +6,7 @@ use DB;
 use Mail;
 use Auth;
 use Crypt;
+use Storage;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\EstadosAlumno;
 use App\Helpers\Enum\MensajesHistorial;
@@ -92,10 +93,41 @@ class Interesado extends Model {
     $datos["urlInscripcion"] = route("alumnos.crear.externo", ["codigoVerificacion" => Crypt::encrypt($entidad->id)]);
     $correo = (isset($datos["correoCotizacionPrueba"]) ? $datos["correoCotizacionPrueba"] : $entidad->correoElectronico);
     $nombreDestinatario = (isset($datos["correoCotizacionPrueba"]) ? "" : $entidad->nombre . " " . $entidad->apellido);
+    $nombresArchivosAdjuntos = $datos["nombresArchivosAdjuntos"];
+    $nombresOriginalesArchivosAdjuntos = $datos["nombresOriginalesArchivosAdjuntos"];
+    $esPrueba = (isset($datos["correoCotizacionPrueba"]));
 
-    Mail::send("interesado.plantillaCorreo.cotizacion", $datos, function ($m) use ($correo, $nombreDestinatario) {
+    Mail::send("interesado.plantillaCorreo.cotizacion", $datos, function ($m) use ($correo, $nombreDestinatario, $nombresArchivosAdjuntos, $nombresOriginalesArchivosAdjuntos, $esPrueba) {
       $m->to($correo, $nombreDestinatario)->subject("English at home - Cotización");
+      if (!is_null($nombresArchivosAdjuntos) && !is_null($nombresOriginalesArchivosAdjuntos)) {
+        $rutaBaseAlmacenamiento = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix();
+        $nombresArchivosAdjuntosSel = explode(",", $nombresArchivosAdjuntos);
+        $nombresOriginalesArchivosAdjuntosSel = explode(",", $nombresOriginalesArchivosAdjuntos);
+        for ($i = 0; $i < count($nombresArchivosAdjuntosSel); $i++) {
+          if (trim($nombresArchivosAdjuntosSel[$i]) == "") {
+            continue;
+          }
+          $m->attach($rutaBaseAlmacenamiento . "/" . $nombresArchivosAdjuntosSel[$i], ['as' => $nombresOriginalesArchivosAdjuntosSel[$i]]);
+        }
+      }
     });
+
+    if (!$esPrueba) {
+      if (!is_null($nombresArchivosAdjuntos)) {
+        $nombresArchivosAdjuntosSel = explode(",", $nombresArchivosAdjuntos);
+        for ($i = 0; $i < count($nombresArchivosAdjuntosSel); $i++) {
+          if (trim($nombresArchivosAdjuntosSel[$i]) == "") {
+            continue;
+          }
+          Archivo::eliminar($nombresArchivosAdjuntosSel[$i]);
+        }
+      }
+      Historial::registrar([
+          "idEntidades" => [$id, Auth::user()->idEntidad],
+          "titulo" => (MensajesHistorial::TituloInteresadoEnvioCorreoCotizacion),
+          "mensaje" => ""
+      ]);
+    }
   }
 
   public static function esAlumnoRegistrado($id) {

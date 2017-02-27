@@ -18,9 +18,15 @@ Route::get("cron/test", ["uses" => "CronController@test", "as" => "cron.test"]);
 Route::get("cron/enviarCorreos", ["uses" => "CronController@enviarCorreos", "as" => "cron.enviar.correos"]);
 Route::get("cron/sincronizarEstados", ["uses" => "CronController@sincronizarEstados", "as" => "cron.sincronizar.estados"]);
 
+Route::get("archivos/{nombre}", ["uses" => "ArchivoController@obtener", "as" => "archivos"]);
+
 Route::group(["middleware" => "auth"], function() {
   Route::get("/", ["uses" => "InicioController@inicio", "as" => "/"]);
-  Route::get("imagenes/{rutaImagen}", ["uses" => "InicioController@obtenerImagen", "as" => "imagenes"]);
+
+  // <editor-fold desc="Archivos">
+  Route::post("archivos", ["uses" => "ArchivoController@registrar", "as" => "archivos.reqistrar"]);
+  Route::delete("archivos/eliminar", ["uses" => "ArchivoController@eliminar", "as" => "archivos.eliminar"]);
+  // </editor-fold>  
 
   Route::group(["middleware" => "verificacion.usuario:,"], function() {
     // <editor-fold desc="Interesados">

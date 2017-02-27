@@ -80,6 +80,9 @@ function cargarFormulario() {
       descripcion: {
         validarCkEditorCurso: true
       },
+      modulos: {
+        validarCkEditorCurso: true
+      },
       metodologia: {
         validarCkEditorCurso: true
       },
@@ -125,6 +128,7 @@ function cargarFormulario() {
   });
 
   CKEDITOR.replace("descripcion");
+  CKEDITOR.replace("modulos");
   CKEDITOR.replace("metodologia");
   CKEDITOR.replace("incluye");
   CKEDITOR.replace("inversion");

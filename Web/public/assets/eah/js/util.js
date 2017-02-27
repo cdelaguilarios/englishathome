@@ -300,3 +300,50 @@ function procesarDatosFormulario(f) {
   });
   return datos;
 }
+function incluirSeccionSubidaArchivos(idElemento, datosAdicionales, funcionSubirCompletado, funcionEliminarCompletado) {
+  urlRegistrarArchivo = (typeof (urlRegistrarArchivo) === "undefined" ? "" : urlRegistrarArchivo);
+  urlEliminarArchivo = (typeof (urlEliminarArchivo) === "undefined" ? "" : urlEliminarArchivo);
+  if (urlRegistrarArchivo !== "" && urlEliminarArchivo !== "") {
+    $("#" + idElemento).uploadFile($.extend(true, {}, {
+      url: urlRegistrarArchivo,
+      fileName: "archivo",
+      multiple: true,
+      dragDrop: true,
+      formData: {"_token": $('meta[name=_token]').attr("content"), "idElemento": idElemento},
+      showPreview: true,
+      showDelete: true,
+      onSuccess: function (f, d, xhr, pd)
+      {
+        var nombresArchivosSubidos = $("#nombres-archivos-" + d.idElemento).val();
+        var nombresOriginalesArchivosSubidos = $("#nombres-originales-archivos-" + d.idElemento).val();
+        $("#nombres-archivos-" + d.idElemento).val(nombresArchivosSubidos + d.nombre + ",");
+        $("#nombres-originales-archivos-" + d.idElemento).val(nombresOriginalesArchivosSubidos + d.nombreOriginal + ",");
+        if (funcionSubirCompletado !== undefined)
+          funcionSubirCompletado(f, d, xhr, pd);
+      },
+      deleteCallback: function (d, p) {
+        llamadaAjax(urlEliminarArchivo, "DELETE", {"nombre": d.nombre}, true);
+        var nombresArchivosSubidos = $("#nombres-archivos-" + d.idElemento).val();
+        var nombresOriginalesArchivosSubidos = $("#nombres-originales-archivos-" + d.idElemento).val();
+        $("#nombres-archivos-" + d.idElemento).val(nombresArchivosSubidos.replace(d.nombre + ",", ""));
+        $("#nombres-originales-archivos-" + d.idElemento).val(nombresOriginalesArchivosSubidos.replace(d.nombreOriginal + ",", ""));
+        if (funcionEliminarCompletado !== undefined)
+          funcionEliminarCompletado(d, p);
+        p.statusbar.hide();
+      },
+      showFileCounter: true,
+      dragDropStr: "<span><b>Arrastrar y soltar</b></span>",
+      previewHeight: "50px",
+      previewWidth: "50px",
+      abortStr: "Cancelar",
+      cancelStr: "Cancelar",
+      deletelStr: "Eliminar",
+      doneStr: "Realizado",
+      downloadStr: "Descargar",
+      maxFileCountErrorStr: " no se agregó. Máximo numero de archivos permitidos: ",
+      multiDragErrorStr: "Arrastrar y soltar los archivos no esta permitido",
+      extErrorStr: "Extensión permitidas: ",
+      sizeErrorStr: "Tamaño máximo: "
+    }, datosAdicionales));
+  }
+}

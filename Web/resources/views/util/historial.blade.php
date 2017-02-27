@@ -78,6 +78,6 @@
 </div>
 <script>
   var urlCargarHistorial = "{{ route('historial.perfil', ['idEntidad' => $idEntidad]) }}";
-  var urlImagenesHistorial = "{{ route('imagenes', ['rutaImagen' => '0']) }}";
+  var urlImagenesHistorial = "{{ route('archivos', ['nombre' => '0']) }}";
 </script>
 <script src="{{ asset("assets/eah/js/historial.js")}}"></script>

@@ -15,12 +15,16 @@ class FormularioCotizacionRequest extends Request {
   protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["idCurso"] = ReglasValidacion::formatoDato($datos, "idCurso");
+    $datos["imagenCurso"] = ReglasValidacion::formatoDato($datos, "imagenCurso");
     $datos["textoIntroductorio"] = ReglasValidacion::formatoDato($datos, "textoIntroductorio");
     $datos["descripcionCurso"] = ReglasValidacion::formatoDato($datos, "descripcionCurso");
+    $datos["modulos"] = ReglasValidacion::formatoDato($datos, "modulos");
     $datos["metodologia"] = ReglasValidacion::formatoDato($datos, "metodologia");
     $datos["cursoIncluye"] = ReglasValidacion::formatoDato($datos, "cursoIncluye");
     $datos["inversion"] = ReglasValidacion::formatoDato($datos, "inversion");
     $datos["inversionCuotas"] = ReglasValidacion::formatoDato($datos, "inversionCuotas");
+    $datos["nombresArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresArchivosAdjuntos");
+    $datos["nombresOriginalesArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresOriginalesArchivosAdjuntos");
     $datos["costoHoraClase"] = ReglasValidacion::formatoDato($datos, "costoHoraClase");
     $datos["correoCotizacionPrueba"] = ReglasValidacion::formatoDato($datos, "correoCotizacionPrueba");
     $this->getInputSource()->replace($datos);
@@ -32,6 +36,7 @@ class FormularioCotizacionRequest extends Request {
     $reglasValidacion = [
         "textoIntroductorio" => "required|max:4000",
         "descripcionCurso" => "required|max:4000",
+        "modulos" => "required|max:4000",
         "metodologia" => "required|max:4000",
         "cursoIncluye" => "required|max:4000",
         "inversion" => "required|max:4000",

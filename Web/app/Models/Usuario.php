@@ -53,6 +53,13 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     return Usuario::listar()->where("entidad.id", $id)->firstOrFail();
   }
 
+  public static function obtenerActual() {
+    if (is_null(session("usuarioActual"))) {
+      session(["usuarioActual" => Usuario::obtenerXId(Auth::user()->idEntidad)]);
+    }
+    return session("usuarioActual");
+  }
+
   public static function registrar($req) {
     $datos = $req->all();
     $datos["correoElectronico"] = $datos["email"];

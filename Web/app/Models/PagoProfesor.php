@@ -73,7 +73,7 @@ class PagoProfesor extends Model {
         "idEntidades" => [$idProfesor, Auth::user()->idEntidad],
         "titulo" => MensajesHistorial::TituloProfesorRegistroPago,
         "mensaje" => $mensajeHistorial,
-        "rutasImagenes" => $datosPago["rutasImagenesComprobante"],
+        "imagenes" => $datosPago["imagenesComprobante"],
         "idPago" => $datosPago["id"],
         "tipo" => TiposHistorial::Pago
     ]);

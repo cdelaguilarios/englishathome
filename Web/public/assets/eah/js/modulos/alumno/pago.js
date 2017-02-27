@@ -400,8 +400,8 @@ function editarPago(idPago) {
       $("#cuenta-actualizar-pago").val(d.cuenta);
       $("#estado-actualizar-pago").val(d.estado);
       $("#descripcion-actualizar-pago").val(d.descripcion);
-      if (d.rutasImagenesComprobante !== null && d.rutasImagenesComprobante !== "") {
-        var rutaImagen = urlImagenes.replace("/0", "/" + d.rutasImagenesComprobante);
+      if (d.imagenesComprobante !== null && d.imagenesComprobante !== "") {
+        var rutaImagen = urlImagenes.replace("/0", "/" + d.imagenesComprobante);
         $("#imagen-comprobante-actualizar-pago").attr("href", rutaImagen);
         $("#imagen-comprobante-actualizar-pago").find("img").attr("src", rutaImagen);
       }
@@ -427,8 +427,8 @@ function verDatosPago(idPago) {
       $("#dat-monto-pago").html('S/. ' + redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="saldo-favor-utilizado">utilizado</span>)' : '') + '</b></small>' : ''));
       $("#dat-estado-pago").html('<span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span>');
       $("#dat-fecha-registro-pago").text(formatoFecha(d.fechaRegistro, true));
-      if (d.rutasImagenesComprobante !== null && d.rutasImagenesComprobante !== "") {
-        var rutaImagen = urlImagenes.replace("/0", "/" + d.rutasImagenesComprobante);
+      if (d.imagenesComprobante !== null && d.imagenesComprobante !== "") {
+        var rutaImagen = urlImagenes.replace("/0", "/" + d.imagenesComprobante);
         $("#dat-imagen-comprobante-pago").attr("href", rutaImagen);
         $("#dat-imagen-comprobante-pago").find("img").attr("src", rutaImagen);
       }

@@ -52,11 +52,11 @@ function cargarListaHistorial() {
                   '<div class="timeline-item">' +
                   '<span class="time"><i class="fa fa-clock-o"></i> ' + datHistorial[i].horaNotificacion + '</span>' +
                   '<h3 class="timeline-header">' + datHistorial[i].titulo + '</h3>';
-              if (datHistorial[i].mensaje !== "" || datHistorial[i].rutasImagenes !== null) {
+              if (datHistorial[i].mensaje !== "" || datHistorial[i].imagenes !== null) {
                 htmlHistorial += '<div class="timeline-body">' + (datHistorial[i].mensaje !== "" ? datHistorial[i].mensaje : "");
-                if (datHistorial[i].rutasImagenes !== null) {
-                  var rutasImagenes = datHistorial[i].rutasImagenes.split(",");
-                  $.each(rutasImagenes, function (e, v) {
+                if (datHistorial[i].imagenes !== null) {
+                  var imagenes = datHistorial[i].imagenes.split(",");
+                  $.each(imagenes, function (e, v) {
                     if (v !== null && v !== "") {
                       var rutaImagen = urlImagenesHistorial.replace("/0", "/" + v);
                       htmlHistorial += '<a href="' + rutaImagen + '" target="_blank"><img src="' + rutaImagen + '" class="margin" width="100"></a>';

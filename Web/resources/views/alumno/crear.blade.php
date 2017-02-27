@@ -37,7 +37,13 @@
 @include("partials/errors")
 @if(isset($vistaExterna) && $vistaExterna && isset($interesado) && $interesado->estado == App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado)
 <div class="row text-center">
-  <h4>Muchas gracias por registrar sus datos, pronto nos estaremos comunicando con usted.</h4>
+  <h4>
+    @if(isset($nuevoRegistro) && $nuevoRegistro)
+    Muchas gracias por registrar sus datos, pronto nos estaremos comunicando con usted.
+    @else
+    Usted ya está registrado como alumno en nuestro sistema, para cualquier información comuniquese con nosotros al 970883890.
+    @endif
+  </h4>
 </div>
 @else
 {{ Form::open(["url" => route("alumnos.registrar" . (isset($vistaExterna) && $vistaExterna && isset($interesado) ? ".externo" : "")), "id" => "formulario-alumno", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}

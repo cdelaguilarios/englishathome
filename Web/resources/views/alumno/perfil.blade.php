@@ -20,10 +20,10 @@
   <div class="col-sm-3">
     <div class="box box-primary">
       <div class="box-body box-profile">
-        <img class="profile-user-img img-responsive img-circle" src="{{ route("imagenes", ["rutaImagen" => (isset($alumno->rutaImagenPerfil) && $alumno->rutaImagenPerfil != "" ? $alumno->rutaImagenPerfil : "-")]) }}" alt="User profile picture">
+        <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($alumno->imagenPerfil) && $alumno->imagenPerfil != "" ? $alumno->imagenPerfil : "-")]) }}" alt="User profile picture">
         <h3 class="profile-username">Alumn{{ $alumno->sexo == "F" ? "a" : "o" }} {{ $alumno->nombre . " " .  $alumno->apellido }}</h3>
         <p class="text-muted">{{ $alumno->correoElectronico }}</p>
-        <span class="label {{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosAlumno::listarCambio()[$alumno->estado][0] }}</span>
+        <span class="label {{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][0] }}</span>
       </div>
     </div>
     <div class="sec-datos box box-primary">
@@ -35,7 +35,16 @@
         <p class="text-muted">
           @include("util.horario", ["horario" => $alumno->horario, "modo" => "visualizar"])
         </p>
-        <hr>  
+        <hr>   
+        @if(isset($alumno->profesorProximaClase)) 
+        <strong><i class="fa flaticon-teach"></i> Profesor</strong>
+        <p class="text-muted">
+          <a href="{{ route("profesores.perfil", ["id" => $alumno->profesorProximaClase->idEntidad]) }}" target="_blank">
+            {{ $alumno->profesorProximaClase->nombre . " " .  $alumno->profesorProximaClase->apellido }}
+          </a>
+        </p>
+        <hr> 
+        @endif 
         @if(isset($alumno->idCurso))
         <strong><i class="fa fa-fw flaticon-favorite-book"></i> Curso</strong>
         <p class="text-muted">{{ $cursos[$alumno->idCurso] }}</p>
@@ -78,7 +87,7 @@
         <div class="box-body">
           <div class="form-group">
             <div class="col-sm-8">
-            <a href="{{ route("alumnos.crear")}}" class="btn btn-primary btn-clean">Nuevo alumno</a> 
+              <a href="{{ route("alumnos.crear")}}" class="btn btn-primary btn-clean">Nuevo alumno</a> 
             </div>           
             <div class="col-sm-4">
               {{ Form::select("",App\Models\Alumno::listarBusqueda(), $alumno->id, ["id"=>"sel-alumno", "class" => "form-control", "data-seccion" => "perfil", "style" => "width: 100%;"]) }}

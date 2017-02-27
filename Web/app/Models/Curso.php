@@ -9,7 +9,7 @@ class Curso extends Model {
 
   public $timestamps = false;
   protected $table = "curso";
-  protected $fillable = ["nombre", "descripcion", "metodologia", "incluye", "inversion", "inversionCuotas", "notasAdicionales", "activo"];
+  protected $fillable = ["nombre", "descripcion", "modulos", "metodologia", "incluye", "inversion", "inversionCuotas", "notasAdicionales", "activo"];
 
   public static function listar() {
     return Curso::where("eliminado", 0);
@@ -23,15 +23,28 @@ class Curso extends Model {
     return Curso::listar()->where("id", $id)->firstOrFail();
   }
 
-  public static function registrar($datos) {
+  public static function registrar($req) {
+
+    $datos = $req->all();
     $curso = new Curso($datos);
     $curso->save();
+    $imagen = $req->file("imagen");
+    if (isset($imagen) && $imagen != "") {
+      $curso->imagen = Archivo::registrar($curso->id . "_ic_", $imagen);
+      $curso->save();
+    }
     return $curso->id;
   }
 
-  public static function actualizar($id, $datos) {
+  public static function actualizar($id, $req) {
+    $datos = $req->all();
     $curso = Curso::obtenerXId($id);
     $curso->update($datos);
+    $imagen = $req->file("imagen");
+    if (isset($imagen) && $imagen != "") {
+      $curso->imagen = Archivo::registrar($curso->id . "_ic_", $imagen);
+      $curso->save();
+    }
   }
 
   public static function eliminar($id) {

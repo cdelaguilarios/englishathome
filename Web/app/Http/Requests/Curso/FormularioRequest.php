@@ -16,6 +16,7 @@ class FormularioRequest extends Request {
     $datos["id"] = ReglasValidacion::formatoDato($datos, "id", 0);
     $datos["nombre"] = ReglasValidacion::formatoDato($datos, "nombre");
     $datos["descripcion"] = ReglasValidacion::formatoDato($datos, "descripcion");
+    $datos["modulos"] = ReglasValidacion::formatoDato($datos, "modulos");
     $datos["metodologia"] = ReglasValidacion::formatoDato($datos, "metodologia");
     $datos["incluye"] = ReglasValidacion::formatoDato($datos, "incluye");
     $datos["inversion"] = ReglasValidacion::formatoDato($datos, "inversion");
@@ -28,7 +29,9 @@ class FormularioRequest extends Request {
   public function rules() {
     $reglasValidacion = [
         "nombre" => ["max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
+        "imagenPerfil" => "image",
         "descripcion" => "required|max:4000",
+        "modulos" => "required|max:4000",
         "metodologia" => "required|max:4000",
         "incluye" => "required|max:4000",
         "inversion" => "required|max:4000",

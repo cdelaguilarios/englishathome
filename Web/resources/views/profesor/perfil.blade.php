@@ -20,7 +20,7 @@
   <div class="col-sm-3">
     <div class="box box-primary">
       <div class="box-body box-profile">
-        <img class="profile-user-img img-responsive img-circle" src="{{ route("imagenes", ["rutaImagen" => (isset($profesor->rutaImagenPerfil) && $profesor->rutaImagenPerfil != "" ? $profesor->rutaImagenPerfil : "-")]) }}" alt="User profile picture">
+        <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($profesor->imagenPerfil) && $profesor->imagenPerfil != "" ? $profesor->imagenPerfil : "-")]) }}" alt="User profile picture">
         <h3 class="profile-username">Profesor{{ $profesor->sexo == "F" ? "a" : "" }} {{ $profesor->nombre . " " .  $profesor->apellido }}</h3>
         <p class="text-muted">{{ $profesor->correoElectronico }}</p>
         <span class="label {{ $estadosProfesor[$profesor->estado][1] }} btn-estado">{{ $estadosProfesor[$profesor->estado][0] }}</span>
