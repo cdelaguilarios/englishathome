@@ -79,10 +79,6 @@ class Interesado extends Model {
 
   public static function enviarCotizacion($id, $datos) {
     $entidad = Entidad::ObtenerXId($id);
-    if (!isset($datos["correoCotizacionPrueba"])) {
-      Interesado::actualizarEstado($id, EstadosInteresado::CotizacionEnviada);
-    }
-
     $interesado = Interesado::obtenerXId($id, TRUE);
     $interesado->costoHoraClase = $datos["costoHoraClase"];
     $interesado->save();
@@ -122,6 +118,9 @@ class Interesado extends Model {
           Archivo::eliminar($nombresArchivosAdjuntosSel[$i]);
         }
       }
+      if (!isset($datos["correoCotizacionPrueba"])) {
+        Interesado::actualizarEstado($id, EstadosInteresado::CotizacionEnviada);
+      }
       Historial::registrar([
           "idEntidades" => [$id, Auth::user()->idEntidad],
           "titulo" => (MensajesHistorial::TituloInteresadoEnvioCorreoCotizacion),
@@ -158,9 +157,20 @@ class Interesado extends Model {
       $alumno->idEntidad = $idEntidad;
       $alumno->save();
       $idAlumno = $idEntidad;
+
+      Historial::registrar([
+          "idEntidades" => [$id, Auth::user()->idEntidad],
+          "titulo" => MensajesHistorial::TituloAlumnoRegistroXUsuario,
+          "mensaje" => ""
+      ]);
     }
     RelacionEntidad::registrar($idAlumno, $id, TiposRelacionEntidad::AlumnoInteresado);
     Interesado::actualizarEstado($id, EstadosInteresado::AlumnoRegistrado);
+    Historial::registrar([
+        "idEntidades" => [$id, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
+        "titulo" => (Auth::guest() ? MensajesHistorial::TituloInteresadoRegistroAlumno : MensajesHistorial::TituloInteresadoRegistroAlumnoXUsuario),
+        "mensaje" => ""
+    ]);
   }
 
   public static function eliminar($id) {

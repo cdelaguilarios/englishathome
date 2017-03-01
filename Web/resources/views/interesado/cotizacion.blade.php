@@ -25,7 +25,7 @@
             <a href="{{ route("interesados.crear")}}" class="btn btn-primary btn-clean">Nuevo interesado</a>
           </div>           
           <div class="col-sm-4">
-            {{ Form::select("",App\Models\Interesado::listarBusqueda(), $interesado->id, ["id"=>"sel-interesado", "class" => "form-control", "data-seccion" => "cotizar", "style" => "width: 100%;"]) }}
+            {{ Form::select("", App\Models\Interesado::listarBusqueda(), $interesado->id, ["id"=>"sel-interesado", "class" => "form-control", "data-seccion" => "cotizar", "style" => "width: 100%;"]) }}
           </div>
         </div> 
       </div>

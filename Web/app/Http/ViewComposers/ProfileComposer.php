@@ -67,7 +67,7 @@ class ProfileComposer {
           "tiposDocente" => TiposEntidad::listarTiposDocente(),
           "estadoPagoRealizado" => EstadosPago::Realizado,
       ];
-      Cache::put("datosExtrasVistas", $datosExtrasVistas, 1);
+      Cache::put("datosExtrasVistas", $datosExtrasVistas, 120);
     }
     foreach ($datosExtrasVistas as $k => $v) {
       $view->with($k, $v);

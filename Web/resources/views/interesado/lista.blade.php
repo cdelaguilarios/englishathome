@@ -5,11 +5,13 @@
 <script>
   var urlListar = "{{ route('interesados.listar') }}";
   var urlEditar = "{{ route('interesados.editar', ['id' => 0]) }}";
+  var urlPerfilAlumno = "{{ route('alumnos.perfil', ['id' => 0]) }}";
   var urlActualizarEstado = "{{ route('interesados.actualizar.estado', ['id' => 0]) }}";
   var urlCotizar = "{{ route('interesados.cotizar', ['id' => 0]) }}";
   var urlEliminar = "{{ route('interesados.eliminar', ['id' => 0]) }}";
   var estados = {!! json_encode(App\Helpers\Enum\EstadosInteresado::listar()) !!};
   var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosInteresado::listarCambio()) !!};
+  var estadoAlumnoRegistrado = "{{ App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/interesado.js")}}"></script>
 @endsection

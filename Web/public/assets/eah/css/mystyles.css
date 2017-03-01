@@ -382,3 +382,8 @@ table.dataTable > tbody > tr.child span.dtr-title {
   cursor: pointer;
   font-family: inherit;
 }
+
+.btn-perfil-alumno-interesado{
+  float: right;
+  margin-left: -20px;
+}

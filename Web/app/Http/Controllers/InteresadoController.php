@@ -52,7 +52,7 @@ class InteresadoController extends Controller {
   public function registrarExterno(FormularioRequest $req) {
     try {
       $id = Interesado::registrar($req->all());
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente."], 400);
     }
@@ -92,7 +92,7 @@ class InteresadoController extends Controller {
     try {
       $datos = $request->all();
       Interesado::actualizarEstado($id, $datos["estado"]);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
     }
@@ -124,7 +124,7 @@ class InteresadoController extends Controller {
   public function eliminar($id) {
     try {
       Interesado::eliminar($id);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "No se pudo eliminar el registro de datos de la persona interesada seleccionada."], 400);
     }

@@ -17,12 +17,14 @@ $(document).ready(function () {
 function cargarLista() {
   urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
+  urlPerfilAlumno = (typeof (urlPerfilAlumno) === "undefined" ? "" : urlPerfilAlumno);
   urlActualizarEstado = (typeof (urlActualizarEstado) === "undefined" ? "" : urlActualizarEstado);
   urlCotizar = (typeof (urlCotizar) === "undefined" ? "" : urlCotizar);
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   estados = (typeof (estados) === "undefined" ? "" : estados);
   estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
-  if (urlListar !== "" && urlEditar !== "" && urlCotizar !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "") {
+  estadoAlumnoRegistrado = (typeof (estadosCambio) === "undefined" ? "" : estadoAlumnoRegistrado);
+  if (urlListar !== "" && urlEditar !== "" && urlPerfilAlumno !== "" && urlCotizar !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "" && estadoAlumnoRegistrado !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -47,7 +49,7 @@ function cargarLista() {
             if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined) {
               return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
             } else if (estados[d.estado] !== undefined) {
-              return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>';
+              return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>' + ((d.estado === estadoAlumnoRegistrado) ? '<a href="' + (urlPerfilAlumno.replace("/0", "/" + 3)) + '" title="Ver perfil del alumno" target="_blank" class="btn-perfil-alumno-interesado"><i class="fa fa-eye"></i></a>' : '');
             } else {
               return "";
             }
@@ -98,7 +100,7 @@ function cargarFormulario() {
         required: true,
         email: true
       },
-      cursoInteres: {
+      idCurso: {
         required: true
       },
       costoHoraClase: {

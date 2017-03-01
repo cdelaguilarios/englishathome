@@ -28,7 +28,7 @@
             <a href="{{ route("interesados.cotizar", ["id" => $interesado->idEntidad]) }}" type="button" class="btn btn-primary" ><i class="fa fa-dollar"></i> Enviar cotización</a>
           </div>           
           <div class="col-sm-4">
-            {{ Form::select("",App\Models\Interesado::listarBusqueda(), $interesado->id, ["id"=>"sel-interesado", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%;"]) }}
+            {{ Form::select("", App\Models\Interesado::listarBusqueda(), $interesado->id, ["id"=>"sel-interesado", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%;"]) }}
           </div>
         </div> 
       </div>
