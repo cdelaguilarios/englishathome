@@ -129,15 +129,9 @@ class Interesado extends Model {
     }
   }
 
-  public static function esAlumnoRegistrado($id) {
-    Interesado::obtenerXId($id, TRUE);
-    $relacionEntidad = RelacionEntidad::obtenerXIdEntidadB($id);
-    return (count($relacionEntidad) > 0);
-  }
-
   public static function registrarAlumno($id, $idAlumno = NULL) {
     $datos = Interesado::obtenerXId($id, TRUE)->toArray();
-    if (!($datos["estado"] != EstadosInteresado::AlumnoRegistrado && !Interesado::esAlumnoRegistrado($id))) {
+    if (!($datos["estado"] != EstadosInteresado::AlumnoRegistrado && Interesado::obtenerIdAlumno($id) == 0)) {
       return;
     }
     if (is_null($idAlumno)) {
@@ -171,6 +165,12 @@ class Interesado extends Model {
         "titulo" => (Auth::guest() ? MensajesHistorial::TituloInteresadoRegistroAlumno : MensajesHistorial::TituloInteresadoRegistroAlumnoXUsuario),
         "mensaje" => ""
     ]);
+  }
+
+  public static function obtenerIdAlumno($id) {
+    Interesado::obtenerXId($id, TRUE);
+    $relacionEntidad = RelacionEntidad::obtenerXIdEntidadB($id);
+    return ((count($relacionEntidad) > 0) ? $relacionEntidad[0]->idEntidadA : 0);
   }
 
   public static function eliminar($id) {

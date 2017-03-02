@@ -121,6 +121,11 @@ class InteresadoController extends Controller {
     return redirect(route("interesados.cotizar", ["id" => $id]));
   }
 
+  public function perfilAlumno($id) {
+    $idAlumno = Interesado::obtenerIdAlumno($id);
+    return redirect($idAlumno > 0 ? route("alumnos.perfil", ["id" => $idAlumno]) : route("interesados"));
+  }
+
   public function eliminar($id) {
     try {
       Interesado::eliminar($id);

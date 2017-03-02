@@ -48,15 +48,20 @@
         @include("util.ubigeo")     
         <div class="form-group">
           {{ Form::label("estado", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
+          @if(!isset($interesado) || (isset($interesado) && array_key_exists($interesado->estado, App\Helpers\Enum\EstadosInteresado::listarCambio())))
           <div class="col-sm-3">
-            @if(!isset($interesado) || (isset($interesado) && array_key_exists($interesado->estado, App\Helpers\Enum\EstadosInteresado::listarCambio())))
             {{ Form::select("estado", App\Helpers\Enum\EstadosInteresado::listarCambio(),
             (isset($interesado) ? $interesado->estado : App\Helpers\Enum\EstadosInteresado::PendienteInformacion)
             , ["class" => "form-control"]) }}
-            @else
+          </div>
+          @else
+          <div class="col-sm-2">
             {{ App\Helpers\Enum\EstadosInteresado::listar()[$interesado->estado][0] }}
+            @if($interesado->estado == App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado)
+            <a href="{{ route("interesados.perfil.alumno", ["id" => $interesado->id]) }}" title="Ver perfil del alumno" target="_blank" class="btn-perfil-alumno-interesado"><i class="fa fa-eye"></i></a>
             @endif
           </div>
+          @endif
         </div>
         <div class="form-group">  
           {{ Form::label("costo-hora-clase", "Costo por hora de clase(*): ", ["class" => "col-sm-2 control-label"]) }}   

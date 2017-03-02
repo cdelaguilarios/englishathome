@@ -1,3 +1,8 @@
+@if (Session::has("historial"))
+<script>
+  var registroHistorial = true;
+</script>
+@endif
 <div id="sec-men-historial"></div>
 <div id="sec-historial-1">
   <div>

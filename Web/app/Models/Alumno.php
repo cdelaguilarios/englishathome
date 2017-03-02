@@ -81,7 +81,7 @@ class Alumno extends Model {
 
   public static function registrarExterno($req) {
     $datos = $req->all();
-    if (!Interesado::esAlumnoRegistrado($datos["idInteresado"])) {
+    if (Interesado::obtenerIdAlumno($datos["idInteresado"]) == 0) {
       $interesado = Interesado::obtenerXId(Crypt::decrypt($datos["codigoVerificacion"]), TRUE);
       if ($interesado->idEntidad == $datos["idInteresado"]) {
         $idEntidad = Alumno::registrar($req);

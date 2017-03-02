@@ -4,7 +4,11 @@ function verificarJqueryHistorial() {
 }
 function  cargarSeccionHistorial() {
   cargarListaHistorial();
-  cargarFormularioHistorial();
+  cargarFormularioHistorial();  
+  registroHistorial = (typeof (registroHistorial) === "undefined" ? false : registroHistorial);
+  if (registroHistorial) {
+    $("a[href='#historial']").trigger("click");
+  }
 }
 
 //Lista
@@ -104,9 +108,9 @@ function cargarFormularioHistorial() {
       }
     },
     submitHandler: function (f) {
-      if(!($("#enviar-correo-evento-historial").is(":checked") || $("#mostrar-perfil-evento-historial").is(":checked"))){        
+      if (!($("#enviar-correo-evento-historial").is(":checked") || $("#mostrar-perfil-evento-historial").is(":checked"))) {
         agregarMensaje("advertencias", 'Por favor selecione por lo menos una de las siguientes opciones: "Enviar correo" o "Mostrar en perfil"', true, "#sec-men-historial");
-      }else if (confirm("¿Está seguro que desea registrar los datos de este evento?")) {
+      } else if (confirm("¿Está seguro que desea registrar los datos de este evento?")) {
         $.blockUI({message: "<h4>Registrando datos...</h4>"});
         f.submit();
       }
@@ -138,8 +142,8 @@ function cargarFormularioHistorial() {
   $("#btn-cancelar-evento-historial").click(function () {
     mostrarSeccionHistorial();
   });
-  $("#notificar-inmediatamente-evento-historial").change(function(){
-  (($(this).is(":visible") && $(this).is(":checked")) ? $("#sec-historial-21").hide() : $("#sec-historial-21").show());
+  $("#notificar-inmediatamente-evento-historial").change(function () {
+    (($(this).is(":visible") && $(this).is(":checked")) ? $("#sec-historial-21").hide() : $("#sec-historial-21").show());
   });
 }
 function limpiarCamposHistorial() {
