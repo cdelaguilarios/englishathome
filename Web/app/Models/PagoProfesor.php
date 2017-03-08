@@ -30,11 +30,8 @@ class PagoProfesor extends Model {
   }
 
   public static function obtenerXId($idProfesor, $id) {
-    $nombreTabla = PagoProfesor::nombreTabla();
-    return PagoProfesor::select("pago.*")
-                    ->leftJoin(Pago::nombreTabla() . " as pago", $nombreTabla . ".idPago", "=", "pago.id")
-                    ->where("pago.eliminado", 0)
-                    ->where($nombreTabla . ".idProfesor", $idProfesor)
+    return PagoProfesor::listar($idProfesor)
+                    ->select("pago.*")
                     ->where("pago.id", $id)->firstOrFail();
   }
 
@@ -63,7 +60,7 @@ class PagoProfesor extends Model {
           continue;
         }
         $idClaseAlumno = explode("-", $datClase);
-        PagoClase::registrarActualizar($datosPago["id"], $idClaseAlumno[1]);
+        PagoClase::registrar($datosPago["id"], $idClaseAlumno[1]);
       }
     }
 
@@ -87,7 +84,7 @@ class PagoProfesor extends Model {
         "idProfesor" => $idProfesor
     ]);
     $pagoProfesor->save();
-    PagoClase::registrarActualizar($datosPago["id"], $idClaseCancelada);
+    PagoClase::registrar($datosPago["id"], $idClaseCancelada);
     $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$datos["motivo"], "", number_format((float) ($datos["monto"]), 2, ".", "")], MensajesHistorial::MensajeProfesorRegistroPago);
     Historial::registrar([
         "idEntidades" => [$idProfesor, Auth::user()->idEntidad],

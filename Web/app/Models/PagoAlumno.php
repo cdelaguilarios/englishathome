@@ -30,21 +30,13 @@ class PagoAlumno extends Model {
   }
 
   public static function obtenerXId($idAlumno, $id) {
-    $nombreTabla = PagoAlumno::nombreTabla();
-    return PagoAlumno::select("pago.*")
-                    ->leftJoin(Pago::nombreTabla() . " as pago", $nombreTabla . ".idPago", "=", "pago.id")
-                    ->where("pago.eliminado", 0)
-                    ->where($nombreTabla . ".idAlumno", $idAlumno)
-                    ->where("pago.id", $id)->firstOrFail();
+    return PagoAlumno::listar($idAlumno)->where("pago.id", $id)->firstOrFail();
   }
 
   public static function obtenerXClase($idAlumno, $idClase) {
     $nombreTabla = PagoAlumno::nombreTabla();
-    return PagoAlumno::select("pago.*")
-                    ->leftJoin(Pago::nombreTabla() . " as pago", $nombreTabla . ".idPago", "=", "pago.id")
+    return PagoAlumno::listar($idAlumno)->select("pago.*")
                     ->leftJoin(PagoClase::nombreTabla() . " as pagoClase", $nombreTabla . ".idPago", "=", "pagoClase.idPago")
-                    ->where("pago.eliminado", 0)
-                    ->where($nombreTabla . ".idAlumno", $idAlumno)
                     ->where("pagoClase.idClase", $idClase)->first();
   }
 
@@ -105,11 +97,7 @@ class PagoAlumno extends Model {
   }
 
   public static function totalSaldoFavor($idAlumno) {
-    $nombreTabla = PagoAlumno::nombreTabla();
-    return PagoAlumno::leftJoin(Pago::nombreTabla() . " as pago", $nombreTabla . ".idPago", "=", "pago.id")
-                    ->where("pago.eliminado", 0)
-                    ->where($nombreTabla . ".idAlumno", $idAlumno)
-                    ->where("pago.saldoFavorUtilizado", 0)->sum("pago.saldoFavor");
+    return PagoAlumno::listar($idAlumno)->where("pago.saldoFavorUtilizado", 0)->sum("pago.saldoFavor");
   }
 
   public static function verificarExistencia($idAlumno, $id) {

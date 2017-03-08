@@ -101,7 +101,7 @@ class UsuarioController extends Controller {
     try {
       $datos = $request->all();
       Usuario::actualizarEstado($id, $datos["estado"]);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
     }
@@ -114,7 +114,7 @@ class UsuarioController extends Controller {
         return response()->json(["mensaje" => "El usuario que usted desea eliminar es el único 'Usuario principal' y sus datos no pueden ser borrados."], 400);
       }
       Usuario::eliminar($id);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "No se pudo eliminar el registro de datos del usuario seleccionado."], 400);
     }

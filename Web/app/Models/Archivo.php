@@ -31,7 +31,7 @@ class Archivo {
       }
       Storage::put($nombre, (string) $archivoSel);
       return $nombre;
-    } catch (Exception $ex) {
+    } catch (\Exception $e) {
       return NULL;
     }
   }

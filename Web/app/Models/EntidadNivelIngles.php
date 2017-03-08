@@ -19,7 +19,7 @@ class EntidadNivelIngles extends Model {
 
   public static function obtenerXEntidad($idEntidad) {
     $entidadNivelIngles = EntidadNivelIngles::where("idEntidad", $idEntidad)->first();
-    return ($entidadNivelIngles != NULL ? $entidadNivelIngles->idNivelIngles : NULL);
+    return (!is_null($entidadNivelIngles) ? $entidadNivelIngles->idNivelIngles : NULL);
   }
 
   public static function registrarActualizar($idEntidad, $idNivelIngles) {

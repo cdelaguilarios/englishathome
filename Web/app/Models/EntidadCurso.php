@@ -22,10 +22,6 @@ class EntidadCurso extends Model {
     return (count($entidadCursos) > 0 ? ($primerCurso ? $entidadCursos[0] : $entidadCursos) : NULL);
   }
 
-  public static function listar($idEntidad) {
-    return EntidadCurso::where("idEntidad", $idEntidad);
-  }
-
   public static function registrarActualizar($idEntidad, $idCursos) {
     EntidadCurso::where("idEntidad", $idEntidad)->delete();
     if (isset($idCursos)) {

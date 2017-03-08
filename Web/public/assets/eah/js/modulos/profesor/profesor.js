@@ -78,24 +78,7 @@ function cargarLista() {
     $("#bus-estado").change(function () {
       $("#tab-lista").DataTable().ajax.reload();
     });
-    $(window).click(function (e) {
-      if (!$(e.target).closest(".sec-btn-editar-estado").length) {
-        $(".sec-btn-editar-estado select").trigger("change");
-      }
-    });
-    $(".btn-editar-estado").live("click", function () {
-      $("#sel-estados").clone().val($(this).data("estado")).data("id", $(this).data("id")).data("estado", $(this).data("estado")).appendTo($(this).closest(".sec-btn-editar-estado"));
-      $(this).remove();
-      event.stopPropagation();
-    });
-    $(".sec-btn-editar-estado select").live("change", function () {
-      var id = $(this).data("id");
-      if (urlActualizarEstado !== "" && $(this).data("estado") !== $(this).val()) {
-        llamadaAjax(urlActualizarEstado.replace("/0", "/" + id), "POST", {"estado": $(this).val()}, true);
-      }
-      $(this).closest(".sec-btn-editar-estado").append('<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + id + '" data-estado="' + $(this).val() + '"><span class="label ' + estados[$(this).val()][1] + ' btn-estado">' + estados[$(this).val()][0] + '</span></a>');
-      $(this).remove();
-    });
+    establecerCambiosEstados(urlActualizarEstado, estados);
   }
 }
 

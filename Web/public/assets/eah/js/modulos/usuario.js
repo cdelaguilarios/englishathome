@@ -22,8 +22,9 @@ function cargarLista() {
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   roles = (typeof (roles) === "undefined" ? "" : roles);
   estados = (typeof (estados) === "undefined" ? "" : estados);
+  estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
 
-  if (urlListar !== "" && urlEditar !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && roles !== "" && estados !== "") {
+  if (urlListar !== "" && urlEditar !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && roles !== "" && estados !== "" && estadosCambio !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -47,7 +48,13 @@ function cargarLista() {
             return roles[d.rol];
           }},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
-            return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
+            if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined) {
+              return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
+            } else if (estados[d.estado] !== undefined) {
+              return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>';
+            } else {
+              return "";
+            }
           }, className: "text-center"},
         {data: "fechaRegistro", name: "entidad.fechaRegistro", render: function (e, t, d, m) {
             return formatoFecha(d.fechaRegistro, true);
@@ -69,24 +76,7 @@ function cargarLista() {
     $("#bus-estado").change(function () {
       $("#tab-lista").DataTable().ajax.reload();
     });
-    $(window).click(function (e) {
-      if (!$(e.target).closest(".sec-btn-editar-estado").length) {
-        $(".sec-btn-editar-estado select").trigger("change");
-      }
-    });
-    $(".btn-editar-estado").live("click", function () {
-      $("#sel-estados").clone().val($(this).data("estado")).data("id", $(this).data("id")).data("estado", $(this).data("estado")).appendTo($(this).closest(".sec-btn-editar-estado"));
-      $(this).remove();
-      event.stopPropagation();
-    });
-    $(".sec-btn-editar-estado select").live("change", function () {
-      var id = $(this).data("id");
-      if (urlActualizarEstado !== "" && $(this).data("estado") !== $(this).val()) {
-        llamadaAjax(urlActualizarEstado.replace("/0", "/" + id), "POST", {"estado": $(this).val()}, true);
-      }
-      $(this).closest(".sec-btn-editar-estado").append('<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + id + '" data-estado="' + $(this).val() + '"><span class="label ' + estados[$(this).val()][1] + ' btn-estado">' + estados[$(this).val()][0] + '</span></a>');
-      $(this).remove();
-    });
+    establecerCambiosEstados(urlActualizarEstado, estados);
   }
 }
 function cargarFormulario() {

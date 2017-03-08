@@ -47,9 +47,9 @@ class Alumno extends Model {
       $alumno->totalSaldoFavor = PagoAlumno::totalSaldoFavor($id);
       $alumno->idNivelIngles = EntidadNivelIngles::obtenerXEntidad($id);
       $entidadCurso = EntidadCurso::obtenerXEntidad($id);
-      $alumno->idCurso = (isset($entidadCurso) ? $entidadCurso->idCurso : NULL);
+      $alumno->idCurso = (!is_null($entidadCurso) ? $entidadCurso->idCurso : NULL);
       $datosProximaClase = Clase::obtenerProximaClase($id);
-      $alumno->profesorProximaClase = ((!is_null($datosProximaClase)) ? Profesor::obtenerXId($datosProximaClase->idProfesor) : NULL);
+      $alumno->profesorProximaClase = (!is_null($datosProximaClase) ? Profesor::obtenerXId($datosProximaClase->idProfesor) : NULL);
     }
     return $alumno;
   }
@@ -81,12 +81,10 @@ class Alumno extends Model {
 
   public static function registrarExterno($req) {
     $datos = $req->all();
-    if (Interesado::obtenerIdAlumno($datos["idInteresado"]) == 0) {
-      $interesado = Interesado::obtenerXId(Crypt::decrypt($datos["codigoVerificacion"]), TRUE);
-      if ($interesado->idEntidad == $datos["idInteresado"]) {
-        $idEntidad = Alumno::registrar($req);
-        Interesado::registrarAlumno($datos["idInteresado"], $idEntidad);
-      }
+    $interesado = Interesado::obtenerXId(Crypt::decrypt($datos["codigoVerificacion"]), TRUE);
+    if ($interesado->idEntidad == $datos["idInteresado"] && Interesado::obtenerIdAlumno($datos["idInteresado"]) == 0) {
+      $idEntidad = Alumno::registrar($req);
+      Interesado::registrarAlumno($datos["idInteresado"], $idEntidad);
     }
   }
 
@@ -102,7 +100,6 @@ class Alumno extends Model {
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($id, $datos["idCurso"]);
     Horario::registrarActualizar($id, $datos["horario"]);
-
     $alumno = Alumno::obtenerXId($id, TRUE);
     $alumno->update($datos);
   }
@@ -126,9 +123,7 @@ class Alumno extends Model {
   public static function sincronizarEstados() {
     Clase::sincronizarEstados();
     $alumnos = Alumno::listar()
-            ->whereNotIn("entidad.id", Clase::listarXEstados([EstadosClase::Programada, EstadosClase::PendienteConfirmar])
-                    ->groupBy(Clase::nombreTabla() . ".idAlumno")
-                    ->lists(Clase::nombreTabla() . ".idAlumno"))
+            ->whereNotIn("entidad.id", Clase::listarXEstados([EstadosClase::Programada, EstadosClase::PendienteConfirmar])->groupBy("idAlumno")->lists("idAlumno"))
             ->whereNotIn("entidad.estado", [EstadosAlumno::PorConfirmar, EstadosAlumno::StandBy, EstadosAlumno::Inactivo])
             ->get();
     foreach ($alumnos as $alumno) {

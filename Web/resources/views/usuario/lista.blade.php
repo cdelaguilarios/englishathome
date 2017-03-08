@@ -9,6 +9,7 @@
   var urlEliminar = "{{ route('usuarios.eliminar', ['id' => 0]) }}";
   var roles = {!!  json_encode($roles) !!};
   var estados = {!!  json_encode(App\Helpers\Enum\EstadosUsuario::listar()) !!};
+  var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosUsuario::listarCambio()) !!};
 </script>
 <script src="{{ asset("assets/eah/js/modulos/usuario.js")}}"></script>
 @endsection
@@ -28,7 +29,7 @@
         <div class="form-group">          
           {{ Form::label("bus-estado", "Estado: ", ["class" => "col-sm-1 control-label"]) }}
           <div class="col-sm-3">
-            {{ Form::select("estado", App\Helpers\Enum\EstadosUsuario::listarSimple(), App\Helpers\Enum\EstadosUsuario::Activo, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos"]) }}
+            {{ Form::select("estado", App\Helpers\Enum\EstadosUsuario::listarBusqueda(), App\Helpers\Enum\EstadosUsuario::Activo, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos"]) }}
           </div>
         </div> 
       </div>
@@ -60,6 +61,6 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosUsuario::listarSimple(), NULL, ["id" => "sel-estados", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosUsuario::listarCambio(), NULL, ["id" => "sel-estados", "class" => "form-control"]) }}
 </div>
 @endsection

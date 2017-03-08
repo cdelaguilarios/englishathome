@@ -22,7 +22,7 @@ class Pago extends Model {
   }
 
   public static function obtenerXId($id) {
-    return Pago::findOrFail($id);
+    return Pago::where("eliminado", 0)->where("id", $id)->firstOrFail();
   }
 
   public static function reporte($datos) {
@@ -45,27 +45,18 @@ class Pago extends Model {
     $pago = new Pago($datos);
     $pago->estado = $estado;
     $pago->save();
-
-    if (isset($request)) {
-      $rutaImagenesComprobantes = NULL;
-      $imagenComprobantePago = $request->file("imagenComprobante");
-      if (isset($imagenComprobantePago) && $imagenComprobantePago != "") {
-        $rutaImagenesComprobantes = Archivo::registrar($pago["id"] . "_icp_", $imagenComprobantePago);
-      }
-      $imagenDocumentoVerificacion = $request->file("imagenDocumentoVerificacion");
-      if (isset($imagenDocumentoVerificacion) && $imagenDocumentoVerificacion != "") {
-        $rutaImagenesComprobantes .= "," . Archivo::registrar($pago["id"] . "_idv_", $imagenDocumentoVerificacion);
-      }
-      $pago->imagenesComprobante = $rutaImagenesComprobantes;
-      $pago->save();
-    }
+    Pago::registrarActualizarImagenes($id, $request);
     return $pago;
   }
 
   public static function actualizar($id, $datos, $request) {
     $pago = Pago::obtenerXId($id);
     $pago->update($datos);
+    Pago::registrarActualizarImagenes($id, $request);
+  }
 
+  private static function registrarActualizarImagenes($id, $request) {
+    $pago = Pago::obtenerXId($id);
     if (isset($request)) {
       $rutaImagenesComprobantes = NULL;
       $imagenComprobantePago = $request->file("imagenComprobante");
@@ -75,6 +66,14 @@ class Pago extends Model {
       $imagenDocumentoVerificacion = $request->file("imagenDocumentoVerificacion");
       if (isset($imagenDocumentoVerificacion) && $imagenDocumentoVerificacion != "") {
         $rutaImagenesComprobantes .= "," . Archivo::registrar($pago["id"] . "_idv_", $imagenDocumentoVerificacion);
+      }
+      if (!is_null($pago->imagenesComprobante) && $pago->imagenesComprobante != "") {
+        $imagenesComprobante = explode(",", $pago->imagenesComprobante);
+        foreach ($imagenesComprobante as $imagenComprobante) {
+          if ($imagenComprobante != "") {
+            Archivo::eliminar($imagenComprobante);
+          }
+        }
       }
       $pago->imagenesComprobante = $rutaImagenesComprobantes;
       $pago->save();

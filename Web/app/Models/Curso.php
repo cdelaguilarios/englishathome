@@ -24,12 +24,14 @@ class Curso extends Model {
   }
 
   public static function registrar($req) {
-
     $datos = $req->all();
     $curso = new Curso($datos);
     $curso->save();
     $imagen = $req->file("imagen");
     if (isset($imagen) && $imagen != "") {
+      if (isset($curso->imagen) && $curso->imagen != "") {
+        Archivo::eliminar($curso->imagen);
+      }
       $curso->imagen = Archivo::registrar($curso->id . "_ic_", $imagen);
       $curso->save();
     }
@@ -42,6 +44,9 @@ class Curso extends Model {
     $curso->update($datos);
     $imagen = $req->file("imagen");
     if (isset($imagen) && $imagen != "") {
+      if (isset($curso->imagen) && $curso->imagen != "") {
+        Archivo::eliminar($curso->imagen);
+      }
       $curso->imagen = Archivo::registrar($curso->id . "_ic_", $imagen);
       $curso->save();
     }

@@ -2,7 +2,7 @@
 @section("titulo", "Interesados")
 
 @section("section_script")
-<script src="{{ asset("assets/eah/js/modulos/interesado.js")}}"></script>
+<script src="{{ asset("assets/eah/js/modulos/interesado.js") }}"></script>
 @endsection
 
 @section("breadcrumb")

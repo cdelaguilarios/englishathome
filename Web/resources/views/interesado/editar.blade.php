@@ -5,7 +5,7 @@
 <script>
   var urlEditar = "{{ route('interesados.editar', ['id' => 0]) }}";
 </script>
-<script src="{{ asset("assets/eah/js/modulos/interesado.js")}}"></script>
+<script src="{{ asset("assets/eah/js/modulos/interesado.js") }}"></script>
 @endsection
 
 @section("breadcrumb")

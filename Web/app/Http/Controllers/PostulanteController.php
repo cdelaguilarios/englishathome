@@ -75,7 +75,7 @@ class PostulanteController extends Controller {
     try {
       $datos = $req->all();
       Postulante::actualizarEstado($id, $datos["estado"]);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
     }
@@ -86,7 +86,7 @@ class PostulanteController extends Controller {
     try {
       $datos = $req->all();
       Postulante::actualizarHorario($id, $datos["horario"]);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
     }
@@ -96,7 +96,7 @@ class PostulanteController extends Controller {
   public function eliminar($id) {
     try {
       Postulante::eliminar($id);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "No se pudo eliminar el registro de datos del postulante seleccionado."], 400);
     }

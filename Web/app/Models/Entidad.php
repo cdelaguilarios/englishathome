@@ -19,7 +19,7 @@ class Entidad extends Model {
   }
 
   public static function ObtenerXId($id) {
-    return Entidad::findOrFail($id);
+    return Entidad::where("eliminado", 0)->where("id", $id)->firstOrFail();
   }
 
   public static function registrar($datos, $tipo, $estado) {
@@ -50,6 +50,9 @@ class Entidad extends Model {
   public static function registrarActualizarImagenPerfil($id, $imagenPerfil) {
     if (isset($imagenPerfil) && !is_null($imagenPerfil) && $imagenPerfil != "") {
       $entidad = Entidad::ObtenerXId($id);
+      if (isset($entidad->imagenPerfil) && $entidad->imagenPerfil != "") {
+        Archivo::eliminar($entidad->imagenPerfil);
+      }
       $entidad->imagenPerfil = Archivo::registrar($entidad->id . "_ip_", $imagenPerfil, TRUE);
       $entidad->save();
     }

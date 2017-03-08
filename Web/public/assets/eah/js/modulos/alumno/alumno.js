@@ -4,7 +4,6 @@ var uto = null;
 $(document).ready(function () {
   cargarLista();
   cargarFormulario();
-
   urlPerfil = (typeof (urlPerfil) === "undefined" ? "" : urlPerfil);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
   $("#sel-alumno").select2();
@@ -25,7 +24,6 @@ function cargarLista() {
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   estados = (typeof (estados) === "undefined" ? "" : estados);
   estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
-
   if (urlListar !== "" && urlPerfil !== "" && urlEditar !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "") {
     $("#tab-lista").DataTable({
       processing: true,
@@ -78,24 +76,7 @@ function cargarLista() {
     $("#bus-estado").change(function () {
       $("#tab-lista").DataTable().ajax.reload();
     });
-    $(window).click(function (e) {
-      if (!$(e.target).closest(".sec-btn-editar-estado").length) {
-        $(".sec-btn-editar-estado select").trigger("change");
-      }
-    });
-    $(".btn-editar-estado").live("click", function () {
-      $("#sel-estados").clone().val($(this).data("estado")).data("id", $(this).data("id")).data("estado", $(this).data("estado")).appendTo($(this).closest(".sec-btn-editar-estado"));
-      $(this).remove();
-      event.stopPropagation();
-    });
-    $(".sec-btn-editar-estado select").live("change", function () {
-      var id = $(this).data("id");
-      if (urlActualizarEstado !== "" && $(this).data("estado") !== $(this).val()) {
-        llamadaAjax(urlActualizarEstado.replace("/0", "/" + id), "POST", {"estado": $(this).val()}, true);
-      }
-      $(this).closest(".sec-btn-editar-estado").append('<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + id + '" data-estado="' + $(this).val() + '"><span class="label ' + estados[$(this).val()][1] + ' btn-estado">' + estados[$(this).val()][0] + '</span></a>');
-      $(this).remove();
-    });
+    establecerCambiosEstados(urlActualizarEstado, estados);
   }
 }
 
@@ -171,7 +152,7 @@ function cargarFormulario() {
           f.submit();
         }
       } else {
-        agregarMensaje("advertencias", "Debe ingresar un horario disponible para sus clases", true, "#sec-men-alerta-horario");
+        agregarMensaje("advertencias", "Debe ingresar un horario disponible para sus clases.", true, "#sec-men-alerta-horario");
       }
     },
     highlight: function () {

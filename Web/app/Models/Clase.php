@@ -83,7 +83,7 @@ class Clase extends Model {
             ->leftJoin(PagoProfesor::nombreTabla() . " as pagoProfesor", "pagoClase.idPago", "=", "pagoProfesor.idPago")
             ->leftJoin(Pago::NombreTabla() . " as pago", "pagoProfesor.idPago", "=", "pago.id")
             ->orderBy($nombreTabla . ".fechaInicio", "ASC");
-    $datos["estado"] = $datos["estadoClase"];
+    $datos["estado"] = (isset($datos["estadoClase"]) ? $datos["estadoClase"] : NULL);
     Util::filtrosBusqueda($nombreTabla, $clases, "fechaInicio", $datos);
     return $clases;
   }
@@ -112,24 +112,21 @@ class Clase extends Model {
             ->select($nombreTabla . ".*", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.estado) AS estadoPago"))
             ->leftJoin(PagoProfesor::nombreTabla() . " as pagoProfesor", "pagoClase.idPago", "=", "pagoProfesor.idPago")
             ->leftJoin(Pago::nombreTabla() . " as pago", "pagoProfesor.idPago", "=", "pago.id")
+            ->where($nombreTabla . ".idProfesor", $idProfesor)
             ->where(function ($q) use ($idProfesor) {
               $q->whereNull("pagoProfesor.idProfesor")->orWhere("pagoProfesor.idProfesor", $idProfesor);
             })
-            ->where($nombreTabla . ".idProfesor", $idProfesor)
             ->orderBy($nombreTabla . ".fechaInicio", "ASC");
-    if (isset($datos["estadoClase"])) {
-      $clases->where($nombreTabla . ".estado", $datos["estadoClase"]);
-    }
     if (isset($datos["estadoPago"])) {
       $clases->where("pago.estado", $datos["estadoPago"]);
     }
+    $datos["estado"] = (isset($datos["estadoClase"]) ? $datos["estadoClase"] : NULL);
     Util::filtrosBusqueda($nombreTabla, $clases, "fechaInicio", $datos);
     return $clases;
   }
 
   public static function listarXEstados($estados) {
-    $nombreTabla = Clase::nombreTabla();
-    return Clase::where($nombreTabla . ".eliminado", 0)->whereIn($nombreTabla . ".estado", (is_array($estados) ? $estados : [$estados]));
+    return Clase::where("eliminado", 0)->whereIn("estado", (is_array($estados) ? $estados : [$estados]));
   }
 
   public static function listarPeriodos($idAlumno) {
@@ -137,11 +134,17 @@ class Clase extends Model {
   }
 
   public static function totalPeriodos($idAlumno) {
-    return count(Clase::selectRaw("count(*) as total")->where("idAlumno", $idAlumno)->where("eliminado", 0)->groupBy("numeroPeriodo")->get()->toArray());
+    return Clase::listarPeriodos($idAlumno)->count();
   }
 
   public static function listarIdsEntidadesXRangoFecha($fechaInicio, $fechaFin, $idsProfesores = FALSE) {
-    $clases = Clase::where("fechaInicio", "<=", $fechaInicio)->where("fechaFin", ">=", $fechaFin);
+    $clases = Clase::where("eliminado", 0)->where(function ($q) use ($fechaInicio, $fechaFin) {
+      $q->where(function ($q) use ($fechaInicio) {
+        $q->where("fechaInicio", "<=", $fechaInicio)->where("fechaFin", ">=", $fechaInicio);
+      })->orWhere(function ($q) use ($fechaFin) {
+        $q->where("fechaInicio", "<=", $fechaFin)->where("fechaFin", ">=", $fechaFin);
+      });
+    });
     return ($idsProfesores ? $clases->groupBy("idProfesor")->lists("idProfesor") : $clases->groupBy("idAlumno")->lists("idAlumno"));
   }
 
@@ -151,7 +154,7 @@ class Clase extends Model {
             ->select(($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes ? DB::raw("MONTH(fechaInicio) AS mes") : ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho ? DB::raw("YEAR(fechaInicio) AS anho") : "fechaInicio")), "estado", DB::raw("count(id) AS total"))
             ->groupBy(($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes ? DB::raw("MONTH(fechaInicio)") : ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho ? DB::raw("YEAR(fechaInicio)") : "fechaInicio")), "estado")
             ->orderBy("fechaInicio", "ASC");
-    $datos["estado"] = $datos["estadoClase"];
+    $datos["estado"] = (isset($datos["estadoClase"]) ? $datos["estadoClase"] : NULL);
     Util::filtrosBusqueda($nombreTabla, $clases, "fechaInicio", $datos);
     return $clases->get();
   }
@@ -163,9 +166,10 @@ class Clase extends Model {
     $preHorasPagadas = ((float) $datos["monto"] / (float) $datos["costoHoraClase"]);
     $horasPagadas = ($preHorasPagadas - fmod($preHorasPagadas, 0.5));
     $fechaInicioClase = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaInicioClases"] . " 00:00:00");
+    $horarioAlumno = Horario::obtener($idAlumno);
 
     while ($duracionTotalSeg < ($horasPagadas * 3600)) {
-      foreach (Horario::obtener($idAlumno) as $datHorarioAlumno) {
+      foreach ($horarioAlumno as $datHorarioAlumno) {
         if ($fechaInicioClase->dayOfWeek == $datHorarioAlumno->numeroDiaSemana) {
           $fechaInicio = Carbon::createFromFormat("d/m/Y H:i:s", $fechaInicioClase->format("d/m/Y") . " " . $datHorarioAlumno->horaInicio);
           $preFechaFin = Carbon::createFromFormat("d/m/Y H:i:s", $fechaInicioClase->format("d/m/Y") . " " . $datHorarioAlumno->horaFin);
@@ -208,7 +212,7 @@ class Clase extends Model {
       $datos["notificar"] = (($datosNotificacionClases[$i]->notificar != "" && $datosNotificacionClases[$i]->notificar) ? 1 : 0);
       $datos["estado"] = EstadosClase::Programada;
       $idClase = Clase::registrarActualizar($idAlumno, $datos);
-      PagoClase::registrarActualizar($idPago, $idClase);
+      PagoClase::registrar($idPago, $idClase);
     }
   }
 
@@ -224,19 +228,16 @@ class Clase extends Model {
 
     $notificar = ($datos["notificar"] == 1);
     $claseAnt = ((isset($datos["idClase"])) ? Clase::obtenerXId($idAlumno, $datos["idClase"]) : NULL);
-    if ($claseAnt !== NULL) {
-      $notificar = ($notificar && $claseAnt->idNotificar == NULL);
-    }
-    if (isset($datos["idClase"])) {
-      $clase = Clase::obtenerXId($idAlumno, $datos["idClase"]);
-      $clase->update($datos);
+    if (!is_null($claseAnt)) {
+      $notificar = ($notificar && is_null($claseAnt->idNotificar));
+      $claseAnt->update($datos);
     } else {
       $clase = new Clase($datos);
       $clase->save();
     }
 
     if (isset($datos["idPago"])) {
-      PagoClase::registrarActualizar($datos["idPago"], $clase["id"]);
+      PagoClase::registrar($datos["idPago"], $clase["id"]);
     }
 
     if ($notificar) {
@@ -318,9 +319,8 @@ class Clase extends Model {
   }
 
   public static function sincronizarEstados() {
-    $nombreTabla = Clase::nombreTabla();
     $clasesProgramadas = Clase::listarXEstados(EstadosClase::Programada)
-            ->where($nombreTabla . ".fechaFin", "<=", Carbon::now())
+            ->where("fechaFin", "<=", Carbon::now())
             ->get();
     foreach ($clasesProgramadas as $claseProgramada) {
       $claseProgramada->estado = EstadosClase::PendienteConfirmar;

@@ -70,7 +70,7 @@ class CursoController extends Controller {
   public function eliminar($id) {
     try {
       Curso::eliminar($id);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "No se pudo eliminar el registro de datos del curso seleccionado."], 400);
     }

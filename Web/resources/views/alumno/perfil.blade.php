@@ -57,7 +57,7 @@
         </p>
         <hr>        
         @if(isset($alumno->numeroDocumento))
-        <strong><i class="fa fa-user margin-r-5"></i> {{ (isset($alumno->idTipoDocumento) ? $tiposDocumentos[$alumno->idTipoDocumento] : "") }}</strong>
+        <strong><i class="fa fa-user margin-r-5"></i> {{ (isset($alumno->idTipoDocumento) ? App\Models\TipoDocumento::listarSimple()[$alumno->idTipoDocumento] : "") }}</strong>
         <p class="text-muted">
           {{ $alumno->numeroDocumento }}
         </p>

@@ -13,7 +13,7 @@
   var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosInteresado::listarCambio()) !!};
   var estadoAlumnoRegistrado = "{{ App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado }}";
 </script>
-<script src="{{ asset("assets/eah/js/modulos/interesado.js")}}"></script>
+<script src="{{ asset("assets/eah/js/modulos/interesado.js") }}"></script>
 @endsection
 
 @section("breadcrumb")

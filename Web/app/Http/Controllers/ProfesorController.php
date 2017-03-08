@@ -91,7 +91,7 @@ class ProfesorController extends Controller {
     try {
       $datos = $req->all();
       Profesor::actualizarEstado($id, $datos["estado"]);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
     }
@@ -102,7 +102,7 @@ class ProfesorController extends Controller {
     try {
       $datos = $req->all();
       Profesor::actualizarHorario($id, $datos["horario"]);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
     }
@@ -112,7 +112,7 @@ class ProfesorController extends Controller {
   public function eliminar($id) {
     try {
       Profesor::eliminar($id);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "No se pudo eliminar el registro de datos del profesor seleccionado."], 400);
     }
@@ -128,7 +128,7 @@ class ProfesorController extends Controller {
   public function actualizarEstadoPago($id, PagoRequest\ActualizarEstadoRequest $req) {
     try {
       PagoProfesor::actualizarEstado($id, $req->all());
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
     }
@@ -153,7 +153,7 @@ class ProfesorController extends Controller {
   public function eliminarPago($id, $idPago) {
     try {
       PagoProfesor::eliminar($id, $idPago);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "No se pudo eliminar el registro de datos del pago seleccionado."], 400);
     }

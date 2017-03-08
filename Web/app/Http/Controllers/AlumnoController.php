@@ -120,7 +120,7 @@ class AlumnoController extends Controller {
     try {
       $datos = $req->all();
       Alumno::actualizarEstado($id, $datos["estado"]);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
     }
@@ -131,7 +131,7 @@ class AlumnoController extends Controller {
     try {
       $datos = $req->all();
       Alumno::actualizarHorario($id, $datos["horario"]);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
     }
@@ -141,7 +141,7 @@ class AlumnoController extends Controller {
   public function eliminar($id) {
     try {
       Alumno::eliminar($id);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "No se encontraron datos del alumno seleccionado."], 400);
     }
@@ -157,7 +157,7 @@ class AlumnoController extends Controller {
   public function actualizarEstadoPago($id, PagoRequest\ActualizarEstadoRequest $req) {
     try {
       PagoAlumno::actualizarEstado($id, $req->all());
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
     }
@@ -176,10 +176,9 @@ class AlumnoController extends Controller {
   }
 
   public function registrarPago($id, PagoRequest\FormularioRequest $req) {
-    PagoAlumno::registrar($id, $req);
-    Mensajes::agregarMensajeExitoso("Registro exitoso.");
     try {
-      
+      PagoAlumno::registrar($id, $req);
+      Mensajes::agregarMensajeExitoso("Registro exitoso.");
     } catch (\Exception $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
@@ -205,11 +204,11 @@ class AlumnoController extends Controller {
   public function eliminarPago($id, $idPago) {
     try {
       PagoAlumno::eliminar($id, $idPago);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "No se pudo eliminar el registro de datos del pago seleccionado."], 400);
     }
-    return response()->json(["mensaje" => "Eliminación exitosa", "id" => $idPago], 200);
+    return response()->json(["mensaje" => "Eliminación exitosa.", "id" => $idPago], 200);
   }
 
   // </editor-fold>
@@ -225,7 +224,7 @@ class AlumnoController extends Controller {
   public function actualizarEstadoClase($id, ClaseRequest\ActualizarEstadoRequest $req) {
     try {
       Clase::actualizarEstado($id, $req->all());
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
     }
@@ -270,7 +269,7 @@ class AlumnoController extends Controller {
   public function eliminarClase($id, $idClase) {
     try {
       Clase::eliminar($id, $idClase);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "No se pudo eliminar el registro de datos de la clase seleccionada."], 400);
     }

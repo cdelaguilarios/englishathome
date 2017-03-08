@@ -43,8 +43,8 @@ class Interesado extends Model {
   public static function obtenerXId($id, $simple = FALSE) {
     $interesado = Interesado::listar()->where("entidad.id", $id)->firstOrFail();
     if (!$simple) {
-      $entidadCurso = EntidadCurso::listar($id)->get();
-      $interesado->idCurso = ((count($entidadCurso) > 0) ? $entidadCurso[0]->idCurso : NULL);
+      $entidadCurso = EntidadCurso::obtenerXEntidad($id);
+      $interesado->idCurso = (!is_null($entidadCurso) ? $entidadCurso->idCurso : NULL);
     }
     return $interesado;
   }
@@ -129,6 +129,12 @@ class Interesado extends Model {
     }
   }
 
+  public static function obtenerIdAlumno($id) {
+    Interesado::obtenerXId($id, TRUE);
+    $relacionEntidad = RelacionEntidad::obtenerXIdEntidadB($id);
+    return ((count($relacionEntidad) > 0) ? $relacionEntidad[0]->idEntidadA : 0);
+  }
+
   public static function registrarAlumno($id, $idAlumno = NULL) {
     $datos = Interesado::obtenerXId($id, TRUE)->toArray();
     if (!($datos["estado"] != EstadosInteresado::AlumnoRegistrado && Interesado::obtenerIdAlumno($id) == 0)) {
@@ -143,9 +149,10 @@ class Interesado extends Model {
           "conAmbienteClase" => 0,
           "numeroHorasClase" => 2
       ];
-      $entidadCurso = EntidadCurso::listar($id)->get();
-      if (count($entidadCurso) > 0) {
-        EntidadCurso::registrarActualizar($idEntidad, $entidadCurso[0]->idCurso);
+      
+      $entidadCurso = EntidadCurso::obtenerXEntidad($id);
+      if (!is_null($entidadCurso)) {
+        EntidadCurso::registrarActualizar($idEntidad, $entidadCurso->idCurso);
       }
       $alumno = new Alumno($datos);
       $alumno->idEntidad = $idEntidad;
@@ -165,12 +172,6 @@ class Interesado extends Model {
         "titulo" => (Auth::guest() ? MensajesHistorial::TituloInteresadoRegistroAlumno : MensajesHistorial::TituloInteresadoRegistroAlumnoXUsuario),
         "mensaje" => ""
     ]);
-  }
-
-  public static function obtenerIdAlumno($id) {
-    Interesado::obtenerXId($id, TRUE);
-    $relacionEntidad = RelacionEntidad::obtenerXIdEntidadB($id);
-    return ((count($relacionEntidad) > 0) ? $relacionEntidad[0]->idEntidadA : 0);
   }
 
   public static function eliminar($id) {

@@ -15,9 +15,9 @@ class Docente extends Model {
 
     foreach ($clasesGeneradas as $claseGenerada) {
       if (isset($claseGenerada["fechaInicio"]) && isset($claseGenerada["fechaFin"])) {
-        $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($claseGenerada["fechaInicio"], $claseGenerada["fechaFin"], TRUE);
+        $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($claseGenerada["fechaInicio"]->subHour(), $claseGenerada["fechaFin"]->addHour(), TRUE);
         $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($claseGenerada["fechaInicio"]->dayOfWeek, $claseGenerada["fechaInicio"]->format("H:i:s"), $claseGenerada["fechaFin"]->format("H:i:s"), $tipoDocente);
-        $idsDisponiblesSel = (count($idsDisponiblesSel) == 0 && $auxCont == 1 ? array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray()) : array_intersect($idsDisponiblesSel, array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray())));
+        $idsDisponiblesSel = ($auxCont == 1 ? array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray()) : array_intersect($idsDisponiblesSel, array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray())));
         $auxCont++;
       }
     }
@@ -26,15 +26,7 @@ class Docente extends Model {
 
   public static function listarDisponiblesXDatosPago($idAlumno, $datos) {
     $idsDisponiblesSel = Docente::listarIdsDisponiblesXDatosClasesGeneradas(Clase::generarXDatosPago($idAlumno, $datos), $datos["tipoDocente"]);
-    $sexoDocentePago = $datos["sexoDocente"];
-    $idCursoDocentePago = $datos["idCursoDocente"];
-    $docentes = ($datos["tipoDocente"] == TiposEntidad::Profesor ? Profesor::listar() : Postulante::listar());
-
-    return $docentes->where(function ($q) use ($sexoDocentePago) {
-              $q->whereNull("entidad.sexo")->orWhereIn("entidad.sexo", ($sexoDocentePago != "" ? [$sexoDocentePago] : array_keys(SexosEntidad::listar())));
-            })->where(function ($q) use ($idCursoDocentePago) {
-              $q->whereNull("entidadCurso.idCurso")->orWhereIn("entidadCurso.idCurso", ($idCursoDocentePago != "" ? [$idCursoDocentePago] : array_keys(Curso::listarSimple()->toArray())));
-            })->where("entidad.tipo", $datos["tipoDocente"])->whereIn("entidad.id", $idsDisponiblesSel);
+    return Docente::listarXFiltrosBusqueda($datos)->whereIn("entidad.id", $idsDisponiblesSel);
   }
 
   public static function listarDisponiblesXDatosClase($datos) {
@@ -42,19 +34,10 @@ class Docente extends Model {
     $fechaFin = clone $fechaInicio;
     $fechaFin->addSeconds($datos["duracion"]);
 
-    $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicio, $fechaFin, TRUE);
+    $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicio->subHour(), $fechaFin->addHour(), TRUE);
     $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($fechaInicio->dayOfWeek, $fechaInicio->format("H:i:s"), $fechaFin->format("H:i:s"), $datos["tipoDocente"]);
     $idsDisponiblesSel = array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray());
-
-    $sexoDocenteClase = $datos["sexoDocente"];
-    $idCursoDocenteClase = $datos["idCursoDocente"];
-    $docentes = ($datos["tipoDocente"] == TiposEntidad::Profesor ? Profesor::listar() : Postulante::listar());
-
-    return $docentes->where(function ($q) use ($sexoDocenteClase) {
-              $q->whereNull("entidad.sexo")->orWhereIn("entidad.sexo", ($sexoDocenteClase != "" ? [$sexoDocenteClase] : array_keys(SexosEntidad::listar())));
-            })->where(function ($q) use ($idCursoDocenteClase) {
-              $q->whereNull("entidadCurso.idCurso")->orWhereIn("entidadCurso.idCurso", ($idCursoDocenteClase != "" ? [$idCursoDocenteClase] : array_keys(Curso::listarSimple()->toArray())));
-            })->where("entidad.tipo", $datos["tipoDocente"])->whereIn("entidad.id", $idsDisponiblesSel);
+    return Docente::listarXFiltrosBusqueda($datos)->whereIn("entidad.id", $idsDisponiblesSel);
   }
 
   public static function listarDisponiblesXFecha($datos) {
@@ -64,23 +47,8 @@ class Docente extends Model {
       return Profesor::whereNull("idEntidad");
     }
 
-    $idsNoDisponibles = Clase::where(function ($q) use ($fechaInicio, $fechaFin) {
-              $q->where(function ($q) use ($fechaInicio, $fechaFin) {
-                $q->where("fechaInicio", ">=", $fechaInicio)->where("fechaInicio", "<=", $fechaFin);
-              })->orWhere(function ($q) use ($fechaInicio, $fechaFin) {
-                $q->where("fechaFin", ">=", $fechaInicio)->where("fechaFin", "<=", $fechaFin);
-              });
-            })->groupBy("idProfesor")
-            ->lists("idProfesor");
-    $sexoDocenteClase = $datos["sexoDocente"];
-    $idCursoDocenteClase = $datos["idCursoDocente"];
-    $docentes = ($datos["tipoDocente"] == TiposEntidad::Profesor ? Profesor::listar() : Postulante::listar());
-
-    return $docentes->where(function ($q) use ($sexoDocenteClase) {
-              $q->whereNull("entidad.sexo")->orWhereIn("entidad.sexo", ($sexoDocenteClase != "" ? [$sexoDocenteClase] : array_keys(SexosEntidad::listar())));
-            })->where(function ($q) use ($idCursoDocenteClase) {
-              $q->whereNull("entidadCurso.idCurso")->orWhereIn("entidadCurso.idCurso", ($idCursoDocenteClase != "" ? [$idCursoDocenteClase] : array_keys(Curso::listarSimple()->toArray())));
-            })->where("entidad.tipo", $datos["tipoDocente"])->whereNotIn("entidad.id", $idsNoDisponibles);
+    $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicio->subHour(), $fechaFin->addHour(), TRUE);
+    return Docente::listarXFiltrosBusqueda($datos)->whereNotIn("entidad.id", $idsNoDisponibles);
   }
 
   public static function verificarExistencia($idEntidad) {
@@ -90,6 +58,18 @@ class Docente extends Model {
     $numProfesores = Entidad::where("id", $idEntidad)->where("tipo", TiposEntidad::Profesor)->count();
     $numPostulantes = Entidad::where("id", $idEntidad)->where("tipo", TiposEntidad::Postulante)->count();
     return ($numProfesores > 0 || $numPostulantes > 0);
+  }
+
+  private static function listarXFiltrosBusqueda($datos) {
+    $sexoDocentePago = $datos["sexoDocente"];
+    $idCursoDocentePago = $datos["idCursoDocente"];
+    $docentes = ($datos["tipoDocente"] == TiposEntidad::Profesor ? Profesor::listar() : Postulante::listar());
+
+    return $docentes->where(function ($q) use ($sexoDocentePago) {
+              $q->whereNull("entidad.sexo")->orWhereIn("entidad.sexo", ($sexoDocentePago != "" ? [$sexoDocentePago] : array_keys(SexosEntidad::listar())));
+            })->where(function ($q) use ($idCursoDocentePago) {
+              $q->whereNull("entidadCurso.idCurso")->orWhereIn("entidadCurso.idCurso", ($idCursoDocentePago != "" ? [$idCursoDocentePago] : array_keys(Curso::listarSimple()->toArray())));
+            })->where("entidad.tipo", $datos["tipoDocente"]);
   }
 
 }

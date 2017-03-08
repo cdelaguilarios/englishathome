@@ -21,4 +21,25 @@ class EstadosUsuario {
     ];
   }
 
+  public static function listarBusqueda() {
+    $estados = EstadosUsuario::listar();
+    $estadosBusqueda = [];
+    foreach ($estados as $k => $v) {
+      $estadosBusqueda[$k] = $v[0];
+    }
+    return $estadosBusqueda;
+  }
+
+  public static function listarCambio() {
+    $estadosBusqueda = EstadosUsuario::listarBusqueda();
+    $estadosDisponibleCambio = [EstadosUsuario::Activo, EstadosUsuario::Inactivo];
+    $estadosCambio = [];
+    foreach ($estadosBusqueda as $k => $v) {
+      if (in_array($k, $estadosDisponibleCambio)) {
+        $estadosCambio[$k] = $v;
+      }
+    }
+    return $estadosCambio;
+  }
+
 }
