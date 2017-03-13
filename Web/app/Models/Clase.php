@@ -19,7 +19,7 @@ class Clase extends Model {
 
   public $timestamps = false;
   protected $table = "clase";
-  protected $fillable = ["idAlumno", "idProfesor", "numeroPeriodo", "duracion", "costoHora", "costoHoraProfesor", "fechaInicio", "fechaFin", "fechaCancelacion", "estado"];
+  protected $fillable = ["idAlumno", "idProfesor", "numeroPeriodo", "duracion", "costoHora", "costoHoraProfesor", "pagoTotalProfesor", "fechaInicio", "fechaFin", "fechaCancelacion", "estado"];
 
   public static function nombreTabla() {
     $modeloClase = new Clase();
@@ -42,19 +42,38 @@ class Clase extends Model {
                     ->distinct();
   }
 
-  public static function obtenerXId($idAlumno, $id) {
+  public static function obtenerXId($idAlumno, $id, $incluirFechaProximaClase = FALSE) {
     $nombreTabla = Clase::nombreTabla();
-    return Clase::listarBase()
-                    ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.id) AS idPago"))
-                    ->leftJoin(PagoAlumno::nombreTabla() . " as pagoAlumno", "pagoClase.idPago", "=", "pagoAlumno.idPago")
-                    ->leftJoin(Pago::nombreTabla() . " as pago", "pagoAlumno.idPago", "=", "pago.id")
-                    ->where($nombreTabla . ".idAlumno", $idAlumno)
-                    ->where($nombreTabla . ".id", $id)
-                    ->where(function ($q) use ($idAlumno) {
-                      $q->whereNull("pagoAlumno.idAlumno")->orWhere("pagoAlumno.idAlumno", $idAlumno);
-                    })
-                    ->orderBy($nombreTabla . ".fechaInicio", "ASC")
-                    ->firstOrFail();
+    $clase = Clase::listarBase()
+            ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.id) AS idPago"))
+            ->leftJoin(PagoAlumno::nombreTabla() . " as pagoAlumno", "pagoClase.idPago", "=", "pagoAlumno.idPago")
+            ->leftJoin(Pago::nombreTabla() . " as pago", "pagoAlumno.idPago", "=", "pago.id")
+            ->where($nombreTabla . ".idAlumno", $idAlumno)
+            ->where($nombreTabla . ".id", $id)
+            ->where(function ($q) use ($idAlumno) {
+              $q->whereNull("pagoAlumno.idAlumno")->orWhere("pagoAlumno.idAlumno", $idAlumno);
+            })
+            ->orderBy($nombreTabla . ".fechaInicio", "ASC")
+            ->firstOrFail();
+    if ($incluirFechaProximaClase) {
+      $ultimaClase = Clase::obtenerUltimaClase($idAlumno);
+      if (isset($ultimaClase)) {
+        $fechaProximaClase = new Carbon($ultimaClase->fechaInicio);
+        $horarioAlumno = Horario::obtener($idAlumno);
+        $flg = TRUE;
+
+        while ($flg) {
+          $fechaProximaClase->addDay();
+          foreach ($horarioAlumno as $datHorarioAlumno) {
+            if ($fechaProximaClase->dayOfWeek == $datHorarioAlumno->numeroDiaSemana) {
+              $flg = FALSE;
+            }
+          }
+        }
+        $clase->fechaProximaClase = (string) $fechaProximaClase;
+      }
+    }
+    return $clase;
   }
 
   public static function obtenerUltimaClase($idAlumno) {
@@ -95,7 +114,6 @@ class Clase extends Model {
                     ->where($nombreTabla . ".numeroPeriodo", $numeroPeriodo)
                     ->where($nombreTabla . ".idAlumno", $idAlumno)
                     ->orderBy($nombreTabla . ".fechaInicio", "ASC")->get();
-
     foreach ($clases as $clase) {
       $pagoProfesor = PagoProfesor::ObtenerXClase($clase["id"]);
       $pagoAlumno = PagoAlumno::ObtenerXClase($idAlumno, $clase["id"]);
@@ -143,6 +161,8 @@ class Clase extends Model {
         $q->where("fechaInicio", "<=", $fechaInicio)->where("fechaFin", ">=", $fechaInicio);
       })->orWhere(function ($q) use ($fechaFin) {
         $q->where("fechaInicio", "<=", $fechaFin)->where("fechaFin", ">=", $fechaFin);
+      })->orWhere(function ($q) use ($fechaInicio, $fechaFin) {
+        $q->where("fechaInicio", ">=", $fechaInicio)->where("fechaFin", "<=", $fechaFin);
       });
     });
     return ($idsProfesores ? $clases->groupBy("idProfesor")->lists("idProfesor") : $clases->groupBy("idAlumno")->lists("idAlumno"));
@@ -227,10 +247,10 @@ class Clase extends Model {
     $datos["costoHoraProfesor"] = $datos["costoHoraDocente"];
 
     $notificar = ($datos["notificar"] == 1);
-    $claseAnt = ((isset($datos["idClase"])) ? Clase::obtenerXId($idAlumno, $datos["idClase"]) : NULL);
-    if (!is_null($claseAnt)) {
-      $notificar = ($notificar && is_null($claseAnt->idNotificar));
-      $claseAnt->update($datos);
+    $clase = ((isset($datos["idClase"])) ? Clase::obtenerXId($idAlumno, $datos["idClase"]) : NULL);
+    if (!is_null($clase)) {
+      $notificar = ($notificar && is_null($clase->idNotificar));
+      $clase->update($datos);
     } else {
       $clase = new Clase($datos);
       $clase->save();
@@ -269,11 +289,10 @@ class Clase extends Model {
       $claseCancelada->tipoCancelacion = $datos["tipoCancelacion"];
       $claseCancelada->fechaCancelacion = Carbon::now()->toDateTimeString();
       $claseCancelada->estado = EstadosClase::Cancelada;
-      $claseCancelada->save();
-
-      if ($datos["tipoCancelacion"] == TiposCancelacionClase::CancelacionAlumno && isset($datos["idProfesor"]) && isset($datos["pagoProfesor"])) {
-        PagoProfesor::registrarXDatosClaseCancelada($datos["idProfesor"], $datos["idClase"], $datos["pagoProfesor"]);
+      if (isset($datos["idProfesor"]) && isset($datos["pagoProfesor"])) {
+        $claseCancelada->pagoTotalProfesor = $datos["pagoProfesor"];
       }
+      $claseCancelada->save();
 
       if ($datos["reprogramarCancelacion"] == 1) {
         unset($datos["idClase"]);

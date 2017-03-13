@@ -10,7 +10,7 @@
         <div class="form-group">          
           {{ Form::label("bus-estado-clase", "Estado de la clase: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-3">
-            {{ Form::select("estadoClase", App\Helpers\Enum\EstadosClase::listarSimple(), NULL, ["id"=>"bus-estado-clase", "class" => "form-control", "placeholder" => "Todos"]) }}
+            {{ Form::select("estadoClase", App\Helpers\Enum\EstadosClase::listarBusqueda(), NULL, ["id"=>"bus-estado-clase", "class" => "form-control", "placeholder" => "Todos"]) }}
           </div>
         </div>
         @endif 

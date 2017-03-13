@@ -76,25 +76,6 @@ class PagoProfesor extends Model {
     ]);
   }
 
-  public static function registrarXDatosClaseCancelada($idProfesor, $idClaseCancelada, $monto) {
-    $datos = ["motivo" => MotivosPago::ClaseCancelada, "monto" => $monto];
-    $datosPago = Pago::registrar($datos, EstadosPago::Pendiente);
-    $pagoProfesor = new PagoProfesor([
-        "idPago" => $datosPago["id"],
-        "idProfesor" => $idProfesor
-    ]);
-    $pagoProfesor->save();
-    PagoClase::registrar($datosPago["id"], $idClaseCancelada);
-    $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$datos["motivo"], "", number_format((float) ($datos["monto"]), 2, ".", "")], MensajesHistorial::MensajeProfesorRegistroPago);
-    Historial::registrar([
-        "idEntidades" => [$idProfesor, Auth::user()->idEntidad],
-        "titulo" => MensajesHistorial::TituloProfesorRegistroPago,
-        "mensaje" => $mensajeHistorial,
-        "idPago" => $datosPago["id"],
-        "tipo" => TiposHistorial::Pago
-    ]);
-  }
-
   public static function actualizarEstado($idProfesor, $datos) {
     PagoProfesor::obtenerXId($idProfesor, $datos["idPago"]);
     Pago::actualizarEstado($datos["idPago"], $datos["estado"]);

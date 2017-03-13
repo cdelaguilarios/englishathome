@@ -35,5 +35,6 @@
   var urlActualizarEstadoPago = "{{ route('profesores.pagos.actualizar.estado', ['id' => $idProfesor]) }}";
   var urlDatosPago = "{{ route('profesores.pagos.datos', ['id' => $idProfesor, 'idPago' => 0]) }}";
   var urlEliminarPago = "{{ route('profesores.pagos.eliminar', ['id' => $idProfesor, 'idPago' => 0]) }}";
+  var motivosPago = {!!  json_encode(App\Helpers\Enum\MotivosPago::listar()) !!};
 </script>
 <script src="{{ asset("assets/eah/js/modulos/profesor/pago.js")}}"></script>

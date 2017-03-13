@@ -40,7 +40,7 @@ function cargarListaClase() {
       order: [[0, "desc"]],
       columns: [
         {data: "id", name: "id", orderable: false, searchable: false, render: function (e, t, d, m) {
-            return d.estadoPago !== null ? '' : '<input type="checkbox" data-id="' + d.id + '" data-idalumno="' + d.idAlumno + '" data-duracion="' + d.duracion + '" data-pagoxhora="' + d.costoHoraProfesor + '"/>';
+            return d.estadoPago !== null ? '' : '<input type="checkbox" data-id="' + d.id + '" data-idalumno="' + d.idAlumno + '" data-duracion="' + d.duracion + '" data-pagoxhora="' + d.costoHoraProfesor + '" ' + (d.pagoTotalProfesor !== null ? 'data-pagototal="' + d.pagoTotalProfesor + '"' : '') + '/>';
           }},
         {data: "idAlumno", name: "idAlumno", render: function (e, t, d, m) {
             return '<a target="_blank" href="' + urlPerfilAlumno.replace("/0", "/" + d.idAlumno) + '">' + d.nombreAlumno + ' ' + d.apellidoAlumno + '</a>';
@@ -52,7 +52,7 @@ function cargarListaClase() {
             return formatoHora(d.duracion);
           }},
         {data: "costoHoraProfesor", name: "costoHoraProfesor", render: function (e, t, d, m) {
-            return "S/. " + redondear(d.costoHoraProfesor, 2);
+            return "S/. " + redondear(d.costoHoraProfesor, 2) + (d.pagoTotalProfesor !== null ? ("<br/>(Pago total de S/. " + redondear(d.pagoTotalProfesor, 2) + ")") : "");
           }},
         {data: "estado", name: "estado", render: function (e, t, d, m) {
             return '<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">Clase - ' + estadosClase[d.estado][0] + '</span>' + (d.estadoPago !== null ? '<br/><span class="label ' + estadosPago[d.estadoPago][1] + ' btn-estado">Pago ' + estadosPago[d.estadoPago][0] + '</span>' : '');
@@ -124,7 +124,11 @@ function cargarFormularioPagoClase() {
     limpiarCamposPagoClase();
     var totalPago = 0;
     $.each($("#tab-lista-clases").find("input[type='checkbox']:checked"), function (e, v) {
-      totalPago += ($(v).data("duracion") !== 0 ? ($(v).data("duracion") / 3600) : 0) * parseFloat($(v).data("pagoxhora"));
+      if ($(v).data("pagototal") !== undefined && $(v).data("pagototal") !== null) {
+        totalPago += parseFloat($(v).data("pagototal"));
+      } else {
+        totalPago += ($(v).data("duracion") !== 0 ? ($(v).data("duracion") / 3600) : 0) * parseFloat($(v).data("pagoxhora"));
+      }
     });
     $("#monto-clase-pago").val(parseFloat(redondear(totalPago, 2)));
     mostrarSeccionClase([2]);

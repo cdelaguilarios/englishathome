@@ -44,7 +44,8 @@
   var urlListarDocentesDisponiblesPago = "{{ route('alumnos.pagos.docentesDisponibles.listar', ['id' => $idAlumno]) }}";
   var saldoFavorTotal = {{ ($totalSaldoFavor != "" ? $totalSaldoFavor : 0) }};
   var urlDatosPago = "{{ route('alumnos.pagos.datos', ['id' => $idAlumno, 'idPago' => 0]) }}";
-  var urlEliminarPago = "{{ route('alumnos.pagos.eliminar', ['id' => $idAlumno, 'idPago' => 0]) }}";   
+  var urlEliminarPago = "{{ route('alumnos.pagos.eliminar', ['id' => $idAlumno, 'idPago' => 0]) }}";
+  var motivosPago = {!!  json_encode(App\Helpers\Enum\MotivosPago::listar()) !!};
   var cuentasBanco = {!! json_encode(App\Helpers\Enum\CuentasBancoPago::listar()) !!};
 </script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/pago.js")}}"></script>

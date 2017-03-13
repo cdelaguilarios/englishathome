@@ -63,9 +63,9 @@ class ListarDocentesDisponiblesRequest extends Request {
 
   public function messages() {
     return [
-        "tipoDocenteNoValido.required" => "El tipo seleccionado para filtrar la lista de profesores o postulantes no es válido",
-        "sexoDocenteNoValido.required" => "El sexo seleccionado para filtrar la lista de profesores o postulantes no es válido",
-        "idCursoDocenteNoValido.required" => "El curso seleccionado para filtrar la lista de profesores o postulantes no es válido"
+        "tipoDocenteNoValido.required" => "El tipo seleccionado para filtrar la lista de profesores o postulantes no es válido.",
+        "sexoDocenteNoValido.required" => "El sexo seleccionado para filtrar la lista de profesores o postulantes no es válido.",
+        "idCursoDocenteNoValido.required" => "El curso seleccionado para filtrar la lista de profesores o postulantes no es válido."
     ];
   }
 

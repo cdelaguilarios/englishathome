@@ -69,9 +69,9 @@ class FormularioActualizarRequest extends Request {
 
   public function messages() {
     return [
-        "motivoNoValido.required" => "El motivo seleccionado del pago no es válido",
-        "cuentaNoValida.required" => "La cuenta de banco seleccionada del pago no es válida",
-        "estadoNoValido.required" => "El estado seleccionado del pago no es válido"        
+        "motivoNoValido.required" => "El motivo seleccionado del pago no es válido.",
+        "cuentaNoValida.required" => "La cuenta de banco seleccionada del pago no es válida.",
+        "estadoNoValido.required" => "El estado seleccionado del pago no es válido."        
     ];
   }
 

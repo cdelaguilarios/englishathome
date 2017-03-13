@@ -8,15 +8,10 @@ use App\Models\Curso;
 use App\Models\Usuario;
 use App\Models\NivelIngles;
 use App\Models\TipoDocumento;
-use App\Helpers\Enum\EstadosPago;
-use App\Helpers\Enum\EstadosClase;
 use App\Helpers\Enum\RolesUsuario;
-use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\SexosEntidad;
 use Illuminate\Contracts\View\View;
-use App\Helpers\Enum\EstadosProfesor;
 use Illuminate\Support\Facades\Cache;
-use App\Helpers\Enum\TiposCancelacionClase;
 
 class ProfileComposer {
 
@@ -58,14 +53,7 @@ class ProfileComposer {
           "maxHorasClase" => Config::get("eah.maxHorasClase"),
           "minHorario" => Config::get("eah.minHorario"),
           "maxHorario" => Config::get("eah.maxHorario"),
-          "estadosClase" => EstadosClase::listar(),
-          "estadoClaseRealizada" => EstadosClase::Realizada,
-          "estadoClaseCancelada" => EstadosClase::Cancelada,
-          "tipoCancelacionClaseAlumno" => TiposCancelacionClase::CancelacionAlumno,
           "rolesUsuarios" => RolesUsuario::listar(),
-          "estadosProfesor" => EstadosProfesor::listar(),
-          "tiposDocente" => TiposEntidad::listarTiposDocente(),
-          "estadoPagoRealizado" => EstadosPago::Realizado,
       ];
       Cache::put("datosExtrasVistas", $datosExtrasVistas, 120);
     }

@@ -15,9 +15,6 @@
           </thead>
         </table>
       </div>
-      <div style="display: none">
-        {{ Form::select("", App\Helpers\Enum\EstadosClase::listarSimple(), NULL, ["id" => "sel-estados-clase", "class" => "form-control"]) }}
-      </div>
     </div> 
     <div id="sec-clase-2" style="display: none;">
       {{ Form::open(["url" => route("alumnos.clases.registrar.actualizar", ["id" => $idAlumno]), "id" => "formulario-registrar-actualizar-clase", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
@@ -32,6 +29,9 @@
   </div>
   @include("alumno.util.docentesDisponibles", ["seccion" => "clase", "idCurso" => $idCurso])
 </div>
+<div style="display: none">
+  {{ Form::select("", App\Helpers\Enum\EstadosClase::listarCambio(), NULL, ["id" => "sel-estados-clase", "class" => "form-control"]) }}
+</div>
 <script>
   var urlListarPeriodos = "{{ route('alumnos.periodos.clases.listar', ['id' => $idAlumno]) }}";
   var urlListarClases = "{{ route('alumnos.periodo.clases.listar', ['id' => $idAlumno, 'numeroPeriodo' => 0]) }}";
@@ -39,5 +39,10 @@
   var urlListarDocentesDisponiblesClase = "{{ route('alumnos.clases.docentesDisponibles.listar', ['id' => $idAlumno]) }}";
   var urlDatosClase = "{{ route('alumnos.clases.datos', ['id' => $idAlumno, 'idClase' => 0]) }}";
   var urlEliminarClase = "{{ route('alumnos.clases.eliminar', ['id' => $idAlumno, 'idClase' => 0]) }}";
+  var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
+  var estadosClaseCambio = {!! json_encode(App\Helpers\Enum\EstadosClase::listarCambio()) !!};
+  var estadoClaseRealizada = "{{ App\Helpers\Enum\EstadosClase::Realizada }}";
+  var estadoClaseCancelada = "{{ App\Helpers\Enum\EstadosClase::Cancelada }}";
+  var tipoCancelacionClaseAlumno = "{{ App\Helpers\Enum\TiposCancelacionClase::CancelacionAlumno }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/clase.js")}}"></script>

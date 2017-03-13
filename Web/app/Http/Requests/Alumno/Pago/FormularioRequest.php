@@ -96,11 +96,11 @@ class FormularioRequest extends Request {
 
   public function messages() {
     return [
-        "motivoNoValido.required" => "El motivo seleccionado del pago no es válido",
-        "cuentaNoValida.required" => "La cuenta de banco seleccionada del pago no es válida",
-        "estadoNoValido.required" => "El estado seleccionado del pago no es válido",
-        "docenteNoValido.required" => "El docente seleccionado no es válido",
-        "datosNotificacionClasesNoValido.required" => "Los datos de notificación de la clases seleccionadas no son válidas"
+        "motivoNoValido.required" => "El motivo seleccionado del pago no es válido.",
+        "cuentaNoValida.required" => "La cuenta de banco seleccionada del pago no es válida.",
+        "estadoNoValido.required" => "El estado seleccionado del pago no es válido.",
+        "docenteNoValido.required" => "El docente seleccionado no es válido.",
+        "datosNotificacionClasesNoValido.required" => "Los datos de notificación de la clases seleccionadas no son válidas."
     ];
   }
 

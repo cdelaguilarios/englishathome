@@ -204,22 +204,16 @@
     <script type="text/javascript">
 var urlBase = "{{ url('/') }}";
 var urlBaseImagen = "{{ route('archivos', ['nombre' => '[RUTA_IMAGEN]']) }}";
+var urlImagenes = "{{ route('archivos', ['nombre' => '0']) }}";
 var urlRegistrarArchivo = "{{ route('archivos.reqistrar') }}";
 var urlEliminarArchivo = "{{ route('archivos.eliminar') }}";
 var minHorasClase = "{{ $minHorasClase }}";
 var maxHorasClase = "{{ $maxHorasClase }}";
 var minHorario = "{{ $minHorario }}";
 var maxHorario = "{{ $maxHorario}}";
-var urlImagenes = "{{ route('archivos', ['nombre' => '0']) }}";
-var estadosClase = {!!  json_encode($estadosClase) !!};
-var estadoClaseRealizada = "{{ $estadoClaseRealizada }}";
-var estadoClaseCancelada = "{{ $estadoClaseCancelada }}";
-var tipoCancelacionClaseAlumno = "{{ $tipoCancelacionClaseAlumno }}";
-var motivosPago = {!!  json_encode(App\Helpers\Enum\MotivosPago::listar()) !!};
 var urlPerfilProfesor = "{{ route('profesores.perfil', ['id' => 0]) }}";
 var urlPerfilAlumno = "{{ route('alumnos.perfil', ['id' => 0]) }}";
 var estadosPago = {!!  json_encode(App\Helpers\Enum\EstadosPago::listar()) !!};
-var estadoPagoRealizado = "{{  $estadoPagoRealizado }}";
     </script>
     <script src="{{ asset("assets/eah/js/util.js") }}"></script>
     <script src="{{ asset("assets/eah/js/mensajes.js") }}"></script>   

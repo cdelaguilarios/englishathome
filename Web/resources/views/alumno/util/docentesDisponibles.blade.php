@@ -17,7 +17,7 @@
           <div class="row">
             {{ Form::label("tipo-docente-disponible-" . $seccion, "Tipo: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-4">
-              {{ Form::select("tipoDocenteDisponible" . $seccion, $tiposDocente, NULL, ["id" => "tipo-docente-disponible-" . $seccion, "class" => "form-control"]) }}
+              {{ Form::select("tipoDocenteDisponible" . $seccion, App\Helpers\Enum\TiposEntidad::listarTiposDocente(), NULL, ["id" => "tipo-docente-disponible-" . $seccion, "class" => "form-control"]) }}
             </div> 
           </div>
           <div class="row">

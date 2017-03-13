@@ -28,6 +28,7 @@
   </div>
   <script>
     var urlListarClases = "{{ route('profesores.clases.listar', ['id' => $idProfesor]) }}";
+    var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
   </script>
   <script src="{{ asset("assets/eah/js/modulos/profesor/clase.js")}}"></script>
 </div>

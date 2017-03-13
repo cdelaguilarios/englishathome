@@ -15,8 +15,10 @@ class Docente extends Model {
 
     foreach ($clasesGeneradas as $claseGenerada) {
       if (isset($claseGenerada["fechaInicio"]) && isset($claseGenerada["fechaFin"])) {
+        $auxFechaInicio = clone $claseGenerada["fechaInicio"];
+        $auxFechaFin = clone $claseGenerada["fechaFin"];
         $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($claseGenerada["fechaInicio"]->subHour(), $claseGenerada["fechaFin"]->addHour(), TRUE);
-        $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($claseGenerada["fechaInicio"]->dayOfWeek, $claseGenerada["fechaInicio"]->format("H:i:s"), $claseGenerada["fechaFin"]->format("H:i:s"), $tipoDocente);
+        $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($auxFechaInicio->dayOfWeek, $auxFechaInicio->format("H:i:s"), $auxFechaFin->format("H:i:s"), $tipoDocente);
         $idsDisponiblesSel = ($auxCont == 1 ? array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray()) : array_intersect($idsDisponiblesSel, array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray())));
         $auxCont++;
       }
@@ -34,8 +36,10 @@ class Docente extends Model {
     $fechaFin = clone $fechaInicio;
     $fechaFin->addSeconds($datos["duracion"]);
 
+    $auxFechaInicio = clone $fechaInicio;
+    $auxFechaFin = clone $fechaFin;
     $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicio->subHour(), $fechaFin->addHour(), TRUE);
-    $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($fechaInicio->dayOfWeek, $fechaInicio->format("H:i:s"), $fechaFin->format("H:i:s"), $datos["tipoDocente"]);
+    $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($auxFechaInicio->dayOfWeek, $auxFechaInicio->format("H:i:s"), $auxFechaFin->format("H:i:s"), $datos["tipoDocente"]);
     $idsDisponiblesSel = array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray());
     return Docente::listarXFiltrosBusqueda($datos)->whereIn("entidad.id", $idsDisponiblesSel);
   }

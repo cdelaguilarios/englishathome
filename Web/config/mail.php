@@ -94,7 +94,7 @@ return [
     |
     */
 
-    'password' => env('MAIL_PASSWORD', 'inglesperu.2017'),
+    'password' => env('MAIL_PASSWORD', 'camviodeclabe1'),
 
     /*
     |--------------------------------------------------------------------------

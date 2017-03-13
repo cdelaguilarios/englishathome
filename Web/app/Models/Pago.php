@@ -45,8 +45,8 @@ class Pago extends Model {
     $pago = new Pago($datos);
     $pago->estado = $estado;
     $pago->save();
-    Pago::registrarActualizarImagenes($id, $request);
-    return $pago;
+    Pago::registrarActualizarImagenes($pago["id"], $request);
+    return Pago::obtenerXId($pago["id"]);
   }
 
   public static function actualizar($id, $datos, $request) {

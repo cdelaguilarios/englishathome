@@ -9,15 +9,6 @@ class EstadosClase {
   const PendienteConfirmar = "PENDIENTE_CONFIRMAR";
   const Realizada = "REALIZADA";
 
-  public static function listarSimple() {
-    return [
-        EstadosClase::Programada => "Programada",
-        EstadosClase::Cancelada => "Cancelada",
-        EstadosClase::PendienteConfirmar => "Pendiente de confirmación",
-        EstadosClase::Realizada => "Realizada"
-    ];
-  }
-
   public static function listar() {
     return [
         EstadosClase::Programada => ["Programada", "label-primary", "#3c8dbc"],
@@ -25,6 +16,27 @@ class EstadosClase {
         EstadosClase::PendienteConfirmar => ["Pendiente de confirmación", "label-warning", "#f39c12"],
         EstadosClase::Realizada => ["Realizada", "label-success", "#00a65a"]
     ];
+  }
+
+  public static function listarBusqueda() {
+    $estados = EstadosClase::listar();
+    $estadosBusqueda = [];
+    foreach ($estados as $k => $v) {
+      $estadosBusqueda[$k] = $v[0];
+    }
+    return $estadosBusqueda;
+  }
+
+  public static function listarCambio() {
+    $estadosBusqueda = EstadosClase::listarBusqueda();
+    $estadosDisponibleCambio = [EstadosClase::Programada, EstadosClase::PendienteConfirmar, EstadosClase::Realizada];
+    $estadosCambio = [];
+    foreach ($estadosBusqueda as $k => $v) {
+      if (in_array($k, $estadosDisponibleCambio)) {
+        $estadosCambio[$k] = $v;
+      }
+    }
+    return $estadosCambio;
   }
 
 }

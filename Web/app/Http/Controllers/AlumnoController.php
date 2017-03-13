@@ -242,7 +242,7 @@ class AlumnoController extends Controller {
     try {
       $datos = $req->all();
       Clase::registrarActualizar($id, $datos);
-      Mensajes::agregarMensajeExitoso(isset($datos["idClase"]) ? "Registro exitoso." : "Actualización exitosa.");
+      Mensajes::agregarMensajeExitoso(isset($datos["idClase"]) ? "Actualización exitosa." : "Registro exitoso.");
     } catch (\Exception $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro/actualización de datos. Por favor inténtelo nuevamente.");
@@ -263,7 +263,7 @@ class AlumnoController extends Controller {
   }
 
   public function datosClase($id, $idClase) {
-    return response()->json(Clase::obtenerXId($id, $idClase), 200);
+    return response()->json(Clase::obtenerXId($id, $idClase, TRUE), 200);
   }
 
   public function eliminarClase($id, $idClase) {

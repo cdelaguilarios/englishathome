@@ -37,7 +37,7 @@ class CancelarRequest extends Request {
     $reglasValidacion = [
         "idClase" => "required",
         "idAlumno" => "required",
-        "pagoProfesor" => ["regex:" . ReglasValidacion::RegexDecimal]
+        "pagoProfesor" => ["regex:" . ReglasValidacion::RegexDecimalNegativo]
     ];
 
     $listaTiposCancelacion = TiposCancelacionClase::listar();

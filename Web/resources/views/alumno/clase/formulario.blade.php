@@ -9,7 +9,7 @@
     </div>
     {{ Form::label("estado-clase", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
-      {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarSimple(), NULL, ["id" => "estado-clase", "class" => "form-control"]) }}
+      {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarCambio(), NULL, ["id" => "estado-clase", "class" => "form-control"]) }}
     </div>
     <div class="col-sm-2">
       <div class="checkbox">

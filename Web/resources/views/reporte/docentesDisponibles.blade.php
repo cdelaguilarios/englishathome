@@ -25,7 +25,7 @@
         <div class="form-group">          
           {{ Form::label("bus-tipo-docente", "Tipo: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-3">
-            {{ Form::select("tipoDocente", $tiposDocente, NULL, ["id" => "bus-tipo-docente", "class" => "form-control"]) }}
+            {{ Form::select("tipoDocente", App\Helpers\Enum\TiposEntidad::listarTiposDocente(), NULL, ["id" => "bus-tipo-docente", "class" => "form-control"]) }}
           </div>
           {{ Form::label("bus-sexo-docente", "Sexo: ", ["class" => "col-sm-1 control-label"]) }}
           <div class="col-sm-3">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use Auth;
 use Mensajes;
 use Carbon\Carbon;
@@ -27,7 +28,7 @@ class HistorialController extends Controller {
   public function registrar($idEntidad, FormularioRequest $req) {
     try {
       $datos = $req->all();
-      $datos["fechaNotificacion"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNotificacion"] . " 00:00:00");
+      $datos["fechaNotificacion"] = (isset($datos["fechaNotificacion"]) ? Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNotificacion"] . " 00:00:00") : NULL);
       $datos["idEntidades"] = [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)];
       Historial::registrar($datos);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");

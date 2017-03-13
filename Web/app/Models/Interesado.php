@@ -160,7 +160,7 @@ class Interesado extends Model {
       $idAlumno = $idEntidad;
 
       Historial::registrar([
-          "idEntidades" => [$id, Auth::user()->idEntidad],
+          "idEntidades" => [$idAlumno, Auth::user()->idEntidad],
           "titulo" => MensajesHistorial::TituloAlumnoRegistroXUsuario,
           "mensaje" => ""
       ]);
