@@ -11,9 +11,9 @@ use App\Helpers\Enum\RolesUsuario;
 use App\Helpers\Enum\EstadosUsuario;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Usuario\BusquedaRequest;
+use App\Http\Requests\Usuario\FormularioRequest;
 use App\Http\Requests\Usuario\ActualizarEstadoRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Http\Requests\Usuario\FormularioRequest;
 
 class UsuarioController extends Controller {
 
@@ -21,8 +21,6 @@ class UsuarioController extends Controller {
 
   public function __construct() {
     $this->data["seccion"] = "usuarios";
-    $this->data["roles"] = RolesUsuario::listar();
-    $this->data["estados"] = EstadosUsuario::listar(TRUE);
   }
 
   public function index() {
@@ -76,17 +74,17 @@ class UsuarioController extends Controller {
         return redirect()->guest(route("/"));
       }
 
-      $edicionAutorizada = true;
+      $actualizacionAutorizada = true;
       $datos = $req->all();
       if ($datos["rol"] != RolesUsuario::Principal && Usuario::usuarioUnicoPrincipal($id)) {
         Mensajes::agregarMensajeAdvertencia("El usuario que usted desea modificar es el único 'Usuario principal' y no puede ser modificado a otro tipo diferente.");
-        $edicionAutorizada = false;
+        $actualizacionAutorizada = false;
       }
       if ($datos["estado"] == EstadosUsuario::Inactivo && Usuario::usuarioUnicoPrincipal($id)) {
         Mensajes::agregarMensajeAdvertencia("El usuario que usted desea modificar es el único 'Usuario principal' y su cuenta no se puede desactivar.");
-        $edicionAutorizada = false;
+        $actualizacionAutorizada = false;
       }
-      if ($edicionAutorizada) {
+      if ($actualizacionAutorizada) {
         Usuario::actualizar($id, $req);
         Mensajes::agregarMensajeExitoso("Actualización exitosa.");
       }
@@ -100,6 +98,9 @@ class UsuarioController extends Controller {
   public function actualizarEstado($id, ActualizarEstadoRequest $request) {
     try {
       $datos = $request->all();
+      if ($datos["estado"] == EstadosUsuario::Inactivo && Usuario::usuarioUnicoPrincipal($id)) {
+        return response()->json(["mensaje" => "El usuario que usted desea modificar es el único 'Usuario principal' y su cuenta no se puede desactivar."], 401);
+      }
       Usuario::actualizarEstado($id, $datos["estado"]);
     } catch (\Exception $e) {
       Log::error($e);
@@ -111,7 +112,7 @@ class UsuarioController extends Controller {
   public function eliminar($id) {
     try {
       if (Usuario::usuarioUnicoPrincipal($id)) {
-        return response()->json(["mensaje" => "El usuario que usted desea eliminar es el único 'Usuario principal' y sus datos no pueden ser borrados."], 400);
+        return response()->json(["mensaje" => "El usuario que usted desea eliminar es el único 'Usuario principal' y sus datos no pueden ser borrados."], 401);
       }
       Usuario::eliminar($id);
     } catch (\Exception $e) {

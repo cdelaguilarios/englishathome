@@ -82,6 +82,9 @@ function cargarListaPeriodos() {
 
         //Opciones
         $("td", r).eq(1).addClass("text-center");
+      },
+      initComplete: function (s, j) {
+        establecerBotonRecargaTabla("tab-lista-periodos-clases");
       }
     });
 

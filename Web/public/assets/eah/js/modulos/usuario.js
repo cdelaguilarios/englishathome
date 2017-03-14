@@ -71,12 +71,12 @@ function cargarLista() {
                 '</li>' +
                 '</ul>';
           }, className: "text-center"}
-      ]
+      ],
+      initComplete: function (s, j) {
+        establecerBotonRecargaTabla("tab-lista");
+      }
     });
-    $("#bus-estado").change(function () {
-      $("#tab-lista").DataTable().ajax.reload();
-    });
-    establecerCambiosEstados(urlActualizarEstado, estados);
+    establecerCambiosEstados("tab-lista", urlActualizarEstado, estados);
   }
 }
 function cargarFormulario() {

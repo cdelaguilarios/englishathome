@@ -54,13 +54,13 @@
         <div class="form-group">
           {{ Form::label("rol", "Rol de usuario: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {{ Form::select("rol", $roles, (isset($usuario) ? $usuario->rol : App\Helpers\Enum\RolesUsuario::Principal), ["class" => "form-control"]) }}
+            {{ Form::select("rol", App\Helpers\Enum\RolesUsuario::listar(), (isset($usuario) ? $usuario->rol : App\Helpers\Enum\RolesUsuario::Principal), ["class" => "form-control"]) }}
           </div>
         </div>
         <div class="form-group">
           {{ Form::label("estado", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {{ Form::select("estado", $estados, (isset($usuario) ? $usuario->estado : App\Helpers\Enum\EstadosUsuario::Activo), ["class" => "form-control"]) }}
+            {{ Form::select("estado", App\Helpers\Enum\EstadosUsuario::listar(TRUE), (isset($usuario) ? $usuario->estado : App\Helpers\Enum\EstadosUsuario::Activo), ["class" => "form-control"]) }}
           </div>
         </div>
         @else

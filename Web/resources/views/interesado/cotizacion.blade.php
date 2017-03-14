@@ -21,10 +21,18 @@
     <div class="box box-primary">        
       <div class="box-body">
         <div class="form-group">
-          <div class="col-sm-8">
+          <div class="col-sm-6">
             <a href="{{ route("interesados.crear")}}" class="btn btn-primary btn-clean">Nuevo interesado</a>
             <a href="{{ route("interesados.editar", ["id" => $interesado->idEntidad]) }}" type="button" class="btn btn-primary" ><i class="fa flaticon-questioning"></i> Ver datos del interesado</a>
-          </div>           
+          </div>         
+          <div class="col-sm-2">
+            @if(isset($interesado->idInteresadoSiguiente))
+            <a href="{{ route("interesados.cotizar", ["id" => $interesado->idInteresadoSiguiente]) }}" class="btn btn-default pull-right"><span class="glyphicon glyphicon-arrow-right"></span></a>
+            @endif
+            @if(isset($interesado->idInteresadoAnterior))
+            <a href="{{ route("interesados.cotizar", ["id" => $interesado->idInteresadoAnterior]) }}" class="btn btn-default pull-right"><span class="glyphicon glyphicon-arrow-left"></span></a>
+            @endif
+          </div>      
           <div class="col-sm-4">
             {{ Form::select("", App\Models\Interesado::listarBusqueda(), $interesado->id, ["id"=>"sel-interesado", "class" => "form-control", "data-seccion" => "cotizar", "style" => "width: 100%;"]) }}
           </div>

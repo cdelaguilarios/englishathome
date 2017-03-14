@@ -45,6 +45,10 @@ class Interesado extends Model {
     if (!$simple) {
       $entidadCurso = EntidadCurso::obtenerXEntidad($id);
       $interesado->idCurso = (!is_null($entidadCurso) ? $entidadCurso->idCurso : NULL);
+      $idInteresadoAnterior = Interesado::listar()->select("entidad.id")->where("entidad.id", "<", $id)->where("entidad.estado", $interesado->estado)->orderBy("entidad.id", "DESC")->first();
+      $idInteresadoSiguiente = Interesado::listar()->select("entidad.id")->where("entidad.id", ">", $id)->where("entidad.estado", $interesado->estado)->first();
+      $interesado->idInteresadoAnterior = (isset($idInteresadoAnterior) ? $idInteresadoAnterior->id : NULL);
+      $interesado->idInteresadoSiguiente = (isset($idInteresadoSiguiente) ? $idInteresadoSiguiente->id : NULL);
     }
     return $interesado;
   }
@@ -149,7 +153,7 @@ class Interesado extends Model {
           "conAmbienteClase" => 0,
           "numeroHorasClase" => 2
       ];
-      
+
       $entidadCurso = EntidadCurso::obtenerXEntidad($id);
       if (!is_null($entidadCurso)) {
         EntidadCurso::registrarActualizar($idEntidad, $entidadCurso->idCurso);

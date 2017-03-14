@@ -223,7 +223,13 @@ $.extend(true, $.fn.dataTable.defaults, {
     "sUrl": urlBase + "/assets/plugins/datatables/languages/Spanish.json"
   }
 });
-function establecerCambiosEstados(urlActualizarEstadoDis, estadosDis) {
+function establecerBotonRecargaTabla(idTabla) {
+  $("#" + idTabla + "_length").html($("#" + idTabla + "_length").html() + '<a href="javascript:void(0)" onclick="recargarDatosTabla(\'' + idTabla + '\')" title="Recargar datos..." style="margin-left: 10px;"><i class="fa fa-refresh"></i></a>');
+}
+function recargarDatosTabla(idTabla) {
+  $("#" + idTabla).DataTable().ajax.reload();
+}
+function establecerCambiosEstados(idTabla, urlActualizarEstadoDis, estadosDis) {
   $(window).click(function (e) {
     if (!$(e.target).closest(".sec-btn-editar-estado").length) {
       $(".sec-btn-editar-estado select").trigger("change");
@@ -241,6 +247,9 @@ function establecerCambiosEstados(urlActualizarEstadoDis, estadosDis) {
     }
     $(this).closest(".sec-btn-editar-estado").append('<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + id + '" data-estado="' + $(this).val() + '"><span class="label ' + estadosDis[$(this).val()][1] + ' btn-estado">' + estadosDis[$(this).val()][0] + '</span></a>');
     $(this).remove();
+  });
+  $("#bus-estado").change(function () {
+    $("#" + idTabla).DataTable().ajax.reload();
   });
 }
 function eliminarElemento(ele, mensajePrevio, idTabla, noRecargarTabla, funcionCompletado) {

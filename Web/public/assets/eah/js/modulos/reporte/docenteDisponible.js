@@ -49,7 +49,10 @@ function cargarLista() {
                 '</li>' +
                 '</ul>';
           }, className: "text-center"}
-      ]
+      ],
+      initComplete: function (s, j) {
+        establecerBotonRecargaTabla("tab-lista");
+      }
     });
 
     establecerCalendario("bus-fecha-inicio", true, false, false, busquedaCambio);

@@ -92,7 +92,10 @@ function cargarListaPago() {
                 '</li>' +
                 '</ul>';
           }, className: "text-center"}
-      ]
+      ],
+      initComplete: function (s, j) {
+        establecerBotonRecargaTabla("tab-lista-pagos");
+      }
     });
 
     $(window).click(function (e) {

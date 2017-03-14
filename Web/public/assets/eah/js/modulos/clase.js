@@ -46,7 +46,10 @@ function cargarLista() {
         {data: "estado", name: "estado", render: function (e, t, d, m) {
             return '<span class="label ' + estados[d.estado][1] + ' btn-estado">Clase - ' + estados[d.estado][0] + '</span>' + (d.estadoPago !== null ? '<br/><span class="label ' + estadosPago[d.estadoPago][1] + ' btn-estado">Pago al profesor - ' + estadosPago[d.estadoPago][0] + '</span>' : '');
           }, className: "text-center"}
-      ]
+      ],
+      initComplete: function (s, j) {
+        establecerBotonRecargaTabla("tab-lista");
+      }
     });
     cargarFiltrosBusqueda(function () {
       $("#tab-lista").DataTable().ajax.reload();

@@ -51,7 +51,10 @@ function cargarLista() {
                 '</li>' +
                 '</ul>';
           }, className: "text-center"}
-      ]
+      ],
+      initComplete: function (s, j) {
+        establecerBotonRecargaTabla("tab-lista");
+      }
     });
   }
 }
