@@ -20,7 +20,7 @@
   <div class="col-sm-3">
     <div class="box box-primary">
       <div class="box-body box-profile">
-        <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($profesor->imagenPerfil) && $profesor->imagenPerfil != "" ? $profesor->imagenPerfil : "-")]) }}" alt="User profile picture">
+        <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($profesor->imagenPerfil) && $profesor->imagenPerfil != "" ? $profesor->imagenPerfil : "-"), "tip" => ($profesor->sexo == "F" ? "f" : "m")]) }}" alt="User profile picture">
         <h3 class="profile-username">Profesor{{ $profesor->sexo == "F" ? "a" : "" }} {{ $profesor->nombre . " " .  $profesor->apellido }}</h3>
         <p class="text-muted">{{ $profesor->correoElectronico }}</p>
         <span class="label {{ App\Helpers\Enum\EstadosProfesor::listar()[$profesor->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosProfesor::listar()[$profesor->estado][0] }}</span>
@@ -75,37 +75,33 @@
     </div>
   </div>
   <div class="col-sm-9">
-    <div class="col-sm-12">
-      <div class="box box-primary">        
-        <div class="box-body">
-          <div class="form-group">
-            <div class="col-sm-8">
-              <a href="{{ route("profesores.crear")}}" class="btn btn-primary btn-clean">Nuevo profesor</a> 
-            </div>           
-            <div class="col-sm-4">
-              {{ Form::select("",App\Models\Profesor::listarBusqueda(), $profesor->id, ["id"=>"sel-profesor", "class" => "form-control", "data-seccion" => "perfil", "style" => "width: 100%;"]) }}
-            </div>
-          </div> 
-        </div>
+    <div class="box box-primary">        
+      <div class="box-body">
+        <div class="form-group">
+          <div class="col-sm-8">
+            <a href="{{ route("profesores.crear")}}" class="btn btn-primary btn-clean">Nuevo profesor</a> 
+          </div>           
+          <div class="col-sm-4">
+            {{ Form::select("",App\Models\Profesor::listarBusqueda(), $profesor->id, ["id"=>"sel-profesor", "class" => "form-control", "data-seccion" => "perfil", "style" => "width: 100%;"]) }}
+          </div>
+        </div> 
       </div>
     </div>
-    <div class="col-sm-12">
-      <div class="nav-tabs-custom">
-        <ul class="nav nav-tabs">
-          <li class="active"><a href="#historial" data-toggle="tab">Historial</a></li>
-          <li><a href="#pago" data-toggle="tab">Detalle económico</a></li>
-          <li><a href="#clase" data-toggle="tab">Clases</a></li>
-        </ul>
-        <div class="tab-content">
-          <div class="active tab-pane" id="historial">
-            @include("util.historial", ["idEntidad" => $profesor->id]) 
-          </div>
-          <div class="tab-pane" id="pago">
-            @include("profesor.pago.principal", ["idProfesor" => $profesor->id])
-          </div>
-          <div class="tab-pane" id="clase">
-            @include("profesor.clase.principal", ["idProfesor" => $profesor->id])
-          </div>
+    <div class="nav-tabs-custom">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#historial" data-toggle="tab">Historial</a></li>
+        <li><a href="#pago" data-toggle="tab">Pagos</a></li>
+        <li><a href="#clase" data-toggle="tab">Clases</a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="active tab-pane" id="historial">
+          @include("util.historial", ["idEntidad" => $profesor->id]) 
+        </div>
+        <div class="tab-pane" id="pago">
+          @include("profesor.pago.principal", ["idProfesor" => $profesor->id])
+        </div>
+        <div class="tab-pane" id="clase">
+          @include("profesor.clase.principal", ["idProfesor" => $profesor->id])
         </div>
       </div>
     </div>

@@ -8,16 +8,16 @@ use Intervention\Image\ImageManager;
 
 class Archivo {
 
-  public static function obtener($nombre) {
+  public static function obtener($nombre, $ipotImagenPerfil = FALSE) {
     try {
       $archivo = Storage::get($nombre);
       $tipo = Storage::mimeType($nombre);
     } catch (\Exception $e) {
-      $nombreImgAux = public_path() . '/assets/eah/img/no-disponible.png';
+      $nombreImgAux = public_path() . "/assets/eah/img/" . (isset($ipotImagenPerfil) ? "perfil-imagen-" . $ipotImagenPerfil . ".png" : "no-disponible.png");
       $archivo = File::get($nombreImgAux);
       $tipo = File::mimeType($nombreImgAux);
     }
-    return response($archivo, 200)->header('Content-Type', $tipo);
+    return response($archivo, 200)->header("Content-Type", $tipo);
   }
 
   public static function registrar($identificador, $archivo, $reajustar = FALSE) {

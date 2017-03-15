@@ -44,17 +44,6 @@ class Docente extends Model {
     return Docente::listarXFiltrosBusqueda($datos)->whereIn("entidad.id", $idsDisponiblesSel);
   }
 
-  public static function listarDisponiblesXFecha($datos) {
-    $fechaInicio = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaInicio"]);
-    $fechaFin = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaFin"]);
-    if ($fechaInicio >= $fechaFin) {
-      return Profesor::whereNull("idEntidad");
-    }
-
-    $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicio->subHour(), $fechaFin->addHour(), TRUE);
-    return Docente::listarXFiltrosBusqueda($datos)->whereNotIn("entidad.id", $idsNoDisponibles);
-  }
-
   public static function verificarExistencia($idEntidad) {
     if (!(isset($idEntidad) && $idEntidad != "" && is_numeric($idEntidad))) {
       return FALSE;

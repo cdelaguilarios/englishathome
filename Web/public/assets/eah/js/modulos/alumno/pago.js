@@ -347,6 +347,9 @@ function cargarDocentesDisponiblesPago(recargarListaPago) {
         createdRow: function (r, d, i) {
           $("td", r).eq(1).html('<input type="radio" name="idDocenteDisponiblePago" value="' + d.id + '" data-nombrecompleto="' + d.nombreCompleto + '"/>');
           $("td", r).eq(1).addClass("text-center");
+        },
+        initComplete: function (s, j) {
+          establecerBotonRecargaTabla("tab-lista-docentes-pago");
         }
       });
     }

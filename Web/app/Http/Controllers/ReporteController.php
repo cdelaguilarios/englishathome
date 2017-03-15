@@ -36,19 +36,4 @@ class ReporteController extends Controller {
     return response()->json(Pago::reporte($req->all()), 200);
   }
 
-  public function docentesDisponibles() {
-    $this->data["subSeccion"] = "docentes-disponibles";
-    return view("reporte.docentesDisponibles", $this->data);
-  }
-
-  public function listarDocentesDisponibles(BusquedaDocenteRequest $req) {   
-    $datos = $req->all();
-    $datos["horaInicio"] = 0; 
-    $datos["duracion"] = 86400; 
-    return Datatables::of(Docente::listarDisponiblesXFecha($datos))
-                    ->filterColumn('nombreCompleto', function($q, $k) {
-                      $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
-                    })->make(true);
-  }
-
 }

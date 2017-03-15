@@ -391,3 +391,10 @@ table.dataTable > tbody > tr.child span.dtr-title {
 .icon-notificar-clase{
   width: inherit !important;
 }
+
+.ajax-file-upload-bar{
+  background-color: #3c8dbc;
+}
+.ajax-file-upload-red{
+  background-color: #dd4b39;
+}

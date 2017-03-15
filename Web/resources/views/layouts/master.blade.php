@@ -141,9 +141,6 @@
                 <li class="{{ ((isset($subSeccion) && $subSeccion == "pagos") ? "active" : "") }}">
                   <a href="{{ route("reporte.pagos")}}"><i class="fa fa-line-chart"></i> Reporte de pagos</a>
                 </li>
-                <li class="{{ ((isset($subSeccion) && $subSeccion == "docentes-disponibles") ? "active" : "") }}">
-                  <a href="{{ route("reporte.docentes.disponibles")}}"><i class="fa flaticon-teach"></i> Docentes disponibles</a>
-                </li>
               </ul>
             </li>
             <li class="{{ ((isset($seccion) && $seccion == "usuarios") ? "active" : "") }}">

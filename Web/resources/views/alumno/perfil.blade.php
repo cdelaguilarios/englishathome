@@ -20,7 +20,7 @@
   <div class="col-sm-3">
     <div class="box box-primary">
       <div class="box-body box-profile">
-        <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($alumno->imagenPerfil) && $alumno->imagenPerfil != "" ? $alumno->imagenPerfil : "-")]) }}" alt="User profile picture">
+        <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($alumno->imagenPerfil) && $alumno->imagenPerfil != "" ? $alumno->imagenPerfil : "-"), "tip" => ($alumno->sexo == "F" ? "f" : "m")]) }}" alt="User profile picture">
         <h3 class="profile-username">Alumn{{ $alumno->sexo == "F" ? "a" : "o" }} {{ $alumno->nombre . " " .  $alumno->apellido }}</h3>
         <p class="text-muted">{{ $alumno->correoElectronico }}</p>
         <span class="label {{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][0] }}</span>
@@ -82,39 +82,35 @@
     </div>
   </div>
   <div class="col-sm-9">
-    <div class="col-sm-12">
-      <div class="box box-primary">        
-        <div class="box-body">
-          <div class="form-group">
-            <div class="col-sm-8">
-              <a href="{{ route("alumnos.crear")}}" class="btn btn-primary btn-clean">Nuevo alumno</a> 
-            </div>           
-            <div class="col-sm-4">
-              {{ Form::select("",App\Models\Alumno::listarBusqueda(), $alumno->id, ["id"=>"sel-alumno", "class" => "form-control", "data-seccion" => "perfil", "style" => "width: 100%;"]) }}
-            </div>
-          </div> 
-        </div>
+    <div class="box box-primary">        
+      <div class="box-body">
+        <div class="form-group">
+          <div class="col-sm-8">
+            <a href="{{ route("alumnos.crear")}}" class="btn btn-primary btn-clean">Nuevo alumno</a> 
+          </div>           
+          <div class="col-sm-4">
+            {{ Form::select("",App\Models\Alumno::listarBusqueda(), $alumno->id, ["id"=>"sel-alumno", "class" => "form-control", "data-seccion" => "perfil", "style" => "width: 100%;"]) }}
+          </div>
+        </div> 
       </div>
     </div>
-    <div class="col-sm-12">
-      <div class="nav-tabs-custom">
-        <ul class="nav nav-tabs">
-          <li class="active"><a href="#historial" data-toggle="tab">Historial</a></li>
-          <li><a href="#pago" data-toggle="tab">Pagos</a></li>
-          <li><a href="#clase" data-toggle="tab">Clases</a></li>
-        </ul>
-        <div class="tab-content">
-          <div class="active tab-pane" id="historial">
-            @include("util.historial", ["idEntidad" => $alumno->id]) 
-          </div>
-          <div class="tab-pane" id="pago">
-            @include("alumno.pago.principal", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "totalSaldoFavor" => $alumno->totalSaldoFavor, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : NULL)]) 
-          </div>
-          <div class="tab-pane" id="clase">
-            @include("alumno.clase.principal", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : NULL)])
-          </div>
-          @include("alumno.pago.datos") 
+    <div class="nav-tabs-custom">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#historial" data-toggle="tab">Historial</a></li>
+        <li><a href="#pago" data-toggle="tab">Pagos</a></li>
+        <li><a href="#clase" data-toggle="tab">Clases</a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="active tab-pane" id="historial">
+          @include("util.historial", ["idEntidad" => $alumno->id]) 
         </div>
+        <div class="tab-pane" id="pago">
+          @include("alumno.pago.principal", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "totalSaldoFavor" => $alumno->totalSaldoFavor, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : NULL)]) 
+        </div>
+        <div class="tab-pane" id="clase">
+          @include("alumno.clase.principal", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : NULL)])
+        </div>
+        @include("alumno.pago.datos") 
       </div>
     </div>
   </div>

@@ -517,6 +517,9 @@ function cargarDocentesDisponiblesClase(recargarListaPeriodos) {
         createdRow: function (r, d, i) {
           $("td", r).eq(1).html('<input type="radio" name="idDocenteDisponibleClase" value="' + d.id + '" data-nombrecompleto="' + d.nombreCompleto + '"/>');
           $("td", r).eq(1).addClass("text-center");
+        },
+        initComplete: function (s, j) {
+          establecerBotonRecargaTabla("tab-lista-docentes-clase");
         }
       });
     }

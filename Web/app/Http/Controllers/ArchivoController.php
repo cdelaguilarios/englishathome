@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Input;
 use App\Models\Archivo;
 use App\Http\Requests\ArchivoRequest;
 
 class ArchivoController extends Controller {
 
   public function obtener($nombre) {
-    return Archivo::obtener($nombre);
+    $ipotImagenPerfil = Input::get("tip");
+    return Archivo::obtener($nombre, (isset($ipotImagenPerfil) ? $ipotImagenPerfil : NULL));
   }
 
   public function registrar(ArchivoRequest $req) {
