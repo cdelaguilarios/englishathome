@@ -101,13 +101,13 @@
         <li><a href="#clase" data-toggle="tab">Clases</a></li>
       </ul>
       <div class="tab-content">
-        <div class="active tab-pane" id="historial">
+        <div id="historial" class="active tab-pane">
           @include("util.historial", ["idEntidad" => $alumno->id]) 
         </div>
-        <div class="tab-pane" id="pago">
+        <div id="pago" class="tab-pane">
           @include("alumno.pago.principal", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "totalSaldoFavor" => $alumno->totalSaldoFavor, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : NULL)]) 
         </div>
-        <div class="tab-pane" id="clase">
+        <div id="clase" class="tab-pane">
           @include("alumno.clase.principal", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : NULL)])
         </div>
         @include("alumno.pago.datos") 

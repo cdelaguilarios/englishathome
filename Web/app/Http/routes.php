@@ -133,15 +133,13 @@ Route::group(["middleware" => "auth"], function() {
     Route::delete("curso/{id}/eliminar", ["uses" => "CursoController@eliminar", "as" => "cursos.eliminar"]);
     Route::post("curso/{id}/datos", ["uses" => "CursoController@datos", "as" => "cursos.datos"]);
     // </editor-fold>
-    // <editor-fold desc="Clases">
-    Route::get("clases", ["uses" => "ClaseController@index", "as" => "clases"]);
-    Route::post("clases/listar", ["uses" => "ClaseController@listar", "as" => "clases.listar"]);
-    // </editor-fold> 
     // <editor-fold desc="Reportes">
     Route::get("reporte/clases", ["uses" => "ReporteController@clases", "as" => "reporte.clases"]);
-    Route::post("reporte/clases/listar", ["uses" => "ReporteController@listarClases", "as" => "reporte.clases.listar"]);
+    Route::post("reporte/listar/clases", ["uses" => "ReporteController@listarClases", "as" => "reporte.listar.clases"]);
+    Route::post("reporte/listar/clases/grafico", ["uses" => "ReporteController@listarClasesGrafico", "as" => "reporte.listar.clases.grafico"]);
     Route::get("reporte/pagos", ["uses" => "ReporteController@pagos", "as" => "reporte.pagos"]);
-    Route::post("reporte/pagos/listar", ["uses" => "ReporteController@listarPagos", "as" => "reporte.pagos.listar"]);
+    Route::post("reporte/listar/pagos", ["uses" => "ReporteController@listarPagos", "as" => "reporte.listar.pagos"]);
+    Route::post("reporte/listar/pagos/grafico", ["uses" => "ReporteController@listarPagosGrafico", "as" => "reporte.listar.pagos.grafico"]);
     // </editor-fold> 
   });
 });

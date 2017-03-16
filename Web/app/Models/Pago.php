@@ -25,6 +25,24 @@ class Pago extends Model {
     return Pago::where("eliminado", 0)->where("id", $id)->firstOrFail();
   }
 
+  public static function listar($datos = NULL) {
+    $nombreTabla = Pago::nombreTabla();
+    $pagos = Pago::where($nombreTabla . ".eliminado", 0)
+            ->select($nombreTabla . ".*", "entidad.id AS idEntidad", "entidad.nombre AS nombreEntidad", "entidad.apellido AS apellidoEntidad", DB::raw(((isset($datos["tipoPago"]) && $datos["tipoPago"] !== "0") ? 1 : 0) . " AS esEntidadProfesor"));
+    if (isset($datos["tipoPago"]) && $datos["tipoPago"] !== "0") {
+      $pagos->leftJoin(PagoProfesor::nombreTabla() . " as pagoProfesor", "pagoProfesor.idPago", "=", $nombreTabla . ".id")
+              ->leftJoin(Entidad::NombreTabla() . " as entidad", "entidad.id", "=", "pagoProfesor.idProfesor")
+              ->whereIn($nombreTabla . ".id", PagoProfesor::lists("idPago"));
+    } else {
+      $pagos->leftJoin(PagoAlumno::nombreTabla() . " as pagoAlumno", "pagoAlumno.idPago", "=", $nombreTabla . ".id")
+              ->leftJoin(Entidad::NombreTabla() . " as entidad", "entidad.id", "=", "pagoAlumno.idAlumno")
+              ->whereIn($nombreTabla . ".id", PagoAlumno::lists("idPago"));
+    }
+    $datos["estado"] = $datos["estadoPago"];
+    Util::filtrosBusqueda($nombreTabla, $pagos, "fechaRegistro", $datos);
+    return $pagos;
+  }
+
   public static function reporte($datos) {
     $nombreTabla = Pago::nombreTabla();
     $pagos = Pago::where("eliminado", 0)

@@ -94,13 +94,13 @@
         <li><a href="#clase" data-toggle="tab">Clases</a></li>
       </ul>
       <div class="tab-content">
-        <div class="active tab-pane" id="historial">
+        <div id="historial" class="active tab-pane">
           @include("util.historial", ["idEntidad" => $profesor->id]) 
         </div>
-        <div class="tab-pane" id="pago">
+        <div id="pago" class="tab-pane">
           @include("profesor.pago.principal", ["idProfesor" => $profesor->id])
         </div>
-        <div class="tab-pane" id="clase">
+        <div id="clase" class="tab-pane">
           @include("profesor.clase.principal", ["idProfesor" => $profesor->id])
         </div>
       </div>

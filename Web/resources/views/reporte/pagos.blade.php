@@ -12,7 +12,10 @@
 @section("section_script")
 <script>
   var estados = {!!  json_encode(App\Helpers\Enum\EstadosPago::listar()) !!};
-  var urlListar = "{{ route('reporte.pagos.listar') }}";
+  var motivosPago = {!!  json_encode(App\Helpers\Enum\MotivosPago::listar()) !!};
+  var cuentasBanco = {!! json_encode(App\Helpers\Enum\CuentasBancoPago::listar()) !!};
+  var urlListar = "{{ route('reporte.listar.pagos') }}";
+  var urlListarGrafico = "{{ route('reporte.listar.pagos.grafico') }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/reporte/base.js")}}"></script>
 <script src="{{ asset("assets/eah/js/modulos/reporte/pago.js")}}"></script>
@@ -28,18 +31,33 @@
   <div class="col-sm-12">
     <div class="nav-tabs-custom">
       <ul class="nav nav-tabs">
-        <li class="active"><a href="#lista" data-toggle="tab">Lista</a></li>
-        <li><a href="#grafico" data-toggle="tab" onclick="cargarDatosGrafico();">Gráfico</a></li>
+        <li class="active"><a href="#sec-lista" data-toggle="tab">Lista</a></li>
+        <li><a href="#sec-grafico" data-toggle="tab">Gráfico</a></li>
       </ul>
       <div class="tab-content">
-        <div class="active tab-pane" id="lista">
-        </div>
-        <div class="tab-pane" id="grafico">
+        <div id="sec-lista" class="active tab-pane">
           <div class="row">
             <div class="col-sm-12">
-              <div id="sec-grafico" class="box box-info">
-                <div id="grafico"></div>
-              </div>
+              <table id="tab-lista" class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>Alumno/Profesor</th> 
+                    <th>Código</th>  
+                    <th>Motivo</th>    
+                    <th>Cuenta</th>
+                    <th>Monto</th>
+                    <th>Fecha de registro</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div id="sec-grafico" class="tab-pane">
+          <div class="row">
+            <div class="col-sm-12">
+              <div id="grafico"></div>
             </div>
           </div>
         </div>
