@@ -58,7 +58,7 @@ function cargarLista() {
         {data: "fechaRegistro", name: "entidad.fechaRegistro", render: function (e, t, d, m) {
             return formatoFecha(d.fechaRegistro, true);
           }, className: "text-center"},
-        {data: "id", name: "id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
+        {data: "id", name: "entidad.id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
                 '<li>' +
                 '<a href="' + (urlPerfil.replace("/0", "/" + d.id)) + '" title="Ver perfil"><i class="fa fa-eye"></i></a>' +

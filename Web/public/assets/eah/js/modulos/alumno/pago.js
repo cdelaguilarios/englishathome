@@ -80,7 +80,7 @@ function cargarListaPago() {
         {data: "estado", name: "pago.estado", render: function (e, t, d, m) {
             return '<div class="sec-btn-editar-estado-pago"><a href="javascript:void(0);" class="btn-editar-estado-pago" data-idpago="' + d.id + '" data-idalumno="' + d.idAlumno + '" data-estado="' + d.estado + '"><span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span></a></div>';
           }, className: "text-center"},
-        {data: "id", name: "id", orderable: false, searchable: false, width: "5%", render: function (e, t, d, m) {
+        {data: "id", name: "pago.id", orderable: false, searchable: false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
                 '<li>' +
                 '<a href="javascript:void(0);" onclick="editarPago(' + d.id + ');" title="Editar datos del pago"><i class="fa fa-pencil"></i></a>' +

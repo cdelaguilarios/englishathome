@@ -122,7 +122,9 @@ class ProfesorController extends Controller {
   // </editor-fold>
   // // <editor-fold desc="Pagos">
   public function listarPagos($id) {
-    return Datatables::of(PagoProfesor::listar($id))->make(true);
+    return Datatables::of(PagoProfesor::listar($id))->filterColumn("pago.fechaRegistro", function($q, $k) {
+              $q->whereRaw("DATE_FORMAT(pago.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
+            })->make(true);
   }
 
   public function actualizarEstadoPago($id, PagoRequest\ActualizarEstadoRequest $req) {
@@ -163,7 +165,11 @@ class ProfesorController extends Controller {
   // </editor-fold>
   // <editor-fold desc="Clases">
   public function listarClases($id, UtilRequest\BusquedaRequest $req) {
-    return Datatables::of(Clase::listarXProfesor($id, $req->all()))->make(true);
+    return Datatables::of(Clase::listarXProfesor($id, $req->all()))->filterColumn("nombreAlumno", function($q, $k) {
+              $q->whereRaw('CONCAT(entidadAlumno.nombre, " ", entidadAlumno.apellido) like ?', ["%{$k}%"]);
+            })->filterColumn("fechaInicio", function($q, $k) {
+              $q->whereRaw("DATE_FORMAT(" . Clase::nombreTabla() . ".fechaInicio, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
+            })->make(true);
   }
 
   public function registrarPagoXClases($id, PagoRequest\FormularioRequest $req) {

@@ -42,7 +42,7 @@ function cargarListaClase() {
         {data: "id", name: "id", orderable: false, searchable: false, render: function (e, t, d, m) {
             return d.estadoPago !== null ? '' : '<input type="checkbox" data-id="' + d.id + '" data-idalumno="' + d.idAlumno + '" data-duracion="' + d.duracion + '" data-pagoxhora="' + d.costoHoraProfesor + '" ' + (d.pagoTotalProfesor !== null ? 'data-pagototal="' + d.pagoTotalProfesor + '"' : '') + '/>';
           }},
-        {data: "idAlumno", name: "idAlumno", render: function (e, t, d, m) {
+        {data: "nombreAlumno", name: "nombreAlumno", render: function (e, t, d, m) {
             return '<a target="_blank" href="' + urlPerfilAlumno.replace("/0", "/" + d.idAlumno) + '">' + d.nombreAlumno + ' ' + d.apellidoAlumno + '</a>';
           }},
         {data: "fechaInicio", name: "fechaInicio", render: function (e, t, d, m) {

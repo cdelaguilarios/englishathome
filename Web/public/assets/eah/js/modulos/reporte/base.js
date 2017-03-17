@@ -66,7 +66,7 @@ function cargarDatosGrafico() {
           var opcionesGrafico = {
             chart: {
               title: "Reporte de " + nombreEntidadReporte,
-              subtitle: (datosMontosReporte ? ("S/. " + redondear(total, 2)) : total) + " " + (total === 1 ? detalleSingularReporte : detallePluralReporte)
+              subtitle: (datosMontosReporte ? ("S/. " + redondear(total, 2)) : total) + " " + (total === 1 ? detalleSingularReporte : detallePluralReporte) + " (Considere que los datos del gráfico son filtrados utilizando solo el formulario de búsquedad superior)"
             },
             bars: "vertical",
             vAxis: {format: (datosMontosReporte ? "decimal" : "")},

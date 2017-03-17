@@ -48,6 +48,13 @@
                     <th>Estado</th>
                   </tr>
                 </thead>
+                <tfoot>
+                  <tr>
+                    <th colspan="4"></th>
+                    <th colspan="2" class="text-center"></th>
+                    <th></th>
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </div>

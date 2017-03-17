@@ -151,7 +151,9 @@ class AlumnoController extends Controller {
   // </editor-fold>
   // <editor-fold desc="Pagos">
   public function listarPagos($id) {
-    return Datatables::of(PagoAlumno::listar($id))->make(true);
+    return Datatables::of(PagoAlumno::listar($id))->filterColumn("pago.fechaRegistro", function($q, $k) {
+              $q->whereRaw("DATE_FORMAT(pago.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
+            })->make(true);
   }
 
   public function actualizarEstadoPago($id, PagoRequest\ActualizarEstadoRequest $req) {

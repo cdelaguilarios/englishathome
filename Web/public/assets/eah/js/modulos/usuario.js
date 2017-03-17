@@ -59,7 +59,7 @@ function cargarLista() {
         {data: "fechaRegistro", name: "entidad.fechaRegistro", render: function (e, t, d, m) {
             return formatoFecha(d.fechaRegistro, true);
           }, className: "text-center"},
-        {data: "id", name: "id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
+        {data: "id", name: "entidad.id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
                 '<li>' +
                 '<a href="' + (urlEditar.replace("/0", "/" + d.id)) + '" title="Editar datos"><i class="fa fa-pencil"></i></a>' +

@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="2">
         <file>
             <url>app/Http/Controllers/AlumnoController.php</url>
             <bookmark id="1">
                 <name/>
                 <line>14</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>public/assets/eah/js/modulos/reporte/clase.js</url>
+            <bookmark id="2">
+                <name/>
+                <line>4</line>
                 <key/>
             </bookmark>
         </file>
