@@ -54,9 +54,11 @@ class Pago extends Model {
     } else {
       $pagos->whereIn("id", PagoAlumno::lists("idPago"));
     }
-    $datos["estado"] = $datos["estadoPago"];
-    Util::filtrosBusqueda($nombreTabla, $pagos, "fechaRegistro", $datos);
-    return $pagos->get();
+    if (isset($datos["ids"]) && is_array($datos["ids"])) {
+      return $pagos->whereIn("id", $datos["ids"])->get();
+    } else {
+      return [];
+    }
   }
 
   public static function registrar($datos, $estado, $request) {

@@ -18,6 +18,7 @@ function  cargarSeccionClases() {
 }
 
 //Lista
+var primeraRecargaListaClases = true;
 function cargarListaClase() {
   urlListarClases = (typeof (urlListarClases) === "undefined" ? "" : urlListarClases);
   urlPerfilAlumno = (typeof (urlPerfilAlumno) === "undefined" ? "" : urlPerfilAlumno);
@@ -26,7 +27,7 @@ function cargarListaClase() {
   if (urlListarClases !== "" && urlPerfilAlumno !== "" && estadosClase !== "" && estadosPago !== "") {
     $("#tab-lista-clases").DataTable({
       processing: true,
-      serverSide: true,
+      serverSide: false,
       ajax: {
         url: urlListarClases,
         type: "POST",
@@ -37,33 +38,49 @@ function cargarListaClase() {
       },
       autoWidth: false,
       responsive: true,
-      order: [[0, "desc"]],
+      order: [[2, "desc"]],
       columns: [
         {data: "id", name: "id", orderable: false, searchable: false, render: function (e, t, d, m) {
             return d.estadoPago !== null ? '' : '<input type="checkbox" data-id="' + d.id + '" data-idalumno="' + d.idAlumno + '" data-duracion="' + d.duracion + '" data-pagoxhora="' + d.costoHoraProfesor + '" ' + (d.pagoTotalProfesor !== null ? 'data-pagototal="' + d.pagoTotalProfesor + '"' : '') + '/>';
-          }},
+          }, className: "text-center"},
         {data: "nombreAlumno", name: "nombreAlumno", render: function (e, t, d, m) {
             return '<a target="_blank" href="' + urlPerfilAlumno.replace("/0", "/" + d.idAlumno) + '">' + d.nombreAlumno + ' ' + d.apellidoAlumno + '</a>';
           }},
         {data: "fechaInicio", name: "fechaInicio", render: function (e, t, d, m) {
             return formatoFecha(d.fechaInicio) + ' - De ' + formatoFecha(d.fechaInicio, false, true) + ' a ' + formatoFecha(d.fechaFin, false, true);
-          }},
-        {data: "duracion", name: "duracion", render: function (e, t, d, m) {
-            return formatoHora(d.duracion);
-          }},
-        {data: "costoHoraProfesor", name: "costoHoraProfesor", render: function (e, t, d, m) {
-            return "S/. " + redondear(d.costoHoraProfesor, 2) + (d.pagoTotalProfesor !== null ? ("<br/>(Pago total de S/. " + redondear(d.pagoTotalProfesor, 2) + ")") : "");
-          }},
+          }, className: "text-center"},
         {data: "estado", name: "estado", render: function (e, t, d, m) {
             return '<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">Clase - ' + estadosClase[d.estado][0] + '</span>' + (d.estadoPago !== null ? '<br/><span class="label ' + estadosPago[d.estadoPago][1] + ' btn-estado">Pago ' + estadosPago[d.estadoPago][0] + '</span>' : '');
-          }, className: "text-center"}
+          }, className: "text-center"},
+        {data: "duracion", name: "duracion", render: function (e, t, d, m) {
+            return formatoHora(d.duracion);
+          }, className: "text-center"},
+        {data: "costoHoraProfesor", name: "costoHoraProfesor", render: function (e, t, d, m) {
+            return "S/. " + redondear(d.costoHoraProfesor, 2) + (d.pagoTotalProfesor !== null ? ("<br/>(Pago total de S/. " + redondear(d.pagoTotalProfesor, 2) + ")") : "");
+          }, className: "text-center"},
       ],
       initComplete: function (s, j) {
         establecerBotonRecargaTabla("tab-lista-clases");
+      },
+      footerCallback: function (r, d, s, e, di) {
+        var api = this.api();
+
+        var totalPagoProfesor = 0, totalPagoProfesorPagina = 0;
+        $('#tab-lista-clases').DataTable().rows({filter: 'applied'}).data().each(function (i) {
+          totalPagoProfesor += (i.duracion !== 0 ? (i.duracion / 3600) : 0) * parseFloat(i.costoHoraProfesor);
+        });
+        $('#tab-lista-clases').DataTable().rows({page: 'current'}).data().each(function (i) {
+          totalPagoProfesorPagina += (i.duracion !== 0 ? (i.duracion / 3600) : 0) * parseFloat(i.costoHoraProfesor);
+        });
+        $(api.column(4).footer()).html("Total S/. " + redondear(totalPagoProfesor, 2) + (totalPagoProfesor !== totalPagoProfesorPagina ? "<br/>Total de la página S/." + redondear(totalPagoProfesorPagina, 2) : ""));
       }
     });
     cargarFiltrosBusqueda(function () {
-      $("#tab-lista-clases").DataTable().ajax.reload();
+      if (!primeraRecargaListaClases) {
+        $("#tab-lista-clases").DataTable().ajax.reload();
+      } else {
+        primeraRecargaListaClases = false;
+      }
     });
   }
   $("#tab-lista-clases").find("input[type='checkbox']").live("change", function () {

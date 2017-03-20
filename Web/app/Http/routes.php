@@ -71,7 +71,9 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("alumno/{id}/clase/docentesDisponibles", ["uses" => "AlumnoController@listarDocentesDisponiblesXClase", "as" => "alumnos.clases.docentesDisponibles.listar"]);
     Route::post("alumno/{id}/clase/registrarActualizar", ["uses" => "AlumnoController@registrarActualizarClase", "as" => "alumnos.clases.registrar.actualizar"]);
     Route::post("alumno/{id}/clase/cancelar", ["uses" => "AlumnoController@cancelarClase", "as" => "alumnos.clases.cancelar"]);
+    Route::post("alumno/{id}/clases/actualizar/grupo", ["uses" => "AlumnoController@actualizarClasesGrupo", "as" => "alumnos.clases.actualizar.grupo"]);
     Route::post("alumno/{id}/clase/{idClase}/datos", ["uses" => "AlumnoController@datosClase", "as" => "alumnos.clases.datos"]);
+    Route::post("alumno/{id}/clases/datos/grupo", ["uses" => "AlumnoController@datosClasesGrupo", "as" => "alumnos.clases.datos.grupo"]);
     Route::delete("alumno/{id}/clase/{idClase}/eliminar", ["uses" => "AlumnoController@eliminarClase", "as" => "alumnos.clases.eliminar"]);
     // </editor-fold>
     // <editor-fold desc="Postulantes">

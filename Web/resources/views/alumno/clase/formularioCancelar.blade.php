@@ -46,7 +46,7 @@
       </div>
     </div>           
     <div class="form-group">
-      {{ Form::label("fecha-clase-reprogramada", "Fecha: ", ["class" => "col-sm-2 control-label"]) }}
+      {{ Form::label("fecha-clase-reprogramada", "Fecha (*): ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-3">
         <div class="input-group date">
           <div class="input-group-addon">
@@ -97,10 +97,10 @@
             </div>
           </div>
         </div>
-        <div class="form-group">
-          <div class="col-sm-12">
-            <br/><span>(*) Campos obligatorios</span>
-          </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-12">
+          <br/><span>(*) Campos obligatorios</span>
         </div>
       </div>
       {{ Form::hidden("idDocente", "", ["class" => "id-docente-clase"]) }} 

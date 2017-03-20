@@ -9,15 +9,23 @@
               <th>Seleccionar</th>  
               <th>Alumno</th>    
               <th>Fecha</th>
+              <th class="all">Estado</th>
               <th>Duración</th>
               <th>Pago por hora</th>
-              <th class="all">Estado</th>
             </tr>
           </thead>
+          <tfoot>
+            <tr>
+              <th colspan="4"></th>
+              <th colspan="2"></th>
+            </tr>
+          </tfoot>
         </table>  
       </div>
-      <div id="sec-clase-11" style="display: none;">
-        <a id="btn-registrar-pago-clase" type="button" class="btn btn-primary btn-sm">Registrar pago</a>                 
+      <div id="sec-clase-11" style="display: none;">   
+        <div class="box-body">
+          <a id="btn-registrar-pago-clase" type="button" class="btn btn-primary btn-sm">Registrar pago</a>
+        </div>                 
       </div>
     </div>    
     <div id="sec-clase-2" style="display: none;">

@@ -224,7 +224,7 @@ $.extend(true, $.fn.dataTable.defaults, {
   }
 });
 function establecerBotonRecargaTabla(idTabla) {
-  $("#" + idTabla + "_length").html($("#" + idTabla + "_length").html() + '<a href="javascript:void(0)" onclick="recargarDatosTabla(\'' + idTabla + '\')" title="Recargar datos..." style="margin-left: 10px;"><i class="fa fa-refresh"></i></a>');
+  $("#" + idTabla + "_length").append('<a href="javascript:void(0)" onclick="recargarDatosTabla(\'' + idTabla + '\')" title="Recargar datos..." style="margin-left: 10px;"><i class="fa fa-refresh"></i></a>');
 }
 function recargarDatosTabla(idTabla) {
   $("#" + idTabla).DataTable().ajax.reload();

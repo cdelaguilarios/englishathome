@@ -27,6 +27,7 @@ class BusquedaRequest extends Request {
     $datos["fechaAnhoFin"] = ReglasValidacion::formatoDato($datos, "fechaAnhoFin");
     $datos["fechaInicio"] = ReglasValidacion::formatoDato($datos, "fechaInicio");
     $datos["fechaFin"] = ReglasValidacion::formatoDato($datos, "fechaFin");
+    $datos["ids"] = ReglasValidacion::formatoDato($datos, "ids", []);
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }

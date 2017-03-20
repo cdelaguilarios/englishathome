@@ -111,7 +111,8 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td:first-child:before, table
   top: 35%;
 }
 div.dataTables_info{
-  white-space: inherit;
+  white-space: inherit;  
+  font-size: 12px;
 }
 
 /*Botón creación*/

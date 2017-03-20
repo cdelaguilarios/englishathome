@@ -167,15 +167,62 @@ class Clase extends Model {
     return ($idsProfesores ? $clases->groupBy("idProfesor")->lists("idProfesor") : $clases->groupBy("idAlumno")->lists("idAlumno"));
   }
 
+  public static function datosGrupo($idAlumno, $datos) {
+    if (isset($datos["ids"]) && is_array($datos["ids"])) {
+      $nombreTabla = Clase::nombreTabla();
+      $clases = Clase::listarBase()
+              ->select($nombreTabla . ".*", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.id) AS idPago"))
+              ->leftJoin(PagoAlumno::nombreTabla() . " as pagoAlumno", "pagoClase.idPago", "=", "pagoAlumno.idPago")
+              ->leftJoin(Pago::nombreTabla() . " as pago", "pagoAlumno.idPago", "=", "pago.id")
+              ->where($nombreTabla . ".idAlumno", $idAlumno)
+              ->whereIn($nombreTabla . ".id", $datos["ids"])
+              ->where(function ($q) use ($idAlumno) {
+                $q->whereNull("pagoAlumno.idAlumno")->orWhere("pagoAlumno.idAlumno", $idAlumno);
+              })
+              ->orderBy($nombreTabla . ".fechaInicio", "ASC")
+              ->get();
+      $datosGrupo = [
+          "numeroPeriodo" => "",
+          "estado" => NULL,
+          "idHistorial" => NULL,
+          "duracion" => NULL,
+          "costoHora" => "",
+          "idPago" => NULL
+      ];
+      for ($i = 0; $i < count($clases); $i++) {
+        $clase = $clases[$i];
+        if ($i > 0) {
+          $datosGrupo["numeroPeriodo"] = ($datosGrupo["numeroPeriodo"] != $clase->numeroPeriodo ? "" : $datosGrupo["numeroPeriodo"]);
+          $datosGrupo["estado"] = ($datosGrupo["estado"] != $clase->estado ? "" : $datosGrupo["estado"]);
+          $datosGrupo["idHistorial"] = ($datosGrupo["idHistorial"] != $clase->idHistorial ? "" : $datosGrupo["idHistorial"]);
+          $datosGrupo["duracion"] = ($datosGrupo["duracion"] != $clase->duracion ? "" : $datosGrupo["duracion"]);
+          $datosGrupo["costoHora"] = ($datosGrupo["costoHora"] != $clase->costoHora ? "" : $datosGrupo["costoHora"]);
+          $datosGrupo["idPago"] = ($datosGrupo["idPago"] != $clase->idPago ? "" : $datosGrupo["idPago"]);
+        } else {
+          $datosGrupo["numeroPeriodo"] = $clase->numeroPeriodo;
+          $datosGrupo["estado"] = $clase->estado;
+          $datosGrupo["idHistorial"] = $clase->idHistorial;
+          $datosGrupo["duracion"] = $clase->duracion;
+          $datosGrupo["costoHora"] = $clase->costoHora;
+          $datosGrupo["idPago"] = $clase->idPago;
+        }
+      }
+      return $datosGrupo;
+    } else {
+      return [];
+    }
+  }
+
   public static function reporte($datos) {
-    $nombreTabla = Clase::nombreTabla();
     $clases = Clase::where("eliminado", 0)
             ->select(($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes ? DB::raw("MONTH(fechaInicio) AS mes") : ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho ? DB::raw("YEAR(fechaInicio) AS anho") : "fechaInicio")), "estado", DB::raw("count(id) AS total"))
             ->groupBy(($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes ? DB::raw("MONTH(fechaInicio)") : ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho ? DB::raw("YEAR(fechaInicio)") : "fechaInicio")), "estado")
             ->orderBy("fechaInicio", "ASC");
-    $datos["estado"] = (isset($datos["estadoClase"]) ? $datos["estadoClase"] : NULL);
-    Util::filtrosBusqueda($nombreTabla, $clases, "fechaInicio", $datos);
-    return $clases->get();
+    if (isset($datos["ids"]) && is_array($datos["ids"])) {
+      return $clases->whereIn("id", $datos["ids"])->get();
+    } else {
+      return [];
+    }
   }
 
   public static function generarXDatosPago($idAlumno, $datos) {

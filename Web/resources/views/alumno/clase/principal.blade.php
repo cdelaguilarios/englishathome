@@ -25,7 +25,12 @@
       {{ Form::open(["url" => route("alumnos.clases.cancelar", ["id" => $idAlumno]), "id" => "formulario-cancelar-clase", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
       @include("alumno.clase.formularioCancelar") 
       {{ Form::close() }}
-    </div> 
+    </div>  
+    <div id="sec-clase-4" style="display: none;">
+      {{ Form::open(["url" => route("alumnos.clases.actualizar.grupo", ["id" => $idAlumno]), "id" => "formulario-actualizar-clases", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
+      @include("alumno.clase.formularioGrupo") 
+      {{ Form::close() }}
+    </div>
   </div>
   @include("alumno.util.docentesDisponibles", ["seccion" => "clase", "idCurso" => $idCurso])
 </div>
@@ -38,11 +43,11 @@
   var urlActualizarEstadoClase = "{{ route('alumnos.clases.actualizar.estado', ['id' => $idAlumno]) }}";
   var urlListarDocentesDisponiblesClase = "{{ route('alumnos.clases.docentesDisponibles.listar', ['id' => $idAlumno]) }}";
   var urlDatosClase = "{{ route('alumnos.clases.datos', ['id' => $idAlumno, 'idClase' => 0]) }}";
+  var urlDatosClasesGrupo = "{{ route('alumnos.clases.datos.grupo', ['id' => $idAlumno]) }}";
   var urlEliminarClase = "{{ route('alumnos.clases.eliminar', ['id' => $idAlumno, 'idClase' => 0]) }}";
   var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
   var estadosClaseCambio = {!! json_encode(App\Helpers\Enum\EstadosClase::listarCambio()) !!};
   var estadoClaseRealizada = "{{ App\Helpers\Enum\EstadosClase::Realizada }}";
   var estadoClaseCancelada = "{{ App\Helpers\Enum\EstadosClase::Cancelada }}";
-  var tipoCancelacionClaseAlumno = "{{ App\Helpers\Enum\TiposCancelacionClase::CancelacionAlumno }}";
-</script>
+  var tipoCancelacionClaseAlumno = "{{ App\Helpers\Enum\TiposCancelacionClase::CancelacionAlumno }}";</script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/clase.js")}}"></script>

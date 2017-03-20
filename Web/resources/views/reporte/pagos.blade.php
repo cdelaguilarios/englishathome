@@ -41,15 +41,21 @@
               <table id="tab-lista" class="table table-bordered table-hover">
                 <thead>
                   <tr>
-                    <th>Alumno/Profesor</th> 
-                    <th>Código</th>  
+                    <th>Código</th> 
+                    <th>Alumno/Profesor</th>  
                     <th>Motivo</th>    
                     <th>Cuenta</th>
-                    <th>Monto</th>
                     <th>Fecha de registro</th>
                     <th>Estado</th>
+                    <th>Monto</th>
                   </tr>
                 </thead>
+                <tfoot>
+                  <tr>
+                    <th colspan="6"></th>
+                    <th></th>
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </div>

@@ -43,16 +43,15 @@
                     <th>Profesor(a)</th>  
                     <th>Alumno(a)</th>    
                     <th>Fecha</th>
+                    <th>Estado</th>
                     <th>Duración</th>
                     <th>Pago por hora al profesor</th>
-                    <th>Estado</th>
                   </tr>
                 </thead>
                 <tfoot>
                   <tr>
-                    <th colspan="4"></th>
-                    <th colspan="2" class="text-center"></th>
-                    <th></th>
+                    <th colspan="5"></th>
+                    <th colspan="2"></th>
                   </tr>
                 </tfoot>
               </table>

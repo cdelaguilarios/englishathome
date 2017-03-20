@@ -7,18 +7,24 @@ function cargarGrafico(datosMontos, nombreEntidad, detalleSingular, detallePlura
   nombreEntidadReporte = nombreEntidad;
   detalleSingularReporte = detalleSingular;
   detallePluralReporte = detallePlural;
-  cargarFiltrosBusqueda(cargarDatosGrafico);
 }
 
-function cargarDatosGrafico() {
+var auxTimeout;
+function cargarDatosGrafico(idsSel, nuevaCarga) {
   if (!$("#sec-grafico").is(":visible")) {
-    setTimeout(cargarDatosGrafico, 100);
+    if (nuevaCarga) {
+      clearTimeout(auxTimeout);
+    }
+    auxTimeout = setTimeout(function () {
+      cargarDatosGrafico(idsSel);
+    }, 100);
   } else {
     urlListarGrafico = (typeof (urlListarGrafico) === "undefined" ? "" : urlListarGrafico);
     estados = (typeof (estados) === "undefined" ? "" : estados);
     meses = (typeof (meses) === "undefined" ? "" : meses);
     if (urlListarGrafico !== "" && estados !== "" && meses !== "") {
       var datos = obtenerDatosFiltrosBusqueda();
+      datos["ids"] = idsSel;
       $('#sec-grafico').block({message: '<h4>Cargando...</h4>'});
       llamadaAjax(urlListarGrafico, "POST", datos, true, function (d) {
         var datosBar = [];
@@ -66,7 +72,7 @@ function cargarDatosGrafico() {
           var opcionesGrafico = {
             chart: {
               title: "Reporte de " + nombreEntidadReporte,
-              subtitle: (datosMontosReporte ? ("S/. " + redondear(total, 2)) : total) + " " + (total === 1 ? detalleSingularReporte : detallePluralReporte) + " (Considere que los datos del gráfico son filtrados utilizando solo el formulario de búsquedad superior)"
+              subtitle: (datosMontosReporte ? ("S/. " + redondear(total, 2)) : total) + " " + (total === 1 ? detalleSingularReporte : detallePluralReporte)
             },
             bars: "vertical",
             vAxis: {format: (datosMontosReporte ? "decimal" : "")},

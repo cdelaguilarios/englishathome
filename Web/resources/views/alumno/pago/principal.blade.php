@@ -11,13 +11,20 @@
             <tr>
               <th>Código</th> 
               <th>Motivo</th>  
-              <th>Cuenta</th>     
-              <th>Monto</th>
+              <th>Cuenta</th>    
               <th>Fecha de registro</th>
-              <th>Estado</th>
+              <th>Estado</th> 
+              <th>Monto</th>
               <th class="all">Opciones</th>
             </tr>
           </thead>
+          <tfoot>
+            <tr>
+              <th colspan="5"></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </tfoot>
         </table>
       </div>
       <div style="display: none">
@@ -46,6 +53,5 @@
   var urlDatosPago = "{{ route('alumnos.pagos.datos', ['id' => $idAlumno, 'idPago' => 0]) }}";
   var urlEliminarPago = "{{ route('alumnos.pagos.eliminar', ['id' => $idAlumno, 'idPago' => 0]) }}";
   var motivosPago = {!!  json_encode(App\Helpers\Enum\MotivosPago::listar()) !!};
-  var cuentasBanco = {!! json_encode(App\Helpers\Enum\CuentasBancoPago::listar()) !!};
-</script>
+  var cuentasBanco = {!! json_encode(App\Helpers\Enum\CuentasBancoPago::listar()) !!};</script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/pago.js")}}"></script>

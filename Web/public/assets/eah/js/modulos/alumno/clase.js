@@ -15,6 +15,7 @@ function  cargarSeccionClases() {
   cargarListaPeriodos();
   cargarFormularioClase();
   cargarFormularioCancelarClase();
+  cargarFormularioClasesGrupo();
   mostrarSeccionClase();
 
   //Común   
@@ -133,7 +134,7 @@ function listarClases(tr, fila, datosFila) {
           if (d.length > 0) {
             $("body").unblock({
               onUnblock: function () {
-                fila.child($('#sec-not-mobile').css('display') === 'none' ? htmlListaClasesMovil(d) : htmlListaClases(d)).show();
+                fila.child($('#sec-not-mobile').css('display') === 'none' ? htmlListaClasesMovil(d) : htmlListaClases(d) + '<div class="box-body"><div id="sec-btn-editar-clases-' + d[0].numeroPeriodo + '" style="display: none;"><a type="button" class="btn btn-primary btn-sm" onclick="editarClasesGrupo(' + d[0].numeroPeriodo + ')">Editar clases seleccionadas</a></div></div>').show();
                 tr.find('a:eq(0)').html(tr.find('a:eq(0)').html().replace('<i class="fa fa-eye"></i> Ver', '<i class="fa fa-eye-slash"></i> Ocultar'));
 
                 if ($('#sec-not-mobile').css('display') === 'none') {
@@ -151,6 +152,9 @@ function listarClases(tr, fila, datosFila) {
                     ]
                   });
                 }
+                $("#tab-lista-clases-" + d[0].numeroPeriodo).find("input[type='checkbox']").live("change", function () {
+                  (($("#tab-lista-clases-" + d[0].numeroPeriodo).find("input[type='checkbox']:checked").length > 0) ? $("#sec-btn-editar-clases-" + d[0].numeroPeriodo).show() : $("#sec-btn-editar-clases-" + d[0].numeroPeriodo).hide());
+                });
               }
             });
           } else {
@@ -174,7 +178,7 @@ function htmlListaClases(d) {
   for (var i = 0; i < d.length; i++) {
     htmlListaClases +=
         '<tr>' +
-        '<td class="text-center">' + (i + 1) + '</td>' +
+        '<td class="text-center"><input type="checkbox" data-id="' + d[i].id + '" /></td>' +
         '<td>' +
         '<b>Fecha:</b> ' + formatoFecha(d[i].fechaInicio) + ' - De ' + formatoFecha(d[i].fechaInicio, false, true) + ' a ' + formatoFecha(d[i].fechaFin, false, true) + '<br/>'
         + '<b>Duración:</b> ' + formatoHora(d[i].duracion) + '<br/>'
@@ -209,7 +213,7 @@ function htmlListaClases(d) {
       '<table id="tab-lista-clases-' + d[0].numeroPeriodo + '" class="table table-bordered table-hover sub-table">' +
       '<thead>' +
       '<tr>' +
-      '<th>N°</th>' +
+      '<th class="text-center">Seleccionar</th>' +
       '<th>Datos</th>' +
       '<th>Estado</th>' +
       '<th>Opciones</th>' +
@@ -300,10 +304,10 @@ function cargarFormularioClase() {
       }
     },
     submitHandler: function (f) {
-      if (confirm($("#btn-guardar").text().trim() === "Guardar"
+      if (confirm($("#btn-guardar-clase").text().trim() === "Guardar"
           ? "¿Está seguro que desea guardar los cambios de los datos de la clase?"
           : "¿Está seguro que desea registrar los datos de esta clase?")) {
-        $.blockUI({message: "<h4>" + ($("#btn-guardar").text().trim() === "Guardar" ? "Guardando" : "Registrando") + " datos...</h4>"});
+        $.blockUI({message: "<h4>" + ($("#btn-guardar-clase").text().trim() === "Guardar" ? "Guardando" : "Registrando") + " datos...</h4>"});
         f.submit();
       }
     },
@@ -332,13 +336,15 @@ function cargarFormularioClase() {
   establecerCampoDuracion("duracion-clase");
   $("#btn-nuevo-clase").click(function () {
     limpiarCamposClase();
-    $("#btn-guardar").text("Registrar");
+    $("#titulo-formulario").text("Nueva clase");
+    $("#btn-guardar-clase").text("Registrar");
     mostrarSeccionClase([2]);
   });
 }
 function editarClase(idClase) {
   obtenerDatosClase(idClase, function (d) {
     limpiarCamposClase();
+    $("#titulo-formulario").text("Editar clase");
     $("#numero-periodo-clase").val(d.numeroPeriodo);
     $("#estado-clase").val(d.estado);
     if (d.idHistorial !== null) {
@@ -352,7 +358,7 @@ function editarClase(idClase) {
     $("#costo-hora-clase").val(redondear(d.costoHora, 2));
     $("#id-pago-clase").val(d.idPago);
     $("input[name='idClase']").val(d.id);
-    $("#btn-guardar").text("Guardar");
+    $("#btn-guardar-clase").text("Guardar");
 
     if (d.idProfesor !== null) {
       $(".id-docente-clase").val(d.idProfesor);
@@ -383,11 +389,6 @@ function obtenerDatosClase(idClase, funcionRetorno) {
           });
         }
     );
-  }
-}
-function verDatosPagosClase() {
-  if ($("#id-pago-clase").val() !== "") {
-    verDatosPago($("#id-pago-clase").val());
   }
 }
 
@@ -475,6 +476,126 @@ function verificarSeccionReprogramarClase() {
   (($("#sec-clase-32").is(":visible") && $(".id-docente-clase").val() !== "") ? $("#sec-clase-321").show() : $("#sec-clase-321").hide());
 }
 
+//Formulario Grupo
+function cargarFormularioClasesGrupo() {
+  $("#formulario-actualizar-clases").validate({
+    ignore: ":hidden",
+    rules: {
+      numeroPeriodo: {
+        required: true,
+        validarEntero: true
+      },
+      estado: {
+        required: true
+      },
+      horaInicio: {
+        required: true,
+        validarDecimal: true,
+        range: [(minHorario * 3600), (maxHorario * 3600)]
+      },
+      duracion: {
+        required: true,
+        validarDecimal: true,
+        range: [(minHorasClase * 3600), (maxHorasClase * 3600)]
+      },
+      costoHora: {
+        required: true,
+        validarDecimal: true
+      },
+      costoHoraDocente: {
+        required: true,
+        validarDecimal: true
+      }
+    },
+    submitHandler: function (f) {
+      if (confirm("¿Está seguro que desea guardar los cambios de los datos de las clases?")) {
+        $.blockUI({message: "<h4>Guardando datos...</h4>"});
+        f.submit();
+      }
+    },
+    highlight: function () {
+    },
+    unhighlight: function () {
+    },
+    errorElement: "div",
+    errorClass: "help-block-error",
+    errorPlacement: function (error, element) {
+      if (element.closest("div[class*=col-sm-]").length > 0) {
+        element.closest("div[class*=col-sm-]").append(error);
+      } else if (element.parent(".input-group").length) {
+        error.insertAfter(element.parent());
+      } else {
+        error.insertAfter(element);
+      }
+    },
+    onfocusout: false,
+    onkeyup: false,
+    onclick: false
+  });
+  //Registrar
+  establecerCampoHorario("hora-inicio-clases");
+  establecerCampoDuracion("duracion-clases");
+}
+function editarClasesGrupo(numeroPeriodo) {
+  var idsClases = [];
+  $.each($("#tab-lista-clases-" + numeroPeriodo).find("input[type='checkbox']:checked"), function (e, v) {
+    idsClases.push($(v).data("id"));
+  });
+  obtenerDatosClasesGrupo(idsClases, function (d) {
+    limpiarCamposClasesGrupo();
+    $("#numero-periodo-clases").val(d.numeroPeriodo);
+    $("#estado-clases").val(d.estado);
+    if (d.idHistorial !== null) {
+      $("#notificar-clases").attr("checked", true);
+      $("#notificar-clases").closest("label").addClass("checked");
+    }
+    $("#hora-inicio-clases").val(tiempoSegundos(d.fechaInicio));
+    $("#duracion-clases").val(d.duracion);
+    $("#costo-hora-clases").val(redondear(d.costoHora, 2));
+    $("#id-pago-clases").val(d.idPago);
+    $("input[name='idsClases']").val(idsClases);
+  });
+}
+function obtenerDatosClasesGrupo(idsClases, funcionRetorno) {
+  urlDatosClasesGrupo = (typeof (urlDatosClasesGrupo) === "undefined" ? "" : urlDatosClasesGrupo);
+  if (urlDatosClasesGrupo !== "") {
+    $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
+    llamadaAjax(urlDatosClasesGrupo, "POST", {"ids": idsClases}, true,
+        function (d) {
+          if (funcionRetorno !== undefined)
+            funcionRetorno(d);
+          $("body").unblock();
+        },
+        function (d) {},
+        function (de) {
+          $('body').unblock({
+            onUnblock: function () {
+              agregarMensaje("errores", "Ocurrió un problema durante la carga de datos de las clases seleccionadas. Por favor inténtelo nuevamente.", true, "#sec-mensajes-clase");
+            }
+          });
+        }
+    );
+  }
+}
+function limpiarCamposClasesGrupo(soloCamposDocente) {
+  $(".id-docente-clases").val("");
+  $(".nombre-docente-clases").html("");
+  if (!soloCamposDocente) {
+    $("#formulario-actualizar-clases").find(":input, select").each(function (i, e) {
+      if (e.name !== "idAlumno" && e.name !== "_token") {
+        if ($(e).is("select")) {
+          $(e).prop("selectedIndex", 0);
+        } else if ($(e).is(":checkbox")) {
+          $(e).attr("checked", false);
+          $(e).closest("label").removeClass("checked");
+        } else {
+          e.value = "";
+        }
+      }
+    });
+  }
+}
+
 //Común - Util
 function cargarDocentesDisponiblesClase(recargarListaPeriodos) {
   var formulario = ($("#formulario-cancelar-clase").is(":visible") ? $("#formulario-cancelar-clase") : $("#formulario-registrar-actualizar-clase"));
@@ -539,7 +660,7 @@ function mostrarSeccionClase(numSecciones) {
 }
 function limpiarCamposClase(soloCamposDocente) {
   $(".id-docente-clase").val("");
-  $(".nombre-docente-pago").html("");
+  $(".nombre-docente-clase").html("");
   if (!soloCamposDocente) {
     $("#formulario-registrar-actualizar-clase, #formulario-cancelar-clase").find(":input, select").each(function (i, e) {
       if (e.name !== "idAlumno" && e.name !== "_token") {
@@ -553,5 +674,10 @@ function limpiarCamposClase(soloCamposDocente) {
         }
       }
     });
+  }
+}
+function verDatosPagosClase(idElemento) {
+  if ($("#" + idElemento).val() !== "") {
+    verDatosPago($("#" + idElemento).val());
   }
 }

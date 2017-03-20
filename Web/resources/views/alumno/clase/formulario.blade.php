@@ -1,5 +1,5 @@
 <div class="box-header">
-  <h3 class="box-title with-border">Nueva clase</h3>                
+  <h3 id="titulo-formulario" class="box-title with-border">Nueva clase</h3>                
 </div>  
 <div class="box-body">    
   <div class="form-group">    
@@ -66,7 +66,7 @@
       {{ Form::select("idPago", App\Models\PagoAlumno::listar($idAlumno)->lists("id", "id")->toArray(), NULL, ["id" => "id-pago-clase", "class" => "form-control", "placeholder" => "Seleccionar código de pago"]) }}
     </div>
     <div class="col-sm-2">
-      <a href="javascript:void(0);" onclick="verDatosPagosClase();"><i class="fa fa-eye"></i></a>
+      <a href="javascript:void(0);" onclick="verDatosPagosClase('id-pago-clase');"><i class="fa fa-eye"></i></a>
     </div>
   </div>
   <div class="box-body">                        
@@ -89,19 +89,19 @@
             {{ Form::text("costoHoraDocente", null, ["id" => "costo-hora-docente", "class" => "form-control", "maxlength" =>"19"]) }}
           </div>
         </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-12">
-          <br/><span>(*) Campos obligatorios</span>
-        </div>
-      </div>
-      {{ Form::hidden("idDocente", "", ["class" => "id-docente-clase"]) }} 
-      {{ Form::hidden("idClase") }} 
-      {{ Form::hidden("idAlumno", $idAlumno) }} 
+      </div>       
     </div>
+    <div class="form-group">
+      <div class="col-sm-12">
+        <br/><span>(*) Campos obligatorios</span>
+      </div>
+    </div>
+    {{ Form::hidden("idDocente", "", ["class" => "id-docente-clase"]) }} 
+    {{ Form::hidden("idClase") }} 
+    {{ Form::hidden("idAlumno", $idAlumno) }}
   </div> 
   <div class="box-footer">    
     <button type="button" class="btn btn-default btn-cancelar-clase">Cancelar</button>
-    <button id="btn-guardar" type="submit" class="btn btn-success pull-right">Registrar</button>
+    <button id="btn-guardar-clase" type="submit" class="btn btn-success pull-right">Registrar</button>
   </div>
 </div>

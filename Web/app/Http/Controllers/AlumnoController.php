@@ -268,6 +268,10 @@ class AlumnoController extends Controller {
     return response()->json(Clase::obtenerXId($id, $idClase, TRUE), 200);
   }
 
+  public function datosClasesGrupo($id, ClaseRequest\DatosGrupoRequest $req) {
+    return response()->json(Clase::datosGrupo($id, $req->all()), 200);
+  }
+
   public function eliminarClase($id, $idClase) {
     try {
       Clase::eliminar($id, $idClase);

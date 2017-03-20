@@ -28,7 +28,7 @@ function cargarListaPago() {
   if (urlListarPagos !== "" && urlActualizarEstadoPago !== "" && urlEliminarPago !== "" && motivosPago !== "" && estadosPago !== "") {
     $("#tab-lista-pagos").DataTable({
       processing: true,
-      serverSide: true,
+      serverSide: false,
       ajax: {
         url: urlListarPagos,
         type: "POST",
@@ -38,18 +38,20 @@ function cargarListaPago() {
       },
       autoWidth: false,
       responsive: true,
+      order: [[2, "desc"]],
       columns: [
+        {data: "id", name: "pago.id", className: "text-center"},
         {data: "motivo", name: "pago.motivo", render: function (e, t, d, m) {
             return motivosPago[d.motivo];
           }},
-        {data: "monto", name: "pago.monto", render: function (e, t, d, m) {
-            return 'S/. ' + redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="saldo-favor-utilizado">utilizado</span>)' : '') + '</b></small>' : '');
-          }},
         {data: "fechaRegistro", name: "pago.fechaRegistro", render: function (e, t, d, m) {
             return formatoFecha(d.fechaRegistro, true);
-          }},
+          }, className: "text-center"},
         {data: "estado", name: "pago.estado", render: function (e, t, d, m) {
             return '<div class="sec-btn-editar-estado-pago"><a href="javascript:void(0);" class="btn-editar-estado-pago" data-idpago="' + d.id + '" data-idalumno="' + d.idAlumno + '" data-estado="' + d.estado + '"><span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span></a></div>';
+          }, className: "text-center"},
+        {data: "monto", name: "pago.monto", render: function (e, t, d, m) {
+            return 'S/. ' + redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="saldo-favor-utilizado">utilizado</span>)' : '') + '</b></small>' : '');
           }, className: "text-center"},
         {data: "id", name: "pago.id", orderable: false, searchable: false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
@@ -66,6 +68,18 @@ function cargarListaPago() {
       ],
       initComplete: function (s, j) {
         establecerBotonRecargaTabla("tab-lista-pagos");
+      },
+      footerCallback: function (r, d, s, e, di) {
+        var api = this.api();
+
+        var montoTotal = 0, montoTotalPagina = 0;
+        $('#tab-lista-pagos').DataTable().rows({filter: 'applied'}).data().each(function (i) {
+          montoTotal += parseFloat(i.monto);
+        });
+        $('#tab-lista-pagos').DataTable().rows({page: 'current'}).data().each(function (i) {
+          montoTotalPagina += parseFloat(i.monto);
+        });
+        $(api.column(4).footer()).html("Total S/. " + redondear(montoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + redondear(montoTotalPagina, 2) : ""));
       }
     });
     $(window).click(function (e) {

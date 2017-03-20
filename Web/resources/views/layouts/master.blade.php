@@ -133,7 +133,7 @@
               </a>
               <ul class="treeview-menu">
                 <li class="{{ ((isset($subSeccion) && $subSeccion == "clases") ? "active" : "") }}">
-                  <a href="{{ route("reporte.clases")}}"><i class="fa fa-signal"></i> Reporte de clases</a>
+                  <a href="{{ route("reporte.clases")}}"><i class="fa flaticon-student-in-front-of-a-stack-of-books"></i> Reporte de clases</a>
                 </li>
                 <li class="{{ ((isset($subSeccion) && $subSeccion == "pagos") ? "active" : "") }}">
                   <a href="{{ route("reporte.pagos")}}"><i class="fa fa-line-chart"></i> Reporte de pagos</a>
