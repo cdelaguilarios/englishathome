@@ -84,7 +84,7 @@ class PagoProfesor extends Model {
   public static function verificarExistencia($idProfesor, $id) {
     try {
       PagoProfesor::obtenerXId($idProfesor, $id);
-    } catch (Exception $ex) {
+    } catch (\Exception $ex) {
       return FALSE;
     }
     return TRUE;

@@ -388,7 +388,7 @@ class Clase extends Model {
   public static function verificarExistencia($idAlumno, $id) {
     try {
       Clase::obtenerXId($idAlumno, $id);
-    } catch (Exception $ex) {
+    } catch (\Exception $ex) {
       return FALSE;
     }
     return TRUE;

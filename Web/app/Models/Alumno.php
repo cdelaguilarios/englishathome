@@ -49,7 +49,7 @@ class Alumno extends Model {
       $entidadCurso = EntidadCurso::obtenerXEntidad($id);
       $alumno->idCurso = (!is_null($entidadCurso) ? $entidadCurso->idCurso : NULL);
       $datosProximaClase = Clase::obtenerProximaClase($id);
-      $alumno->profesorProximaClase = (!is_null($datosProximaClase) ? Profesor::obtenerXId($datosProximaClase->idProfesor) : NULL);
+      $alumno->profesorProximaClase = (!is_null($datosProximaClase) && Profesor::verificarExistencia($datosProximaClase->idProfesor) ? Profesor::obtenerXId($datosProximaClase->idProfesor) : NULL);
     }
     return $alumno;
   }

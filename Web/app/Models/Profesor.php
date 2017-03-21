@@ -106,4 +106,13 @@ class Profesor extends Model {
     Entidad::eliminar($id);
   }
 
+  public static function verificarExistencia($id) {
+    try {
+      Profesor::obtenerXId($id, TRUE);
+    } catch (\Exception $ex) {
+      return FALSE;
+    }
+    return TRUE;
+  }
+
 }
