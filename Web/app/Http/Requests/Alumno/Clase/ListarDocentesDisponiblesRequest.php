@@ -16,13 +16,17 @@ class ListarDocentesDisponiblesRequest extends Request {
   }
 
   protected function getValidatorInstance() {
-    $datos = $this->all();    
+    $datos = $this->all();
     $datos["fecha"] = ReglasValidacion::formatoDato($datos, "fecha");
     $datos["horaInicio"] = ReglasValidacion::formatoDato($datos, "horaInicio");
     $datos["duracion"] = ReglasValidacion::formatoDato($datos, "duracion");
     $datos["tipoDocente"] = ReglasValidacion::formatoDato($datos, "tipoDocente");
     $datos["sexoDocente"] = ReglasValidacion::formatoDato($datos, "sexoDocente", "");
     $datos["idCursoDocente"] = ReglasValidacion::formatoDato($datos, "idCursoDocente", "");
+    $datos["idsClases"] = ReglasValidacion::formatoDato($datos, "idsClases", []);
+    if (!is_array($datos["idsClases"])) {
+      $datos["idsClases"] = explode(",", $datos["idsClases"]);
+    }
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -30,9 +34,9 @@ class ListarDocentesDisponiblesRequest extends Request {
   public function rules() {
     $datos = $this->all();
     $reglasValidacion = [
-        "fecha" => "required|date_format:d/m/Y",
-        "horaInicio" => "required|numeric|between:" . ((int) Config::get("eah.minHorario") * 3600) . "," . ((int) Config::get("eah.maxHorario") * 3600),
-        "duracion" => "required|numeric|between:" . ((int) Config::get("eah.minHorasClase") * 3600) . "," . ((int) Config::get("eah.maxHorasClase") * 3600)
+        "fecha" => (count($datos["idsClases"]) > 0 ? "" : "required|") . "date_format:d/m/Y",
+        "horaInicio" => (count($datos["idsClases"]) > 0 ? "" : "required|") . "numeric|between:" . ((int) Config::get("eah.minHorario") * 3600) . "," . ((int) Config::get("eah.maxHorario") * 3600),
+        "duracion" => (count($datos["idsClases"]) > 0 ? "" : "required|") . "numeric|between:" . ((int) Config::get("eah.minHorasClase") * 3600) . "," . ((int) Config::get("eah.maxHorasClase") * 3600)
     ];
     $listaTiposDocente = TiposEntidad::listarTiposDocente();
     if (!(!is_null($datos["tipoDocente"]) && (array_key_exists($datos["tipoDocente"], $listaTiposDocente)))) {
@@ -63,9 +67,9 @@ class ListarDocentesDisponiblesRequest extends Request {
 
   public function messages() {
     return [
-        "tipoDocenteNoValido.required" => "El tipo seleccionado para filtrar la lista de profesores o postulantes no es válido",
-        "sexoDocenteNoValido.required" => "El sexo seleccionado para filtrar la lista de profesores o postulantes no es válido",
-        "idCursoDocenteNoValido.required" => "El curso seleccionado para filtrar la lista de profesores o postulantes no es válido"
+        "tipoDocenteNoValido.required" => "El tipo seleccionado para filtrar la lista de profesores o postulantes no es válido.",
+        "sexoDocenteNoValido.required" => "El sexo seleccionado para filtrar la lista de profesores o postulantes no es válido.",
+        "idCursoDocenteNoValido.required" => "El curso seleccionado para filtrar la lista de profesores o postulantes no es válido."
     ];
   }
 

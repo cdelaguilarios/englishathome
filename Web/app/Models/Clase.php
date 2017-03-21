@@ -13,7 +13,6 @@ use App\Helpers\Enum\TiposHistorial;
 use App\Helpers\Enum\MensajesHistorial;
 use Illuminate\Database\Eloquent\Model;
 use App\Helpers\Enum\TiposBusquedaFecha;
-use App\Helpers\Enum\TiposCancelacionClase;
 
 class Clase extends Model {
 
@@ -171,7 +170,7 @@ class Clase extends Model {
     if (isset($datos["ids"]) && is_array($datos["ids"])) {
       $nombreTabla = Clase::nombreTabla();
       $clases = Clase::listarBase()
-              ->select($nombreTabla . ".*", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.id) AS idPago"))
+              ->select($nombreTabla . ".*", DB::raw("max(pago.id) AS idPago"))
               ->leftJoin(PagoAlumno::nombreTabla() . " as pagoAlumno", "pagoClase.idPago", "=", "pagoAlumno.idPago")
               ->leftJoin(Pago::nombreTabla() . " as pago", "pagoAlumno.idPago", "=", "pago.id")
               ->where($nombreTabla . ".idAlumno", $idAlumno)
@@ -184,7 +183,7 @@ class Clase extends Model {
       $datosGrupo = [
           "numeroPeriodo" => "",
           "estado" => NULL,
-          "idHistorial" => NULL,
+          "fechaInicio" => NULL,
           "duracion" => NULL,
           "costoHora" => "",
           "idPago" => NULL
@@ -192,16 +191,19 @@ class Clase extends Model {
       for ($i = 0; $i < count($clases); $i++) {
         $clase = $clases[$i];
         if ($i > 0) {
+          $fechaInicioBase = new Carbon($datosGrupo["fechaInicio"]);
+          $fechaInicio = new Carbon($clase->fechaInicio);
+
           $datosGrupo["numeroPeriodo"] = ($datosGrupo["numeroPeriodo"] != $clase->numeroPeriodo ? "" : $datosGrupo["numeroPeriodo"]);
-          $datosGrupo["estado"] = ($datosGrupo["estado"] != $clase->estado ? "" : $datosGrupo["estado"]);
-          $datosGrupo["idHistorial"] = ($datosGrupo["idHistorial"] != $clase->idHistorial ? "" : $datosGrupo["idHistorial"]);
-          $datosGrupo["duracion"] = ($datosGrupo["duracion"] != $clase->duracion ? "" : $datosGrupo["duracion"]);
+          $datosGrupo["estado"] = ($datosGrupo["estado"] != $clase->estado ? NULL : $datosGrupo["estado"]);
+          $datosGrupo["fechaInicio"] = ($fechaInicioBase->toTimeString() != $fechaInicio->toTimeString() ? NULL : $datosGrupo["fechaInicio"]);
+          $datosGrupo["duracion"] = ($datosGrupo["duracion"] != $clase->duracion ? NULL : $datosGrupo["duracion"]);
           $datosGrupo["costoHora"] = ($datosGrupo["costoHora"] != $clase->costoHora ? "" : $datosGrupo["costoHora"]);
-          $datosGrupo["idPago"] = ($datosGrupo["idPago"] != $clase->idPago ? "" : $datosGrupo["idPago"]);
+          $datosGrupo["idPago"] = ($datosGrupo["idPago"] != $clase->idPago ? NULL : $datosGrupo["idPago"]);
         } else {
           $datosGrupo["numeroPeriodo"] = $clase->numeroPeriodo;
           $datosGrupo["estado"] = $clase->estado;
-          $datosGrupo["idHistorial"] = $clase->idHistorial;
+          $datosGrupo["fechaInicio"] = $clase->fechaInicio;
           $datosGrupo["duracion"] = $clase->duracion;
           $datosGrupo["costoHora"] = $clase->costoHora;
           $datosGrupo["idPago"] = $clase->idPago;
@@ -321,6 +323,37 @@ class Clase extends Model {
       ]);
     }
     return $clase["id"];
+  }
+
+  public static function actualizarGrupo($idAlumno, $datos) {
+    $clases = Clase::listar()->whereIn(Clase::nombreTabla() . ".id", $datos["idsClases"])->orderBy(Clase::nombreTabla() . ".fechaInicio")->get();
+    foreach ($clases as $clase) {
+      $claseSel = Clase::obtenerXId($idAlumno, $clase->id);
+      if (!is_null($claseSel)) {
+        $datosActualizar = [];
+        if ($datos["editarDatosGenerales"] == 1) {
+          $datosActualizar["numeroPeriodo"] = $datos["numeroPeriodo"];
+          $datosActualizar["estado"] = $datos["estado"];
+        }
+        if ($datos["editarDatosTiempo"] == 1) {
+          $fechaInicio = new Carbon($claseSel->fechaInicio);
+          $datosActualizar["fechaInicio"] = $fechaInicio->setTime(0, 0, 0)->addSeconds($datos["horaInicio"]);
+          $datosActualizar["fechaFin"] = clone $datosActualizar["fechaInicio"];
+          $datosActualizar["fechaFin"]->addSeconds($datos["duracion"]);
+          $datosActualizar["duracion"] = $datos["duracion"];
+        }
+
+        if ($datos["editarDatosProfesor"] == 1) {
+          $datosActualizar["idProfesor"] = $datos["idDocente"];
+          $datosActualizar["costoHoraProfesor"] = $datos["costoHoraDocente"];
+        }
+
+        $claseSel->update($datosActualizar);
+        if ($datos["editarDatosPago"] == 1 && isset($datos["idPago"])) {
+          PagoClase::registrar($datos["idPago"], $clase->id);
+        }
+      }
+    }
   }
 
   public static function actualizarEstado($idAlumno, $datos) {

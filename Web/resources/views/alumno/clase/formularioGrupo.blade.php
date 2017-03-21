@@ -3,41 +3,41 @@
 </div>  
 <div class="box-body"> 
   <div class="form-group">
-    <div class="col-sm-6">      
+    <div class="col-sm-3 col-sm-offset-1">
       <div class="checkbox">
         <label class="checkbox-custom" data-initialize="checkbox">
-          {{ Form::label("editar-datos-profesor-clases", "Notificar", ["class" => "checkbox-label"]) }}
-          {{ Form::checkbox("", null, FALSE, ["id" => "editar-datos-profesor-clases"]) }} 
+          {{ Form::label("editar-datos-generales-clases", "Editar datos generales", ["class" => "checkbox-label"]) }}
+          {{ Form::checkbox("editarDatosGenerales", NULL, FALSE, ["id" => "editar-datos-generales-clases", "data-seccion" => "sec-clase-41"]) }} 
         </label>
       </div>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-3 col-sm-offset-1">
       <div class="checkbox">
         <label class="checkbox-custom" data-initialize="checkbox">
-          {{ Form::label("editar-datos-generales-clases", "Notificar", ["class" => "checkbox-label"]) }}
-          {{ Form::checkbox("", null, FALSE, ["id" => "editar-datos-generales-clases"]) }} 
+          {{ Form::label("editar-datos-tiempo-clases", "Editar datos de tiempo", ["class" => "checkbox-label"]) }}
+          {{ Form::checkbox("editarDatosTiempo", NULL, FALSE, ["id" => "editar-datos-tiempo-clases", "data-seccion" => "sec-clase-42"]) }} 
         </label>
       </div>
     </div>
-  </div>  
+  </div>   
   <div class="form-group">
-    <div class="col-sm-6">
+    <div class="col-sm-3 col-sm-offset-1">
       <div class="checkbox">
         <label class="checkbox-custom" data-initialize="checkbox">
-          {{ Form::label("editar-datos-tiempo-clases", "Notificar", ["class" => "checkbox-label"]) }}
-          {{ Form::checkbox("", null, FALSE, ["id" => "editar-datos-tiempo-clases"]) }} 
+          {{ Form::label("editar-datos-pago-clases", "Editar datos de pago", ["class" => "checkbox-label"]) }}
+          {{ Form::checkbox("editarDatosPago", NULL, FALSE, ["id" => "editar-datos-pago-clases", "data-seccion" => "sec-clase-43"]) }} 
         </label>
       </div>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-3 col-sm-offset-1">      
       <div class="checkbox">
         <label class="checkbox-custom" data-initialize="checkbox">
-          {{ Form::label("editar-datos-pago-clases", "Notificar", ["class" => "checkbox-label"]) }}
-          {{ Form::checkbox("", null, FALSE, ["id" => "editar-datos-pago-clases"]) }} 
+          {{ Form::label("editar-datos-profesor-clases", "Editar datos de profesor", ["class" => "checkbox-label"]) }}
+          {{ Form::checkbox("editarDatosProfesor", NULL, FALSE, ["id" => "editar-datos-profesor-clases", "data-seccion" => "sec-clase-44"]) }} 
         </label>
       </div>
     </div>
-  </div>  
+  </div>
   <div id="sec-clase-41" class="form-group">    
     {{ Form::label("numero-periodo-clases", "Período (*): ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
@@ -47,14 +47,6 @@
     <div class="col-sm-3">
       {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarCambio(), NULL, ["id" => "estado-clases", "class" => "form-control"]) }}
     </div>
-    <div class="col-sm-2">
-      <div class="checkbox">
-        <label class="checkbox-custom" data-initialize="checkbox">
-          {{ Form::label("notificar-clases", "Notificar", ["class" => "checkbox-label"]) }}
-          {{ Form::checkbox("notificar", null, FALSE, ["id" => "notificar-clases"]) }} 
-        </label>
-      </div>
-    </div> 
   </div>
   <div id="sec-clase-42" class="form-group">    
     {{ Form::label("hora-inicio-clases", "Hora inicio: ", ["class" => "col-sm-2 control-label"]) }}
@@ -97,12 +89,12 @@
   <div id="sec-clase-44" class="box-body">                        
     <div class="form-group">
       <div class="col-sm-12">
-        <button type="button" class="btn btn-primary btn-sm btn-docentes-disponibles-clases">Elegir profesor disponible</button> 
+        <button type="button" class="btn btn-primary btn-sm btn-docentes-disponibles-clase">Elegir profesor disponible</button> 
       </div>
     </div>
     <div id="sec-clase-441">
       <div class="form-group">
-        {{ Form::label("", "", ["class" => "col-sm-4 control-label nombre-docente-clases"]) }}
+        {{ Form::label("", "", ["class" => "col-sm-4 control-label nombre-docente-clase"]) }}
       </div>
       <div class="form-group">
         {{ Form::label("costo-hora-docente-clases", "Pago por hora al profesor (*): ", ["class" => "col-sm-3 control-label"]) }}
@@ -122,7 +114,7 @@
       <br/><span>(*) Campos obligatorios</span>
     </div>
   </div>
-  {{ Form::hidden("idDocente", "", ["class" => "id-docente-clases"]) }} 
+  {{ Form::hidden("idDocente", "", ["class" => "id-docente-clase"]) }} 
   {{ Form::hidden("idsClases") }} 
   {{ Form::hidden("idAlumno", $idAlumno) }} 
   <div class="box-footer">    

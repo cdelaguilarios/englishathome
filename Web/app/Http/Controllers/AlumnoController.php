@@ -252,6 +252,18 @@ class AlumnoController extends Controller {
     return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "clase"]));
   }
 
+  public function actualizarClasesGrupo($id, ClaseRequest\FormularioGrupoRequest $req) {
+      $datos = $req->all();
+      Clase::actualizarGrupo($id, $datos);
+      Mensajes::agregarMensajeExitoso("Actualización exitosa.");
+    try {
+    } catch (\Exception $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");
+    }
+    return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "clase"]));
+  }
+
   public function cancelarClase($id, ClaseRequest\CancelarRequest $req) {
     try {
       $datos = $req->all();

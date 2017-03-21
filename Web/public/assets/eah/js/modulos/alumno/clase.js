@@ -37,6 +37,8 @@ function  cargarSeccionClases() {
         $(".nombre-docente-clase").html((docenteDisponibleClase.val() !== '' ? '<i class="fa flaticon-teach"></i> <b>' + docenteDisponibleClase.data('nombrecompleto') + '</b> <a href=' + (urlPerfilProfesor.replace('/0', '/' + docenteDisponibleClase.val())) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>' : ''));
         if ($("#formulario-registrar-actualizar-clase").is(":visible")) {
           mostrarSeccionClase([2, 1]);
+        } else if ($("#formulario-actualizar-clases").is(":visible")) {
+          $("#sec-clase-441").show();
         }
       }
       verificarSeccionReprogramarClase();
@@ -508,9 +510,13 @@ function cargarFormularioClasesGrupo() {
       }
     },
     submitHandler: function (f) {
-      if (confirm("¿Está seguro que desea guardar los cambios de los datos de las clases?")) {
-        $.blockUI({message: "<h4>Guardando datos...</h4>"});
-        f.submit();
+      if ($("#editar-datos-generales-clases:checked, #editar-datos-tiempo-clases:checked, #editar-datos-pago-clases:checked, #editar-datos-profesor-clases:checked").length > 0) {
+        if (confirm("¿Está seguro que desea guardar estos cambios?")) {
+          $.blockUI({message: "<h4>Guardando datos...</h4>"});
+          f.submit();
+        }
+      } else {
+        agregarMensaje("advertencias", "Debe seleccionar un grupo de datos a editar.", true, "#sec-mensajes-clase");
       }
     },
     highlight: function () {
@@ -535,6 +541,10 @@ function cargarFormularioClasesGrupo() {
   //Registrar
   establecerCampoHorario("hora-inicio-clases");
   establecerCampoDuracion("duracion-clases");
+
+  $("#editar-datos-generales-clases, #editar-datos-tiempo-clases, #editar-datos-pago-clases, #editar-datos-profesor-clases").live("click", function () {
+    (($(this).is(':checked')) ? $("#" + $(this).data("seccion")).show() : $("#" + $(this).data("seccion")).hide());
+  });
 }
 function editarClasesGrupo(numeroPeriodo) {
   var idsClases = [];
@@ -545,15 +555,15 @@ function editarClasesGrupo(numeroPeriodo) {
     limpiarCamposClasesGrupo();
     $("#numero-periodo-clases").val(d.numeroPeriodo);
     $("#estado-clases").val(d.estado);
-    if (d.idHistorial !== null) {
-      $("#notificar-clases").attr("checked", true);
-      $("#notificar-clases").closest("label").addClass("checked");
-    }
     $("#hora-inicio-clases").val(tiempoSegundos(d.fechaInicio));
     $("#duracion-clases").val(d.duracion);
     $("#costo-hora-clases").val(redondear(d.costoHora, 2));
     $("#id-pago-clases").val(d.idPago);
     $("input[name='idsClases']").val(idsClases);
+
+    $("#editar-datos-generales-clases").attr("checked", true);
+    $("#editar-datos-generales-clases").closest("label").addClass("checked");
+    mostrarSeccionClase([4, 1]);
   });
 }
 function obtenerDatosClasesGrupo(idsClases, funcionRetorno) {
@@ -598,7 +608,7 @@ function limpiarCamposClasesGrupo(soloCamposDocente) {
 
 //Común - Util
 function cargarDocentesDisponiblesClase(recargarListaPeriodos) {
-  var formulario = ($("#formulario-cancelar-clase").is(":visible") ? $("#formulario-cancelar-clase") : $("#formulario-registrar-actualizar-clase"));
+  var formulario = ($("#formulario-cancelar-clase").is(":visible") ? $("#formulario-cancelar-clase") : ($("#formulario-actualizar-clases").is(":visible") ? $("#formulario-actualizar-clases") : $("#formulario-registrar-actualizar-clase")));
   var camposFormularioClase = formulario.find(":input, select").not(":hidden, input[name='pagoProfesor'], input[name='costoHoraDocente'], input[name='costoHora'], input[name='numeroPeriodo']");
   if (!camposFormularioClase.valid()) {
     return false;
