@@ -15,10 +15,13 @@ class Docente extends Model {
 
     foreach ($clasesGeneradas as $claseGenerada) {
       if (isset($claseGenerada["fechaInicio"]) && isset($claseGenerada["fechaFin"])) {
-        $auxFechaInicio = clone $claseGenerada["fechaInicio"];
-        $auxFechaFin = clone $claseGenerada["fechaFin"];
-        $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($claseGenerada["fechaInicio"]->subHour(), $claseGenerada["fechaFin"]->addHour(), TRUE);
-        $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($auxFechaInicio->dayOfWeek, $auxFechaInicio->format("H:i:s"), $auxFechaFin->format("H:i:s"), $tipoDocente);
+        $fechaInicioOri = clone $claseGenerada["fechaInicio"];
+        $fechaFinOri = clone $claseGenerada["fechaFin"];
+        $fechaInicioCop = clone $fechaInicioOri;
+        $fechaFinCop = clone $fechaFinOri;
+        
+        $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicioOri->subHour(), $fechaFinOri->addHour(), TRUE);
+        $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($fechaInicioCop->dayOfWeek, $fechaInicioCop->format("H:i:s"), $fechaFinCop->format("H:i:s"), $tipoDocente);
         $idsDisponiblesSel = ($auxCont == 1 ? array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray()) : array_intersect($idsDisponiblesSel, array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray())));
         $auxCont++;
       }

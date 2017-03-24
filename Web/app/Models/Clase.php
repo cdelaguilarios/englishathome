@@ -150,7 +150,8 @@ class Clase extends Model {
   }
 
   public static function totalPeriodos($idAlumno) {
-    return Clase::listarPeriodos($idAlumno)->count();
+    $sub = Clase::listarPeriodos($idAlumno);
+    return DB::table(DB::raw("({$sub->toSql()}) as sub"))->mergeBindings($sub->getQuery())->count();
   }
 
   public static function listarIdsEntidadesXRangoFecha($fechaInicio, $fechaFin, $idsProfesores = FALSE) {

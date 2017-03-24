@@ -70,8 +70,8 @@ class PagoAlumno extends Model {
         "tipo" => TiposHistorial::Pago
     ]);
 
-    Alumno::actualizarEstado($idAlumno, EstadosAlumno::Activo);
     if ($datos["motivo"] == MotivosPago::Clases) {
+      Alumno::actualizarEstado($idAlumno, EstadosAlumno::Activo);
       Clase::registrarXDatosPago($idAlumno, $datosPago["id"], $datos);
     }
   }
