@@ -60,7 +60,7 @@ class PagoProfesor extends Model {
           continue;
         }
         $idClaseAlumno = explode("-", $datClase);
-        PagoClase::registrar($datosPago["id"], $idClaseAlumno[1]);
+        PagoClase::registrarActualizar($datosPago["id"], $idClaseAlumno[1], $idProfesor, FALSE);
       }
     }
 

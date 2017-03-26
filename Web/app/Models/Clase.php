@@ -35,7 +35,9 @@ class Clase extends Model {
                     ->leftJoin(PagoClase::nombreTabla() . " as pagoClase", $nombreTabla . ".id", "=", "pagoClase.idClase")
                     ->where($nombreTabla . ".eliminado", 0)
                     ->where(function ($q) {
-                      $q->whereNull("historial.id")->orWhere("historial.enviarCorreo", 1);
+                      $q->whereNull("historial.id")->orWhere(function ($q) {
+                        $q->where("historial.eliminado", 0)->where("historial.enviarCorreo", 1);
+                      });
                     })
                     ->groupBy($nombreTabla . ".id")
                     ->distinct();
@@ -216,6 +218,43 @@ class Clase extends Model {
     }
   }
 
+  public static function totalXHorario($idAlumno, $datos) {
+    if (!(isset($datos["fecha"]) || count($datos["ids"]) > 0)) {
+      return 0;
+    }
+
+    $nombreTabla = Clase::nombreTabla();
+    $auxIds = (isset($datos["fecha"]) ? [1] : $datos["ids"]);
+    foreach ($auxIds as $auxId) {
+      if (isset($datos["fecha"])) {
+        $fechaInicio = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00");
+      } else {
+        $clase = Clase::obtenerXId($idAlumno, $auxId);
+        $fechaInicio = new Carbon($clase->fechaInicio);
+        $fechaInicio->setTime(0, 0, 0);
+      }
+      $fechaInicio->addSeconds($datos["horaInicio"]);
+      $fechaFin = clone $fechaInicio;
+      $fechaFin->addSeconds($datos["duracion"]);
+      $total = Clase::listarBase()
+                      ->where($nombreTabla . ".idAlumno", $idAlumno)
+                      ->where(function ($q) use ($fechaInicio, $fechaFin) {
+                        $q->where(function ($q) use ($fechaInicio) {
+                          $q->where("fechaInicio", "<=", $fechaInicio)->where("fechaFin", ">=", $fechaInicio);
+                        })->orWhere(function ($q) use ($fechaFin) {
+                          $q->where("fechaInicio", "<=", $fechaFin)->where("fechaFin", ">=", $fechaFin);
+                        })->orWhere(function ($q) use ($fechaInicio, $fechaFin) {
+                          $q->where("fechaInicio", ">=", $fechaInicio)->where("fechaFin", "<=", $fechaFin);
+                        });
+                      })->whereNotIn($nombreTabla . ".estado", [EstadosClase::Cancelada])
+                      ->whereNotIn($nombreTabla . ".id", $datos["ids"])->count();
+      if ($total > 0) {
+        return $total;
+      }
+    }
+    return 0;
+  }
+
   public static function reporte($datos) {
     $clases = Clase::where("eliminado", 0)
             ->select(($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes ? DB::raw("MONTH(fechaInicio) AS mes") : ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho ? DB::raw("YEAR(fechaInicio) AS anho") : "fechaInicio")), "estado", DB::raw("count(id) AS total"))
@@ -280,8 +319,8 @@ class Clase extends Model {
       $datos["numeroPeriodo"] = $datos["periodoClases"];
       $datos["notificar"] = (($datosNotificacionClases[$i]->notificar != "" && $datosNotificacionClases[$i]->notificar) ? 1 : 0);
       $datos["estado"] = EstadosClase::Programada;
-      $idClase = Clase::registrarActualizar($idAlumno, $datos);
-      PagoClase::registrar($idPago, $idClase);
+      $datos["idPago"] = $idPago;
+      Clase::registrarActualizar($idAlumno, $datos);
     }
   }
 
@@ -298,7 +337,15 @@ class Clase extends Model {
     $notificar = ($datos["notificar"] == 1);
     $clase = ((isset($datos["idClase"])) ? Clase::obtenerXId($idAlumno, $datos["idClase"]) : NULL);
     if (!is_null($clase)) {
-      $notificar = ($notificar && is_null($clase->idNotificar));
+      if (is_null($datos["estado"])) {
+        unset($datos["estado"]);
+      }
+      if (!is_null($clase->idHistorial) && !$notificar) {
+        Historial::eliminarXIdClase($datos["idClase"]);
+      }
+      if (!is_null($clase->idHistorial) && $notificar) {
+        $notificar = FALSE;
+      }
       $clase->update($datos);
     } else {
       $clase = new Clase($datos);
@@ -306,7 +353,7 @@ class Clase extends Model {
     }
 
     if (isset($datos["idPago"])) {
-      PagoClase::registrar($datos["idPago"], $clase["id"]);
+      PagoClase::registrarActualizar($datos["idPago"], $clase["id"], $idAlumno);
     }
 
     if ($notificar) {
@@ -330,7 +377,7 @@ class Clase extends Model {
     $clases = Clase::listar()->whereIn(Clase::nombreTabla() . ".id", $datos["idsClases"])->orderBy(Clase::nombreTabla() . ".fechaInicio")->get();
     foreach ($clases as $clase) {
       $claseSel = Clase::obtenerXId($idAlumno, $clase->id);
-      if (!is_null($claseSel)) {
+      if (!is_null($claseSel) && $claseSel->estado != EstadosClase::Cancelada) {
         $datosActualizar = [];
         if ($datos["editarDatosGenerales"] == 1) {
           $datosActualizar["numeroPeriodo"] = $datos["numeroPeriodo"];
@@ -351,7 +398,7 @@ class Clase extends Model {
 
         $claseSel->update($datosActualizar);
         if ($datos["editarDatosPago"] == 1 && isset($datos["idPago"])) {
-          PagoClase::registrar($datos["idPago"], $clase->id);
+          PagoClase::registrarActualizar($datos["idPago"], $clase->id, $idAlumno);
         }
       }
     }
@@ -373,6 +420,7 @@ class Clase extends Model {
         $claseCancelada->pagoTotalProfesor = $datos["pagoProfesor"];
       }
       $claseCancelada->save();
+      Historial::eliminarXIdClase($datos["idClase"]);
 
       if ($datos["reprogramarCancelacion"] == 1) {
         unset($datos["idClase"]);
@@ -398,6 +446,11 @@ class Clase extends Model {
   public static function eliminadXIdPago($idAlumno, $idPago) {
     $pagosClases = PagoClase::obtenerXIdPago($idPago);
     foreach ($pagosClases as $pagoClase) {
+      try {
+        Clase::obtenerXId($idAlumno, $pagoClase->idClase);
+      } catch (\Exception $e) {
+        continue;
+      }
       Clase::eliminar($idAlumno, $pagoClase->idClase);
     }
   }
@@ -415,6 +468,7 @@ class Clase extends Model {
     $clase->eliminado = 1;
     $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $clase->save();
+    Historial::eliminarXIdClase($id);
   }
 
   public static function sincronizarEstados() {

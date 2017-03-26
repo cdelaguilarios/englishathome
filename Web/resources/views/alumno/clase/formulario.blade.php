@@ -7,9 +7,11 @@
     <div class="col-sm-3">
       {{ Form::number("numeroPeriodo", "", ["id" => "numero-periodo-clase", "class" => "form-control", "maxlength" =>"11", "min" =>"1"]) }}
     </div>
-    {{ Form::label("estado-clase", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
-    <div class="col-sm-3">
-      {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarCambio(), NULL, ["id" => "estado-clase", "class" => "form-control"]) }}
+    <div id="sec-estado-clase">
+      {{ Form::label("estado-clase", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
+      <div class="col-sm-3">
+        {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarCambio(), NULL, ["id" => "estado-clase", "class" => "form-control"]) }}
+      </div>
     </div>
     <div class="col-sm-2">
       <div class="checkbox">
@@ -63,7 +65,7 @@
     </div> 
     {{ Form::label("id-pago-clase", "Código de pago: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
-      {{ Form::select("idPago", App\Models\PagoAlumno::listar($idAlumno)->lists("id", "id")->toArray(), NULL, ["id" => "id-pago-clase", "class" => "form-control", "placeholder" => "Seleccionar código de pago"]) }}
+      {{ Form::select("idPago", App\Models\PagoAlumno::listar($idAlumno, TRUE)->lists("id", "id")->toArray(), NULL, ["id" => "id-pago-clase", "class" => "form-control", "placeholder" => "Seleccionar código de pago"]) }}
     </div>
     <div class="col-sm-2">
       <a href="javascript:void(0);" onclick="verDatosPagosClase('id-pago-clase');"><i class="fa fa-eye"></i></a>

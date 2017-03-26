@@ -17,7 +17,7 @@ class FormularioRequest extends Request {
   }
 
   protected function getValidatorInstance() {
-    $datos = $this->all();    
+    $datos = $this->all();
     $datos["idClase"] = ReglasValidacion::formatoDato($datos, "idClase");
     $datos["idAlumno"] = ReglasValidacion::formatoDato($datos, "idAlumno");
     $datos["numeroPeriodo"] = ReglasValidacion::formatoDato($datos, "numeroPeriodo");
@@ -49,7 +49,7 @@ class FormularioRequest extends Request {
       $reglasValidacion["claseNoValida"] = "required";
     }
     $estados = EstadosClase::listarCambio();
-    if (!array_key_exists($datos["estado"], $estados)) {
+    if ((is_null($datos["idClase"]) || (!is_null($datos["idClase"]) && !is_null($datos["estado"]))) && !array_key_exists($datos["estado"], $estados)) {
       $reglasValidacion["estadoNoValido"] = "required";
     }
     if (!is_null($datos["idPago"]) && !PagoAlumno::verificarExistencia($datos["idAlumno"], $datos["idPago"])) {

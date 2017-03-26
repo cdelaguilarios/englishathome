@@ -22,11 +22,15 @@ class PagoAlumno extends Model {
     return $nombreTabla;
   }
 
-  public static function listar($idAlumno) {
+  public static function listar($idAlumno, $soloMotivoClases = FALSE) {
     $nombreTabla = PagoAlumno::nombreTabla();
-    return PagoAlumno::leftJoin(Pago::nombreTabla() . " as pago", $nombreTabla . ".idPago", "=", "pago.id")
-                    ->where("pago.eliminado", 0)
-                    ->where($nombreTabla . ".idAlumno", $idAlumno);
+    $pagosAlumno = PagoAlumno::leftJoin(Pago::nombreTabla() . " as pago", $nombreTabla . ".idPago", "=", "pago.id")
+            ->where("pago.eliminado", 0)
+            ->where($nombreTabla . ".idAlumno", $idAlumno);
+    if ($soloMotivoClases) {
+      $pagosAlumno->where("pago.motivo", MotivosPago::Clases);
+    }
+    return $pagosAlumno;
   }
 
   public static function obtenerXId($idAlumno, $id) {

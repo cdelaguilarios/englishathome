@@ -259,16 +259,13 @@ function eliminarElemento(ele, mensajePrevio, idTabla, noRecargarTabla, funcionC
         function (data) {
           if (idTabla !== undefined && idTabla !== null) {
             var eleEli = $("#" + idTabla).find("a[data-id='" + data["id"] + "']").closest("tr");
-            if (eleEli !== undefined) {
-              $("#" + idTabla).DataTable().row((eleEli.index() + 1)).remove().draw();
-            }
             eleEli.remove();
           }
           agregarMensaje("exitosos", data["mensaje"], true);
         },
         function (data) {
           if (idTabla !== undefined && idTabla !== null && !noRecargarTabla) {
-            $("#" + idTabla).DataTable().draw(false);
+            $("#" + idTabla).DataTable().ajax.reload();
           }
           if (funcionCompletado !== undefined) {
             funcionCompletado(data);

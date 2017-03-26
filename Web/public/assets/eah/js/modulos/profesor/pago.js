@@ -74,10 +74,10 @@ function cargarListaPago() {
 
         var montoTotal = 0, montoTotalPagina = 0;
         $('#tab-lista-pagos').DataTable().rows({filter: 'applied'}).data().each(function (i) {
-          montoTotal += parseFloat(i.monto);
+          montoTotal += parseFloat(i.monto) + (i.saldoFavor !== null ? parseFloat(i.saldoFavor + "") : 0);
         });
         $('#tab-lista-pagos').DataTable().rows({page: 'current'}).data().each(function (i) {
-          montoTotalPagina += parseFloat(i.monto);
+          montoTotalPagina += parseFloat(i.monto) + (i.saldoFavor !== null ? parseFloat(i.saldoFavor + "") : 0);
         });
         $(api.column(4).footer()).html("Total S/. " + redondear(montoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + redondear(montoTotalPagina, 2) : ""));
       }

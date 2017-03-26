@@ -17,11 +17,22 @@ class PagoClase extends Model {
     return $nombreTabla;
   }
 
-  public static function registrar($idPago, $idClase) {
-    if (PagoClase::where("idPago", $idPago)->where("idClase", $idClase)->count() == 0) {
-      $pagoClase = new PagoClase(["idPago" => $idPago, "idClase" => $idClase]);
-      $pagoClase->save();
+  public static function registrarActualizar($idPago, $idClase, $idAlumnoProfesor, $esPagoAlumno = TRUE) {
+    if ($esPagoAlumno) {
+      PagoClase::where("idClase", $idClase)->whereIn("idPago", function($q) use ($idAlumnoProfesor) {
+        $q->select("idPago")
+                ->from(with(new PagoAlumno)->getTable())
+                ->where("idAlumno", $idAlumnoProfesor);
+      })->delete();
+    } else {
+      PagoClase::where("idClase", $idClase)->whereIn("idPago", function($q) use ($idAlumnoProfesor) {
+        $q->select("idPago")
+                ->from(with(new PagoProfesor)->getTable())
+                ->where("idProfesor", $idAlumnoProfesor);
+      })->delete();
     }
+    $pagoClase = new PagoClase(["idPago" => $idPago, "idClase" => $idClase]);
+    $pagoClase->save();
   }
 
   public static function totalXProfesor($idClase) {

@@ -44,6 +44,7 @@
   var urlListarDocentesDisponiblesClase = "{{ route('alumnos.clases.docentesDisponibles.listar', ['id' => $idAlumno]) }}";
   var urlDatosClase = "{{ route('alumnos.clases.datos', ['id' => $idAlumno, 'idClase' => 0]) }}";
   var urlDatosClasesGrupo = "{{ route('alumnos.clases.datos.grupo', ['id' => $idAlumno]) }}";
+  var urlTotalClasesXHorario = "{{ route('alumnos.clases.total.horario', ['id' => $idAlumno]) }}";
   var urlEliminarClase = "{{ route('alumnos.clases.eliminar', ['id' => $idAlumno, 'idClase' => 0]) }}";
   var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
   var estadosClaseCambio = {!! json_encode(App\Helpers\Enum\EstadosClase::listarCambio()) !!};

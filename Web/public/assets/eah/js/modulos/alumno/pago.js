@@ -86,7 +86,7 @@ function cargarListaPago() {
                 '<a href="javascript:void(0);" onclick="editarPago(' + d.id + ');" title="Editar datos del pago"><i class="fa fa-pencil"></i></a>' +
                 '</li>' +
                 '<li>' +
-                '<a href="javascript:void(0);" title="Eliminar pago" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?, considere que si el pago está relacionado a una o más clases estas también serán eliminadas.\', \'tab-lista-pagos\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' +
+                '<a href="javascript:void(0);" title="Eliminar pago" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?, considere que si el pago está relacionado a una o más clases estas también serán eliminadas.\', \'tab-lista-pagos\', false, function(){recargarDatosTabla(\'tab-lista-periodos-clases\')})" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' +
                 '<i class="fa fa-trash"></i>' +
                 '</a>' +
                 '</li>' +
@@ -101,10 +101,10 @@ function cargarListaPago() {
 
         var montoTotal = 0, montoTotalPagina = 0;
         $('#tab-lista-pagos').DataTable().rows({filter: 'applied'}).data().each(function (i) {
-          montoTotal += parseFloat(i.monto);
+          montoTotal += parseFloat(i.monto) + (i.saldoFavor !== null ? parseFloat(i.saldoFavor + "") : 0);
         });
         $('#tab-lista-pagos').DataTable().rows({page: 'current'}).data().each(function (i) {
-          montoTotalPagina += parseFloat(i.monto);
+          montoTotalPagina += parseFloat(i.monto) + (i.saldoFavor !== null ? parseFloat(i.saldoFavor) : 0);
         });
         $(api.column(5).footer()).html("Total S/. " + redondear(montoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + redondear(montoTotalPagina, 2) : ""));
       }
@@ -284,7 +284,7 @@ function generarClases(e) {
                   '</tr>');
             } else if (i === "montoRestante" && v > 0) {
               $("#sec-saldo-favor-pago").html('<span>El alumno tiene un saldo a favor de <b>S/. ' + redondear(v, 2) + '</b></span>');
-              $("input[name='saldoFavor']").val(v);
+              $("input[name='saldoFavor']").val(redondear(v, 4));
             } else if (i === "idProfesor") {
               idProfesor = v;
             } else if (i === "nombreCompletoProfesor") {
