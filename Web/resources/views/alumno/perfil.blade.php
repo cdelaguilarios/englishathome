@@ -99,6 +99,7 @@
         <li class="active"><a href="#historial" data-toggle="tab">Historial</a></li>
         <li><a href="#pago" data-toggle="tab">Pagos</a></li>
         <li><a href="#clase" data-toggle="tab">Clases</a></li>
+        <li><a href="#calendario" data-toggle="tab">Calendario</a></li>
       </ul>
       <div class="tab-content">
         <div id="historial" class="active tab-pane">
@@ -109,6 +110,9 @@
         </div>
         <div id="clase" class="tab-pane">
           @include("alumno.clase.principal", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : NULL)])
+        </div>
+        <div id="calendario" class="tab-pane">
+          @include("util.calendario", ["idEntidad" => $alumno->id]) 
         </div>
         @include("alumno.pago.datos") 
       </div>

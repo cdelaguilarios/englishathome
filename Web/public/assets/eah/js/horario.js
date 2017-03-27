@@ -18,24 +18,24 @@ function cargarHorario() {
     horarioFin = $.parseJSON($("input[name='horario']").val());
     mostrarTextoHorario();
   }
-  if ($("#calendario").length > 0) {
+  if ($("#sec-calendario-horario").length > 0) {
     inicializarHorario();
-    $("#calendario").dayScheduleSelector({
+    $("#sec-calendario-horario").dayScheduleSelector({
       days: diasNum,
       startTime: formatoHora(parseInt(minHorario) * 3600),
       endTime: formatoHora(parseInt(maxHorario) * 3600),
       interval: minutosIntervalo,
       stringDays: diasLet
     });
-    $("#calendario").data("artsy.dayScheduleSelector").deserialize(horarioInicial);
-    $("#calendario").on("selected.artsy.dayScheduleSelector", function (e, selected) {
+    $("#sec-calendario-horario").data("artsy.dayScheduleSelector").deserialize(horarioInicial);
+    $("#sec-calendario-horario").on("selected.artsy.dayScheduleSelector", function (e, selected) {
       for (var i = 0; i < selected.length; i++) {
         var dia = $(selected[i]).data("day");
         horarioSel[dia] = (horarioSel[dia] !== undefined ? horarioSel[dia] : []);
         horarioSel[dia].push($(selected[i]).data("time"));
       }
     });
-    $("#calendario").on("deselected.artsy.dayScheduleSelector", function (e, selected, dia) {
+    $("#sec-calendario-horario").on("deselected.artsy.dayScheduleSelector", function (e, selected, dia) {
       horarioSel[dia] = [];
       for (var i = 0; i < selected.length; i++) {
         horarioSel[dia] = (horarioSel[dia] !== undefined ? horarioSel[dia] : []);
@@ -61,7 +61,7 @@ function cargarHorario() {
     });
     $("#btn-limpiar-seleccion").click(function () {
       horarioSel = [];
-      $("#calendario").find(".time-slot").removeAttr("data-selected");
+      $("#sec-calendario-horario").find(".time-slot").removeAttr("data-selected");
     });
   }
 }

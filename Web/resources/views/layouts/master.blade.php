@@ -13,7 +13,9 @@
     <link rel="stylesheet" href="{{ asset("assets/eah/css/iconos-educacion/flaticon.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/datatables/dataTables.bootstrap.css") }}" />    
     <link rel="stylesheet" href="{{ asset("assets/plugins/datatables/extensions/Responsive/css/dataTables.responsive.css") }}" />    
-    <link rel="stylesheet" href="{{ asset("assets/plugins/select2/select2.min.css") }}" />    
+    <link rel="stylesheet" href="{{ asset("assets/plugins/select2/select2.min.css") }}" />
+    <link rel="stylesheet" href="{{ asset("assets/plugins/fullcalendar/fullcalendar.min.css") }}" /> 
+    <link rel="stylesheet" href="{{ asset("assets/plugins/fullcalendar/fullcalendar.print.min.css") }}" media="print" />     
     <link rel="stylesheet" href="{{ asset("assets/dist/css/AdminLTE.min.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/dist/css/skins/_all-skins.min.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/datepicker/datepicker3.css") }}" />
@@ -194,6 +196,9 @@
     <script src="{{ asset("assets/plugins/datetimepicker/bootstrap-datetimepicker.min.js") }}"></script>   
     <script src="{{ asset("assets/plugins/datetimepicker/locales/bootstrap-datetimepicker.es.js") }}"></script>
     <script src="{{ asset("assets/plugins/jQueryUploadFileMaster/js/jquery.uploadfile.min.js") }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+    <script src="{{ asset("assets/plugins/fullcalendar/fullcalendar.min.js") }}"></script>
+    <script src="{{ asset("assets/plugins/fullcalendar/locale/es.js") }}"></script>
     <script src="//www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
 var urlBase = "{{ url('/') }}";

@@ -31,7 +31,7 @@
               <i class="fa fa-fw fa-info-circle"></i> Instrucciones
             </button>
           </p>
-          <div id="calendario"></div>
+          <div id="sec-calendario-horario"></div>
         </div>
         <div class="modal-footer">
           <div class="sec-btn-limpiar-seleccion">
