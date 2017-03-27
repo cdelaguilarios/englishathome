@@ -9,14 +9,28 @@ function  cargarSeccionCalendario() {
       cargarSeccionCalendario();
     }, 100);
   } else {
-    $('#calendario').fullCalendar({
-      header: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'month,agendaWeek,agendaDay,listMonth'
-      },
-      locale: 'es',
-      allDaySlot: false
-    });
+    urlListarCalendario = (typeof (urlListarCalendario) === "undefined" ? "" : urlListarCalendario);
+    if (urlListarCalendario !== "") {
+      $('#calendario').fullCalendar({
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,agendaWeek,agendaDay,listMonth'
+        },
+        locale: 'es',
+        allDaySlot: false,
+        eventSources: [{
+            url: urlListarCalendario,
+            type: 'POST',
+            data: {
+              _token: $('meta[name=_token]').attr("content")
+            }
+          }
+        ]
+      });
+    }
+    //var view = $('#calendario').fullCalendar('getView');
+    //view.start._d
+    //view.end._d
   }
 }

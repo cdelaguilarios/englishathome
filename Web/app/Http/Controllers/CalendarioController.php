@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Historial;
+use App\Models\Clase;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Calendario\ListaRequest;
 
@@ -15,9 +15,13 @@ class CalendarioController extends Controller {
   }
 
   public function listar($idEntidad, ListaRequest $req) {
-    $datos = $req->all();
-    $datosHistorial = Historial::obtenerPerfil($datos["numeroCarga"], $idEntidad);
+    $aa = Clase::listarXRangoFecha($idEntidad, $req->all());
+    print_r($aa);
+    die;
+    $datosHistorial = [];
     return response()->json($datosHistorial, 200);
   }
+  //https://fullcalendar.io/docs/event_data/events_json_feed/
+  //https://fullcalendar.io/docs/event_data/Event_Object/
 
 }
