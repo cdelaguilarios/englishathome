@@ -400,3 +400,7 @@ table.dataTable > tbody > tr.child span.dtr-title {
 .ajax-file-upload-red{
   background-color: #dd4b39;
 }
+
+.fc-event, .fc-list-item-title a{
+  cursor: pointer; 
+}

@@ -115,6 +115,7 @@
           @include("util.calendario", ["idEntidad" => $alumno->id]) 
         </div>
         @include("alumno.pago.datos") 
+        @include("util.datosClase") 
       </div>
     </div>
   </div>

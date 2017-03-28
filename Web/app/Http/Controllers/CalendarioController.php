@@ -15,13 +15,8 @@ class CalendarioController extends Controller {
   }
 
   public function listar($idEntidad, ListaRequest $req) {
-    $aa = Clase::listarXRangoFecha($idEntidad, $req->all());
-    print_r($aa);
-    die;
-    $datosHistorial = [];
-    return response()->json($datosHistorial, 200);
+    $eventos = Clase::calendario($idEntidad, $req->all());
+    return response()->json($eventos, 200);
   }
-  //https://fullcalendar.io/docs/event_data/events_json_feed/
-  //https://fullcalendar.io/docs/event_data/Event_Object/
 
 }

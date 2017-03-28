@@ -353,3 +353,51 @@ function incluirSeccionSubidaArchivos(idElemento, datosAdicionales, funcionSubir
     }, datosAdicionales));
   }
 }
+//Clases
+function obtenerDatosClase(idAlumno, idClase, funcionRetorno) {
+  urlDatosClase = (typeof (urlDatosClase) === "undefined" ? "" : urlDatosClase);
+  if (urlDatosClase !== "") {
+    $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
+    llamadaAjax(urlDatosClase.replace(encodeURI("/[ID_ALUMNO]"), "/" + idAlumno).replace("/0", "/" + idClase), "POST", {}, true,
+        function (d) {
+          if (funcionRetorno !== undefined)
+            funcionRetorno(d);
+          $("body").unblock();
+        },
+        function (d) {},
+        function (de) {
+          $('body').unblock({
+            onUnblock: function () {
+              agregarMensaje("errores", "Ocurrió un problema durante la carga de datos de la clase seleccionada. Por favor inténtelo nuevamente.", true);
+            }
+          });
+        }
+    );
+  }
+}
+function verDatosClase(idAlumno, idClase) {
+  estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
+  urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
+  if (estadosClase !== "" && urlPerfilProfesor !== "") {
+    obtenerDatosClase(idAlumno, idClase, function (d) {
+      $("#dat-numero-periodo-clase").text(d.numeroPeriodo);
+      $("#dat-estado-clase").html('<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">' + estadosClase[d.estado][0] + '</span>');
+
+      $("#sec-dat-notificar-clase").hide();
+      if (d.idHistorial !== null) {
+        $("#sec-dat-notificar-clase").show();
+        $("#dat-notificar-clase").html('<i class="fa fa-check-circle-o icon-notificar-clase"></i>');
+      }
+      $("#dat-fecha-clase").html(formatoFecha(d.fechaInicio) + ' - De ' + formatoFecha(d.fechaInicio, false, true) + ' a ' + formatoFecha(d.fechaFin, false, true));
+      $("#dat-costo-hora-clase").html('S/. ' + redondear(d.costoHora, 2));
+      $("#dat-codigo-pago-clase").html(d.idPago);
+      $("#sec-dat-profesor-clase").hide();
+      if (d.idProfesor !== null) {
+        $("#sec-dat-profesor-clase").show();
+        $("#dat-profesor-clase").html('<i class="fa flaticon-teach"></i> <b>' + d.nombreProfesor + ' ' + d.apellidoProfesor + '</b> <a href=' + (urlPerfilProfesor.replace('/0', '/' + d.idProfesor)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>');
+        $("#dat-pago-hora-profesor-clase").html('S/. ' + redondear(d.costoHoraProfesor, 2));
+      }
+      $("#mod-datos-clase").modal("show");
+    });
+  }
+}

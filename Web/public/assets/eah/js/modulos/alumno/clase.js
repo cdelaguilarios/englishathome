@@ -356,7 +356,7 @@ function cargarFormularioClase() {
   });
 }
 function editarClase(idClase) {
-  obtenerDatosClase(idClase, function (d) {
+  obtenerDatosClase(idAlumno, idClase, function (d) {
     limpiarCamposClase();
     $("input[name='idClase']").val(d.id);
     $("#titulo-formulario").text("Editar clase");
@@ -384,27 +384,6 @@ function editarClase(idClase) {
       mostrarSeccionClase([2]);
     }
   });
-}
-function obtenerDatosClase(idClase, funcionRetorno) {
-  urlDatosClase = (typeof (urlDatosClase) === "undefined" ? "" : urlDatosClase);
-  if (urlDatosClase !== "") {
-    $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
-    llamadaAjax(urlDatosClase.replace("/0", "/" + idClase), "POST", {}, true,
-        function (d) {
-          if (funcionRetorno !== undefined)
-            funcionRetorno(d);
-          $("body").unblock();
-        },
-        function (d) {},
-        function (de) {
-          $('body').unblock({
-            onUnblock: function () {
-              agregarMensaje("errores", "Ocurrió un problema durante la carga de datos de la clase seleccionada. Por favor inténtelo nuevamente.", true, "#sec-mensajes-clase");
-            }
-          });
-        }
-    );
-  }
 }
 
 //Formulario Cancelar
@@ -469,7 +448,7 @@ function cargarFormularioCancelarClase() {
   }
 }
 function cancelarClase(idClase) {
-  obtenerDatosClase(idClase, function (d) {
+  obtenerDatosClase(idAlumno, idClase, function (d) {
     limpiarCamposClase();
     $("input[name='idClase']").val(d.id);
     if (d.idProfesor !== null) {

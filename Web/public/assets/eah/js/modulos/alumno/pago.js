@@ -432,7 +432,6 @@ function editarPago(idPago) {
 
 //Datos
 function verDatosPago(idPago) {
-  urlDatosPago = (typeof (urlDatosPago) === "undefined" ? "" : urlDatosPago);
   if (motivosPago !== "" && cuentasBanco !== "" && urlImagenes !== "" && estadosPago !== "") {
     obtenerDatosPago(idPago, function (d) {
       $("#sec-descripcion-pago").hide();

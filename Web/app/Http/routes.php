@@ -127,7 +127,7 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("historial/{idEntidad}/registrar", ["uses" => "HistorialController@registrar", "as" => "historial.registrar"]);
     // </editor-fold>
     // <editor-fold desc="Calendario">
-    Route::post("calendario/{idEntidad}/perfil", ["uses" => "CalendarioController@listar", "as" => "calendario.perfil"]);
+    Route::post("{idEntidad}/calendario", ["uses" => "CalendarioController@listar", "as" => "calendario"]);
     // </editor-fold>
     // <editor-fold desc="Cursos">
     Route::get("cursos", ["uses" => "CursoController@index", "as" => "cursos"]);
