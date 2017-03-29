@@ -39,9 +39,6 @@ class ProfileComposer {
    * @return void
    */
   public function compose(View $view) {
-    if (!\Illuminate\Support\Facades\Auth::check()) {
-      return;
-    }
     $datosExtrasVistas = Cache::get("datosExtrasVistas");
     if (!isset($datosExtrasVistas)) {
       $datosExtrasVistas = [
