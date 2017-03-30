@@ -76,7 +76,7 @@ class InteresadoController extends Controller {
       Interesado::actualizar($id, $datos);
       if ($datos["registrarComoAlumno"] == 1) {
         Interesado::registrarAlumno($id);
-        Mensajes::agregarMensajeExitoso("El interesado seleccionado ha sido registrado como alumno.");
+        Mensajes::agregarMensajeExitoso("El interesado seleccionado ha sido registrado como nuevo alumno.");
         return redirect(route("interesados"));
       } else {
         Mensajes::agregarMensajeExitoso("Actualización exitosa.");
@@ -107,7 +107,7 @@ class InteresadoController extends Controller {
       Mensajes::agregarMensajeError("No se encontraron datos de la persona interesada seleccionada.");
       return redirect("interesados");
     }
-    return view("interesado.cotizacion", $this->data);
+    return view("interesado.cotizar", $this->data);
   }
 
   public function enviarCotizacion($id, FormularioCotizacionRequest $req) {
@@ -122,8 +122,14 @@ class InteresadoController extends Controller {
   }
 
   public function perfilAlumno($id) {
-    $idAlumno = Interesado::obtenerIdAlumno($id);
-    return redirect($idAlumno > 0 ? route("alumnos.perfil", ["id" => $idAlumno]) : route("interesados"));
+    try {
+      $idAlumno = Interesado::obtenerIdAlumno($id);
+      return redirect($idAlumno > 0 ? route("alumnos.perfil", ["id" => $idAlumno]) : route("interesados"));
+    } catch (\Exception $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("No se encontraron datos de la persona interesada o del alumno seleccionado.");
+      return redirect("interesados");
+    }
   }
 
   public function eliminar($id) {
@@ -133,7 +139,7 @@ class InteresadoController extends Controller {
       Log::error($e);
       return response()->json(["mensaje" => "No se pudo eliminar el registro de datos de la persona interesada seleccionada."], 400);
     }
-    return response()->json(["mensaje" => "Eliminación exitosa", "id" => $id], 200);
+    return response()->json(["mensaje" => "Eliminación exitosa.", "id" => $id], 200);
   }
 
 }

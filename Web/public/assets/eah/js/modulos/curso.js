@@ -31,9 +31,7 @@ function cargarLista() {
       responsive: true,
       order: [[0, "desc"]],
       columns: [
-        {data: "nombre", name: "nombre", render: function (e, t, d, m) {
-            return d.nombre;
-          }},
+        {data: "nombre", name: "nombre"},
         {data: "descripcion", name: "descripcion", render: function (e, t, d, m) {
             return ((d.descripcion.length > 200) ? (d.descripcion.substr(0, d.descripcion.lastIndexOf(' ', 197)) + '...') : d.descripcion);
           }},
@@ -60,12 +58,12 @@ function cargarLista() {
 }
 
 $.validator.addMethod("validarCkEditorCurso", validarCkEditorCurso, "Este campo es obligatorio.");
-function validarCkEditorCurso(value, element, param) {
-  CKEDITOR.instances[$(element).attr("id")].updateElement();
-  if ($(element).val().trim() !== "") {
+function validarCkEditorCurso(v, e, p) {
+  CKEDITOR.instances[$(e).attr("id")].updateElement();
+  if ($(e).val().trim() !== "") {
     return true;
   } else {
-    $(window).scrollTop($("#cke_" + $(element).attr("id")).offset().top);
+    $(window).scrollTop($("#cke_" + $(e).attr("id")).offset().top);
     return false;
   }
 }
@@ -77,8 +75,7 @@ function cargarFormulario() {
     ignore: "",
     rules: {
       nombre: {
-        required: true,
-        validarAlfabetico: true
+        required: true
       },
       descripcion: {
         validarCkEditorCurso: true
@@ -129,7 +126,6 @@ function cargarFormulario() {
     onkeyup: false,
     onclick: false
   });
-
   CKEDITOR.replace("descripcion");
   CKEDITOR.replace("modulos");
   CKEDITOR.replace("metodologia");

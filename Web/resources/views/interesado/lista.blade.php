@@ -5,9 +5,9 @@
 <script>
   var urlListar = "{{ route('interesados.listar') }}";
   var urlEditar = "{{ route('interesados.editar', ['id' => 0]) }}";
+  var urlCotizar = "{{ route('interesados.cotizar', ['id' => 0]) }}";
   var urlPerfilAlumno = "{{ route('interesados.perfil.alumno', ['id' => 0]) }}";
   var urlActualizarEstado = "{{ route('interesados.actualizar.estado', ['id' => 0]) }}";
-  var urlCotizar = "{{ route('interesados.cotizar', ['id' => 0]) }}";
   var urlEliminar = "{{ route('interesados.eliminar', ['id' => 0]) }}";
   var estados = {!! json_encode(App\Helpers\Enum\EstadosInteresado::listar()) !!};
   var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosInteresado::listarCambio()) !!};

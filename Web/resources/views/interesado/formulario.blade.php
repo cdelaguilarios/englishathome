@@ -38,7 +38,7 @@
         </div>
         <div class="form-group">
           {{ Form::label("idCurso", "Curso de interes: ", ["class" => "col-sm-2 control-label"]) }}
-          <div class="col-sm-3">
+          <div class="col-sm-6">
             {{ Form::select("idCurso", $cursos, (isset($interesado) ? $interesado->idCurso : NULL), ["class" => "form-control"]) }}
           </div>        
           <div class="col-sm-3">

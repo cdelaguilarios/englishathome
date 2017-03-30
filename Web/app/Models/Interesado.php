@@ -56,7 +56,6 @@ class Interesado extends Model {
   public static function registrar($datos) {
     $idEntidad = Entidad::registrar($datos, TiposEntidad::Interesado, ((isset($datos["estado"])) ? $datos["estado"] : EstadosInteresado::PendienteInformacion));
     EntidadCurso::registrarActualizar($idEntidad, $datos["idCurso"]);
-
     $interesado = new Interesado($datos);
     $interesado->idEntidad = $idEntidad;
     $interesado->save();
@@ -97,7 +96,7 @@ class Interesado extends Model {
     $nombresOriginalesArchivosAdjuntos = $datos["nombresOriginalesArchivosAdjuntos"];
     $esPrueba = (isset($datos["correoCotizacionPrueba"]));
 
-    Mail::send("interesado.plantillaCorreo.cotizacion", $datos, function ($m) use ($correo, $nombreDestinatario, $nombresArchivosAdjuntos, $nombresOriginalesArchivosAdjuntos, $esPrueba) {
+    Mail::send("interesado.plantillaCorreo.cotizacion", $datos, function ($m) use ($correo, $nombreDestinatario, $nombresArchivosAdjuntos, $nombresOriginalesArchivosAdjuntos) {
       $m->to($correo, $nombreDestinatario)->subject("English at home - Cotización");
       if (!is_null($nombresArchivosAdjuntos) && !is_null($nombresOriginalesArchivosAdjuntos)) {
         $rutaBaseAlmacenamiento = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix();
@@ -122,9 +121,7 @@ class Interesado extends Model {
           Archivo::eliminar($nombresArchivosAdjuntosSel[$i]);
         }
       }
-      if (!isset($datos["correoCotizacionPrueba"])) {
-        Interesado::actualizarEstado($id, EstadosInteresado::CotizacionEnviada);
-      }
+      Interesado::actualizarEstado($id, EstadosInteresado::CotizacionEnviada);
       Historial::registrar([
           "idEntidades" => [$id, Auth::user()->idEntidad],
           "titulo" => (MensajesHistorial::TituloInteresadoEnvioCorreoCotizacion),
@@ -153,7 +150,6 @@ class Interesado extends Model {
           "conAmbienteClase" => 0,
           "numeroHorasClase" => 2
       ];
-
       $entidadCurso = EntidadCurso::obtenerXEntidad($id);
       if (!is_null($entidadCurso)) {
         EntidadCurso::registrarActualizar($idEntidad, $entidadCurso->idCurso);
@@ -164,8 +160,8 @@ class Interesado extends Model {
       $idAlumno = $idEntidad;
 
       Historial::registrar([
-          "idEntidades" => [$idAlumno, Auth::user()->idEntidad],
-          "titulo" => MensajesHistorial::TituloAlumnoRegistroXUsuario,
+          "idEntidades" => [$idAlumno, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
+          "titulo" => (Auth::guest() ? MensajesHistorial::TituloAlumnoRegistro : MensajesHistorial::TituloAlumnoRegistroXUsuario),
           "mensaje" => ""
       ]);
     }

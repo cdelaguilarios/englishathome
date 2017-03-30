@@ -11,8 +11,9 @@
   </div>
 </div>
 {{ Form::hidden("codigoUbigeo") }} 
-<script type="text/javascript">
+<script>
   var urlListarDepartamentos = "{{ route('ubigeo.listarDepartamentos') }}";
   var urlListarProvincias = "{{ route('ubigeo.listarProvincias', ['codigoDepartamento' => 0]) }}";
-  var urlListarDistritos = "{{ route('ubigeo.listarDistritos', ['codigoProvincia' => 0]) }}";</script>
+  var urlListarDistritos = "{{ route('ubigeo.listarDistritos', ['codigoProvincia' => 0]) }}";
+</script>
 <script src="{{ asset("assets/eah/js/ubigeo.js")}}"></script>

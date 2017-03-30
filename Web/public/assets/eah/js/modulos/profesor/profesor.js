@@ -78,7 +78,7 @@ function cargarLista() {
         establecerBotonRecargaTabla("tab-lista");
       }
     });
-    establecerCambiosEstados("tab-lista", urlActualizarEstado, estados);
+    establecerCambiosBusquedaEstados("tab-lista", urlActualizarEstado, estados);
   }
 }
 

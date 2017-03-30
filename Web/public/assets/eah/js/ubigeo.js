@@ -6,7 +6,6 @@ function verificarJqueryUbigeo() {
 var codigoDepartamento = "";
 var codigoProvincia = "";
 var codigoDistrito = "";
-
 function cargarUbigeo() {
   if ($("input[name='codigoUbigeo']").length > 0 && $("input[name='codigoUbigeo']").val().length === 6) {
     codigoDepartamento = $("input[name='codigoUbigeo']").val().slice(0, 2);
@@ -44,8 +43,8 @@ function cargarDatosUbigeo(eleUbigeoLista, urlListarUbigeo, parametros, textoSel
   if (urlListarUbigeo !== "") {
     (!noMostrarMensajeBloq ? $.blockUI({message: "<h4>Cargando...</h4>"}) : "");
     llamadaAjax(urlListarUbigeo, "POST", parametros, true,
-        function (data) {
-          var elementosUbigeo = data["elementosUbigeo"];
+        function (d) {
+          var elementosUbigeo = d["elementosUbigeo"];
           var codigosUbigeo = Object.keys(elementosUbigeo);
           codigosUbigeo.sort();
 
@@ -55,7 +54,6 @@ function cargarDatosUbigeo(eleUbigeoLista, urlListarUbigeo, parametros, textoSel
             var nombreElemento = elementosUbigeo[codUbigeo].replace("DEPARTAMENTO ", "");
             html += '<option value="' + codUbigeo + '" ' + (codigoUbigeoSel === codUbigeo ? 'selected="selected"' : '') + '>' + nombreElemento + '</option>';
           }
-
 
           if (html !== "") {
             eleUbigeoLista.html('<option ' + (codigoUbigeoSel !== '' ? '' : 'selected="selected"') + ' value>' + textoSeleccionDef + '</option>' + html);
@@ -71,7 +69,7 @@ function cargarDatosUbigeo(eleUbigeoLista, urlListarUbigeo, parametros, textoSel
             }
           }
         },
-        function (data) {
+        function (d) {
           $("body").unblock();
         },
         function (dataError) {

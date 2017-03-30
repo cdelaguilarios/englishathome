@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 
 class Curso extends Model {
@@ -15,8 +16,12 @@ class Curso extends Model {
     return Curso::where("eliminado", 0);
   }
 
-  public static function listarSimple() {
-    return Curso::listar()->where("activo", 1)->lists("nombre", "id");
+  public static function listarSimple($soloActivos = TRUE) {
+    $cursos = Curso::listar();
+    if ($soloActivos) {
+      $cursos->where("activo", 1);
+    }
+    return $cursos->lists("nombre", "id");
   }
 
   public static function obtenerXId($id) {
@@ -29,12 +34,10 @@ class Curso extends Model {
     $curso->save();
     $imagen = $req->file("imagen");
     if (isset($imagen) && $imagen != "") {
-      if (isset($curso->imagen) && $curso->imagen != "") {
-        Archivo::eliminar($curso->imagen);
-      }
       $curso->imagen = Archivo::registrar($curso->id . "_ic_", $imagen);
       $curso->save();
     }
+    Cache::forget("datosExtrasVistas");
     return $curso->id;
   }
 
@@ -50,6 +53,7 @@ class Curso extends Model {
       $curso->imagen = Archivo::registrar($curso->id . "_ic_", $imagen);
       $curso->save();
     }
+    Cache::forget("datosExtrasVistas");
   }
 
   public static function eliminar($id) {

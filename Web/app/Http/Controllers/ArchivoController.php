@@ -9,8 +9,8 @@ use App\Http\Requests\ArchivoRequest;
 class ArchivoController extends Controller {
 
   public function obtener($nombre) {
-    $ipotImagenPerfil = Input::get("tip");
-    return Archivo::obtener($nombre, (isset($ipotImagenPerfil) ? $ipotImagenPerfil : NULL));
+    $tipoImagenPerfil = Input::get("tip");
+    return Archivo::obtener($nombre, (isset($tipoImagenPerfil) ? $tipoImagenPerfil : NULL));
   }
 
   public function registrar(ArchivoRequest $req) {
@@ -24,7 +24,7 @@ class ArchivoController extends Controller {
     try {
       $datos = $req->all();
       Archivo::eliminar($datos["nombre"]);
-    } catch (ModelNotFoundException $e) {
+    } catch (\Exception $e) {
       Log::error($e);
       return response()->json(['mensaje' => 'No se pudo eliminar el archivo seleccionado.'], 400);
     }

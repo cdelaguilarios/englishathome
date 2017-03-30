@@ -229,7 +229,7 @@ function establecerBotonRecargaTabla(idTabla) {
 function recargarDatosTabla(idTabla) {
   $("#" + idTabla).DataTable().ajax.reload();
 }
-function establecerCambiosEstados(idTabla, urlActualizarEstadoDis, estadosDis) {
+function establecerCambiosBusquedaEstados(idTabla, urlActualizarEstadoDis, estadosDis) {
   $(window).click(function (e) {
     if (!$(e.target).closest(".sec-btn-editar-estado").length) {
       $(".sec-btn-editar-estado select").trigger("change");

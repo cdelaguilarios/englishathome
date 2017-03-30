@@ -1,8 +1,8 @@
-var editorCargado = false;
 $(document).ready(function () {
   cargarLista();
   cargarFormulario();
   cargarFormularioCotizacion();
+  
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
   urlCotizar = (typeof (urlCotizar) === "undefined" ? "" : urlCotizar);
   $("#sel-interesado").select2();
@@ -17,14 +17,14 @@ $(document).ready(function () {
 function cargarLista() {
   urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
+  urlCotizar = (typeof (urlCotizar) === "undefined" ? "" : urlCotizar);
   urlPerfilAlumno = (typeof (urlPerfilAlumno) === "undefined" ? "" : urlPerfilAlumno);
   urlActualizarEstado = (typeof (urlActualizarEstado) === "undefined" ? "" : urlActualizarEstado);
-  urlCotizar = (typeof (urlCotizar) === "undefined" ? "" : urlCotizar);
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   estados = (typeof (estados) === "undefined" ? "" : estados);
   estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
   estadoAlumnoRegistrado = (typeof (estadoAlumnoRegistrado) === "undefined" ? "" : estadoAlumnoRegistrado);
-  if (urlListar !== "" && urlEditar !== "" && urlPerfilAlumno !== "" && urlCotizar !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "" && estadoAlumnoRegistrado !== "") {
+  if (urlListar !== "" && urlEditar !== "" && urlCotizar !== "" && urlPerfilAlumno !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "" && estadoAlumnoRegistrado !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -77,7 +77,7 @@ function cargarLista() {
         establecerBotonRecargaTabla("tab-lista");
       }
     });
-    establecerCambiosEstados("tab-lista", urlActualizarEstado, estados);
+    establecerCambiosBusquedaEstados("tab-lista", urlActualizarEstado, estados);
   }
 }
 
@@ -149,13 +149,14 @@ function cargarFormulario() {
   });
 }
 
+var editorCargado = false;
 $.validator.addMethod("validarCkEditor", validarCkEditor, "Este campo es obligatorio.");
-function validarCkEditor(value, element, param) {
-  CKEDITOR.instances[$(element).attr("id")].updateElement();
-  if ($(element).val().trim() !== "") {
+function validarCkEditor(v, e, p) {
+  CKEDITOR.instances[$(e).attr("id")].updateElement();
+  if ($(e).val().trim() !== "") {
     return true;
   } else {
-    $(window).scrollTop($("#cke_" + $(element).attr("id")).offset().top);
+    $(window).scrollTop($("#cke_" + $(e).attr("id")).offset().top);
     return false;
   }
 }

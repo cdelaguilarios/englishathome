@@ -35,9 +35,9 @@ class CursoController extends Controller {
 
   public function registrar(FormularioRequest $req) {
     try {
-      $idCurso = Curso::registrar($req);
+      Curso::registrar($req);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
-      return redirect(route("cursos.listar", ["id" => $idCurso]));
+      return redirect(route("cursos"));
     } catch (\Exception $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
@@ -74,7 +74,7 @@ class CursoController extends Controller {
       Log::error($e);
       return response()->json(["mensaje" => "No se pudo eliminar el registro de datos del curso seleccionado."], 400);
     }
-    return response()->json(["mensaje" => "Eliminación exitosa", "id" => $id], 200);
+    return response()->json(["mensaje" => "Eliminación exitosa.", "id" => $id], 200);
   }
 
 }

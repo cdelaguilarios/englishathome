@@ -8,12 +8,12 @@ use Intervention\Image\ImageManager;
 
 class Archivo {
 
-  public static function obtener($nombre, $ipotImagenPerfil = FALSE) {
+  public static function obtener($nombre, $tipoImagenPerfil = FALSE) {
     try {
       $archivo = Storage::get($nombre);
       $tipo = Storage::mimeType($nombre);
     } catch (\Exception $e) {
-      $nombreImgAux = public_path() . "/assets/eah/img/" . (isset($ipotImagenPerfil) ? "perfil-imagen-" . $ipotImagenPerfil . ".png" : "no-disponible.png");
+      $nombreImgAux = public_path() . "/assets/eah/img/" . (isset($tipoImagenPerfil) ? "perfil-imagen-" . $tipoImagenPerfil . ".png" : "no-disponible.png");
       $archivo = File::get($nombreImgAux);
       $tipo = File::mimeType($nombreImgAux);
     }

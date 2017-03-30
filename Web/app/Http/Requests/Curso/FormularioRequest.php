@@ -21,14 +21,14 @@ class FormularioRequest extends Request {
     $datos["incluye"] = ReglasValidacion::formatoDato($datos, "incluye");
     $datos["inversion"] = ReglasValidacion::formatoDato($datos, "inversion");
     $datos["inversionCuotas"] = ReglasValidacion::formatoDato($datos, "inversionCuotas");
-    $datos["activo"] = (isset($datos["activo"]) ? 1 : 0);   
+    $datos["activo"] = (isset($datos["activo"]) ? 1 : 0);
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
 
   public function rules() {
     $reglasValidacion = [
-        "nombre" => ["max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
+        "nombre" => ["required", "max:255"],
         "imagenPerfil" => "image",
         "descripcion" => "required|max:4000",
         "modulos" => "required|max:4000",
@@ -40,12 +40,12 @@ class FormularioRequest extends Request {
 
     switch ($this->method()) {
       case "GET":
-      case "DELETE":
-      case "PUT":
-      case "PATCH": {
+      case "DELETE": {
           return [];
         }
-      case "POST": {
+      case "POST":
+      case "PUT":
+      case "PATCH": {
           return $reglasValidacion;
         }
       default:break;
