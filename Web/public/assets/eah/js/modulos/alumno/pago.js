@@ -33,6 +33,9 @@ function cargarSeccionPagos() {
       return false;
     }
   });
+  $(".btn-cancelar-pago").click(function () {
+    mostrarSeccionPago([1]);
+  });
 
   //Común   
   if (obtenerParametroUrlXNombre("sec") === "pago") {
@@ -202,7 +205,14 @@ function cargarFormularioPago() {
     onkeyup: false,
     onclick: false
   });
+
+  var fechaInicioClasesPago = $("#fecha-inicio-clases-pago").val();
   establecerCalendario("fecha-inicio-clases-pago", false, false, false);
+  if (fechaInicioClasesPago !== "") {
+    var datFechaInicioClasesPago = fechaInicioClasesPago.split("/");
+    $("#fecha-inicio-clases-pago").datepicker("setDate", (new Date(datFechaInicioClasesPago[1] + "/" + datFechaInicioClasesPago[0] + "/" + datFechaInicioClasesPago[2])));
+  }
+
   $("#btn-nuevo-pago").click(function () {
     limpiarCamposPago();
     $("#btn-anterior-pago, #btn-registrar-pago").hide();
@@ -223,15 +233,9 @@ function cargarFormularioPago() {
     $("#txt-periodo").text($(this).val());
   });
   $("#btn-anterior-pago").click(function () {
-    $("#btn-anterior-pago, #btn-registrar-pago").hide();
-    $("#btn-generar-clases-pago").show();
-    mostrarSeccionPago([2, 1, 1]);
     $("#motivo-pago").trigger("change");
   });
   $("#btn-generar-clases-pago").click(generarClases);
-  $(".btn-cancelar-pago").click(function () {
-    mostrarSeccionPago([1]);
-  });
   $("#btn-docentes-disponibles-pago").click(function () {
     cargarDocentesDisponiblesPago(true);
   });
@@ -242,11 +246,12 @@ function cargarFormularioPago() {
     if (urlPerfilProfesor !== "") {
       var docenteDisponiblePago = $("input[name='idDocenteDisponiblePago']:checked");
       limpiarCamposPago(true);
-      mostrarSeccionPago([2, 2]);
       if (docenteDisponiblePago.length > 0) {
         $("input[name='idDocente']").val(docenteDisponiblePago.val());
         $("#nombre-docente-pago").html((docenteDisponiblePago.val() !== '' ? '<i class="fa flaticon-teach"></i> <b>' + docenteDisponiblePago.data('nombrecompleto') + '</b> <a href=' + (urlPerfilProfesor.replace('/0', '/' + docenteDisponiblePago.val())) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>' : ''));
         mostrarSeccionPago([2, 2, 1]);
+      } else {
+        mostrarSeccionPago([2, 2]);
       }
     }
     $("#mod-docentes-disponibles-pago").modal("hide");
@@ -467,7 +472,6 @@ function verDatosPago(idPago) {
 function limpiarCamposPago(soloCamposDocente) {
   $("input[name='idDocente']").val("");
   $("#nombre-docente-pago").html("");
-
   if (!soloCamposDocente) {
     $("#formulario-pago, #formulario-actualizar-pago").find(":input, select").each(function (i, e) {
       if (e.name !== "costoHoraClase" && e.name !== "fechaInicioClases" && e.name !== "periodoClases" && e.name !== "_token" && e.type !== "hidden") {
