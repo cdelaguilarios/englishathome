@@ -132,7 +132,7 @@ class FormularioRequest extends Request {
 
   public function messages() {
     return [
-        "sexoNoValido.required" => "El sexo seleccionado no es válido",
+        "sexoNoValido.required" => "El sexo seleccionado no es válido.",
         "tipoDocumenoNoValido.required" => "El tipo de documento seleccionado no es válido.",
         "ubigeoNoValido.required" => "Los datos de dirección ingresados no son válidos.",
         "nivelInglesNoValido.required" => "El nivel de inglés seleccionado no es válido.",

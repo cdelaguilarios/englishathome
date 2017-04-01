@@ -27,10 +27,10 @@ class Ubigeo extends Model {
       $codigoDistrito = substr($codigoUbigeo, 0, 6);
 
       try {
-        $distritoSel = DB::table("distrito")->where("codigo", $codigoDistrito)->firstOrFail();
-        $provinciaSel = DB::table("provincia")->where("codigo", $codigoProvincia)->firstOrFail();
-        $departamentoSel = DB::table("departamento")->where("codigo", $codigoDepartamento)->firstOrFail();
-        $texto = ucwords(strtolower($distritoSel->distrito . ", " . $provinciaSel->provincia . ", " . str_replace("DEPARTAMENTO ", "", $departamentoSel->departamento)));
+        $distritoSel = DB::table("distrito")->where("codigo", $codigoDistrito)->get();
+        $provinciaSel = DB::table("provincia")->where("codigo", $codigoProvincia)->get();
+        $departamentoSel = DB::table("departamento")->where("codigo", $codigoDepartamento)->get();
+        $texto = ucwords(strtolower($distritoSel[0]->distrito . ", " . $provinciaSel[0]->provincia . ", " . str_replace("DEPARTAMENTO ", "", $departamentoSel[0]->departamento)));
       } catch (\Exception $e) {
         
       }

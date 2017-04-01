@@ -1,6 +1,3 @@
-var mapa;
-var uto = null;
-
 $(document).ready(function () {
   cargarLista();
   cargarFormulario();
@@ -131,7 +128,6 @@ function cargarFormulario() {
       } else {
         agregarMensaje("advertencias", "Debe ingresar un horario disponible", true, "#sec-men-alerta-horario");
       }
-
     },
     highlight: function () {
     },
@@ -148,30 +144,24 @@ function cargarFormulario() {
         error.insertAfter(element);
       }
     },
+    invalidHandler: function (e, v) {
+      if (v.errorList.length > 0 && $(v.errorList[0].element).closest(".step-pane").data("step") !== undefined) {
+        $('#wiz-registro-postulante').wizard('selectedItem', {step: $(v.errorList[0].element).closest(".step-pane").data("step")});
+      }
+    },
     onfocusout: false,
     onkeyup: false,
     onclick: false
   });
   if ($("input[name='modoEditarRegistrar']").val() === "1") {
-    $("#wiz-registro-postulante").wizard();
-    $("#wiz-registro-postulante").on("actionclicked.fu.wizard", function (e, data) {
-      var campos = $("#formulario-postulante").find("#sec-wiz-postulante-" + data.step).find(":input, select");
-      if (data.direction === "next" && !campos.valid()) {
-        e.preventDefault();
-      }
-    }).on("changed.fu.wizard", function (evt, data) {
-      google.maps.event.trigger(mapa, "resize");
-      verificarPosicionSel();
-    }).on("finished.fu.wizard", function (evt, data) {
-      $("#formulario-postulante").submit();
-    });
+    establecerWizard("postulante", ($("input[name='modoEditar']").length > 0 && $("input[name='modoEditar']").val() === "1"));
 
     var fechaNacimiento = $("#fecha-nacimiento").val();
     establecerCalendario("fecha-nacimiento", false, true, false);
     if (fechaNacimiento !== "") {
-      $("#fecha-nacimiento").datepicker("setDate", (new Date(fechaNacimiento)));
+      var datFechaNacimiento = fechaNacimiento.split("/");
+      $("#fecha-nacimiento").datepicker("setDate", (new Date(datFechaNacimiento[1] + "/" + datFechaNacimiento[0] + "/" + datFechaNacimiento[2])));
     }
-
 
     $("#curso-interes").select2();
     $("#direccion").focusout(verificarDatosBusquedaMapa);
@@ -210,13 +200,6 @@ function cargarFormulario() {
         );
       }
     });
-  }
-}
-function verificarDatosBusquedaMapa() {
-  if ($("#direccion").val() !== "" && $("#codigo-distrito option:selected").text() !== "" &&
-      $("#codigo-provincia option:selected").text() !== "" && $("#codigo-departamento option:selected").text() !== "") {
-    buscarDireccionMapa($("#direccion").val() + " " + $("#codigo-distrito option:selected").text() +
-        ", " + $("#codigo-provincia option:selected").text() + ", " + $("#codigo-departamento option:selected").text());
   }
 }
 

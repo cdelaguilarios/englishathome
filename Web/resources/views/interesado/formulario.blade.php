@@ -91,6 +91,7 @@
             <button id="btn-guardar" type="button" class="btn btn-success pull-right">
               {{ ((isset($modo) && $modo == "registrar") ? "Registrar" : "Guardar") }}
             </button>
+            <a href="{{ route("interesados") }}" type="button" class="btn btn-default pull-right" >Cancelar</a>
           </div>
         </div>
       </div>

@@ -77,7 +77,7 @@ class Historial extends Model {
   }
 
   public static function eliminarXIdClase($idClase) {
-    $historiales = Historial::where("idClase", $idClase)->get();
+    $historiales = Historial::where("eliminado", 0)->where("idClase", $idClase)->get();
     foreach ($historiales as $historial) {
       $historial->eliminado = 1;
       $historial->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();

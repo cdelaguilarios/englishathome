@@ -38,7 +38,7 @@
           @endif
         </div>
         <div class="form-group">
-          {{ Form::hidden("ModoEdicion", ((isset($modo) && $modo == "registrar") ? "0" : "1"), ["id" => "ModoEdicion"]) }}
+          {{ Form::hidden("modoEdicion", ((isset($modo) && $modo == "registrar") ? "0" : "1"), ["id" => "modo-edicion"]) }}
           {{ Form::label("password", ((isset($modo) && $modo == "registrar") ? "Contraseña (*): " : "Nueva contraseña: "), ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
             {{ Form::password("password", ["class" => "form-control", "minlength" =>"6", "maxlength" =>"30"]) }}
@@ -64,7 +64,7 @@
           </div>
         </div>
         @else
-        ]] Form::hidden("rol", (isset($usuario) ? $usuario->rol : App\Helpers\Enum\RolesUsuario::Secundario)) }} 
+        {{ Form::hidden("rol", (isset($usuario) ? $usuario->rol : App\Helpers\Enum\RolesUsuario::Secundario)) }} 
         {{ Form::hidden("estado", (isset($usuario) ? $usuario->estado : App\Helpers\Enum\EstadosUsuario::Activo)) }}    
         @endif
         {{ Form::hidden("id") }}

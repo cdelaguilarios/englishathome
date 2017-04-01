@@ -3,22 +3,23 @@ function verificarJqueryUbicacionMapa() {
 }
 
 var posicionSel = null;
+var mapa, umto = null;
 function inicializarMapa() {
   var cen = {lat: -12.069890396610955, lng: -77.10353526868857};
   mapa = new google.maps.Map(document.getElementById("mapa"), {
     zoom: 12,
     center: cen
   });
-  
+
   modoVisualizarMapa = (typeof (modoVisualizarMapa) === "undefined" ? "" : modoVisualizarMapa);
   if (!(typeof modoVisualizarMapa !== "" && modoVisualizarMapa === true)) {
     mapa.addListener("click", function (e) {
-      uto = setTimeout(function () {
+      umto = setTimeout(function () {
         seleccionarPosicionMapa(e.latLng);
       }, 200);
     });
     mapa.addListener("dblclick", function (e) {
-      clearTimeout(uto);
+      clearTimeout(umto);
     });
   }
 
@@ -34,7 +35,7 @@ function inicializarMapa() {
       if (lugares.length === 0) {
         return;
       }
-      seleccionarPosicionMapa(lugares[0].geometry.location);
+      seleccionarPosicionMapa(lugares[0].geometry.location, true);
     });
   }
   $("#btn-ubicacion-mapa").click(function () {
@@ -43,10 +44,9 @@ function inicializarMapa() {
     verificarPosicionSel();
   });
 }
-
 function verificarPosicionSel() {
   if ($("input[name='geoLatitud']").val() !== "" && $("input[name='geoLongitud']").val() !== "") {
-    seleccionarPosicionMapa({lat: parseFloat($("input[name='geoLatitud']").val()), lng: parseFloat($("input[name='geoLongitud']").val())});
+    seleccionarPosicionMapa({lat: parseFloat($("input[name='geoLatitud']").val()), lng: parseFloat($("input[name='geoLongitud']").val())}, true);
   }
 }
 function buscarDireccionMapa(direccion) {
@@ -58,9 +58,8 @@ function buscarDireccionMapa(direccion) {
       keyCode: 13
     });
   }
-
 }
-function seleccionarPosicionMapa(pos) {
+function seleccionarPosicionMapa(pos, cambiarZoom) {
   if (posicionSel !== null) {
     posicionSel.setMap(null);
   }
@@ -68,8 +67,22 @@ function seleccionarPosicionMapa(pos) {
     position: pos,
     map: mapa
   });
-  mapa.setZoom(18);
+  if (cambiarZoom) {
+    mapa.setZoom(18);
+  }
   mapa.setCenter(pos);
   $("input[name='geoLatitud']").val((typeof pos.lat === 'function') ? pos.lat() : pos.lat);
   $("input[name='geoLongitud']").val((typeof pos.lng === 'function') ? pos.lng() : pos.lng);
+}
+var plvdbm = true;
+function verificarDatosBusquedaMapa() {
+  if (plvdbm) {
+    plvdbm = false;
+  } else {
+    if ($("#direccion").val() !== "" && $("#codigo-distrito option:selected").text() !== "" &&
+        $("#codigo-provincia option:selected").text() !== "" && $("#codigo-departamento option:selected").text() !== "") {
+      buscarDireccionMapa($("#direccion").val() + " " + $("#codigo-distrito option:selected").text() +
+          ", " + $("#codigo-provincia option:selected").text() + ", " + $("#codigo-departamento option:selected").text());
+    }
+  }
 }

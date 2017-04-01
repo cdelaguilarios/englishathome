@@ -124,7 +124,15 @@ function cargarListaPago() {
       var idpago = $(this).data("idpago");
       var idAlumno = $(this).data("idalumno");
       if (urlActualizarEstadoPago !== "" && $(this).data("estado") !== $(this).val()) {
-        llamadaAjax(urlActualizarEstadoPago, "POST", {"idPago": idpago, "idAlumno": idAlumno, "estado": $(this).val()}, true);
+        llamadaAjax(urlActualizarEstadoPago, "POST", {"idPago": idpago, "idAlumno": idAlumno, "estado": $(this).val()}, true, undefined, undefined, function (de) {
+          var rj = de.responseJSON;
+          if (rj !== undefined && rj.mensaje !== undefined) {
+            agregarMensaje("errores", rj.mensaje, true);
+          } else if (rj !== undefined && rj[Object.keys(rj)[0]] !== undefined) {
+            agregarMensaje("errores", rj[Object.keys(rj)[0]][0], true);
+          }
+          $("#tab-lista-pagos").DataTable().ajax.reload();
+        });
       }
       $(this).closest(".sec-btn-editar-estado-pago").append('<a href="javascript:void(0);" class="btn-editar-estado-pago" data-idpago="' + idpago + '" data-idalumno="' + idAlumno + '" data-estado="' + $(this).val() + '"><span class="label ' + estadosPago[$(this).val()][1] + ' btn-estado">' + estadosPago[$(this).val()][0] + '</span></a>');
       $(this).remove();

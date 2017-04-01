@@ -19,6 +19,7 @@
 
 @section("content") 
 @include("partials/errors")
+@if($usuarioActual->rol == App\Helpers\Enum\RolesUsuario::Principal)
 <div class="row">
   <div class="col-sm-12">
     <div class="box box-primary">        
@@ -35,6 +36,7 @@
     </div>
   </div>
 </div>
+@endif
 {{ Form::model($usuario, ["method" => "PATCH", "action" => ["UsuarioController@actualizar", $usuario->id], "id" => "formulario-usuario", "class" => "form-horizontal", "files" => true]) }}
 @include("usuario.formulario")
 {{ Form::close() }}

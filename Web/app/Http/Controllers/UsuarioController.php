@@ -73,14 +73,13 @@ class UsuarioController extends Controller {
         Mensajes::agregarMensajeAdvertencia("No tiene permisos suficientes para realizar la acción solicitada.");
         return redirect()->guest(route("/"));
       }
-
       $actualizacionAutorizada = true;
       $datos = $req->all();
       if ($datos["rol"] != RolesUsuario::Principal && Usuario::usuarioUnicoPrincipal($id)) {
         Mensajes::agregarMensajeAdvertencia("El usuario que usted desea modificar es el único 'Usuario principal' y no puede ser modificado a otro tipo diferente.");
         $actualizacionAutorizada = false;
       }
-      if ($datos["estado"] == EstadosUsuario::Inactivo && Usuario::usuarioUnicoPrincipal($id)) {
+      if ($actualizacionAutorizada && $datos["estado"] == EstadosUsuario::Inactivo && Usuario::usuarioUnicoPrincipal($id)) {
         Mensajes::agregarMensajeAdvertencia("El usuario que usted desea modificar es el único 'Usuario principal' y su cuenta no se puede desactivar.");
         $actualizacionAutorizada = false;
       }

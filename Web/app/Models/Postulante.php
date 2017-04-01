@@ -28,7 +28,7 @@ class Postulante extends Model {
     $postulantes = Postulante::select($nombreTabla . ".*", "entidad.*", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))
                     ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
                     ->leftJoin(EntidadCurso::nombreTabla() . " as entidadCurso", $nombreTabla . ".idEntidad", "=", "entidadCurso.idEntidad")
-                    ->where("entidad.eliminado", 0)->distinct();
+                    ->where("entidad.eliminado", 0)->groupBy("entidad.id")->distinct();
 
     if (isset($datos["estado"])) {
       $postulantes->where("entidad.estado", $datos["estado"]);
@@ -41,11 +41,7 @@ class Postulante extends Model {
   }
 
   public static function obtenerXId($id, $simple = FALSE) {
-    $nombreTabla = Postulante::nombreTabla();
-    $postulante = Postulante::select($nombreTabla . ".*", "entidad.*")
-                    ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
-                    ->where("entidad.id", $id)
-                    ->where("entidad.eliminado", 0)->firstOrFail();
+    $postulante = Postulante::listar()->where("entidad.id", $id)->firstOrFail();
     if (!$simple) {
       $postulante->horario = Horario::obtenerFormatoJson($id);
       $postulante->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($postulante->codigoUbigeo);
@@ -86,13 +82,16 @@ class Postulante extends Model {
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($id, $datos["idCursos"]);
     Horario::registrarActualizar($id, $datos["horario"]);
-
-    Postulante::obtenerXId($id, TRUE);
   }
 
   public static function actualizarEstado($id, $estado) {
     Postulante::obtenerXId($id, TRUE);
     Entidad::actualizarEstado($id, $estado);
+  }
+
+  public static function actualizarHorario($id, $horario) {
+    Postulante::obtenerXId($id, TRUE);
+    Horario::registrarActualizar($id, $horario);
   }
 
   public static function eliminar($id) {

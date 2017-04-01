@@ -9,13 +9,13 @@ function cargarGrafico(datosMontos, nombreEntidad, detalleSingular, detallePlura
   detallePluralReporte = detallePlural;
 }
 
-var auxTimeout;
+var auxTimeoutCargarDatosGrafico;
 function cargarDatosGrafico(idsSel, nuevaCarga) {
   if (!$("#sec-grafico").is(":visible")) {
     if (nuevaCarga) {
-      clearTimeout(auxTimeout);
+      clearTimeout(auxTimeoutCargarDatosGrafico);
     }
-    auxTimeout = setTimeout(function () {
+    auxTimeoutCargarDatosGrafico = setTimeout(function () {
       cargarDatosGrafico(idsSel);
     }, 100);
   } else {

@@ -33,7 +33,7 @@
           </div>  
           <div class="form-group">
             {{ Form::label("telefono", "Teléfono: ", ["class" => "col-sm-2 control-label"]) }}
-            <div class="col-sm-10">
+            <div class="col-sm-3">
               {{ Form::text("telefono", null, ["class" => "form-control", "maxlength" =>"30"]) }}
             </div>
           </div>                 
@@ -150,6 +150,7 @@
           </div>
         </div>                
         {{ Form::hidden("modoEditarRegistrar", 1) }} 
+        {{ Form::hidden("modoEditar", ((isset($modo) && $modo == "registrar") ? 0: 1)) }} 
       </div>
     </div>       
   </div>

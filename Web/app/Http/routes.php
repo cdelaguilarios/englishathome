@@ -116,11 +116,11 @@ Route::group(["middleware" => "auth"], function() {
       Route::post("usuarios/listar", ["uses" => "UsuarioController@listar", "as" => "usuarios.listar"]);
       Route::get("usuario/nuevo", ["uses" => "UsuarioController@crear", "as" => "usuarios.crear"]);
       Route::post("usuario/registrar", ["uses" => "UsuarioController@registrar", "as" => "usuarios.registrar"]);
+      Route::post("usuario/{id}/actualizarEstado", ["uses" => "UsuarioController@actualizarEstado", "as" => "usuarios.actualizar.estado"]);
+      Route::delete("usuario/{id}/eliminar", ["uses" => "UsuarioController@eliminar", "as" => "usuarios.eliminar"]);
     });
     Route::get("usuario/{id}/editar", ["uses" => "UsuarioController@editar", "as" => "usuarios.editar"]);
     Route::patch("usuario/{id}/actualizar", ["uses" => "UsuarioController@actualizar", "as" => "usuarios.actualizar"]);
-    Route::post("usuario/{id}/actualizarEstado", ["uses" => "UsuarioController@actualizarEstado", "as" => "usuarios.actualizar.estado"]);
-    Route::delete("usuario/{id}/eliminar", ["uses" => "UsuarioController@eliminar", "as" => "usuarios.eliminar"]);
     // </editor-fold>
     // <editor-fold desc="Historial">
     Route::post("historial/{idEntidad}/perfil", ["uses" => "HistorialController@obtener", "as" => "historial.perfil"]);

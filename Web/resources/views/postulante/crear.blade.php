@@ -1,12 +1,12 @@
 @extends("layouts.master")
-@section("titulo", "Posultantes")
+@section("titulo", "Postulantes")
 
 @section("section_script")
 <script src="{{ asset("assets/eah/js/modulos/postulante.js") }}"></script>
 @endsection
 
 @section("breadcrumb")
-<li><a href="{{ route("postulantes") }}">Posultantes</a></li>
+<li><a href="{{ route("postulantes") }}">Postulantes</a></li>
 <li class="active">Nuevo</li>
 @endsection
 

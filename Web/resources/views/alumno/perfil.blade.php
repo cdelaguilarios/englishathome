@@ -20,7 +20,7 @@
   <div class="col-sm-3">
     <div class="box box-primary">
       <div class="box-body box-profile">
-        <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($alumno->imagenPerfil) && $alumno->imagenPerfil != "" ? $alumno->imagenPerfil : "-"), "tip" => ($alumno->sexo == "F" ? "f" : "m")]) }}" alt="User profile picture">
+        <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($alumno->imagenPerfil) && $alumno->imagenPerfil != "" ? $alumno->imagenPerfil : "-"), "tip" => ($alumno->sexo == "F" ? "f" : "m")]) }}" alt="Alumn{{ $alumno->sexo == "F" ? "a" : "o" }} {{ $alumno->nombre . " " .  $alumno->apellido }}">
         <h3 class="profile-username">Alumn{{ $alumno->sexo == "F" ? "a" : "o" }} {{ $alumno->nombre . " " .  $alumno->apellido }}</h3>
         <p class="text-muted">{{ $alumno->correoElectronico }}</p>
         <span class="label {{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][0] }}</span>
@@ -28,7 +28,7 @@
     </div>
     <div class="sec-datos box box-primary">
       <div class="box-header with-border">
-        <h3 class="box-title">Datos principales del alumn{{ $alumno->sexo == "F" ? "a" : "o" }}</h3>
+        <h3 class="box-title">Datos principales {{ $alumno->sexo == "F" ? "de la alumna" : "del alumno" }}</h3>
       </div>
       <div class="box-body">
         <strong><i class="fa fa-fw fa-calendar"></i> Horario</strong>

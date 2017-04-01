@@ -141,10 +141,12 @@
                   <a href="{{ route("reporte.pagos")}}"><i class="fa fa-line-chart"></i> Reporte de pagos</a>
                 </li>
               </ul>
-            </li>
+            </li>            
+            @if($usuarioActual->rol == App\Helpers\Enum\RolesUsuario::Principal)
             <li class="{{ ((isset($seccion) && $seccion == "usuarios") ? "active" : "") }}">
               <a href="{{ route("usuarios")}}"><i class="fa fa-users"></i> <span>Usuarios del sistema</span></a>
             </li>
+            @endif
           </ul>
         </section>
       </aside>

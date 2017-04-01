@@ -480,8 +480,7 @@ class Clase extends Model {
   }
 
   public static function eliminadXIdAdlumno($idAlumno) {
-    $nombreTabla = Clase::nombreTabla();
-    $clases = Clase::where($nombreTabla . ".eliminado", 0)->where($nombreTabla . ".idAlumno", $idAlumno)->get();
+    $clases = Clase::where("eliminado", 0)->where("idAlumno", $idAlumno)->get();
     foreach ($clases as $clase) {
       Clase::eliminar($idAlumno, $clase->id);
     }

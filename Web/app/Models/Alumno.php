@@ -45,11 +45,12 @@ class Alumno extends Model {
       $alumno->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($alumno->codigoUbigeo);
       $alumno->numeroPeriodos = Clase::totalPeriodos($id);
       $alumno->totalSaldoFavor = PagoAlumno::totalSaldoFavor($id);
-      $alumno->idNivelIngles = EntidadNivelIngles::obtenerXEntidad($id);
+      $entidadNivelIngles = EntidadNivelIngles::obtenerXEntidad($id);
+      $alumno->idNivelIngles = (isset($entidadNivelIngles) ? $entidadNivelIngles->idNivelIngles : NULL);
       $entidadCurso = EntidadCurso::obtenerXEntidad($id);
-      $alumno->idCurso = (!is_null($entidadCurso) ? $entidadCurso->idCurso : NULL);
+      $alumno->idCurso = (isset($entidadCurso) ? $entidadCurso->idCurso : NULL);
       $datosProximaClase = Clase::obtenerProximaClase($id);
-      $alumno->profesorProximaClase = (!is_null($datosProximaClase) && Profesor::verificarExistencia($datosProximaClase->idProfesor) ? Profesor::obtenerXId($datosProximaClase->idProfesor) : NULL);
+      $alumno->profesorProximaClase = (isset($datosProximaClase) && Profesor::verificarExistencia($datosProximaClase->idProfesor) ? Profesor::obtenerXId($datosProximaClase->idProfesor) : NULL);
     }
     return $alumno;
   }

@@ -31,7 +31,7 @@ class AuthController extends Controller {
             Mensajes::agregarMensajeAdvertencia("Su cuenta ha sido eliminada.");
         } else if (!Usuario::usuarioActivo($user["idEntidad"])) {
             Auth::logout();
-            Mensajes::agregarMensajeAdvertencia("Su cuenta ha sido desactivada.");
+            Mensajes::agregarMensajeAdvertencia("Su cuenta no esta activa.");
         }
         return redirect()->intended($this->redirectPath());
     }

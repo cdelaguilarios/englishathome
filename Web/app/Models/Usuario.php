@@ -35,10 +35,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
   }
 
   public static function listar($datos = NULL) {
-    $nombreTabla = Usuario::nombreTabla();
-    $usuarios = Usuario::select($nombreTabla . ".*", "entidad.*")
-            ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
-            ->where("entidad.eliminado", 0);
+    $usuarios = Usuario::leftJoin(Entidad::nombreTabla() . " as entidad", Usuario::nombreTabla() . ".idEntidad", "=", "entidad.id")->where("entidad.eliminado", 0)->groupBy("entidad.id")->distinct();
     if (isset($datos["estado"])) {
       $usuarios->where("entidad.estado", $datos["estado"]);
     }
@@ -64,7 +61,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     $datos = $req->all();
     $datos["correoElectronico"] = $datos["email"];
 
-    $idEntidad = Entidad::registrar($datos, TiposEntidad::Usuario, ((isset($datos["estado"])) ? $datos["estado"] : EstadosUsuario::Activo));
+    $idEntidad = Entidad::registrar($datos, TiposEntidad::Usuario, $datos["estado"]);
     Entidad::registrarActualizarImagenPerfil($idEntidad, $req->file("imagenPerfil"));
 
     $usuario = new Usuario($datos);
@@ -82,7 +79,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
 
     $usuario = Usuario::obtenerXId($id);
-    if (isset($datos["password"]) && !is_null($datos["password"]) && $datos["password"] != "") {
+    if (isset($datos["password"]) && $datos["password"] != "") {
       $usuario->password = bcrypt($datos["password"]);
     }
     $rol = Auth::user()->rol;
@@ -98,7 +95,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
   }
 
   public static function usuarioUnicoPrincipal($id) {
-    $datosUsuario = Usuario::where("rol", RolesUsuario::Principal)->count();
+    $datosUsuario = Usuario::listar()->where(Usuario::nombreTabla() . ".rol", RolesUsuario::Principal)->count();
     if ($datosUsuario > 1) {
       return FALSE;
     }

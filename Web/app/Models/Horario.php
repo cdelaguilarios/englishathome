@@ -57,8 +57,8 @@ class Horario extends Model {
   }
 
   public static function registrarActualizar($idEntidad, $datosJsonHorario) {
-    $datosHorario = json_decode($datosJsonHorario);
     Horario::where("idEntidad", $idEntidad)->delete();
+    $datosHorario = json_decode($datosJsonHorario);
     foreach ($datosHorario as $horario) {
       $dias = explode(",", $horario->dias);
       $horas = $horario->horas;

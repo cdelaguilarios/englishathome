@@ -1,7 +1,7 @@
 $.validator.addMethod("validarPassword", validarPassword, "Este campo es obligatorio.");
 function validarPassword(value, element, param) {
-  return (($("#ModoEdicion") === undefined && value.trim() !== "") ||
-      ($("#ModoEdicion") !== undefined && ($("#ModoEdicion").val() === "1" || ($("#ModoEdicion").val() === "0" && value.trim() !== ""))));
+  return (($("#modo-edicion") === undefined && value.trim() !== "") ||
+      ($("#modo-edicion") !== undefined && ($("#modo-edicion").val() === "1" || ($("#modo-edicion").val() === "0" && value.trim() !== ""))));
 }
 $(document).ready(function () {
   cargarLista();

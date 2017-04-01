@@ -206,31 +206,31 @@ textarea{
 }
 
 /*Sección horario*/
-#calendario .schedule-table{
+#sec-calendario-horario.schedule-table{
   font-size: 9pt;
 }
-#calendario .schedule-header th{
+#sec-calendario-horario .schedule-header th{
   border: 1px solid #3c8dbc;  
   text-align: center;
   background: #fafafa;
 }
-#calendario .schedule-rows td {
+#sec-calendario-horario .schedule-rows td {
   width: 70px;
   cursor: pointer;
   border: 1px solid #3c8dbc;
   border-bottom: 0;
   padding: 0 2px;
 }
-#calendario .schedule-rows td:first-child {
+#sec-calendario-horario .schedule-rows td:first-child {
   width: 80px;   
   text-align: center;
 }
-#calendario .schedule-rows tr:last-child {    
+#sec-calendario-horario .schedule-rows tr:last-child {    
   border-bottom: 1px solid #3c8dbc;
 }
-#calendario .schedule-rows td[data-selected],
-#calendario .schedule-rows td[data-selecting] { background-color: #008d4c; }
-#calendario .schedule-rows td[data-disabled] { opacity: 0.55; }
+#sec-calendario-horario .schedule-rows td[data-selected],
+#sec-calendario-horario .schedule-rows td[data-selecting] { background-color: #008d4c; }
+#sec-calendario-horario .schedule-rows td[data-disabled] { opacity: 0.55; }
 #mod-horario .modal-header, #mod-horario .modal-body, #mod-horario .modal-footer{
   padding: 5px 15px;
 }

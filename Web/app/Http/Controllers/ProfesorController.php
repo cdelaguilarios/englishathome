@@ -10,10 +10,10 @@ use App\Models\Profesor;
 use App\Models\PagoProfesor;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Util as UtilRequest;
+use App\Http\Requests\ActualizarHorarioRequest;
 use App\Http\Requests\Profesor\BusquedaRequest;
 use App\Http\Requests\Profesor\FormularioRequest;
 use App\Http\Requests\Profesor\ActualizarEstadoRequest;
-use App\Http\Requests\Profesor\ActualizarHorarioRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Requests\Profesor\Pago as PagoRequest;
 

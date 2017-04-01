@@ -187,7 +187,7 @@
           <div class="form-group">
             {{ Form::label("idCurso", "Curso de interes: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3">
-              {{ Form::select("idCurso", $cursos, (isset($alumno) ? $alumno->idCurso : NULL), ["class" => "form-control"]) }}
+              {{ Form::select("idCurso", $cursos, (isset($alumno) ? $alumno->idCurso : (isset($interesado) ? $interesado->idCurso : NULL)), ["class" => "form-control"]) }}
             </div>
             {{ Form::label("numero-horas-clase", "Número de horas por clase (*): ", ["class" => "col-sm-3 control-label"]) }}
             <div class="col-sm-2">

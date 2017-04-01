@@ -234,13 +234,6 @@ function cargarFormulario() {
     });
   }
 }
-function verificarDatosBusquedaMapa() {
-  if ($("#direccion").val() !== "" && $("#codigo-distrito option:selected").text() !== "" &&
-      $("#codigo-provincia option:selected").text() !== "" && $("#codigo-departamento option:selected").text() !== "") {
-    buscarDireccionMapa($("#direccion").val() + " " + $("#codigo-distrito option:selected").text() +
-        ", " + $("#codigo-provincia option:selected").text() + ", " + $("#codigo-departamento option:selected").text());
-  }
-}
 function habilitarTodosPasos() {
   var pasos = $("#wiz-registro-profesor").find('.steps-container').find('li');
   $.each(pasos, function (i, v) {

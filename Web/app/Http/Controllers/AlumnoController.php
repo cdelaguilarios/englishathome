@@ -14,11 +14,11 @@ use App\Models\PagoAlumno;
 use App\Models\Interesado;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Alumno\BusquedaRequest;
+use App\Http\Requests\ActualizarHorarioRequest;
 use App\Http\Requests\Alumno\FormularioRequest;
 use App\Http\Requests\Alumno\Pago as PagoRequest;
 use App\Http\Requests\Alumno\Clase as ClaseRequest;
 use App\Http\Requests\Alumno\ActualizarEstadoRequest;
-use App\Http\Requests\Alumno\ActualizarHorarioRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AlumnoController extends Controller {
@@ -61,7 +61,7 @@ class AlumnoController extends Controller {
   public function crearExterno($codigoVerificacion) {
     try {
       $nuevoRegistro = Input::get("nr");
-      $this->data["nuevoRegistro"] = (isset($nuevoRegistro) ? TRUE : FALSE);
+      $this->data["nuevoRegistro"] = (isset($nuevoRegistro));
       $this->data["vistaExterna"] = TRUE;
       $this->data["codigoVerificacion"] = $codigoVerificacion;
       $this->data["interesado"] = Interesado::obtenerXId(Crypt::decrypt($codigoVerificacion));

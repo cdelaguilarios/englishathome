@@ -7,11 +7,11 @@ use Mensajes;
 use Datatables;
 use App\Models\Postulante;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ActualizarHorarioRequest;
 use App\Http\Requests\Postulante\BusquedaRequest;
 use App\Http\Requests\Postulante\FormularioRequest;
-use App\Http\Requests\Postulante\ActualizarEstadoRequest;
-use App\Http\Requests\Postulante\ActualizarHorarioRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Http\Requests\Postulante\ActualizarEstadoRequest;
 
 class PostulanteController extends Controller {
 

@@ -15,14 +15,14 @@
     </div>
   </div>
 </div>
-{!! Form::hidden("geoLatitud", (isset($geoLatitud) ? $geoLatitud : 0)) !!} 
-{!! Form::hidden("geoLongitud", (isset($geoLongitud) ? $geoLongitud : 0)) !!} 
+{{ Form::hidden("geoLatitud", (isset($geoLatitud) ? $geoLatitud : 0)) }} 
+{{ Form::hidden("geoLongitud", (isset($geoLongitud) ? $geoLongitud : 0)) }} 
 @else
 <input id="mapa-bus" class="controls" type="text" placeholder="Buscar">
 <div id="mapa"></div>
 @endif
 <script type="text/javascript">
-  var modoVisualizarMapa = {!! (isset($modo) && $modo == "visualizar") ? "true" : "false" !!};
+  var modoVisualizarMapa = {{ (isset($modo) && $modo === "visualizar") ? "true" : "false" }};
 </script>
-<script type="text/javascript" src="{{ asset("assets/eah/js/ubicacionMapa.js")}}"></script>
+<script type="text/javascript" src="{{ asset("assets/eah/js/ubicacionMapa.js") }}"></script>
 <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyD3y8Vvx3X9BquN5iaZcLQdD-768cy0ADY&libraries=places&callback=verificarJqueryUbicacionMapa" async defer></script>

@@ -84,7 +84,6 @@ function cargarFormulario() {
   minHorasClase = (typeof (minHorasClase) === "undefined" ? "" : minHorasClase);
   maxHorasClase = (typeof (maxHorasClase) === "undefined" ? "" : maxHorasClase);
   urlActualizarHorario = (typeof (urlActualizarHorario) === "undefined" ? "" : urlActualizarHorario);
-
   $("#formulario-alumno").validate({
     ignore: "",
     rules: {
@@ -170,23 +169,17 @@ function cargarFormulario() {
         error.insertAfter(element);
       }
     },
+    invalidHandler: function (e, v) {
+      if (v.errorList.length > 0 && $(v.errorList[0].element).closest(".step-pane").data("step") !== undefined) {
+        $('#wiz-registro-alumno').wizard('selectedItem', {step: $(v.errorList[0].element).closest(".step-pane").data("step")});
+      }
+    },
     onfocusout: false,
     onkeyup: false,
     onclick: false
   });
   if ($("input[name='modoEditarRegistrar']").val() === "1") {
-    $("#wiz-registro-alumno").wizard();
-    $("#wiz-registro-alumno").on("actionclicked.fu.wizard", function (e, data) {
-      var campos = $("#formulario-alumno").find("#sec-wiz-alumno-" + data.step).find(":input, select");
-      if (data.direction === "next" && !campos.valid()) {
-        e.preventDefault();
-      }
-    }).on("changed.fu.wizard", function (evt, data) {
-      google.maps.event.trigger(mapa, "resize");
-      verificarPosicionSel();
-    }).on("finished.fu.wizard", function (evt, data) {
-      $("#formulario-alumno").submit();
-    });
+    establecerWizard("alumno", ($("input[name='modoEditar']").length > 0 && $("input[name='modoEditar']").val() === "1"));
 
     var fechaNacimiento = $("#fecha-nacimiento").val();
     var fechaInicioClase = $("#fecha-inicio-clase").val();
@@ -209,21 +202,6 @@ function cargarFormulario() {
     }
     $("#direccion").focusout(verificarDatosBusquedaMapa);
     $("input[name='codigoUbigeo']").change(verificarDatosBusquedaMapa);
-
-    if ($("input[name='modoEditar']").length > 0 && $("input[name='modoEditar']").val() === "1") {
-      habilitarTodosPasos();
-      $("#wiz-registro-alumno").find('.steps-container').find('li').click(function (e) {
-        var pasoActual = $("#wiz-registro-alumno").find('.steps-container').find('li.active').data("step");
-        var campos = $("#formulario-alumno").find("#sec-wiz-alumno-" + pasoActual).find(":input, select");
-        if (!campos.valid()) {
-          e.preventDefault();
-          return false;
-        }
-      });
-      $('#wiz-registro-alumno').on('changed.fu.wizard', function (evt, data) {
-        habilitarTodosPasos();
-      });
-    }
   } else {
     $("input[name='horario']").change(function () {
       if (urlActualizarHorario !== "" && $(this).val() !== "") {
@@ -249,21 +227,6 @@ function cargarFormulario() {
       }
     });
   }
-}
-function verificarDatosBusquedaMapa() {
-  if ($("#direccion").val() !== "" && $("#codigo-distrito option:selected").text() !== "" &&
-      $("#codigo-provincia option:selected").text() !== "" && $("#codigo-departamento option:selected").text() !== "") {
-    buscarDireccionMapa($("#direccion").val() + " " + $("#codigo-distrito option:selected").text() +
-        ", " + $("#codigo-provincia option:selected").text() + ", " + $("#codigo-departamento option:selected").text());
-  }
-}
-function habilitarTodosPasos() {
-  var pasos = $("#wiz-registro-alumno").find('.steps-container').find('li');
-  $.each(pasos, function (i, v) {
-    if (!pasos.eq(i).hasClass('active')) {
-      pasos.eq(i).addClass('complete');
-    }
-  });
 }
 
 

@@ -243,7 +243,15 @@ function establecerCambiosBusquedaEstados(idTabla, urlActualizarEstadoDis, estad
   $(".sec-btn-editar-estado select").live("change", function () {
     var id = $(this).data("id");
     if (urlActualizarEstadoDis !== "" && $(this).data("estado") !== $(this).val()) {
-      llamadaAjax(urlActualizarEstadoDis.replace("/0", "/" + id), "POST", {"estado": $(this).val()}, true);
+      llamadaAjax(urlActualizarEstadoDis.replace("/0", "/" + id), "POST", {"estado": $(this).val()}, true, undefined, undefined, function (de) {
+        var rj = de.responseJSON;
+        if (rj !== undefined && rj.mensaje !== undefined) {
+          agregarMensaje("errores", rj.mensaje, true);
+        } else if (rj !== undefined && rj[Object.keys(rj)[0]] !== undefined) {
+          agregarMensaje("errores", rj[Object.keys(rj)[0]][0], true);
+        }
+        $("#" + idTabla).DataTable().ajax.reload();
+      });
     }
     $(this).closest(".sec-btn-editar-estado").append('<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + id + '" data-estado="' + $(this).val() + '"><span class="label ' + estadosDis[$(this).val()][1] + ' btn-estado">' + estadosDis[$(this).val()][0] + '</span></a>');
     $(this).remove();
@@ -256,12 +264,12 @@ function eliminarElemento(ele, mensajePrevio, idTabla, noRecargarTabla, funcionC
   mensajePrevio = (mensajePrevio !== undefined && mensajePrevio !== null && mensajePrevio.trim() !== "" ? mensajePrevio : "¿Está seguro que desea eliminar este elemento?");
   if (confirm(mensajePrevio)) {
     llamadaAjax($(ele).data("urleliminar"), "DELETE", {}, true,
-        function (data) {
+        function (d) {
           if (idTabla !== undefined && idTabla !== null) {
-            var eleEli = $("#" + idTabla).find("a[data-id='" + data["id"] + "']").closest("tr");
+            var eleEli = $("#" + idTabla).find("a[data-id='" + d["id"] + "']").closest("tr");
             eleEli.remove();
           }
-          agregarMensaje("exitosos", data["mensaje"], true);
+          agregarMensaje("exitosos", d["mensaje"], true);
         },
         function (data) {
           if (idTabla !== undefined && idTabla !== null && !noRecargarTabla) {
@@ -271,11 +279,102 @@ function eliminarElemento(ele, mensajePrevio, idTabla, noRecargarTabla, funcionC
             funcionCompletado(data);
           }
         },
-        function (dataError) {
-          agregarMensaje("errores", dataError["responseJSON"]["mensaje"], true);
+        function (de) {
+          agregarMensaje("errores", de["responseJSON"]["mensaje"], true);
         }
     );
   }
+}
+
+//Clases
+function obtenerDatosClase(idAlumno, idClase, funcionRetorno) {
+  urlDatosClase = (typeof (urlDatosClase) === "undefined" ? "" : urlDatosClase);
+  if (urlDatosClase !== "") {
+    $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
+    llamadaAjax(urlDatosClase.replace(encodeURI("/[ID_ALUMNO]"), "/" + idAlumno).replace("/0", "/" + idClase), "POST", {}, true,
+        function (d) {
+          if (funcionRetorno !== undefined)
+            funcionRetorno(d);
+          $("body").unblock();
+        },
+        function (d) {},
+        function (de) {
+          $('body').unblock({
+            onUnblock: function () {
+              agregarMensaje("errores", "Ocurrió un problema durante la carga de datos de la clase seleccionada. Por favor inténtelo nuevamente.", true);
+            }
+          });
+        }
+    );
+  }
+}
+function verDatosClase(idAlumno, idClase) {
+  estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
+  urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
+  if (estadosClase !== "" && urlPerfilProfesor !== "") {
+    obtenerDatosClase(idAlumno, idClase, function (d) {
+      $("#dat-numero-periodo-clase").text(d.numeroPeriodo);
+      $("#dat-estado-clase").html('<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">' + estadosClase[d.estado][0] + '</span>');
+
+      $("#sec-dat-notificar-clase").hide();
+      if (d.idHistorial !== null) {
+        $("#sec-dat-notificar-clase").show();
+        $("#dat-notificar-clase").html('<i class="fa fa-check-circle-o icon-notificar-clase"></i>');
+      }
+      $("#dat-fecha-clase").html(formatoFecha(d.fechaInicio) + ' - De ' + formatoFecha(d.fechaInicio, false, true) + ' a ' + formatoFecha(d.fechaFin, false, true));
+      $("#dat-costo-hora-clase").html('S/. ' + redondear(d.costoHora, 2));
+      $("#dat-codigo-pago-clase").html(d.idPago);
+      $("#sec-dat-profesor-clase").hide();
+      if (d.idProfesor !== null) {
+        $("#sec-dat-profesor-clase").show();
+        $("#dat-profesor-clase").html('<i class="fa flaticon-teach"></i> <b>' + d.nombreProfesor + ' ' + d.apellidoProfesor + '</b> <a href=' + (urlPerfilProfesor.replace('/0', '/' + d.idProfesor)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>');
+        $("#dat-pago-hora-profesor-clase").html('S/. ' + redondear(d.costoHoraProfesor, 2));
+      }
+      $("#mod-datos-clase").modal("show");
+    });
+  }
+}
+
+//Wizard
+var mapa, google;
+function establecerWizard(idEntidad, modoEditar) {
+  $("#wiz-registro-" + idEntidad).wizard();
+  $("#wiz-registro-" + idEntidad).on("actionclicked.fu.wizard", function (e, d) {
+    var campos = $("#formulario-" + idEntidad).find("#sec-wiz-" + idEntidad + "-" + d.step).find(":input, select");
+    if (d.direction === "next" && !campos.valid()) {
+      e.preventDefault();
+    }
+  }).on("changed.fu.wizard", function (e, d) {
+    if (google !== undefined && mapa !== undefined) {
+      google.maps.event.trigger(mapa, "resize");
+      verificarPosicionSel();
+    }
+  }).on("finished.fu.wizard", function (e, d) {
+    $("#formulario-" + idEntidad).submit();
+  });
+
+  if (modoEditar) {
+    habilitarTodosPasosWizard(idEntidad);
+    $("#wiz-registro-" + idEntidad).find('.steps-container').find('li').click(function (e) {
+      var pasoActual = $("#wiz-registro-" + idEntidad).find('.steps-container').find('li.active').data("step");
+      var campos = $("#formulario-" + idEntidad).find("#sec-wiz-" + idEntidad + "-" + pasoActual).find(":input, select");
+      if (!campos.valid()) {
+        e.preventDefault();
+        return false;
+      }
+    });
+    $("#wiz-registro-" + idEntidad).on("changed.fu.wizard", function (e, d) {
+      habilitarTodosPasosWizard(idEntidad);
+    });
+  }
+}
+function habilitarTodosPasosWizard(idEntidad) {
+  var pasos = $("#wiz-registro-" + idEntidad).find('.steps-container').find('li');
+  $.each(pasos, function (i, v) {
+    if (!pasos.eq(i).hasClass('active')) {
+      pasos.eq(i).addClass('complete');
+    }
+  });
 }
 
 //Util
@@ -351,53 +450,5 @@ function incluirSeccionSubidaArchivos(idElemento, datosAdicionales, funcionSubir
       extErrorStr: "Extensión permitidas: ",
       sizeErrorStr: "Tamaño máximo: "
     }, datosAdicionales));
-  }
-}
-//Clases
-function obtenerDatosClase(idAlumno, idClase, funcionRetorno) {
-  urlDatosClase = (typeof (urlDatosClase) === "undefined" ? "" : urlDatosClase);
-  if (urlDatosClase !== "") {
-    $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
-    llamadaAjax(urlDatosClase.replace(encodeURI("/[ID_ALUMNO]"), "/" + idAlumno).replace("/0", "/" + idClase), "POST", {}, true,
-        function (d) {
-          if (funcionRetorno !== undefined)
-            funcionRetorno(d);
-          $("body").unblock();
-        },
-        function (d) {},
-        function (de) {
-          $('body').unblock({
-            onUnblock: function () {
-              agregarMensaje("errores", "Ocurrió un problema durante la carga de datos de la clase seleccionada. Por favor inténtelo nuevamente.", true);
-            }
-          });
-        }
-    );
-  }
-}
-function verDatosClase(idAlumno, idClase) {
-  estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
-  urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
-  if (estadosClase !== "" && urlPerfilProfesor !== "") {
-    obtenerDatosClase(idAlumno, idClase, function (d) {
-      $("#dat-numero-periodo-clase").text(d.numeroPeriodo);
-      $("#dat-estado-clase").html('<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">' + estadosClase[d.estado][0] + '</span>');
-
-      $("#sec-dat-notificar-clase").hide();
-      if (d.idHistorial !== null) {
-        $("#sec-dat-notificar-clase").show();
-        $("#dat-notificar-clase").html('<i class="fa fa-check-circle-o icon-notificar-clase"></i>');
-      }
-      $("#dat-fecha-clase").html(formatoFecha(d.fechaInicio) + ' - De ' + formatoFecha(d.fechaInicio, false, true) + ' a ' + formatoFecha(d.fechaFin, false, true));
-      $("#dat-costo-hora-clase").html('S/. ' + redondear(d.costoHora, 2));
-      $("#dat-codigo-pago-clase").html(d.idPago);
-      $("#sec-dat-profesor-clase").hide();
-      if (d.idProfesor !== null) {
-        $("#sec-dat-profesor-clase").show();
-        $("#dat-profesor-clase").html('<i class="fa flaticon-teach"></i> <b>' + d.nombreProfesor + ' ' + d.apellidoProfesor + '</b> <a href=' + (urlPerfilProfesor.replace('/0', '/' + d.idProfesor)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>');
-        $("#dat-pago-hora-profesor-clase").html('S/. ' + redondear(d.costoHoraProfesor, 2));
-      }
-      $("#mod-datos-clase").modal("show");
-    });
   }
 }
