@@ -76,13 +76,13 @@ function cargarListaPago() {
           }, className: "text-center"},
         {data: "fechaRegistro", name: "pago.fechaRegistro", render: function (e, t, d, m) {
             return formatoFecha(d.fechaRegistro, true);
-          }, className: "text-center"},
+          }, className: "text-center", type: "fecha"},
         {data: "estado", name: "pago.estado", render: function (e, t, d, m) {
             return '<div class="sec-btn-editar-estado-pago"><a href="javascript:void(0);" class="btn-editar-estado-pago" data-idpago="' + d.id + '" data-idalumno="' + d.idAlumno + '" data-estado="' + d.estado + '"><span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span></a></div>';
           }, className: "text-center"},
         {data: "monto", name: "pago.monto", render: function (e, t, d, m) {
             return 'S/. ' + redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="saldo-favor-utilizado">utilizado</span>)' : '') + '</b></small>' : '');
-          }, className: "text-center"},
+          }, className: "text-center", type: "monto"},
         {data: "id", name: "pago.id", orderable: false, searchable: false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
                 '<li>' +
@@ -104,10 +104,10 @@ function cargarListaPago() {
 
         var montoTotal = 0, montoTotalPagina = 0;
         $('#tab-lista-pagos').DataTable().rows({filter: 'applied'}).data().each(function (i) {
-          montoTotal += parseFloat(i.monto) + (i.saldoFavor !== null ? parseFloat(i.saldoFavor + "") : 0);
+          montoTotal += parseFloat(i.monto);
         });
         $('#tab-lista-pagos').DataTable().rows({page: 'current'}).data().each(function (i) {
-          montoTotalPagina += parseFloat(i.monto) + (i.saldoFavor !== null ? parseFloat(i.saldoFavor) : 0);
+          montoTotalPagina += parseFloat(i.monto);
         });
         $(api.column(5).footer()).html("Total S/. " + redondear(montoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + redondear(montoTotalPagina, 2) : ""));
       }
@@ -148,9 +148,6 @@ function cargarFormularioPago() {
   $("#formulario-pago").validate({
     ignore: ":hidden",
     rules: {
-      motivo: {
-        required: true
-      },
       imagenComprobante: {
         validarImagen: true
       },
@@ -386,9 +383,6 @@ function cargarFormularioActualizarPago() {
   $("#formulario-actualizar-pago").validate({
     ignore: ":hidden",
     rules: {
-      motivo: {
-        required: true
-      },
       imagenComprobante: {
         validarImagen: true
       },

@@ -42,13 +42,13 @@ function cargarListaPagos() {
           }, className: "text-center"},
         {data: "fechaRegistro", name: "fechaRegistro", render: function (e, t, d, m) {
             return formatoFecha(d.fechaRegistro, true);
-          }, className: "text-center"},
+          }, className: "text-center", type: "fecha"},
         {data: "estado", name: "estado", render: function (e, t, d, m) {
             return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>';
           }, className: "text-center"},
         {data: "monto", name: "monto", render: function (e, t, d, m) {
             return 'S/. ' + redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="saldo-favor-utilizado">utilizado</span>)' : '') + '</b></small>' : '');
-          }, className: "text-center"}
+          }, className: "text-center", type: "monto"}
       ],
       initComplete: function (s, j) {
         establecerBotonRecargaTabla("tab-lista");

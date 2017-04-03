@@ -360,7 +360,7 @@ class Clase extends Model {
 
     $notificar = ($datos["notificar"] == 1);
     $clase = ((isset($datos["idClase"])) ? Clase::obtenerXId($idAlumno, $datos["idClase"]) : NULL);
-    if (!is_null($clase)) {
+    if (isset($clase)) {
       if (is_null($datos["estado"])) {
         unset($datos["estado"]);
       }

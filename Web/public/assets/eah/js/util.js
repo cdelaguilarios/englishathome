@@ -99,6 +99,34 @@ function validarFecha(value, element, param) {
 ﻿$(document).ready(function () {
   $.fn.datepicker.defaults.language = "es";
   $.fn.dataTable.ext.errMode = "none";
+  jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+    "fecha-pre": function (f) {
+      var dateTimeParts = f.split(' ');
+      var timeParts = dateTimeParts[1].split(':');
+      var dateParts = dateTimeParts[0].split('/');
+      var fechaSel = new Date(dateParts[2], parseInt(dateParts[1], 10) - 1, dateParts[0], timeParts[0], timeParts[1], timeParts[2]);
+      return fechaSel.getTime();
+    },
+    "fecha-asc": function (a, b) {
+      return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+    },
+    "fecha-desc": function (a, b) {
+      return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+    }
+  });
+  jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+    "monto-pre": function (m) {
+      return parseFloat(m.replace("S/. ", "")
+          .replace(/<br\/><small><b>Saldo a favor de .*<\/b><\/small>/, '')
+          .replace(/<br\/><small><b>Saldo a favor de .* (<span class="saldo-favor-utilizado">utilizado<\/span>)<\/b><\/small>/, ''));
+    },
+    "monto-asc": function (a, b) {
+      return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+    },
+    "monto-desc": function (a, b) {
+      return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+    }
+  });
 
   setTimeout(function () {
     $("#secCargandoPrincipal").fadeOut("fast", function () {

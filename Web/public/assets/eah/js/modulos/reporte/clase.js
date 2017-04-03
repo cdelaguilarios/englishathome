@@ -40,7 +40,7 @@ function cargarListaClases() {
           }},
         {data: "fechaInicio", name: "fechaInicio", render: function (e, t, d, m) {
             return formatoFecha(d.fechaInicio) + ' - De ' + formatoFecha(d.fechaInicio, false, true) + ' a ' + formatoFecha(d.fechaFin, false, true);
-          }, className: "text-center"},
+          }, className: "text-center", type: "fecha"},
         {data: "estado", name: "estado", render: function (e, t, d, m) {
             return '<span class="label ' + estados[d.estado][1] + ' btn-estado">Clase - ' + estados[d.estado][0] + '</span>' + (d.estadoPago !== null ? '<br/><span class="label ' + estadosPago[d.estadoPago][1] + ' btn-estado">Pago al profesor - ' + estadosPago[d.estadoPago][0] + '</span>' : '');
           }, className: "text-center"},
@@ -49,7 +49,7 @@ function cargarListaClases() {
           }, className: "text-center"},
         {data: "costoHoraProfesor", name: "costoHoraProfesor", render: function (e, t, d, m) {
             return "S/. " + redondear(d.costoHoraProfesor, 2) + (d.pagoTotalProfesor !== null ? ("<br/>(Pago total de S/. " + redondear(d.pagoTotalProfesor, 2) + ")") : "");
-          }, className: "text-center"}
+          }, className: "text-center", type: "monto"}
       ],
       initComplete: function (s, j) {
         establecerBotonRecargaTabla("tab-lista");

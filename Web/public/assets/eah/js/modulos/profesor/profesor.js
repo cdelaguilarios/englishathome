@@ -155,24 +155,18 @@ function cargarFormulario() {
         error.insertAfter(element);
       }
     },
+    invalidHandler: function (e, v) {
+      if (v.errorList.length > 0 && $(v.errorList[0].element).closest(".step-pane").data("step") !== undefined) {
+        $('#wiz-registro-profesor').wizard('selectedItem', {step: $(v.errorList[0].element).closest(".step-pane").data("step")});
+      }
+    },
     onfocusout: false,
     onkeyup: false,
     onclick: false
   });
   if ($("input[name='modoEditarRegistrar']").val() === "1") {
-    $("#wiz-registro-profesor").wizard();
-    $("#wiz-registro-profesor").on("actionclicked.fu.wizard", function (e, data) {
-      var campos = $("#formulario-profesor").find("#sec-wiz-profesor-" + data.step).find(":input, select");
-      if (data.direction === "next" && !campos.valid()) {
-        e.preventDefault();
-      }
-    }).on("changed.fu.wizard", function (evt, data) {
-      google.maps.event.trigger(mapa, "resize");
-      verificarPosicionSel();
-    }).on("finished.fu.wizard", function (evt, data) {
-      $("#formulario-profesor").submit();
-    });
-
+    establecerWizard("profesor", ($("input[name='modoEditar']").length > 0 && $("input[name='modoEditar']").val() === "1"));
+    
     var fechaNacimiento = $("#fecha-nacimiento").val();
     establecerCalendario("fecha-nacimiento", false, true, false);
     if (fechaNacimiento !== "") {
@@ -183,21 +177,6 @@ function cargarFormulario() {
     $("#curso-interes").select2();
     $("#direccion").focusout(verificarDatosBusquedaMapa);
     $("input[name='codigoUbigeo']").change(verificarDatosBusquedaMapa);
-
-    if ($("input[name='modoEditar']").length > 0 && $("input[name='modoEditar']").val() === "1") {
-      habilitarTodosPasos();
-      $("#wiz-registro-profesor").find('.steps-container').find('li').click(function (e) {
-        var pasoActual = $("#wiz-registro-profesor").find('.steps-container').find('li.active').data("step");
-        var campos = $("#formulario-profesor").find("#sec-wiz-profesor-" + pasoActual).find(":input, select");
-        if (!campos.valid()) {
-          e.preventDefault();
-          return false;
-        }
-      });
-      $('#wiz-registro-profesor').on('changed.fu.wizard', function (evt, data) {
-        habilitarTodosPasos();
-      });
-    }
 
     if ($("input[name='cursos']").val() !== "") {
       var selCursosVal = [];

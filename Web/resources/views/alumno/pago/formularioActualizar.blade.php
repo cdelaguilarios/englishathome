@@ -3,7 +3,7 @@
 </div>  
 <div class="box-body">
   <div class="form-group">
-    {{ Form::label("motivo-actualizar-pago", "Motivo (*): ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("motivo-actualizar-pago", "Motivo: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       {{ Form::select("motivo", App\Helpers\Enum\MotivosPago::listar(), NULL, ["id" => "motivo-actualizar-pago", "class" => "form-control"]) }}
     </div>                  
