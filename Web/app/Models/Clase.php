@@ -35,7 +35,8 @@ class Clase extends Model {
                     ->leftJoin(PagoClase::nombreTabla() . " as pagoClase", $nombreTabla . ".id", "=", "pagoClase.idClase")
                     ->where($nombreTabla . ".eliminado", 0)
                     ->where(function ($q) {
-                      $q->whereNull("historial.id")->orWhere(function ($q) {
+                      $q->whereNull("historial.id")->orWhere("historial.eliminado", 1)
+                      ->orWhere(function ($q) {
                         $q->where("historial.eliminado", 0)->where("historial.enviarCorreo", 1);
                       });
                     })
@@ -46,7 +47,7 @@ class Clase extends Model {
   public static function obtenerXId($idAlumno, $id, $incluirFechaProximaClase = FALSE) {
     $nombreTabla = Clase::nombreTabla();
     $clase = Clase::listarBase()
-            ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.id) AS idPago"))
+            ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("(CASE WHEN historial.eliminado = 0 THEN max(historial.id) ELSE NULL END) AS idHistorial"), DB::raw("max(pago.id) AS idPago"))
             ->leftJoin(PagoAlumno::nombreTabla() . " as pagoAlumno", "pagoClase.idPago", "=", "pagoAlumno.idPago")
             ->leftJoin(Pago::nombreTabla() . " as pago", "pagoAlumno.idPago", "=", "pago.id")
             ->where($nombreTabla . ".idAlumno", $idAlumno)
@@ -99,7 +100,7 @@ class Clase extends Model {
   public static function listar($datos = NULL) {
     $nombreTabla = Clase::nombreTabla();
     $clases = Clase::listarBase()
-            ->select($nombreTabla . ".*", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.estado) AS estadoPago"))
+            ->select($nombreTabla . ".*", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("(CASE WHEN historial.eliminado = 0 THEN max(historial.id) ELSE NULL END) AS idHistorial"), DB::raw("max(pago.estado) AS estadoPago"))
             ->leftJoin(PagoProfesor::nombreTabla() . " as pagoProfesor", "pagoClase.idPago", "=", "pagoProfesor.idPago")
             ->leftJoin(Pago::NombreTabla() . " as pago", "pagoProfesor.idPago", "=", "pago.id");
     $datos["estado"] = (isset($datos["estadoClase"]) ? $datos["estadoClase"] : NULL);
@@ -110,7 +111,7 @@ class Clase extends Model {
   public static function listarXAlumno($idAlumno, $numeroPeriodo) {
     $nombreTabla = Clase::nombreTabla();
     $clases = Clase::listarBase()
-                    ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"))
+                    ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("(CASE WHEN historial.eliminado = 0 THEN max(historial.id) ELSE NULL END) AS idHistorial"))
                     ->where($nombreTabla . ".numeroPeriodo", $numeroPeriodo)
                     ->where($nombreTabla . ".idAlumno", $idAlumno)
                     ->orderBy($nombreTabla . ".fechaInicio", "ASC")->get();
@@ -127,7 +128,7 @@ class Clase extends Model {
   public static function listarXProfesor($idProfesor, $datos = NULL) {
     $nombreTabla = Clase::nombreTabla();
     $clases = Clase::listarBase()
-            ->select($nombreTabla . ".*", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.estado) AS estadoPago"))
+            ->select($nombreTabla . ".*", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", DB::raw("(CASE WHEN historial.eliminado = 0 THEN max(historial.id) ELSE NULL END) AS idHistorial"), DB::raw("max(pago.estado) AS estadoPago"))
             ->leftJoin(PagoProfesor::nombreTabla() . " as pagoProfesor", "pagoClase.idPago", "=", "pagoProfesor.idPago")
             ->leftJoin(Pago::nombreTabla() . " as pago", "pagoProfesor.idPago", "=", "pago.id")
             ->where($nombreTabla . ".idProfesor", $idProfesor)
@@ -361,7 +362,7 @@ class Clase extends Model {
     $notificar = ($datos["notificar"] == 1);
     $clase = ((isset($datos["idClase"])) ? Clase::obtenerXId($idAlumno, $datos["idClase"]) : NULL);
     if (isset($clase)) {
-      if (is_null($datos["estado"])) {
+      if (is_null($datos["estado"]) || $clase->estado == EstadosClase::Cancelada) {
         unset($datos["estado"]);
       }
       if (!is_null($clase->idHistorial) && !$notificar) {

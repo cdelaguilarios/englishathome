@@ -3,7 +3,6 @@ function verificarJqueryClase() {
   ((window.jQuery && jQuery.ui) ? cargarSeccionClases() : window.setTimeout(verificarJqueryClase, 100));
 }
 function  cargarSeccionClases() {
-  //Urls y datos  
   urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
   estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
   estadosClaseCambio = (typeof (estadosClaseCambio) === "undefined" ? "" : estadosClaseCambio);
@@ -115,7 +114,15 @@ function cargarListaPeriodos() {
       var idClase = $(this).data("idclase");
       var idAlumno = $(this).data("idalumno");
       if (urlActualizarEstadoClase !== "" && $(this).data("estado") !== $(this).val()) {
-        llamadaAjax(urlActualizarEstadoClase, "POST", {"idClase": idClase, "idAlumno": idAlumno, "estado": $(this).val()}, true);
+        llamadaAjax(urlActualizarEstadoClase, "POST", {"idClase": idClase, "idAlumno": idAlumno, "estado": $(this).val()}, true, undefined, undefined, function (de) {
+          var rj = de.responseJSON;
+          if (rj !== undefined && rj.mensaje !== undefined) {
+            agregarMensaje("errores", rj.mensaje, true);
+          } else if (rj !== undefined && rj[Object.keys(rj)[0]] !== undefined) {
+            agregarMensaje("errores", rj[Object.keys(rj)[0]][0], true);
+          }
+          $("#tab-lista-pagos").DataTable().ajax.reload();
+        });
       }
       $(this).closest(".sec-btn-editar-estado-clase").append('<a href="javascript:void(0);" class="btn-editar-estado-clase" data-idclase="' + idClase + '" data-idalumno="' + idAlumno + '" data-estado="' + $(this).val() + '"><span class="label ' + estadosClase[$(this).val()][1] + ' btn-estado">' + estadosClase[$(this).val()][0] + '</span></a>');
       $(this).remove();
@@ -247,8 +254,9 @@ function htmlListaClasesMovil(d) {
         '<b>Fecha:</b> ' + formatoFecha(d[i].fechaInicio) + ' - De ' + formatoFecha(d[i].fechaInicio, false, true) + ' a ' + formatoFecha(d[i].fechaFin, false, true) + '<br/>' +
         '<b>Duración:</b> ' + formatoHora(d[i].duracion) + '<br/>' +
         '<b>Profesor:</b> ' + (d[i].idProfesor !== null ? '<a target="_blank" href="' + urlPerfilProfesor.replace("/0", "/" + d[i].idProfesor) + '">' + d[i].nombreProfesor + ' ' + d[i].apellidoProfesor + (d[i].estadoPagoProfesor !== null ? '<br/><span class="label ' + estadosPago[d[i].estadoPagoProfesor][1] + ' btn-estado">Pago al profesor - ' + estadosPago[d[i].estadoPagoProfesor][0] + '</span>' : '') + '</a>' : 'Sin profesor asignado') + '<br/>' +
-        '<b>Notificar:</b> <input type="checkbox" disabled="disabled"' + (d[i].idHistorial !== null ? ' checked="checked"' : '') + '/><br/>' +
-        '<div class="sec-btn-editar-estado-clase"><a href="javascript:void(0);" class="btn-editar-estado-clase" data-idclase="' + d[i].id + '" data-idalumno="' + d[i].idAlumno + '" data-estado="' + d[i].estado + '"><span class="label ' + estadosClase[d[i].estado][1] + ' btn-estado">' + estadosClase[d[i].estado][0] + '</span></a></div>' +
+        (d[i].idHistorial !== null ? '<b>Notificar:</b> <i class="fa fa-check icon-notificar-clase"></i><br/>' : '') +        
+        ((estadosClase[d[i].estado] !== undefined && estadosClaseCambio[d[i].estado] !== undefined) ?
+            '<div class="sec-btn-editar-estado-clase"><a href="javascript:void(0);" class="btn-editar-estado-clase" data-idclase="' + d[i].id + '" data-idalumno="' + d[i].idAlumno + '" data-estado="' + d[i].estado + '"><span class="label ' + estadosClase[d[i].estado][1] + ' btn-estado">' + estadosClase[d[i].estado][0] + '</span></a></div>' : ((estadosClase[d[i].estado] !== undefined) ? '<span class="label ' + estadosClase[d[i].estado][1] + ' btn-estado">' + estadosClase[d[i].estado][0] + '</span>' : '')) +
         '</td>' +
         '<td class="text-center">' +
         '<ul class="buttons">' +

@@ -27,9 +27,6 @@
           </tfoot>
         </table>
       </div>
-      <div style="display: none">
-        {{ Form::select("", App\Helpers\Enum\EstadosPago::listarCambio(), NULL, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
-      </div>
     </div>      
     <div id="sec-pago-2" style="display: none;">
       {{ Form::open(["url" => route("alumnos.pagos.registrar", ["id" => $idAlumno]), "id" => "formulario-pago", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
@@ -44,6 +41,9 @@
   </div>
 </div>
 @include("alumno.util.docentesDisponibles", ["seccion" => "pago", "idCurso" => $idCurso])
+<div style="display: none">
+  {{ Form::select("", App\Helpers\Enum\EstadosPago::listarCambio(), NULL, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
+</div>
 <script>
   var urlListarPagos = "{{ route('alumnos.pagos.listar', ['id' => $idAlumno]) }}";
   var urlActualizarEstadoPago = "{{ route('alumnos.pagos.actualizar.estado', ['id' => $idAlumno]) }}";
@@ -53,6 +53,5 @@
   var urlDatosPago = "{{ route('alumnos.pagos.datos', ['id' => $idAlumno, 'idPago' => 0]) }}";
   var urlEliminarPago = "{{ route('alumnos.pagos.eliminar', ['id' => $idAlumno, 'idPago' => 0]) }}";
   var motivosPago = {!!  json_encode(App\Helpers\Enum\MotivosPago::listar()) !!};
-  var cuentasBanco = {!! json_encode(App\Helpers\Enum\CuentasBancoPago::listar()) !!};
-</script>
+  var cuentasBanco = {!! json_encode(App\Helpers\Enum\CuentasBancoPago::listar()) !!};</script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/pago.js")}}"></script>

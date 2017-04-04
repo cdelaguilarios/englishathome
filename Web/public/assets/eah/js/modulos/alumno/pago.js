@@ -3,11 +3,11 @@ function verificarJqueryPago() {
   ((window.jQuery && jQuery.ui) ? cargarSeccionPagos() : window.setTimeout(verificarJqueryPago, 100));
 }
 function cargarSeccionPagos() {
+  urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
   motivosPago = (typeof (motivosPago) === "undefined" ? "" : motivosPago);
   cuentasBanco = (typeof (cuentasBanco) === "undefined" ? "" : cuentasBanco);
   estadosPago = (typeof (estadosPago) === "undefined" ? "" : estadosPago);
   urlImagenes = (typeof (urlImagenes) === "undefined" ? "" : urlImagenes);
-  urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
 
   cargarListaPago();
   cargarFormularioPago();
@@ -230,6 +230,7 @@ function cargarFormularioPago() {
     $("#txt-periodo").text($(this).val());
   });
   $("#btn-anterior-pago").click(function () {
+    $(this).hide();
     $("#motivo-pago").trigger("change");
   });
   $("#btn-generar-clases-pago").click(generarClases);
