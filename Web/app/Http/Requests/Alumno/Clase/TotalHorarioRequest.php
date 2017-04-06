@@ -18,6 +18,9 @@ class TotalHorarioRequest extends Request {
     $datos["fecha"] = ReglasValidacion::formatoDato($datos, "fecha");
     $datos["horaInicio"] = ReglasValidacion::formatoDato($datos, "horaInicio");
     $datos["duracion"] = ReglasValidacion::formatoDato($datos, "duracion");
+    if (!is_array($datos["ids"])) {
+      $datos["ids"] = explode(",", $datos["ids"]);
+    }
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }

@@ -49,7 +49,7 @@
     </div>
   </div>
   <div id="sec-clase-42" class="form-group">    
-    {{ Form::label("hora-inicio-clases", "Hora inicio: ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("hora-inicio-clases", "Hora inicio (*): ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       <div class="input-group date">
         <div class="input-group-addon">
@@ -58,7 +58,7 @@
         {{ Form::select("horaInicio", [], NULL, ["id" => "hora-inicio-clases", "class" => "form-control"]) }}
       </div>
     </div>
-    {{ Form::label("duracion-clases", "Duración: ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("duracion-clases", "Duración (*):: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       <div class="input-group date">
         <div class="input-group-addon">
@@ -80,7 +80,7 @@
     </div> 
     {{ Form::label("id-pago-clases", "Código de pago: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
-      {{ Form::select("idPago", App\Models\PagoAlumno::listar($idAlumno)->lists("id", "id")->toArray(), NULL, ["id" => "id-pago-clases", "class" => "form-control", "placeholder" => "Seleccionar código de pago"]) }}
+      {{ Form::select("idPago", App\Models\PagoAlumno::listar($idAlumno, TRUE)->lists("id", "id")->toArray(), NULL, ["id" => "id-pago-clases", "class" => "form-control", "placeholder" => "Seleccionar código de pago"]) }}
     </div>
     <div class="col-sm-2">
       <a href="javascript:void(0);" onclick="verDatosPagosClase('id-pago-clases');"><i class="fa fa-eye"></i></a>

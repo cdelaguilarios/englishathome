@@ -20,12 +20,14 @@ class CancelarRequest extends Request {
     $datos["idClase"] = ReglasValidacion::formatoDato($datos, "idClase");
     $datos["idAlumno"] = ReglasValidacion::formatoDato($datos, "idAlumno");
     $datos["idProfesor"] = ReglasValidacion::formatoDato($datos, "idProfesor");
-    $datos["pagoProfesor"] = ReglasValidacion::formatoDato($datos, "pagoProfesor");
     $datos["tipoCancelacion"] = ReglasValidacion::formatoDato($datos, "tipoCancelacion");
+    $datos["pagoProfesor"] = ReglasValidacion::formatoDato($datos, "pagoProfesor");
     $datos["reprogramarCancelacion"] = (isset($datos["reprogramarCancelacion"]) ? 1 : 0);
     $datos["fecha"] = ReglasValidacion::formatoDato($datos, "fecha");
     $datos["horaInicio"] = ReglasValidacion::formatoDato($datos, "horaInicio");
     $datos["duracion"] = ReglasValidacion::formatoDato($datos, "duracion");
+    $datos["costoHora"] = ReglasValidacion::formatoDato($datos, "costoHora");
+    $datos["idPago"] = ReglasValidacion::formatoDato($datos, "idPago");
     $datos["idDocente"] = ReglasValidacion::formatoDato($datos, "idDocente");
     $datos["costoHoraDocente"] = ReglasValidacion::formatoDato($datos, "costoHoraDocente");
     $this->getInputSource()->replace($datos);
@@ -47,6 +49,7 @@ class CancelarRequest extends Request {
     if (!Clase::verificarExistencia($datos["idAlumno"], $datos["idClase"])) {
       $reglasValidacion["claseNoValida"] = "required";
     }
+
     //Profesor de la clase cancelada
     if (!is_null($datos["idProfesor"]) && !Docente::verificarExistencia($datos["idProfesor"])) {
       $reglasValidacion["profesorNoValido"] = "required";
@@ -58,6 +61,7 @@ class CancelarRequest extends Request {
           "fecha" => "required|date_format:d/m/Y",
           "horaInicio" => "required|numeric|between:" . ((int) Config::get("eah.minHorario") * 3600) . "," . ((int) Config::get("eah.maxHorario") * 3600),
           "duracion" => "required|numeric|between:" . ((int) Config::get("eah.minHorasClase") * 3600) . "," . ((int) Config::get("eah.maxHorasClase") * 3600),
+          "costoHora" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
           "costoHoraDocente" => ["regex:" . ReglasValidacion::RegexDecimal]
       ];
       //Docente para la nueva clase (reprogramación)
@@ -82,10 +86,10 @@ class CancelarRequest extends Request {
 
   public function messages() {
     return [
-        "tipoCancelacionNoValido.required" => "El tipo de cancelación seleccionado no es válido",
-        "claseNoValida.required" => "La clase seleccionada no es válida",
-        "profesorNoValido.required" => "El profesor de la clase cancelada no es válido",
-        "docenteNoValido.required" => "El docente seleccionado no es válido"
+        "tipoCancelacionNoValido.required" => "El tipo de cancelación seleccionado no es válido.",
+        "claseNoValida.required" => "La clase seleccionada no es válida.",
+        "profesorNoValido.required" => "El profesor de la clase cancelada no es válido.",
+        "docenteNoValido.required" => "El docente seleccionado no es válido."
     ];
   }
 

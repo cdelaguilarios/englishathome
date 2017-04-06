@@ -66,7 +66,7 @@
           {{ Form::select("horaInicio", [], NULL, ["id" => "hora-inicio-clase-reprogramada", "class" => "form-control"]) }}
         </div>
       </div>
-      {{ Form::label("duracion-clase-reprogramada", "Duración: ", ["class" => "col-sm-1 control-label"]) }}
+      {{ Form::label("duracion-clase-reprogramada", "Duración: ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-3">
         <div class="input-group date">
           <div class="input-group-addon">
@@ -76,6 +76,28 @@
         </div>
       </div>
     </div>
+    
+    
+  <div class="form-group">  
+    {{ Form::label("costo-hora-clase-reprogramada", "Costo por hora (*): ", ["class" => "col-sm-2 control-label"]) }}   
+    <div class="col-sm-3">
+      <div class="input-group">
+        <span class="input-group-addon">
+          <b>S/.</b>
+        </span>
+        {{ Form::text("costoHora", number_format($costoHoraClase, 2, ".", ","), ["id" => "costo-hora-clase-reprogramada", "class" => "form-control", "maxlength" =>"19"]) }}
+      </div>
+    </div> 
+    {{ Form::label("id-pago-clase-reprogramada", "Código de pago: ", ["class" => "col-sm-2 control-label"]) }}
+    <div class="col-sm-3">
+      {{ Form::select("idPago", App\Models\PagoAlumno::listar($idAlumno, TRUE)->lists("id", "id")->toArray(), NULL, ["id" => "id-pago-clase-reprogramada", "class" => "form-control", "placeholder" => "Seleccionar código de pago"]) }}
+    </div>
+    <div class="col-sm-2">
+      <a href="javascript:void(0);" onclick="verDatosPagosClase('id-pago-clase-reprogramada');"><i class="fa fa-eye"></i></a>
+    </div>
+  </div>
+    
+    
     <div class="box-body">                        
       <div class="form-group">
         <div class="col-sm-12">

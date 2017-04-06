@@ -31,7 +31,7 @@ function  cargarSeccionClases() {
     cambioFechaHorario(idsClases, fecha, horaInicio, duracion, numFormulario);
   });
   $(".btn-docentes-disponibles-clase").click(function () {
-    cargarDocentesDisponiblesClase(true);
+    cargarDocentesDisponiblesClase(false, true);
   });
   $("#sexo-docente-disponible-clase, #id-curso-docente-disponible-clase, #tipo-docente-disponible-clase").change(function () {
     cargarDocentesDisponiblesClase(true);
@@ -166,6 +166,7 @@ function listarClases(tr, fila, datosFila) {
                 } else {
                   $("#tab-lista-clases-" + d[0].numeroPeriodo).DataTable({
                     paginate: false,
+                    order: [[1, "asc"]],
                     columnDefs: [
                       {targets: [3], orderable: false, searchable: false}
                     ]
@@ -254,7 +255,7 @@ function htmlListaClasesMovil(d) {
         '<b>Fecha:</b> ' + formatoFecha(d[i].fechaInicio) + ' - De ' + formatoFecha(d[i].fechaInicio, false, true) + ' a ' + formatoFecha(d[i].fechaFin, false, true) + '<br/>' +
         '<b>Duración:</b> ' + formatoHora(d[i].duracion) + '<br/>' +
         '<b>Profesor:</b> ' + (d[i].idProfesor !== null ? '<a target="_blank" href="' + urlPerfilProfesor.replace("/0", "/" + d[i].idProfesor) + '">' + d[i].nombreProfesor + ' ' + d[i].apellidoProfesor + (d[i].estadoPagoProfesor !== null ? '<br/><span class="label ' + estadosPago[d[i].estadoPagoProfesor][1] + ' btn-estado">Pago al profesor - ' + estadosPago[d[i].estadoPagoProfesor][0] + '</span>' : '') + '</a>' : 'Sin profesor asignado') + '<br/>' +
-        (d[i].idHistorial !== null ? '<b>Notificar:</b> <i class="fa fa-check icon-notificar-clase"></i><br/>' : '') +        
+        (d[i].idHistorial !== null ? '<b>Notificar:</b> <i class="fa fa-check icon-notificar-clase"></i><br/>' : '') +
         ((estadosClase[d[i].estado] !== undefined && estadosClaseCambio[d[i].estado] !== undefined) ?
             '<div class="sec-btn-editar-estado-clase"><a href="javascript:void(0);" class="btn-editar-estado-clase" data-idclase="' + d[i].id + '" data-idalumno="' + d[i].idAlumno + '" data-estado="' + d[i].estado + '"><span class="label ' + estadosClase[d[i].estado][1] + ' btn-estado">' + estadosClase[d[i].estado][0] + '</span></a></div>' : ((estadosClase[d[i].estado] !== undefined) ? '<span class="label ' + estadosClase[d[i].estado][1] + ' btn-estado">' + estadosClase[d[i].estado][0] + '</span>' : '')) +
         '</td>' +
@@ -371,6 +372,7 @@ function editarClase(idClase) {
     $("#numero-periodo-clase").val(d.numeroPeriodo);
     $("#estado-clase").val(d.estado);
     (d.estado === estadoClaseCancelada ? $("#sec-estado-clase").hide() : $("#sec-estado-clase").show());
+    (d.estado === estadoClaseCancelada ? $("#sec-notificar-clase").hide() : $("#sec-notificar-clase").show());
     if (d.idHistorial !== null) {
       $("#notificar-clase").attr("checked", true);
       $("#notificar-clase").closest("label").addClass("checked");
@@ -402,7 +404,6 @@ function cargarFormularioCancelarClase() {
       ignore: ":hidden,:not(:visible)",
       rules: {
         pagoProfesor: {
-          required: true,
           validarDecimalNegativo: true
         },
         fecha: {
@@ -418,6 +419,10 @@ function cargarFormularioCancelarClase() {
           required: true,
           validarDecimal: true,
           range: [(minHorasClase * 3600), (maxHorasClase * 3600)]
+        },
+        costoHora: {
+          required: true,
+          validarDecimal: true
         },
         costoHoraDocente: {
           required: true,
@@ -467,8 +472,10 @@ function cancelarClase(idClase) {
     }
     var datFechaProximaClase = formatoFecha(d.fechaProximaClase).split("/");
     $("#fecha-clase-reprogramada").datepicker("setDate", (new Date(datFechaProximaClase[1] + "/" + datFechaProximaClase[0] + "/" + datFechaProximaClase[2])));
-    $("#hora-inicio-clase-reprogramada").val(tiempoSegundos(d.fechaProximaClase));
+    $("#hora-inicio-clase-reprogramada").val(tiempoSegundos(d.fechaInicio));
     $("#duracion-clase-reprogramada").val(d.duracion);
+    $("#costo-hora-clase-reprogramada").val(redondear(d.costoHora, 2));
+    $("#id-pago-clase-reprogramada").val(d.idPago);
     mostrarSeccionClase([3, 1, 1]);
   });
 }
@@ -541,7 +548,6 @@ function cargarFormularioClasesGrupo() {
   //Registrar
   establecerCampoHorario("hora-inicio-clases");
   establecerCampoDuracion("duracion-clases");
-
   $("#editar-datos-generales-clases, #editar-datos-tiempo-clases, #editar-datos-pago-clases, #editar-datos-profesor-clases").live("click", function () {
     (($(this).is(':checked')) ? $("#" + $(this).data("seccion")).show() : $("#" + $(this).data("seccion")).hide());
   });
@@ -588,8 +594,8 @@ function obtenerDatosClasesGrupo(idsClases, funcionRetorno) {
   }
 }
 function limpiarCamposClasesGrupo(soloCamposDocente) {
-  $(".id-docente-clases").val("");
-  $(".nombre-docente-clases").html("");
+  $(".id-docente-clase").val("");
+  $(".nombre-docente-clase").html("");
   if (!soloCamposDocente) {
     $("#formulario-actualizar-clases").find(":input, select").each(function (i, e) {
       if (e.name !== "idAlumno" && e.name !== "_token") {
@@ -607,7 +613,7 @@ function limpiarCamposClasesGrupo(soloCamposDocente) {
 }
 
 //Común - Util
-function cargarDocentesDisponiblesClase(recargarListaPeriodos) {
+function cargarDocentesDisponiblesClase(recargarListaPeriodos, recrearTabla) {
   var formulario = ($("#formulario-cancelar-clase").is(":visible") ? $("#formulario-cancelar-clase") : ($("#formulario-actualizar-clases").is(":visible") ? $("#formulario-actualizar-clases") : $("#formulario-registrar-actualizar-clase")));
   var camposFormularioClase = formulario.find(":input, select").not(":hidden, input[name='pagoProfesor'], input[name='costoHoraDocente'], input[name='costoHora'], input[name='numeroPeriodo']");
   if (!camposFormularioClase.valid()) {
@@ -615,6 +621,9 @@ function cargarDocentesDisponiblesClase(recargarListaPeriodos) {
   }
 
   $('#mod-docentes-disponibles-clase').modal('show');
+  if ($.fn.DataTable.isDataTable('#tab-lista-docentes-clase') && recrearTabla){
+      $('#tab-lista-docentes-clase').DataTable().destroy();
+  }
   if ($.fn.DataTable.isDataTable('#tab-lista-docentes-clase')) {
     if (recargarListaPeriodos) {
       $('#tab-lista-docentes-clase').DataTable().ajax.reload();

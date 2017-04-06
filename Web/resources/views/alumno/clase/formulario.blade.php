@@ -13,7 +13,7 @@
         {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarCambio(), NULL, ["id" => "estado-clase", "class" => "form-control"]) }}
       </div>
     </div>
-    <div class="col-sm-2">
+    <div id="sec-notificar-clase" class="col-sm-2">
       <div class="checkbox">
         <label class="checkbox-custom" data-initialize="checkbox">
           {{ Form::label("notificar-clase", "Notificar", ["class" => "checkbox-label"]) }}

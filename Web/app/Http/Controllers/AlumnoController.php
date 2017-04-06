@@ -253,11 +253,10 @@ class AlumnoController extends Controller {
   }
 
   public function actualizarClasesGrupo($id, ClaseRequest\FormularioGrupoRequest $req) {
-    $datos = $req->all();
-    Clase::actualizarGrupo($id, $datos);
-    Mensajes::agregarMensajeExitoso("Actualización exitosa.");
     try {
-      
+      $datos = $req->all();
+      Clase::actualizarGrupo($id, $datos);
+      Mensajes::agregarMensajeExitoso("Actualización exitosa.");
     } catch (\Exception $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");

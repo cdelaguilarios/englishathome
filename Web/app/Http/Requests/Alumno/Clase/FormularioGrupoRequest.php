@@ -77,7 +77,6 @@ class FormularioGrupoRequest extends Request {
 
   public function messages() {
     return [
-        "claseNoValida.required" => "La clase seleccionada no es válida.",
         "estadoNoValido.required" => "El estado seleccionado no es válido.",
         "pagoNoValido.required" => "El pago seleccionado no es válido.",
         "docenteNoValido.required" => "El docente seleccionado no es válido."

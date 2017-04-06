@@ -365,6 +365,9 @@ class Clase extends Model {
       if (is_null($datos["estado"]) || $clase->estado == EstadosClase::Cancelada) {
         unset($datos["estado"]);
       }
+      if ($clase->estado == EstadosClase::Cancelada) {
+        $notificar = FALSE;
+      }
       if (!is_null($clase->idHistorial) && !$notificar) {
         Historial::eliminarXIdClase($datos["idClase"]);
       }
@@ -415,6 +418,10 @@ class Clase extends Model {
           $datosActualizar["fechaFin"]->addSeconds($datos["duracion"]);
           $datosActualizar["duracion"] = $datos["duracion"];
         }
+        
+        if (isset($datos["costoHora"])) {
+          $datosActualizar["costoHora"] = $datos["costoHora"];
+        }
 
         if ($datos["editarDatosProfesor"] == 1) {
           $datosActualizar["idProfesor"] = $datos["idDocente"];
@@ -450,7 +457,6 @@ class Clase extends Model {
       if ($datos["reprogramarCancelacion"] == 1) {
         unset($datos["idClase"]);
         $datos["numeroPeriodo"] = $claseCancelada["numeroPeriodo"];
-        $datos["costoHora"] = $claseCancelada["costoHora"];
         $datos["notificar"] = ((isset($claseCancelada["idHistorial"])) ? 1 : 0);
         $datos["idClaseCancelada"] = $claseCancelada["id"];
         $datos["estado"] = EstadosClase::Programada;
