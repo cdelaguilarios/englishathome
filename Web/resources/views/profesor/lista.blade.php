@@ -29,7 +29,7 @@
         <div class="form-group">          
           {{ Form::label("bus-estado", "Estado: ", ["class" => "col-sm-1 control-label"]) }}
           <div class="col-sm-3">
-            {{ Form::select("estado", App\Helpers\Enum\EstadosProfesor::listarBusqueda(), App\Helpers\Enum\EstadosProfesor::Activo, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos"]) }}
+            {{ Form::select("estado", App\Helpers\Enum\EstadosProfesor::listarBusqueda(), null, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos"]) }}
           </div>
         </div> 
       </div>
@@ -60,6 +60,6 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosProfesor::listarCambio(), NULL, ["id" => "sel-estados", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosProfesor::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control"]) }}
 </div>
 @endsection

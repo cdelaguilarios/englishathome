@@ -206,7 +206,7 @@ function htmlListaClases(d) {
         + '<b>Duración:</b> ' + formatoHora(d[i].duracion) + '<br/>'
         + (d[i].idHistorial !== null ?
             '<b>Notificar:</b> ' + ' <i class="fa fa-check icon-notificar-clase"></i>' + '<br/>' : '')
-        + '<b>Profesor:</b> ' + (d[i].idProfesor !== null ? '<a target="_blank" href="' + urlPerfilProfesor.replace("/0", "/" + d[i].idProfesor) + '">' + d[i].nombreProfesor + ' ' + d[i].apellidoProfesor + '</a>' + (d[i].estadoPagoProfesor !== null ? '<br/><span class="label ' + estadosPago[d[i].estadoPagoProfesor][1] + ' btn-estado">Pago al profesor - ' + estadosPago[d[i].estadoPagoProfesor][0] + '</span>' : '') : 'Sin profesor asignado') +
+        + '<b>Profesor:</b> ' + (d[i].idProfesor !== null && d[i].nombreProfesor !== null && d[i].nombreProfesor !== '' ? '<a target="_blank" href="' + urlPerfilProfesor.replace("/0", "/" + d[i].idProfesor) + '">' + d[i].nombreProfesor + ' ' + d[i].apellidoProfesor + '</a>' + (d[i].estadoPagoProfesor !== null ? '<br/><span class="label ' + estadosPago[d[i].estadoPagoProfesor][1] + ' btn-estado">Pago al profesor - ' + estadosPago[d[i].estadoPagoProfesor][0] + '</span>' : '') : 'Sin profesor asignado') +
         '</td>' +
         '<td class="text-center">' +
         ((estadosClase[d[i].estado] !== undefined && estadosClaseCambio[d[i].estado] !== undefined) ?
@@ -254,7 +254,7 @@ function htmlListaClasesMovil(d) {
         '<b>Número:</b> ' + (i + 1) + '<br/>' +
         '<b>Fecha:</b> ' + formatoFecha(d[i].fechaInicio) + ' - De ' + formatoFecha(d[i].fechaInicio, false, true) + ' a ' + formatoFecha(d[i].fechaFin, false, true) + '<br/>' +
         '<b>Duración:</b> ' + formatoHora(d[i].duracion) + '<br/>' +
-        '<b>Profesor:</b> ' + (d[i].idProfesor !== null ? '<a target="_blank" href="' + urlPerfilProfesor.replace("/0", "/" + d[i].idProfesor) + '">' + d[i].nombreProfesor + ' ' + d[i].apellidoProfesor + (d[i].estadoPagoProfesor !== null ? '<br/><span class="label ' + estadosPago[d[i].estadoPagoProfesor][1] + ' btn-estado">Pago al profesor - ' + estadosPago[d[i].estadoPagoProfesor][0] + '</span>' : '') + '</a>' : 'Sin profesor asignado') + '<br/>' +
+        '<b>Profesor:</b> ' + (d[i].idProfesor !== null && d[i].nombreProfesor !== null && d[i].nombreProfesor !== '' ? '<a target="_blank" href="' + urlPerfilProfesor.replace("/0", "/" + d[i].idProfesor) + '">' + d[i].nombreProfesor + ' ' + d[i].apellidoProfesor + (d[i].estadoPagoProfesor !== null ? '<br/><span class="label ' + estadosPago[d[i].estadoPagoProfesor][1] + ' btn-estado">Pago al profesor - ' + estadosPago[d[i].estadoPagoProfesor][0] + '</span>' : '') + '</a>' : 'Sin profesor asignado') + '<br/>' +
         (d[i].idHistorial !== null ? '<b>Notificar:</b> <i class="fa fa-check icon-notificar-clase"></i><br/>' : '') +
         ((estadosClase[d[i].estado] !== undefined && estadosClaseCambio[d[i].estado] !== undefined) ?
             '<div class="sec-btn-editar-estado-clase"><a href="javascript:void(0);" class="btn-editar-estado-clase" data-idclase="' + d[i].id + '" data-idalumno="' + d[i].idAlumno + '" data-estado="' + d[i].estado + '"><span class="label ' + estadosClase[d[i].estado][1] + ' btn-estado">' + estadosClase[d[i].estado][0] + '</span></a></div>' : ((estadosClase[d[i].estado] !== undefined) ? '<span class="label ' + estadosClase[d[i].estado][1] + ' btn-estado">' + estadosClase[d[i].estado][0] + '</span>' : '')) +
@@ -385,7 +385,7 @@ function editarClase(idClase) {
     $("#id-pago-clase").val(d.idPago);
     $("#btn-guardar-clase").text("Guardar");
 
-    if (d.idProfesor !== null) {
+    if (d.idProfesor !== null && d.nombreProfesor !== null && d.nombreProfesor !== '') {
       $(".id-docente-clase").val(d.idProfesor);
       $(".nombre-docente-clase").html('<i class="fa flaticon-teach"></i> <b>' + d.nombreProfesor + ' ' + d.apellidoProfesor + '</b> <a href=' + (urlPerfilProfesor.replace('/0', '/' + d.idProfesor)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>');
       $("#costo-hora-docente").val(redondear(d.costoHoraProfesor, 2));
@@ -464,7 +464,7 @@ function cancelarClase(idClase) {
   obtenerDatosClase(idAlumno, idClase, function (d) {
     limpiarCamposClase();
     $("input[name='idClase']").val(d.id);
-    if (d.idProfesor !== null) {
+    if (d.idProfesor !== null && d.nombreProfesor !== null && d.nombreProfesor !== '') {
       $("#sec-campo-pago-profesor").show();
       $("input[name='idProfesor']").val(d.idProfesor);
     } else {

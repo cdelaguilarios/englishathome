@@ -1,9 +1,9 @@
 var mapa;
-var uto = null;
 
 $(document).ready(function () {
   cargarLista();
   cargarFormulario();
+
   urlPerfil = (typeof (urlPerfil) === "undefined" ? "" : urlPerfil);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
   $("#sel-alumno").select2();
@@ -24,6 +24,7 @@ function cargarLista() {
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   estados = (typeof (estados) === "undefined" ? "" : estados);
   estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
+
   if (urlListar !== "" && urlPerfil !== "" && urlEditar !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "") {
     $("#tab-lista").DataTable({
       processing: true,
@@ -181,25 +182,26 @@ function cargarFormulario() {
   if ($("input[name='modoEditarRegistrar']").val() === "1") {
     establecerWizard("alumno", ($("input[name='modoEditar']").length > 0 && $("input[name='modoEditar']").val() === "1"));
 
-    var fechaNacimiento = $("#fecha-nacimiento").val();
-    var fechaInicioClase = $("#fecha-inicio-clase").val();
-    var numeroHorasClase = $("input[name='auxNumeroHorasClase']").val();
-
     if (!($("input[name='idInteresado']").length > 0 && $("input[name='idInteresado']").val() !== "")) {
+      var fechaNacimiento = $("#fecha-nacimiento").val();
       establecerCalendario("fecha-nacimiento", false, true, false);
+      if (fechaNacimiento !== "") {
+        var datFechaNacimiento = fechaNacimiento.split("/");
+        $("#fecha-nacimiento").datepicker("setDate", (new Date(datFechaNacimiento[1] + "/" + datFechaNacimiento[0] + "/" + datFechaNacimiento[2])));
+      }
     }
-    establecerCalendario("fecha-inicio-clase", false, false, (fechaInicioClase === ""));
-    establecerCampoDuracion("numero-horas-clase", (numeroHorasClase !== "" ? numeroHorasClase : undefined));
 
-    if (!($("input[name='idInteresado']").length > 0 && $("input[name='idInteresado']").val() !== "") && fechaNacimiento !== "") {
-      var datFechaNacimiento = fechaNacimiento.split("/");
-      $("#fecha-nacimiento").datepicker("setDate", (new Date(datFechaNacimiento[1] + "/" + datFechaNacimiento[0] + "/" + datFechaNacimiento[2])));
-    }
+    var fechaInicioClase = $("#fecha-inicio-clase").val();
+    establecerCalendario("fecha-inicio-clase", false, false, (fechaInicioClase === ""));
     if (fechaInicioClase !== "") {
       var datFechaInicioClase = fechaInicioClase.split("/");
       $("#fecha-inicio-clase").datepicker("setDate", (new Date(datFechaInicioClase[1] + "/" + datFechaInicioClase[0] + "/" + datFechaInicioClase[2])));
 
     }
+
+    var numeroHorasClase = $("input[name='auxNumeroHorasClase']").val();
+    establecerCampoDuracion("numero-horas-clase", (numeroHorasClase !== "" ? numeroHorasClase : undefined));
+
     $("#direccion").focusout(verificarDatosBusquedaMapa);
     $("input[name='codigoUbigeo']").change(verificarDatosBusquedaMapa);
   } else {

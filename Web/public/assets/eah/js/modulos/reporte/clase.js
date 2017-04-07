@@ -33,7 +33,7 @@ function cargarListaClases() {
             return d.numeroPeriodo;
           }, className: "text-center"},
         {data: "nombreProfesor", name: "nombreProfesor", render: function (e, t, d, m) {
-            return (d.idProfesor !== null ? '<a target="_blank" href="' + urlPerfilProfesor.replace("/0", "/" + d.idProfesor) + '">' + d.nombreProfesor + ' ' + d.apellidoProfesor + '</a>' : "Sin profesor asignado");
+            return (d.idProfesor !== null && d.nombreProfesor !== null && d.nombreProfesor !== '' ? '<a target="_blank" href="' + urlPerfilProfesor.replace("/0", "/" + d.idProfesor) + '">' + d.nombreProfesor + ' ' + d.apellidoProfesor + '</a>' : "Sin profesor asignado");
           }},
         {data: "nombreAlumno", name: "nombreAlumno", render: function (e, t, d, m) {
             return '<a target="_blank" href="' + urlPerfilAlumno.replace("/0", "/" + d.idAlumno) + '">' + d.nombreAlumno + ' ' + d.apellidoAlumno + '</a>';

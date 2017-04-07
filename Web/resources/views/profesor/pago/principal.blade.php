@@ -27,7 +27,7 @@
         </table>
       </div>
       <div style="display: none">
-        {{ Form::select("", App\Helpers\Enum\EstadosPago::listarCambio(), NULL, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
+        {{ Form::select("", App\Helpers\Enum\EstadosPago::listarCambio(), null, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
       </div>
     </div>   
     <div id="sec-pago-2" style="display: none;">     

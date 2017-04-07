@@ -10,7 +10,7 @@
     <div id="sec-estado-clase">
       {{ Form::label("estado-clase", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-3">
-        {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarCambio(), NULL, ["id" => "estado-clase", "class" => "form-control"]) }}
+        {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarCambio(), null, ["id" => "estado-clase", "class" => "form-control"]) }}
       </div>
     </div>
     <div id="sec-notificar-clase" class="col-sm-2">
@@ -29,7 +29,7 @@
         <div class="input-group-addon">
           <i class="fa fa-calendar"></i>
         </div>                                
-        {{ Form::text("fecha", NULL, ["id" => "fecha-clase", "class" => "form-control", "placeholder" => "dd/mm/aaaa"]) }}
+        {{ Form::text("fecha", null, ["id" => "fecha-clase", "class" => "form-control", "placeholder" => "dd/mm/aaaa"]) }}
       </div>
     </div> 
   </div>
@@ -40,7 +40,7 @@
         <div class="input-group-addon">
           <i class="fa  fa-clock-o"></i>
         </div>    
-        {{ Form::select("horaInicio", [], NULL, ["id" => "hora-inicio-clase", "class" => "form-control"]) }}
+        {{ Form::select("horaInicio", [], null, ["id" => "hora-inicio-clase", "class" => "form-control"]) }}
       </div>
     </div>
     {{ Form::label("duracion-clase", "Duración: ", ["class" => "col-sm-2 control-label"]) }}
@@ -49,7 +49,7 @@
         <div class="input-group-addon">
           <i class="fa  fa-clock-o"></i>
         </div>    
-        {{ Form::select("duracion", [], NULL, ["id" => "duracion-clase", "class" => "form-control"]) }}
+        {{ Form::select("duracion", [], null, ["id" => "duracion-clase", "class" => "form-control"]) }}
       </div>
     </div>
   </div>
@@ -65,7 +65,7 @@
     </div> 
     {{ Form::label("id-pago-clase", "Código de pago: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
-      {{ Form::select("idPago", App\Models\PagoAlumno::listar($idAlumno, TRUE)->lists("id", "id")->toArray(), NULL, ["id" => "id-pago-clase", "class" => "form-control", "placeholder" => "Seleccionar código de pago"]) }}
+      {{ Form::select("idPago", App\Models\PagoAlumno::listar($idAlumno, TRUE)->lists("id", "id")->toArray(), null, ["id" => "id-pago-clase", "class" => "form-control", "placeholder" => "Seleccionar código de pago"]) }}
     </div>
     <div class="col-sm-2">
       <a href="javascript:void(0);" onclick="verDatosPagosClase('id-pago-clase');"><i class="fa fa-eye"></i></a>

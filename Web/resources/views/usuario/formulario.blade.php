@@ -29,7 +29,7 @@
           <div class="col-sm-4">
             {{ Form::file("imagenPerfil", null) }}
           </div>
-          @if (isset($usuario->imagenPerfil) && !empty($usuario->imagenPerfil) && $usuario->imagenPerfil != "NULL")
+          @if (isset($usuario->imagenPerfil) && !empty($usuario->imagenPerfil) && $usuario->imagenPerfil != "null")
           <div class="col-sm-3">
             <a href="{{ route("archivos", ["nombre" => $usuario->imagenPerfil]) }}" target="_blank">
               <img src="{{ route("archivos", ["nombre" => $usuario->imagenPerfil]) }}" width="40"/>

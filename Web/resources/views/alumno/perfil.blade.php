@@ -106,10 +106,10 @@
           @include("util.historial", ["idEntidad" => $alumno->id]) 
         </div>
         <div id="pago" class="tab-pane">
-          @include("alumno.pago.principal", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "totalSaldoFavor" => $alumno->totalSaldoFavor, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : NULL)]) 
+          @include("alumno.pago.principal", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "totalSaldoFavor" => $alumno->totalSaldoFavor, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : null)]) 
         </div>
         <div id="clase" class="tab-pane">
-          @include("alumno.clase.principal", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : NULL)])
+          @include("alumno.clase.principal", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : null)])
         </div>
         <div id="calendario" class="tab-pane">
           @include("util.calendario", ["idEntidad" => $alumno->id]) 

@@ -35,7 +35,7 @@
   @include("alumno.util.docentesDisponibles", ["seccion" => "clase", "idCurso" => $idCurso])
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosClase::listarCambio(), NULL, ["id" => "sel-estados-clase", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosClase::listarCambio(), null, ["id" => "sel-estados-clase", "class" => "form-control"]) }}
 </div>
 <script>
   var idAlumno = "{{ $idAlumno }}";

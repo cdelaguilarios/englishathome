@@ -4,7 +4,7 @@
 <div class="box-body">
   <div class="form-group">
     <div class="col-sm-4">
-      {{ Form::select("tipoCancelacion", App\Helpers\Enum\TiposCancelacionClase::listar(), NULL, ["id" => "tipo-cancelacion-clase", "class" => "form-control"]) }}
+      {{ Form::select("tipoCancelacion", App\Helpers\Enum\TiposCancelacionClase::listar(), null, ["id" => "tipo-cancelacion-clase", "class" => "form-control"]) }}
     </div>
   </div>
   <div class="form-group">
@@ -23,7 +23,7 @@
             <span class="input-group-addon">
               <b>S/.</b>
             </span>
-            {{ Form::text("pagoProfesor", NULL, ["class" => "form-control", "maxlength" => "19"]) }}
+            {{ Form::text("pagoProfesor", null, ["class" => "form-control", "maxlength" => "19"]) }}
           </div>
         </div>
       </div>
@@ -52,7 +52,7 @@
           <div class="input-group-addon">
             <i class="fa fa-calendar"></i>
           </div>                                
-          {{ Form::text("fecha", NULL, ["id" => "fecha-clase-reprogramada", "class" => "form-control", "placeholder" => "dd/mm/aaaa"]) }}
+          {{ Form::text("fecha", null, ["id" => "fecha-clase-reprogramada", "class" => "form-control", "placeholder" => "dd/mm/aaaa"]) }}
         </div>
       </div>                        
     </div>
@@ -63,7 +63,7 @@
           <div class="input-group-addon">
             <i class="fa  fa-clock-o"></i>
           </div>    
-          {{ Form::select("horaInicio", [], NULL, ["id" => "hora-inicio-clase-reprogramada", "class" => "form-control"]) }}
+          {{ Form::select("horaInicio", [], null, ["id" => "hora-inicio-clase-reprogramada", "class" => "form-control"]) }}
         </div>
       </div>
       {{ Form::label("duracion-clase-reprogramada", "Duración: ", ["class" => "col-sm-2 control-label"]) }}
@@ -72,7 +72,7 @@
           <div class="input-group-addon">
             <i class="fa  fa-clock-o"></i>
           </div>    
-          {{ Form::select("duracion", [], NULL, ["id" => "duracion-clase-reprogramada", "class" => "form-control"]) }}
+          {{ Form::select("duracion", [], null, ["id" => "duracion-clase-reprogramada", "class" => "form-control"]) }}
         </div>
       </div>
     </div>
@@ -90,7 +90,7 @@
     </div> 
     {{ Form::label("id-pago-clase-reprogramada", "Código de pago: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
-      {{ Form::select("idPago", App\Models\PagoAlumno::listar($idAlumno, TRUE)->lists("id", "id")->toArray(), NULL, ["id" => "id-pago-clase-reprogramada", "class" => "form-control", "placeholder" => "Seleccionar código de pago"]) }}
+      {{ Form::select("idPago", App\Models\PagoAlumno::listar($idAlumno, TRUE)->lists("id", "id")->toArray(), null, ["id" => "id-pago-clase-reprogramada", "class" => "form-control", "placeholder" => "Seleccionar código de pago"]) }}
     </div>
     <div class="col-sm-2">
       <a href="javascript:void(0);" onclick="verDatosPagosClase('id-pago-clase-reprogramada');"><i class="fa fa-eye"></i></a>

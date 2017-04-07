@@ -42,7 +42,7 @@
 </div>
 @include("alumno.util.docentesDisponibles", ["seccion" => "pago", "idCurso" => $idCurso])
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosPago::listarCambio(), NULL, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosPago::listarCambio(), null, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
 </div>
 <script>
   var urlListarPagos = "{{ route('alumnos.pagos.listar', ['id' => $idAlumno]) }}";

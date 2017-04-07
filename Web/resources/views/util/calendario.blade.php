@@ -13,7 +13,7 @@
               <div class="input-group-addon">
                 <i class="fa fa-calendar"></i>
               </div>  
-              {{ Form::text("", NULL, ["id" => "bus-fecha-calendario", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
+              {{ Form::text("", null, ["id" => "bus-fecha-calendario", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
             </div>
           </div>
         </div>

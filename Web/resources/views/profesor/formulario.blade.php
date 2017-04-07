@@ -44,12 +44,12 @@
                 <div class="input-group-addon">
                   <i class="fa fa-calendar"></i>
                 </div>                          
-                {{ Form::text("fechaNacimiento", (isset($profesor->fechaNacimiento) ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $profesor->fechaNacimiento)->format("d/m/Y") : NULL), ["id" => "fecha-nacimiento", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
+                {{ Form::text("fechaNacimiento", (isset($profesor->fechaNacimiento) ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $profesor->fechaNacimiento)->format("d/m/Y") : null), ["id" => "fecha-nacimiento", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
               </div>
             </div>
             {{ Form::label("sexo", "Sexo: ", ["class" => "col-sm-1 control-label"]) }}
             <div class="col-sm-2">
-              {{ Form::select("sexo", $sexos, NULL, ["class" => "form-control"]) }}
+              {{ Form::select("sexo", $sexos, null, ["class" => "form-control"]) }}
             </div>
           </div>            
           <div class="form-group">
@@ -92,7 +92,7 @@
           <div class="form-group">
             {{ Form::label("numeroDepartamento", "Depto./Int: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
-              {{ Form::text("numeroDepartamento", NULL, ["class" => "form-control", "maxlength" =>"255"]) }}
+              {{ Form::text("numeroDepartamento", null, ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
           </div>  
           <div class="form-group">
@@ -107,7 +107,7 @@
               @include("util.ubicacionMapa")              
             </div>
             <div class="col-sm-10 col-sm-offset-2">
-              <b>Sugerimos seleccionar la ubicación exacta en el mapa del lugar donde se realizarán las clases.</b>
+              <b>Sugerimos seleccionar la ubicación exacta en el mapa de la dirección del profesor.</b>
             </div>
             {{ Form::hidden("geoLatitud", null) }} 
             {{ Form::hidden("geoLongitud", null) }} 
@@ -122,7 +122,7 @@
             <div class="col-sm-5">
               {{ Form::select("idCursos[]", $cursos, null, ["id" => "curso-interes", "class" => "form-control", "multiple" => "multiple", "style" => "width: 100%;"]) }}
             </div>    
-            {{ Form::hidden("cursos", (isset($profesor) ? $profesor->cursos : NULL)) }}                
+            {{ Form::hidden("cursos", (isset($profesor) ? $profesor->cursos : null)) }}                
           </div>
           <div class="form-group">
             <h4>Horario disponible (*):</h4>

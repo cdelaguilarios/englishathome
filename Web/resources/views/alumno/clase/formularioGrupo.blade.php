@@ -7,7 +7,7 @@
       <div class="checkbox">
         <label class="checkbox-custom" data-initialize="checkbox">
           {{ Form::label("editar-datos-generales-clases", "Editar datos generales", ["class" => "checkbox-label"]) }}
-          {{ Form::checkbox("editarDatosGenerales", NULL, FALSE, ["id" => "editar-datos-generales-clases", "data-seccion" => "sec-clase-41"]) }} 
+          {{ Form::checkbox("editarDatosGenerales", null, FALSE, ["id" => "editar-datos-generales-clases", "data-seccion" => "sec-clase-41"]) }} 
         </label>
       </div>
     </div>
@@ -15,7 +15,7 @@
       <div class="checkbox">
         <label class="checkbox-custom" data-initialize="checkbox">
           {{ Form::label("editar-datos-tiempo-clases", "Editar datos de tiempo", ["class" => "checkbox-label"]) }}
-          {{ Form::checkbox("editarDatosTiempo", NULL, FALSE, ["id" => "editar-datos-tiempo-clases", "data-seccion" => "sec-clase-42"]) }} 
+          {{ Form::checkbox("editarDatosTiempo", null, FALSE, ["id" => "editar-datos-tiempo-clases", "data-seccion" => "sec-clase-42"]) }} 
         </label>
       </div>
     </div>
@@ -25,7 +25,7 @@
       <div class="checkbox">
         <label class="checkbox-custom" data-initialize="checkbox">
           {{ Form::label("editar-datos-pago-clases", "Editar datos de pago", ["class" => "checkbox-label"]) }}
-          {{ Form::checkbox("editarDatosPago", NULL, FALSE, ["id" => "editar-datos-pago-clases", "data-seccion" => "sec-clase-43"]) }} 
+          {{ Form::checkbox("editarDatosPago", null, FALSE, ["id" => "editar-datos-pago-clases", "data-seccion" => "sec-clase-43"]) }} 
         </label>
       </div>
     </div>
@@ -33,7 +33,7 @@
       <div class="checkbox">
         <label class="checkbox-custom" data-initialize="checkbox">
           {{ Form::label("editar-datos-profesor-clases", "Editar datos de profesor", ["class" => "checkbox-label"]) }}
-          {{ Form::checkbox("editarDatosProfesor", NULL, FALSE, ["id" => "editar-datos-profesor-clases", "data-seccion" => "sec-clase-44"]) }} 
+          {{ Form::checkbox("editarDatosProfesor", null, FALSE, ["id" => "editar-datos-profesor-clases", "data-seccion" => "sec-clase-44"]) }} 
         </label>
       </div>
     </div>
@@ -45,7 +45,7 @@
     </div>
     {{ Form::label("estado-clases", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
-      {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarCambio(), NULL, ["id" => "estado-clases", "class" => "form-control"]) }}
+      {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarCambio(), null, ["id" => "estado-clases", "class" => "form-control"]) }}
     </div>
   </div>
   <div id="sec-clase-42" class="form-group">    
@@ -55,7 +55,7 @@
         <div class="input-group-addon">
           <i class="fa  fa-clock-o"></i>
         </div>    
-        {{ Form::select("horaInicio", [], NULL, ["id" => "hora-inicio-clases", "class" => "form-control"]) }}
+        {{ Form::select("horaInicio", [], null, ["id" => "hora-inicio-clases", "class" => "form-control"]) }}
       </div>
     </div>
     {{ Form::label("duracion-clases", "Duración (*):: ", ["class" => "col-sm-2 control-label"]) }}
@@ -64,7 +64,7 @@
         <div class="input-group-addon">
           <i class="fa  fa-clock-o"></i>
         </div>    
-        {{ Form::select("duracion", [], NULL, ["id" => "duracion-clases", "class" => "form-control"]) }}
+        {{ Form::select("duracion", [], null, ["id" => "duracion-clases", "class" => "form-control"]) }}
       </div>
     </div>
   </div> 
@@ -80,7 +80,7 @@
     </div> 
     {{ Form::label("id-pago-clases", "Código de pago: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
-      {{ Form::select("idPago", App\Models\PagoAlumno::listar($idAlumno, TRUE)->lists("id", "id")->toArray(), NULL, ["id" => "id-pago-clases", "class" => "form-control", "placeholder" => "Seleccionar código de pago"]) }}
+      {{ Form::select("idPago", App\Models\PagoAlumno::listar($idAlumno, TRUE)->lists("id", "id")->toArray(), null, ["id" => "id-pago-clases", "class" => "form-control", "placeholder" => "Seleccionar código de pago"]) }}
     </div>
     <div class="col-sm-2">
       <a href="javascript:void(0);" onclick="verDatosPagosClase('id-pago-clases');"><i class="fa fa-eye"></i></a>

@@ -16,7 +16,7 @@
           <div class="col-sm-4">
             {{ Form::file("imagen", null) }}
           </div>
-          @if (isset($curso->imagen) && !empty($curso->imagen) && $curso->imagen != "NULL")
+          @if (isset($curso->imagen) && !empty($curso->imagen) && $curso->imagen != "null")
           <div class="col-sm-3">
             <a href="{{ route("archivos", ["nombre" => $curso->imagen]) }}" target="_blank">
               <img src="{{ route("archivos", ["nombre" => $curso->imagen]) }}" width="120"/>
@@ -27,43 +27,43 @@
         <div class="form-group">
           {{ Form::label("descripcion", "Descripción curso (*): ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {{ Form::textarea("descripcion", NULL, ["class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+            {{ Form::textarea("descripcion", null, ["class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
           </div>                                        
         </div>
         <div class="form-group">
           {{ Form::label("modulos", "Módulos (*): ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {{ Form::textarea("modulos", NULL, ["class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+            {{ Form::textarea("modulos", null, ["class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
           </div>                                        
         </div>
         <div class="form-group">
           {{ Form::label("metodologia", "Metodología (*): ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {{ Form::textarea("metodologia", NULL, ["class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+            {{ Form::textarea("metodologia", null, ["class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
           </div>                                        
         </div>
         <div class="form-group">
           {{ Form::label("incluye", "Curso incluye (*): ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {{ Form::textarea("incluye", NULL, ["class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+            {{ Form::textarea("incluye", null, ["class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
           </div>                                        
         </div>
         <div class="form-group">
           {{ Form::label("inversion", "Inversión (*): ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10 sec-inversion">
-            {{ Form::textarea("inversion", NULL, ["class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+            {{ Form::textarea("inversion", null, ["class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
           </div>                                        
         </div>
         <div class="form-group">
           {{ Form::label("inversion-cuotas", "Inversión en cuotas (*): ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10 sec-inversion">
-            {{ Form::textarea("inversionCuotas", NULL, ["id" => "inversion-cuotas", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+            {{ Form::textarea("inversionCuotas", null, ["id" => "inversion-cuotas", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
           </div>                                        
         </div>
         <div class="form-group">
           {{ Form::label("notas-adicionales", "Notas adicionales (*): ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10 sec-inversion">
-            {{ Form::textarea("notasAdicionales", NULL, ["id" => "notas-adicionales", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+            {{ Form::textarea("notasAdicionales", null, ["id" => "notas-adicionales", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
           </div>                                        
         </div>
         <div class="form-group">
@@ -71,7 +71,7 @@
             <div class="checkbox">
               <label class="checkbox-custom" data-initialize="checkbox">
                 {{ Form::label("activo", "Activo", ["class" => "checkbox-label"]) }}
-                {{ Form::checkbox("activo", NULL, (isset($curso) && $curso->activo == 1 ? TRUE : FALSE)) }}
+                {{ Form::checkbox("activo", null, (isset($curso) && $curso->activo == 1 ? TRUE : FALSE)) }}
               </label>
             </div>
           </div>

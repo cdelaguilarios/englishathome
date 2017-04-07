@@ -10,7 +10,7 @@
         <div class="form-group">          
           {{ Form::label("bus-estado-clase", "Estado de la clase: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-3">
-            {{ Form::select("estadoClase", App\Helpers\Enum\EstadosClase::listarBusqueda(), NULL, ["id"=>"bus-estado-clase", "class" => "form-control", "placeholder" => "Todos"]) }}
+            {{ Form::select("estadoClase", App\Helpers\Enum\EstadosClase::listarBusqueda(), null, ["id"=>"bus-estado-clase", "class" => "form-control", "placeholder" => "Todos"]) }}
           </div>
         </div>
         @endif 
@@ -18,7 +18,7 @@
         <div class="form-group">          
           {{ Form::label("bus-estado-pago", "Estado del pago: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-3">
-            {{ Form::select("estadoPago", App\Helpers\Enum\EstadosPago::listarSimple(), NULL, ["id"=>"bus-estado-pago", "class" => "form-control", "placeholder" => "Todos"]) }}
+            {{ Form::select("estadoPago", App\Helpers\Enum\EstadosPago::listarSimple(), null, ["id"=>"bus-estado-pago", "class" => "form-control", "placeholder" => "Todos"]) }}
           </div>
         </div>
         @endif
@@ -26,7 +26,7 @@
         <div class="form-group">          
           {{ Form::label("bus-tipo-pago", "Tipo de pago: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-3">
-            {{ Form::select("tipoPago", ["0" => "Pago de alumnos", "1" => "Pago a profesores"], NULL, ["id"=>"bus-tipo-pago", "class" => "form-control"]) }}
+            {{ Form::select("tipoPago", ["0" => "Pago de alumnos", "1" => "Pago a profesores"], null, ["id"=>"bus-tipo-pago", "class" => "form-control"]) }}
           </div>
         </div>
         @endif

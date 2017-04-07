@@ -13,9 +13,9 @@ use App\Http\Requests\Util as UtilRequest;
 use App\Http\Requests\ActualizarHorarioRequest;
 use App\Http\Requests\Profesor\BusquedaRequest;
 use App\Http\Requests\Profesor\FormularioRequest;
+use App\Http\Requests\Profesor\Pago as PagoRequest;
 use App\Http\Requests\Profesor\ActualizarEstadoRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Http\Requests\Profesor\Pago as PagoRequest;
 
 class ProfesorController extends Controller {
 
@@ -116,7 +116,7 @@ class ProfesorController extends Controller {
       Log::error($e);
       return response()->json(["mensaje" => "No se pudo eliminar el registro de datos del profesor seleccionado."], 400);
     }
-    return response()->json(["mensaje" => "Eliminación exitosa", "id" => $id], 200);
+    return response()->json(["mensaje" => "Eliminación exitosa.", "id" => $id], 200);
   }
 
   // </editor-fold>

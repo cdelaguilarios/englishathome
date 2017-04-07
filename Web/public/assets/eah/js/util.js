@@ -353,7 +353,7 @@ function verDatosClase(idAlumno, idClase) {
       $("#dat-costo-hora-clase").html('S/. ' + redondear(d.costoHora, 2));
       $("#dat-codigo-pago-clase").html(d.idPago);
       $("#sec-dat-profesor-clase").hide();
-      if (d.idProfesor !== null) {
+      if (d.idProfesor !== null && d.nombreProfesor !== null && d.nombreProfesor !== '') {
         $("#sec-dat-profesor-clase").show();
         $("#dat-profesor-clase").html('<i class="fa flaticon-teach"></i> <b>' + d.nombreProfesor + ' ' + d.apellidoProfesor + '</b> <a href=' + (urlPerfilProfesor.replace('/0', '/' + d.idProfesor)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>');
         $("#dat-pago-hora-profesor-clase").html('S/. ' + redondear(d.costoHoraProfesor, 2));

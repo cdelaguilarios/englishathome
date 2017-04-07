@@ -28,8 +28,7 @@ class Profesor extends Model {
     $profesores = Profesor::select($nombreTabla . ".*", "entidad.*", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))
                     ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
                     ->leftJoin(EntidadCurso::nombreTabla() . " as entidadCurso", $nombreTabla . ".idEntidad", "=", "entidadCurso.idEntidad")
-                    ->where("entidad.eliminado", 0)->distinct();
-
+                    ->where("entidad.eliminado", 0)->groupBy("entidad.id")->distinct();
     if (isset($datos["estado"])) {
       $profesores->where("entidad.estado", $datos["estado"]);
     }

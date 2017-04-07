@@ -73,7 +73,7 @@
             <ul class="nav navbar-nav">
               <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  @if ($usuarioActual->imagenPerfil == "NULL" || empty($usuarioActual->imagenPerfil))
+                  @if ($usuarioActual->imagenPerfil == "null" || empty($usuarioActual->imagenPerfil))
                   <img src="{{ asset("assets/eah/img/perfil-imagen.png")}}" class="user-image" />
                   @else
                   <img src="{{ route("archivos", ["nombre" => $usuarioActual->imagenPerfil]) }}" class="user-image"/>
@@ -83,7 +83,7 @@
                 <ul class="dropdown-menu">
                   <!-- User image -->
                   <li class="user-header">
-                    @if ($usuarioActual->imagenPerfil == "NULL" || empty($usuarioActual->imagenPerfil))
+                    @if ($usuarioActual->imagenPerfil == "null" || empty($usuarioActual->imagenPerfil))
                     <img src="{{ asset("assets/eah/img/perfil-imagen.png") }}" class="img-circle" />
                     @else
                     <img src="{{ route("archivos", ["nombre" => $usuarioActual->imagenPerfil]) }}" class="img-circle"/>

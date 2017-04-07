@@ -90,49 +90,49 @@
       <div class="form-group">
         {{ Form::label("texto-introductorio", "Texto introductorio (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10">
-          {{ Form::textarea("textoIntroductorio", NULL, ["id" => "texto-introductorio", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+          {{ Form::textarea("textoIntroductorio", null, ["id" => "texto-introductorio", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div>                                        
       </div>
       <div class="form-group">
         {{ Form::label("descripcion-curso", "Descripción curso (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10">
-          {{ Form::textarea("descripcionCurso", NULL, ["id" => "descripcion-curso", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+          {{ Form::textarea("descripcionCurso", null, ["id" => "descripcion-curso", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div>                                        
       </div>
       <div class="form-group">
         {{ Form::label("modulos", "Módulos (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10">
-          {{ Form::textarea("modulos", NULL, ["id" => "modulos", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+          {{ Form::textarea("modulos", null, ["id" => "modulos", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div>                                        
       </div>
       <div class="form-group">
         {{ Form::label("metodologia", "Metodología (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10">
-          {{ Form::textarea("metodologia", NULL, ["id" => "metodologia", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+          {{ Form::textarea("metodologia", null, ["id" => "metodologia", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div>                                        
       </div>
       <div class="form-group">
         {{ Form::label("curso-incluye", "Curso incluye (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10">
-          {{ Form::textarea("cursoIncluye", NULL, ["id" => "curso-incluye", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+          {{ Form::textarea("cursoIncluye", null, ["id" => "curso-incluye", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div>                                        
       </div>
       <div class="form-group">
         {{ Form::label("inversion", "Inversión (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10 sec-inversion">
-          {{ Form::textarea("inversion", NULL, ["id" => "inversion", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+          {{ Form::textarea("inversion", null, ["id" => "inversion", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div>                                        
       </div>
       <div class="form-group">
         {{ Form::label("inversion-cuotas", "Inversión en cuotas (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10 sec-inversion">
-          {{ Form::textarea("inversionCuotas", NULL, ["id" => "inversion-cuotas", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+          {{ Form::textarea("inversionCuotas", null, ["id" => "inversion-cuotas", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div>                                        
       </div> 
       <div class="form-group">  
         {{ Form::label("notas-adicionales", "Notas adicionales (*): ", ["class" => "col-sm-2 control-label"]) }}   
         <div class="col-sm-10">
-          {{ Form::textarea("notasAdicionales", NULL, ["id" => "notas-adicionales", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
+          {{ Form::textarea("notasAdicionales", null, ["id" => "notas-adicionales", "class" => "form-control", "rows" => "10", "maxlength" =>"4000"]) }}
         </div> 
       </div> 
       <div class="form-group">
@@ -151,7 +151,7 @@
             <span class="input-group-addon">
               <b>S/.</b>
             </span>
-            {{ Form::text("costoHoraClase", (isset($interesado->costoHoraClase) ? number_format($interesado->costoHoraClase, 2, ".", ",") : NULL), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
+            {{ Form::text("costoHoraClase", (isset($interesado->costoHoraClase) ? number_format($interesado->costoHoraClase, 2, ".", ",") : null), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
           </div>
         </div> 
       </div> 

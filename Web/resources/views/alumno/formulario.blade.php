@@ -26,19 +26,19 @@
           <div class="form-group">
             {{ Form::label("nombre", "Nombres (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
-              {{ Form::text("nombre", (isset($interesado) ? $interesado->nombre : NULL), ["class" => "form-control", "maxlength" =>"255"]) }}
+              {{ Form::text("nombre", (isset($interesado) ? $interesado->nombre : null), ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
           </div>
           <div class="form-group">
             {{ Form::label("apellido", "Apellidos (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
-              {{ Form::text("apellido", (isset($interesado) ? $interesado->apellido : NULL), ["class" => "form-control", "maxlength" =>"255"]) }}
+              {{ Form::text("apellido", (isset($interesado) ? $interesado->apellido : null), ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
           </div>  
           <div class="form-group">
             {{ Form::label("telefono", "Teléfono" . ((Auth::guest()) ? " (*)" : "") . ": ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3">
-              {{ Form::text("telefono", (isset($interesado) ? $interesado->telefono : NULL), ["class" => "form-control", "maxlength" =>"30"]) }}
+              {{ Form::text("telefono", (isset($interesado) ? $interesado->telefono : null), ["class" => "form-control", "maxlength" =>"30"]) }}
             </div>
           </div>                 
           <div class="form-group">
@@ -48,33 +48,33 @@
                 <div class="input-group-addon">
                   <i class="fa fa-calendar"></i>
                 </div>                                
-                {{ Form::text("fechaNacimiento", (isset($alumno->fechaNacimiento) ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaNacimiento)->format("d/m/Y") : NULL), ["id" => "fecha-nacimiento", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
+                {{ Form::text("fechaNacimiento", (isset($alumno->fechaNacimiento) ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaNacimiento)->format("d/m/Y") : null), ["id" => "fecha-nacimiento", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
               </div>
             </div>
             {{ Form::label("sexo", "Sexo: ", ["class" => "col-sm-1 control-label"]) }}
             <div class="col-sm-2">
-              {{ Form::select("sexo", $sexos, NULL, ["class" => "form-control"]) }}
+              {{ Form::select("sexo", $sexos, null, ["class" => "form-control"]) }}
             </div>
           </div>            
           <div class="form-group">
             {{ Form::label("numeroDocumento", "Doc. de identidad" . ((Auth::guest()) ? " (*)" : "") . ": ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3" style="display:none">
-              {{ Form::select("idTipoDocumento", $tiposDocumentos, NULL, ["class" => "form-control"]) }}
+              {{ Form::select("idTipoDocumento", $tiposDocumentos, null, ["class" => "form-control"]) }}
             </div>
             <div class="col-sm-3">
-              {{ Form::number("numeroDocumento", NULL, ["class" => "form-control", "minlength" =>"8", "maxlength" =>"20"]) }}
+              {{ Form::number("numeroDocumento", null, ["class" => "form-control", "minlength" =>"8", "maxlength" =>"20"]) }}
             </div>                    
           </div> 
           <div class="form-group">
             {{ Form::label("correoElectronico", "Correo electrónico (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
-              {{ Form::email("correoElectronico", (isset($interesado) ? $interesado->correoElectronico : NULL), ["class" => "form-control", "maxlength" =>"245"]) }}
+              {{ Form::email("correoElectronico", (isset($interesado) ? $interesado->correoElectronico : null), ["class" => "form-control", "maxlength" =>"245"]) }}
             </div>
           </div> 
           <div class="form-group">
             {{ Form::label("imagenPerfil", "Imagen de perfil: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-4">
-              {{ Form::file("imagenPerfil", NULL) }}
+              {{ Form::file("imagenPerfil", null) }}
             </div>
             @if (isset($alumno->imagenPerfil) && !empty($alumno->imagenPerfil))
             <div class="col-sm-3">
@@ -90,19 +90,19 @@
           <div class="form-group">    
             {{ Form::label("direccion", "Dirección (*): ", ["class" => "col-sm-2 control-label"]) }}                
             <div class="col-sm-10">
-              {{ Form::text("direccion", NULL, ["class" => "form-control", "maxlength" =>"255"]) }}
+              {{ Form::text("direccion", null, ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
           </div>
           <div class="form-group">
             {{ Form::label("numeroDepartamento", "Depto./Int: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
-              {{ Form::text("numeroDepartamento", NULL, ["class" => "form-control", "maxlength" =>"255"]) }}
+              {{ Form::text("numeroDepartamento", null, ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
           </div>  
           <div class="form-group">
             {{ Form::label("referenciaDireccion", "Referencia: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
-              {{ Form::text("referenciaDireccion", NULL, ["class" => "form-control", "maxlength" =>"255"]) }}
+              {{ Form::text("referenciaDireccion", null, ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
           </div>                
           <div class="form-group">
@@ -113,33 +113,33 @@
             <div class="col-sm-10 col-sm-offset-2">
               <b>Sugerimos seleccionar la ubicación exacta en el mapa del lugar donde se realizarán las clases.</b>
             </div>
-            {{ Form::hidden("geoLatitud", NULL) }} 
-            {{ Form::hidden("geoLongitud", NULL) }} 
+            {{ Form::hidden("geoLatitud", null) }} 
+            {{ Form::hidden("geoLongitud", null) }} 
           </div>
         </div>
         <div id="sec-wiz-alumno-3" class="step-pane sample-pane alert" data-step="3">
           <div class="form-group">
             {{ Form::label("idNivelIngles", "Nivel de ingles logrado (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3">
-              {{ Form::select("idNivelIngles", $nivelesIngles, (isset($alumno) ? $alumno->idNivelIngles : NULL), ["class" => "form-control"]) }}
+              {{ Form::select("idNivelIngles", $nivelesIngles, (isset($alumno) ? $alumno->idNivelIngles : null), ["class" => "form-control"]) }}
             </div>                   
           </div>                    
           <div class="form-group">
             {{ Form::label("inglesLugarEstudio", "Lugar donde estudió: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
-              {{ Form::text("inglesLugarEstudio", NULL, ["class" => "form-control", "maxlength" =>"255"]) }}
+              {{ Form::text("inglesLugarEstudio", null, ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
           </div>                   
           <div class="form-group">
             {{ Form::label("inglesPracticaComo", "¿Lo practica?¿Cómo?: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
-              {{ Form::text("inglesPracticaComo", NULL, ["class" => "form-control", "maxlength" =>"255"]) }}
+              {{ Form::text("inglesPracticaComo", null, ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
           </div>                   
           <div class="form-group">
             {{ Form::label("inglesObjetivo", "Objetivos específicos: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
-              {{ Form::text("inglesObjetivo", NULL, ["class" => "form-control", "maxlength" =>"255"]) }}
+              {{ Form::text("inglesObjetivo", null, ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
           </div>
         </div>                
@@ -152,7 +152,7 @@
               <div class="checkbox">
                 <label class="checkbox-custom" data-initialize="checkbox">
                   {{ Form::label("conComputadora", "Con computadora: ", ["class" => "checkbox-label"]) }}
-                  {{ Form::checkbox("conComputadora", NULL, (isset($alumno->conComputadora) && $alumno->conComputadora == "1")) }}
+                  {{ Form::checkbox("conComputadora", null, (isset($alumno->conComputadora) && $alumno->conComputadora == "1")) }}
                 </label>
               </div>
             </div>                        
@@ -160,7 +160,7 @@
               <div class="checkbox">
                 <label class="checkbox-custom" data-initialize="checkbox">
                   {{ Form::label("conInternet", "Con internet: ", ["class" => "checkbox-label"]) }}
-                  {{ Form::checkbox("conInternet", NULL, (isset($alumno->conInternet) && $alumno->conInternet == "1")) }}
+                  {{ Form::checkbox("conInternet", null, (isset($alumno->conInternet) && $alumno->conInternet == "1")) }}
                 </label>
               </div>
             </div>    
@@ -168,7 +168,7 @@
               <div class="checkbox">
                 <label class="checkbox-custom" data-initialize="checkbox">
                   {{ Form::label("conAmbienteClase", "Un ambiente adecuado para la realización de la clase: ", ["class" => "checkbox-label"]) }}
-                  {{ Form::checkbox("conAmbienteClase", NULL, (isset($alumno->conAmbienteClase) && $alumno->conAmbienteClase == "1")) }}
+                  {{ Form::checkbox("conAmbienteClase", null, (isset($alumno->conAmbienteClase) && $alumno->conAmbienteClase == "1")) }}
                 </label>
               </div>
             </div>
@@ -176,7 +176,7 @@
               <div class="checkbox">
                 <label class="checkbox-custom" data-initialize="checkbox">
                   {{ Form::label("conPlumonPizarra", "Pizarra / plumones: ", ["class" => "checkbox-label"]) }}
-                  {{ Form::checkbox("conPlumonPizarra", NULL, (isset($alumno->conPlumonPizarra) && $alumno->conPlumonPizarra == "1")) }}
+                  {{ Form::checkbox("conPlumonPizarra", null, (isset($alumno->conPlumonPizarra) && $alumno->conPlumonPizarra == "1")) }}
                 </label>
               </div>
             </div>
@@ -187,12 +187,12 @@
           <div class="form-group">
             {{ Form::label("idCurso", "Curso de interes: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3">
-              {{ Form::select("idCurso", $cursos, (isset($alumno) ? $alumno->idCurso : (isset($interesado) ? $interesado->idCurso : NULL)), ["class" => "form-control"]) }}
+              {{ Form::select("idCurso", $cursos, (isset($alumno) ? $alumno->idCurso : (isset($interesado) ? $interesado->idCurso : null)), ["class" => "form-control"]) }}
             </div>
             {{ Form::label("numero-horas-clase", "Número de horas por clase (*): ", ["class" => "col-sm-3 control-label"]) }}
             <div class="col-sm-2">
-              {{ Form::select("numeroHorasClase", [], (isset($alumno->numeroHorasClase) ? $alumno->numeroHorasClase : NULL), ["id" => "numero-horas-clase", "class" => "form-control"]) }}     
-              {{ Form::hidden("auxNumeroHorasClase", (isset($alumno->numeroHorasClase) ? $alumno->numeroHorasClase : NULL)) }}             
+              {{ Form::select("numeroHorasClase", [], (isset($alumno->numeroHorasClase) ? $alumno->numeroHorasClase : null), ["id" => "numero-horas-clase", "class" => "form-control"]) }}     
+              {{ Form::hidden("auxNumeroHorasClase", (isset($alumno->numeroHorasClase) ? $alumno->numeroHorasClase : null)) }}             
             </div>                    
           </div>
           <div class="form-group">
@@ -202,7 +202,7 @@
                 <div class="input-group-addon">
                   <i class="fa fa-calendar"></i>
                 </div>                                    
-                {{ Form::text("fechaInicioClase", (isset($alumno->fechaInicioClase) ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaInicioClase)->format("d/m/Y") : NULL), ["id" => "fecha-inicio-clase", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
+                {{ Form::text("fechaInicioClase", (isset($alumno->fechaInicioClase) ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaInicioClase)->format("d/m/Y") : null), ["id" => "fecha-inicio-clase", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
               </div>
             </div>
             @if(isset($interesado))
@@ -214,7 +214,7 @@
                 <span class="input-group-addon">
                   <b>S/.</b>
                 </span>
-                {{ Form::text("costoHoraClase", (isset($alumno) ? number_format($alumno->costoHoraClase, 2, '.', ',') : NULL), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
+                {{ Form::text("costoHoraClase", (isset($alumno) ? number_format($alumno->costoHoraClase, 2, '.', ',') : null), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
               </div>
             </div>
             @endif 
@@ -233,7 +233,7 @@
           </div>
           <div class="form-group">
             <div class="col-sm-offset-1 col-sm-10">
-              {{ Form::textarea("comentarioAdicional", NULL, ["class" => "form-control", "rows" => "2", "maxlength" =>"255"]) }}
+              {{ Form::textarea("comentarioAdicional", null, ["class" => "form-control", "rows" => "2", "maxlength" =>"255"]) }}
             </div>                                        
           </div>
         </div>
@@ -255,8 +255,8 @@
         {{ Form::hidden("usuarioNoLogueado", ((Auth::guest()) ? 1 : 0)) }}
         {{ Form::hidden("modoEditarRegistrar", 1) }} 
         {{ Form::hidden("modoEditar", ((isset($modo) && $modo == "registrar") ? 0: 1)) }} 
-        {{ Form::hidden("idInteresado", (isset($interesado) ? $interesado->idEntidad : NULL)) }}  
-        {{ Form::hidden("codigoVerificacion", (isset($codigoVerificacion) ? $codigoVerificacion : NULL)) }}
+        {{ Form::hidden("idInteresado", (isset($interesado) ? $interesado->idEntidad : null)) }}  
+        {{ Form::hidden("codigoVerificacion", (isset($codigoVerificacion) ? $codigoVerificacion : null)) }}
       </div>
     </div>       
   </div>

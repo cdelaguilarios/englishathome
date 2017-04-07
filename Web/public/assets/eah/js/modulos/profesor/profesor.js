@@ -1,5 +1,4 @@
 var mapa;
-var uto = null;
 
 $(document).ready(function () {
   cargarLista();
@@ -138,7 +137,6 @@ function cargarFormulario() {
       } else {
         agregarMensaje("advertencias", "Debe ingresar un horario disponible", true, "#sec-men-alerta-horario");
       }
-
     },
     highlight: function () {
     },
@@ -166,7 +164,7 @@ function cargarFormulario() {
   });
   if ($("input[name='modoEditarRegistrar']").val() === "1") {
     establecerWizard("profesor", ($("input[name='modoEditar']").length > 0 && $("input[name='modoEditar']").val() === "1"));
-    
+
     var fechaNacimiento = $("#fecha-nacimiento").val();
     establecerCalendario("fecha-nacimiento", false, true, false);
     if (fechaNacimiento !== "") {
@@ -213,13 +211,4 @@ function cargarFormulario() {
     });
   }
 }
-function habilitarTodosPasos() {
-  var pasos = $("#wiz-registro-profesor").find('.steps-container').find('li');
-  $.each(pasos, function (i, v) {
-    if (!pasos.eq(i).hasClass('active')) {
-      pasos.eq(i).addClass('complete');
-    }
-  });
-}
-
 

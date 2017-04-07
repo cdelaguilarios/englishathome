@@ -6,31 +6,31 @@
     <div class="form-group">
       {{ Form::label("motivo", "Motivo: ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-3">
-        {{ Form::select("motivo", App\Helpers\Enum\MotivosPago::listar(), NULL, ["id" => "motivo-pago", "class" => "form-control"]) }}
+        {{ Form::select("motivo", App\Helpers\Enum\MotivosPago::listar(), null, ["id" => "motivo-pago", "class" => "form-control"]) }}
       </div>                  
     </div> 
     <div class="form-group">
       {{ Form::label("cuenta", "Cuenta: ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-3">
-        {{ Form::select("cuenta", App\Helpers\Enum\CuentasBancoPago::listar(), NULL, ["class" => "form-control"]) }}
+        {{ Form::select("cuenta", App\Helpers\Enum\CuentasBancoPago::listar(), null, ["class" => "form-control"]) }}
       </div>   
     </div>
     <div class="form-group">
       {{ Form::label("estado", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-3">
-        {{ Form::select("estado", App\Helpers\Enum\EstadosPago::listarCambio(), NULL, ["class" => "form-control"]) }}
+        {{ Form::select("estado", App\Helpers\Enum\EstadosPago::listarCambio(), null, ["class" => "form-control"]) }}
       </div>   
     </div>
     <div class="form-group">
       {{ Form::label("descripcion", "Descripción: ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-10">
-        {{ Form::text("descripcion", NULL, ["class" => "form-control", "maxlength" =>"255"]) }}
+        {{ Form::text("descripcion", null, ["class" => "form-control", "maxlength" =>"255"]) }}
       </div>
     </div>
     <div class="form-group">
       {{ Form::label("imagenComprobante", "Imagen de comprobante: ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-4">
-        {{ Form::file("imagenComprobante", NULL) }}
+        {{ Form::file("imagenComprobante", null) }}
       </div>
     </div> 
     <div class="form-group">
@@ -40,7 +40,7 @@
           <span class="input-group-addon">
             <b>S/.</b>
           </span>
-          {{ Form::text("monto", NULL, ["class" => "monto-pago form-control", "maxlength" =>"19", "data-modo" =>"registrar"]) }}
+          {{ Form::text("monto", null, ["class" => "monto-pago form-control", "maxlength" =>"19", "data-modo" =>"registrar"]) }}
         </div>
       </div>
       @if($totalSaldoFavor > 0)
@@ -48,7 +48,7 @@
         <div class="checkbox">
           <label class="checkbox-custom" data-initialize="checkbox">
             {{ Form::label("usarSaldoFavor", "Utilizar saldo a favor total (S/. " . number_format($totalSaldoFavor, 2, ".", ",") . ")", ["class" => "checkbox-label"]) }}
-            {{ Form::checkbox("usarSaldoFavor", NULL, FALSE, ["class" => "usar-saldo-favor", "data-modo" =>"registrar"]) }}
+            {{ Form::checkbox("usarSaldoFavor", null, FALSE, ["class" => "usar-saldo-favor", "data-modo" =>"registrar"]) }}
           </label>
         </div>
       </div> 
@@ -73,7 +73,7 @@
             <div class="input-group-addon">
               <i class="fa fa-calendar"></i>
             </div>                                
-            {{ Form::text("fechaInicioClases", ((((int) $numeroPeriodos) +1) == 1 ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $fechaInicioClase)->format("d/m/Y") : NULL), ["id" => "fecha-inicio-clases-pago", "class" => "form-control", "placeholder" => "dd/mm/aaaa"]) }}
+            {{ Form::text("fechaInicioClases", ((((int) $numeroPeriodos) +1) == 1 ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $fechaInicioClase)->format("d/m/Y") : null), ["id" => "fecha-inicio-clases-pago", "class" => "form-control", "placeholder" => "dd/mm/aaaa"]) }}
           </div>
         </div>
 
@@ -127,7 +127,7 @@
             <span class="input-group-addon">
               <b>S/.</b>
             </span>
-            {{ Form::text("costoHoraDocente", NULL, ["id" => "costo-hora-docente-pago", "class" => "form-control", "maxlength" =>"19"]) }}
+            {{ Form::text("costoHoraDocente", null, ["id" => "costo-hora-docente-pago", "class" => "form-control", "maxlength" =>"19"]) }}
           </div>
         </div>
       </div>

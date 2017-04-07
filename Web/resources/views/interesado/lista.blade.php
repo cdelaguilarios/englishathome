@@ -63,6 +63,6 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosInteresado::listarCambio(), NULL, ["id" => "sel-estados", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosInteresado::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control"]) }}
 </div>
 @endsection

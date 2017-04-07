@@ -39,7 +39,7 @@
         <div class="form-group">
           {{ Form::label("idCurso", "Curso de interes: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-6">
-            {{ Form::select("idCurso", $cursos, (isset($interesado) ? $interesado->idCurso : NULL), ["class" => "form-control"]) }}
+            {{ Form::select("idCurso", $cursos, (isset($interesado) ? $interesado->idCurso : null), ["class" => "form-control"]) }}
           </div>        
           <div class="col-sm-3">
             <span>{{ (isset($interesado) && $interesado->cursoInteres != "" ? "(" . $interesado->cursoInteres . ")" : "") }}</span>
@@ -70,17 +70,17 @@
               <span class="input-group-addon">
                 <b>S/.</b>
               </span>
-              {{ Form::text("costoHoraClase", (isset($interesado->costoHoraClase) ? number_format($interesado->costoHoraClase, 2, ".", ",") : NULL), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
+              {{ Form::text("costoHoraClase", (isset($interesado->costoHoraClase) ? number_format($interesado->costoHoraClase, 2, ".", ",") : null), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
             </div>
           </div> 
         </div>
         <div class="form-group">
           {{ Form::label("comentarioAdicional", "Comentarios adicionales: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {{ Form::textarea("comentarioAdicional", NULL, ["class" => "form-control", "rows" => "2", "maxlength" =>"255"]) }}
+            {{ Form::textarea("comentarioAdicional", null, ["class" => "form-control", "rows" => "2", "maxlength" =>"255"]) }}
           </div>                                        
         </div>
-        {{ Form::hidden("registrarComoAlumno", NULL) }}
+        {{ Form::hidden("registrarComoAlumno", null) }}
       </div>
       <div class="box-footer">    
         <div class="form-group">
