@@ -18,8 +18,9 @@ class BusquedaRequest extends Request {
     $datos = $this->all();
     $datos["estadoClase"] = ReglasValidacion::formatoDato($datos, "estadoClase");
     $datos["estadoPago"] = ReglasValidacion::formatoDato($datos, "estadoPago");
-    $datos["tipoBusquedaFecha"] = ReglasValidacion::formatoDato($datos, "tipoBusquedaFecha");
     $datos["tipoPago"] = ReglasValidacion::formatoDato($datos, "tipoPago", "0");
+
+    $datos["tipoBusquedaFecha"] = ReglasValidacion::formatoDato($datos, "tipoBusquedaFecha");
     $datos["fechaDia"] = ReglasValidacion::formatoDato($datos, "fechaDia");
     $datos["fechaMesInicio"] = ReglasValidacion::formatoDato($datos, "fechaMesInicio");
     $datos["fechaMesFin"] = ReglasValidacion::formatoDato($datos, "fechaMesFin");
@@ -58,9 +59,9 @@ class BusquedaRequest extends Request {
     } else if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho) {
       $datos["fechaAnhoInicio"] = ((!is_null($datos["fechaAnhoInicio"]) && preg_match(ReglasValidacion::RegexFecha, "01/01/" . $datos["fechaAnhoInicio"])) ? $datos["fechaAnhoInicio"] : NULL);
       $datos["fechaAnhoFin"] = ((!is_null($datos["fechaAnhoFin"]) && preg_match(ReglasValidacion::RegexFecha, "01/01/" . $datos["fechaAnhoFin"])) ? $datos["fechaAnhoFin"] : NULL);
-    } else if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoFecha && (!preg_match(ReglasValidacion::RegexFecha, $datos["fechaInicio"]) || !preg_match(ReglasValidacion::RegexFecha, $datos["fechaFin"]))) {
-      $datos["fechaInicio"] = NULL;
-      $datos["fechaFin"] = NULL;
+    } else if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoFecha) {
+      $datos["fechaInicio"] = ((!is_null($datos["fechaInicio"]) && preg_match(ReglasValidacion::RegexFecha, $datos["fechaInicio"])) ? $datos["fechaInicio"] : NULL);
+      $datos["fechaFin"] = ((!is_null($datos["fechaFin"]) && preg_match(ReglasValidacion::RegexFecha, $datos["fechaFin"])) ? $datos["fechaFin"] : NULL);
     }
 
     switch ($this->method()) {

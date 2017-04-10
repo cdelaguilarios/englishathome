@@ -26,18 +26,22 @@
           </tfoot>
         </table>
       </div>
-      <div style="display: none">
-        {{ Form::select("", App\Helpers\Enum\EstadosPago::listarCambio(), null, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
-      </div>
     </div>   
     <div id="sec-pago-2" style="display: none;">     
       {{ Form::open(["url" => route("profesores.pagos.registrar", ["id" => $idProfesor]), "id" => "formulario-pago", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
       @include("profesor.pago.formulario") 
       {{ Form::close() }}
+    </div>    
+    <div id="sec-pago-3" style="display: none;">
+      {{ Form::open(["url" => route("profesores.pagos.actualizar", ["id" => $idProfesor]), "id" => "formulario-actualizar-pago", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
+      @include("profesor.pago.formularioActualizar") 
+      {{ Form::close() }}
     </div>
   </div>
 </div>
-@include("profesor.pago.datos") 
+<div style="display: none">
+  {{ Form::select("", App\Helpers\Enum\EstadosPago::listarCambio(), null, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
+</div>
 <script>
   var urlListarPagos = "{{ route('profesores.pagos.listar', ['id' => $idProfesor]) }}";
   var urlActualizarEstadoPago = "{{ route('profesores.pagos.actualizar.estado', ['id' => $idProfesor]) }}";

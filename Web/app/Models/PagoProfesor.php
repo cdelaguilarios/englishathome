@@ -30,9 +30,7 @@ class PagoProfesor extends Model {
   }
 
   public static function obtenerXId($idProfesor, $id) {
-    return PagoProfesor::listar($idProfesor)
-                    ->select("pago.*")
-                    ->where("pago.id", $id)->firstOrFail();
+    return PagoProfesor::listar($idProfesor)->where("pago.id", $id)->firstOrFail();
   }
 
   public static function obtenerXClase($idClase) {
@@ -46,7 +44,7 @@ class PagoProfesor extends Model {
 
   public static function registrar($idProfesor, $request) {
     $datos = $request->all();
-    $datosPago = Pago::registrar($datos, EstadosPago::Realizado, $request);
+    $datosPago = Pago::registrar($datos, $datos["estado"], $request);
     $pagoProfesor = new PagoProfesor([
         "idPago" => $datosPago["id"],
         "idProfesor" => $idProfesor
@@ -65,7 +63,7 @@ class PagoProfesor extends Model {
     }
 
     $listaMotivosPago = MotivosPago::listar();
-    $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$listaMotivosPago[$datos["motivo"]], "", number_format((float) ($datos["monto"]), 2, ".", "")], MensajesHistorial::MensajeProfesorRegistroPago);
+    $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$listaMotivosPago[$datos["motivo"]], (isset($datos["descripcion"]) && $datos["descripcion"] != "" ? "<br/><strong>Descripción:</strong> " . $datos["descripcion"] : ""), number_format((float) ($datos["monto"]), 2, ".", "")], MensajesHistorial::MensajeProfesorRegistroPago);
     Historial::registrar([
         "idEntidades" => [$idProfesor, Auth::user()->idEntidad],
         "titulo" => MensajesHistorial::TituloProfesorRegistroPago,
@@ -74,6 +72,12 @@ class PagoProfesor extends Model {
         "idPago" => $datosPago["id"],
         "tipo" => TiposHistorial::Pago
     ]);
+  }
+
+  public static function actualizar($idProfesor, $request) {
+    $datos = $request->all();
+    PagoProfesor::obtenerXId($idProfesor, $datos["idPago"]);
+    Pago::actualizar($datos["idPago"], $datos, $request);
   }
 
   public static function actualizarEstado($idProfesor, $datos) {
@@ -93,6 +97,7 @@ class PagoProfesor extends Model {
   public static function eliminar($idProfesor, $id) {
     PagoProfesor::obtenerXId($idProfesor, $id);
     Pago::eliminar($id);
+    PagoProfesor::where("idProfesor", $idProfesor)->where("idPago", $id)->delete();
   }
 
 }

@@ -38,25 +38,27 @@ function cargarHorario() {
     $("#sec-calendario-horario").on("deselected.artsy.dayScheduleSelector", function (e, selected, dia) {
       horarioSel[dia] = [];
       for (var i = 0; i < selected.length; i++) {
-        horarioSel[dia] = (horarioSel[dia] !== undefined ? horarioSel[dia] : []);
-        horarioSel[dia].push($(selected[i]).data("time"));
+        if (rgb2hex($('.time-slot[data-time="' + $(selected[i]).data("time") + '"][data-day="' + dia + '"]').css("background-color")) !== "#fff") {
+          horarioSel[dia].push($(selected[i]).data("time"));
+        }
       }
     });
     $("#btn-horario").click(function () {
       $("#mod-horario").modal("show");
     });
-    $("#btn-instrucciones-horario").click(function(){
+    $("#btn-instrucciones-horario").click(function () {
       $("#sec-horario").hide();
       $("#sec-instrucciones-horario").show();
     });
-    $("#btn-regresar-horario").click(function(){
+    $("#btn-regresar-horario").click(function () {
       $("#sec-horario").show();
       $("#sec-instrucciones-horario").hide();
     });
     $("#btn-confirmar-horario").click(function () {
       simplificarHorario();
       mostrarTextoHorario();
-      $("input[name='horario']").val(JSON.stringify(horarioFin)).trigger('change');;
+      $("input[name='horario']").val(JSON.stringify(horarioFin)).trigger('change');
+      ;
       $("#mod-horario").modal("hide");
     });
     $("#btn-limpiar-seleccion").click(function () {

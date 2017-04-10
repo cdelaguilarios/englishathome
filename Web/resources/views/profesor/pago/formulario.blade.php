@@ -3,6 +3,12 @@
 </div>  
 <div class="box-body">
   <div class="form-group">
+    {{ Form::label("estado", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
+    <div class="col-sm-3">
+      {{ Form::select("estado", App\Helpers\Enum\EstadosPago::listarCambio(), null, ["class" => "form-control"]) }}
+    </div>   
+  </div>
+  <div class="form-group">
     {{ Form::label("descripcion", "Descripción: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-10">
       {{ Form::text("descripcion", null, ["class" => "form-control", "maxlength" =>"255"]) }}
@@ -33,6 +39,6 @@
   {{ Form::hidden("motivo", App\Helpers\Enum\MotivosPago::Otros) }} 
 </div> 
 <div class="box-footer">    
-  <button id="btn-cancelar-pago" type="button" class="btn btn-default">Cancelar</button>
+  <button type="button" class="btn-cancelar-pago btn btn-default">Cancelar</button>
   <button id="btn-registrar-pago" type="submit" class="btn btn-success pull-right">Registrar pago</button>
 </div> 

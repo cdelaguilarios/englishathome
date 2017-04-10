@@ -50,7 +50,7 @@ function cargarListaClase() {
             return formatoFecha(d.fechaInicio) + ' - De ' + formatoFecha(d.fechaInicio, false, true) + ' a ' + formatoFecha(d.fechaFin, false, true);
           }, className: "text-center", type: "fecha"},
         {data: "estado", name: "estado", render: function (e, t, d, m) {
-            return '<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">Clase - ' + estadosClase[d.estado][0] + '</span>' + (d.estadoPago !== null ? '<br/><span class="label ' + estadosPago[d.estadoPago][1] + ' btn-estado">Pago ' + estadosPago[d.estadoPago][0] + '</span>' : '');
+            return '<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">Clase - ' + estadosClase[d.estado][0] + '</span>' + (d.estadoPago !== null ? '&nbsp;<span class="label ' + estadosPago[d.estadoPago][1] + ' btn-estado">Pago - ' + estadosPago[d.estadoPago][0] + '</span>' : '');
           }, className: "text-center"},
         {data: "duracion", name: "duracion", render: function (e, t, d, m) {
             return formatoHora(d.duracion);
@@ -158,10 +158,13 @@ function cargarFormularioPagoClase() {
   });
 }
 function limpiarCamposPagoClase() {
-  $("#formulario-pago-clase input, #formulario-pago-clase select").each(function (i, e) {
+  $("#formulario-pago-clase").find(":input, select").each(function (i, e) {
     if (e.name !== "_token" && e.type !== "hidden") {
       if ($(e).is("select")) {
         $(e).prop("selectedIndex", 0);
+      } else if ($(e).is(":checkbox")) {
+        $(e).attr("checked", false);
+        $(e).closest("label").removeClass("checked");
       } else {
         e.value = "";
       }
@@ -175,6 +178,7 @@ function mostrarSeccionClase(numSecciones) {
   if (!numSecciones) {
     numSecciones = [1];
   }
+  
   $('[id*="sec-clase-"]').hide();
   var auxSec = "";
   for (var i = 0; i < numSecciones.length; i++) {

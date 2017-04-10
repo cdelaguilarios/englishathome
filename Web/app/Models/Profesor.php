@@ -86,8 +86,6 @@ class Profesor extends Model {
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($id, $datos["idCursos"]);
     Horario::registrarActualizar($id, $datos["horario"]);
-
-    Profesor::obtenerXId($id, TRUE);
   }
 
   public static function actualizarEstado($id, $estado) {

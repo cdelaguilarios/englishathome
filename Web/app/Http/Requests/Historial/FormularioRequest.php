@@ -51,7 +51,7 @@ class FormularioRequest extends Request {
 
   public function messages() {
     return [
-        "opcionEventoNoValido.required" => "Por favor selecione por lo menos una de las siguientes opciones: \"Enviar correo\" o \"Mostrar en perfil\""
+        "opcionEventoNoValido.required" => "Por favor selecione por lo menos una de las siguientes opciones: \"Enviar correo\" o \"Mostrar en perfil\"."
     ];
   }
 

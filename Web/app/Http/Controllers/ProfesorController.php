@@ -148,13 +148,24 @@ class ProfesorController extends Controller {
     return redirect(route("profesores.perfil", ["id" => $id, "sec" => "pago"]));
   }
 
+  public function actualizarPago($id, PagoRequest\FormularioActualizarRequest $req) {
+    try {
+      PagoProfesor::actualizar($id, $req);
+      Mensajes::agregarMensajeExitoso("Actualización exitosa.");
+    } catch (\Exception $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");
+    }
+    return redirect(route("profesores.perfil", ["id" => $id, "sec" => "pago"]));
+  }
+
   public function datosPago($id, $idPago) {
     return response()->json(PagoProfesor::obtenerXId($id, $idPago), 200);
   }
 
   public function eliminarPago($id, $idPago) {
-    try {
       PagoProfesor::eliminar($id, $idPago);
+    try {
     } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "No se pudo eliminar el registro de datos del pago seleccionado."], 400);

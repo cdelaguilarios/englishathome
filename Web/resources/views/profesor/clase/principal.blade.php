@@ -1,6 +1,7 @@
 @include("util.filtroBusqueda", ["idSeccion" => "sec-clase-filtros-busqueda", "incluirEstadosClase" => 1, "incluirEstadosPago" => 1])
 <div class="row">
   <div class="col-sm-12">
+    <div id="sec-mensajes-clase"></div>
     <div id="sec-clase-1">      
       <div class="box-body">
         <table id="tab-lista-clases" class="table table-bordered table-hover">

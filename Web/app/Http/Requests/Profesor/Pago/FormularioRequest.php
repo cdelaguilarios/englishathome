@@ -6,6 +6,7 @@ use App\Models\Clase;
 use App\Models\PagoClase;
 use App\Http\Requests\Request;
 use App\Helpers\Enum\MotivosPago;
+use App\Helpers\Enum\EstadosPago;
 use App\Helpers\ReglasValidacion;
 
 class FormularioRequest extends Request {
@@ -17,7 +18,9 @@ class FormularioRequest extends Request {
   protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["motivo"] = ReglasValidacion::formatoDato($datos, "motivo");
-    $datos["monto"] = ReglasValidacion::formatoDato($datos, "monto");
+    $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
+    $datos["descripcion"] = ReglasValidacion::formatoDato($datos, "descripcion");
+    $datos["imagenComprobante"] = ReglasValidacion::formatoDato($datos, "imagenComprobante");
     $datos["datosClases"] = ReglasValidacion::formatoDato($datos, "datosClases");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
@@ -34,6 +37,11 @@ class FormularioRequest extends Request {
     $listaMotivosPago = MotivosPago::listar();
     if (!array_key_exists($datos["motivo"], $listaMotivosPago)) {
       $reglasValidacion["motivoNoValido"] = "required";
+    }
+
+    $listaEstadosPago = EstadosPago::listar();
+    if (!array_key_exists($datos["estado"], $listaEstadosPago)) {
+      $reglasValidacion["estadoNoValido"] = "required";
     }
 
     if ($datos["motivo"] == MotivosPago::Clases) {
@@ -60,12 +68,14 @@ class FormularioRequest extends Request {
 
     switch ($this->method()) {
       case "GET":
-      case "DELETE":
-      case "PUT":
-      case "PATCH": {
+      case "DELETE": {
           return [];
         }
       case "POST": {
+          return $reglasValidacion;
+        }
+      case "PUT":
+      case "PATCH": {
           return $reglasValidacion;
         }
       default:break;
@@ -75,6 +85,7 @@ class FormularioRequest extends Request {
   public function messages() {
     return [
         "motivoNoValido.required" => "El motivo seleccionado del pago no es válido.",
+        "estadoNoValido.required" => "El estado seleccionado del pago no es válido.",
         "datosClasesNoValidos.required" => "Los datos de las clases seleccionadas nos son válidas."
     ];
   }

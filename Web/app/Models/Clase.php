@@ -30,11 +30,11 @@ class Clase extends Model {
   private static function listarBase() {
     $nombreTabla = Clase::nombreTabla();
     return Clase::leftJoin(Entidad::nombreTabla() . " as entidadAlumno", $nombreTabla . ".idAlumno", "=", "entidadAlumno.id")
-                    ->leftJoin(Entidad::nombreTabla() . " as entidadProfesor", function($q)use($nombreTabla) {
+                    ->leftJoin(Entidad::nombreTabla() . " as entidadProfesor", function ($q) use($nombreTabla) {
                       $q->on($nombreTabla . ".idProfesor", '=', "entidadProfesor.id");
                       $q->on('entidadProfesor.eliminado', '=', DB::raw("0"));
                     })
-                    ->leftJoin(Historial::nombreTabla() . " as historial", function($q)use($nombreTabla) {
+                    ->leftJoin(Historial::nombreTabla() . " as historial", function ($q) use($nombreTabla) {
                       $q->on($nombreTabla . ".id", '=', "historial.idClase");
                       $q->on('historial.eliminado', '=', DB::raw("0"));
                       $q->on('historial.enviarCorreo', '=', DB::raw("1"));

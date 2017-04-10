@@ -4,7 +4,7 @@ function verificarJqueryHistorial() {
 }
 function  cargarSeccionHistorial() {
   cargarListaHistorial();
-  cargarFormularioHistorial();  
+  cargarFormularioHistorial();
   registroHistorial = (typeof (registroHistorial) === "undefined" ? false : registroHistorial);
   if (registroHistorial) {
     $("a[href='#historial']").trigger("click");
@@ -15,12 +15,11 @@ function  cargarSeccionHistorial() {
 var ultimaFechaCargada = "";
 function cargarListaHistorial() {
   urlCargarHistorial = (typeof (urlCargarHistorial) === "undefined" ? "" : urlCargarHistorial);
-  urlImagenesHistorial = (typeof (urlImagenesHistorial) === "undefined" ? "" : urlImagenesHistorial);
+  urlImagenes = (typeof (urlImagenes) === "undefined" ? "" : urlImagenes);
   meses = (typeof (meses) === "undefined" ? "" : meses);
 
   var numeroCarga = $("input[name='numeroCarga']").val();
-
-  if (urlCargarHistorial !== "" && urlImagenesHistorial !== "" && meses !== "" && !isNaN(parseInt(numeroCarga))) {
+  if (urlCargarHistorial !== "" && urlImagenes !== "" && meses !== "" && !isNaN(parseInt(numeroCarga))) {
     $("#sec-historial").find("#sec-cierre-historial").hide("slow");
     $("#sec-historial").find("#sec-cierre-historial").remove();
     $("#sec-boton-carga-mas-historial").hide();
@@ -62,7 +61,7 @@ function cargarListaHistorial() {
                   var imagenes = datHistorial[i].imagenes.split(",");
                   $.each(imagenes, function (e, v) {
                     if (v !== null && v !== "") {
-                      var rutaImagen = urlImagenesHistorial.replace("/0", "/" + v);
+                      var rutaImagen = urlImagenes.replace("/0", "/" + v);
                       htmlHistorial += '<a href="' + rutaImagen + '" target="_blank"><img src="' + rutaImagen + '" class="margin" width="100"></a>';
                     }
                   });
@@ -76,7 +75,7 @@ function cargarListaHistorial() {
           var nuevoDatos = $(htmlHistorial).hide();
 
           $("#sec-historial").find("#sec-cargando-historial").fadeOut('slow', function () {
-            $("input[name='numeroCarga']").val(parseInt(numeroCarga) + 1);
+            $("input[name='numeroCarga']").val(parseInt($("input[name='numeroCarga']").val()) + 1);
             $("#sec-historial").append(nuevoDatos);
             nuevoDatos.show("normal");
             $("#sec-historial").find("#sec-cargando-historial").remove();
@@ -86,10 +85,6 @@ function cargarListaHistorial() {
               $("#sec-boton-carga-mas-historial").remove();
             }
           });
-        },
-        function (data) {
-        },
-        function (dataError) {
         }
     );
   }

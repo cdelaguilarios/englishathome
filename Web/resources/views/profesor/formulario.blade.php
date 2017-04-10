@@ -55,7 +55,7 @@
           <div class="form-group">
             {{ Form::label("numeroDocumento", "Doc. de identidad: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3" style="display:none">
-              {{ Form::select("idTipoDocumento", $tiposDocumentos, null, ["class" => "form-control"]) }}
+              {{ Form::select("idTipoDocumento", App\Models\TipoDocumento::listarSimple(), null, ["class" => "form-control"]) }}
             </div>
             <div class="col-sm-3">
               {{ Form::number("numeroDocumento", null, ["class" => "form-control", "minlength" =>"8", "maxlength" =>"20"]) }}

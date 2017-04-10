@@ -31,6 +31,7 @@ class FormularioRequest extends Request {
     $datos["referenciaDireccion"] = ReglasValidacion::formatoDato($datos, "referenciaDireccion");
     $datos["geoLatitud"] = ReglasValidacion::formatoDato($datos, "geoLatitud");
     $datos["geoLongitud"] = ReglasValidacion::formatoDato($datos, "geoLongitud");
+    
     $datos["idCursos"] = ReglasValidacion::formatoDato($datos, "idCursos");
     $datos["horario"] = ReglasValidacion::formatoDato($datos, "horario");    
     
@@ -105,11 +106,11 @@ class FormularioRequest extends Request {
 
   public function messages() {
     return [
-        "sexoNoValido.required" => "El sexo seleccionado no es válido",
-        "tipoDocumenoNoValido.required" => "El tipo de documento seleccionado no es válido",
+        "sexoNoValido.required" => "El sexo seleccionado no es válido.",
+        "tipoDocumenoNoValido.required" => "El tipo de documento seleccionado no es válido.",
         "ubigeoNoValido.required" => "Los datos de dirección ingresados no son válidos.",
-        "cursosNoValido.required" => "Uno o más de los cursos seleccionados no es válido",
-        "horarioNoValido.required" => "El horario seleccionado no es válido"
+        "cursosNoValido.required" => "Uno o más de los cursos seleccionados no es válido.",
+        "horarioNoValido.required" => "El horario seleccionado no es válido."
     ];
   }
 

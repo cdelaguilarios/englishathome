@@ -32,7 +32,7 @@ function cargarListaPagos() {
       columns: [
         {data: "id", name: "id", className: "text-center"},
         {data: "nombreEntidad", name: "nombreEntidad", render: function (e, t, d, m) {
-            return (d.idEntidad !== null ? '<a target="_blank" href="' + (d.esEntidadProfesor === 1 ? urlPerfilProfesor : urlPerfilAlumno).replace("/0", "/" + d.idEntidad) + '">' + d.nombreEntidad + ' ' + d.apellidoEntidad + '</a>' : "");
+            return (d.idEntidad !== null && d.nombreEntidad !== null && d.nombreEntidad !== '' ? '<a target="_blank" href="' + (d.esEntidadProfesor === 1 ? urlPerfilProfesor : urlPerfilAlumno).replace("/0", "/" + d.idEntidad) + '">' + d.nombreEntidad + ' ' + d.apellidoEntidad + '</a>' : "");
           }},
         {data: "motivo", name: "motivo", render: function (e, t, d, m) {
             return motivosPago[d.motivo];
@@ -58,10 +58,10 @@ function cargarListaPagos() {
 
         var montoTotal = 0, montoTotalPagina = 0;
         $('#tab-lista').DataTable().rows({filter: 'applied'}).data().each(function (i) {
-          montoTotal += parseFloat(i.monto) + (i.saldoFavor !== null ? parseFloat(i.saldoFavor + "") : 0);
+          montoTotal += parseFloat(i.monto);
         });
         $('#tab-lista').DataTable().rows({page: 'current'}).data().each(function (i) {
-          montoTotalPagina += parseFloat(i.monto) + (i.saldoFavor !== null ? parseFloat(i.saldoFavor + "") : 0);
+          montoTotalPagina += parseFloat(i.monto);
         });
         $(api.column(6).footer()).html("Total S/. " + redondear(montoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + redondear(montoTotalPagina, 2) : ""));
       },

@@ -4,9 +4,15 @@
 <div class="box-body">
   <div class="form-group">
     <div class="col-sm-12">
-      <span>Ingrese los datos solicitados para registrar el pago al profesor por las clases realizadas que ha seleccionado.</span></b>
+      <span>Ingrese los datos solicitados para registrar el pago al profesor por las clases que ha seleccionado.</span></b>
     </div>                                        
   </div> 
+  <div class="form-group">
+    {{ Form::label("estado", "Estado: ", ["class" => "col-sm-3 control-label"]) }}
+    <div class="col-sm-3">
+      {{ Form::select("estado", App\Helpers\Enum\EstadosPago::listarCambio(), null, ["class" => "form-control"]) }}
+    </div>   
+  </div>
   <div class="form-group">
     {{ Form::label("monto-clase-pago", "Monto total (*): ", ["class" => "col-sm-3 control-label"]) }}
     <div class="col-sm-3">

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DB;
 use Mail;
 use Config;
 use Carbon\Carbon;
@@ -126,7 +127,8 @@ class Historial extends Model {
     $nombreTabla = Entidad::nombreTabla();
     $entidades = Entidad::select($nombreTabla . ".*")
                     ->leftJoin(EntidadHistorial::nombreTabla() . " as entidadHistorial", $nombreTabla . ".id", "=", "entidadHistorial.idEntidad")
-                    ->where("entidadHistorial.idHistorial", $historial->id)->get();
+                    ->where("entidadHistorial.idHistorial", $historial->id)
+                    ->where($nombreTabla . ".eliminado", 0)->get();
     foreach ($entidades as $entidad) {
       if (!array_key_exists($entidad->tipo, $tiposEntidad)) {
         continue;

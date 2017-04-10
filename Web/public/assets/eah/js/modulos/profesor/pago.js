@@ -5,10 +5,17 @@ function verificarJqueryPago() {
 function cargarSeccionPagos() {
   motivosPago = (typeof (motivosPago) === "undefined" ? "" : motivosPago);
   estadosPago = (typeof (estadosPago) === "undefined" ? "" : estadosPago);
+  urlImagenes = (typeof (urlImagenes) === "undefined" ? "" : urlImagenes);
 
   cargarListaPago();
   cargarFormularioPago();
+  cargarFormularioActualizarPago();
   mostrarSeccionPago();
+
+  //Común formularios
+  $(".btn-cancelar-pago").click(function () {
+    mostrarSeccionPago([1]);
+  });
 
   //Común   
   if (obtenerParametroUrlXNombre("sec") === "pago") {
@@ -48,18 +55,18 @@ function cargarListaPago() {
             return formatoFecha(d.fechaRegistro, true);
           }, className: "text-center", type: "fecha"},
         {data: "estado", name: "pago.estado", render: function (e, t, d, m) {
-            return '<div class="sec-btn-editar-estado-pago"><a href="javascript:void(0);" class="btn-editar-estado-pago" data-idpago="' + d.id + '" data-idalumno="' + d.idAlumno + '" data-estado="' + d.estado + '"><span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span></a></div>';
+            return '<div class="sec-btn-editar-estado-pago"><a href="javascript:void(0);" class="btn-editar-estado-pago" data-idpago="' + d.id + '" data-idprofesor="' + d.idProfesor + '" data-estado="' + d.estado + '"><span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span></a></div>';
           }, className: "text-center"},
         {data: "monto", name: "pago.monto", render: function (e, t, d, m) {
-            return 'S/. ' + redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="saldo-favor-utilizado">utilizado</span>)' : '') + '</b></small>' : '');
+            return 'S/. ' + redondear(d.monto, 2);
           }, className: "text-center", type: "monto"},
         {data: "id", name: "pago.id", orderable: false, searchable: false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
                 '<li>' +
-                '<a href="javascript:void(0);" onclick="verDatosPago(' + d.id + ');" title="Ver datos del pago"><i class="fa fa-eye"></i></a>' +
+                '<a href="javascript:void(0);" onclick="editarPago(' + d.id + ');" title="Editar datos del pago"><i class="fa fa-pencil"></i></a>' +
                 '</li>' +
                 '<li>' +
-                '<a href="javascript:void(0);" title="Eliminar pago" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?\', \'tab-lista-pagos\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' +
+                '<a href="javascript:void(0);" title="Eliminar pago" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?\', \'tab-lista-pagos\', false, function(){recargarDatosTabla(\'tab-lista-clases\')})" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' +
                 '<i class="fa fa-trash"></i>' +
                 '</a>' +
                 '</li>' +
@@ -74,10 +81,10 @@ function cargarListaPago() {
 
         var montoTotal = 0, montoTotalPagina = 0;
         $('#tab-lista-pagos').DataTable().rows({filter: 'applied'}).data().each(function (i) {
-          montoTotal += parseFloat(i.monto) + (i.saldoFavor !== null ? parseFloat(i.saldoFavor + "") : 0);
+          montoTotal += parseFloat(i.monto);
         });
         $('#tab-lista-pagos').DataTable().rows({page: 'current'}).data().each(function (i) {
-          montoTotalPagina += parseFloat(i.monto) + (i.saldoFavor !== null ? parseFloat(i.saldoFavor + "") : 0);
+          montoTotalPagina += parseFloat(i.monto);
         });
         $(api.column(4).footer()).html("Total S/. " + redondear(montoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + redondear(montoTotalPagina, 2) : ""));
       }
@@ -96,7 +103,15 @@ function cargarListaPago() {
       var idpago = $(this).data("idpago");
       var idprofesor = $(this).data("idprofesor");
       if (urlActualizarEstadoPago !== "" && $(this).data("estado") !== $(this).val()) {
-        llamadaAjax(urlActualizarEstadoPago, "POST", {"idPago": idpago, "idProfesor": idprofesor, "estado": $(this).val()}, true);
+        llamadaAjax(urlActualizarEstadoPago, "POST", {"idPago": idpago, "idProfesor": idprofesor, "estado": $(this).val()}, true, undefined, undefined, function (de) {
+          var rj = de.responseJSON;
+          if (rj !== undefined && rj.mensaje !== undefined) {
+            agregarMensaje("errores", rj.mensaje, true);
+          } else if (rj !== undefined && rj[Object.keys(rj)[0]] !== undefined) {
+            agregarMensaje("errores", rj[Object.keys(rj)[0]][0], true);
+          }
+          $("#tab-lista-pagos").DataTable().ajax.reload();
+        });
       }
       $(this).closest(".sec-btn-editar-estado-pago").append('<a href="javascript:void(0);" class="btn-editar-estado-pago" data-idpago="' + idpago + '" data-idprofesor="' + idprofesor + '" data-estado="' + $(this).val() + '"><span class="label ' + estadosPago[$(this).val()][1] + ' btn-estado">' + estadosPago[$(this).val()][0] + '</span></a>');
       $(this).remove();
@@ -146,72 +161,141 @@ function cargarFormularioPago() {
     limpiarCamposPago();
     mostrarSeccionPago([2]);
   });
-  $("#btn-cancelar-pago").click(function () {
-    mostrarSeccionPago([1]);
+}
+
+//Formulario editar
+function cargarFormularioActualizarPago() {
+  $("#formulario-actualizar-pago").validate({
+    ignore: ":hidden",
+    rules: {
+      imagenComprobante: {
+        validarImagen: true
+      },
+      monto: {
+        required: true,
+        validarDecimal: true
+      }
+    },
+    submitHandler: function (f) {
+      if (confirm("¿Está seguro que desea guardar los datos de este pago?")) {
+        $.blockUI({message: "<h4>Guardando datos...</h4>"});
+        f.submit();
+      }
+    },
+    highlight: function () {
+    },
+    unhighlight: function () {
+    },
+    errorElement: "div",
+    errorClass: "help-block-error",
+    errorPlacement: function (error, element) {
+      if (element.closest("div[class*=col-sm-]").length > 0) {
+        element.closest("div[class*=col-sm-]").append(error);
+      } else if (element.parent(".input-group").length) {
+        error.insertAfter(element.parent());
+      } else {
+        error.insertAfter(element);
+      }
+    },
+    onfocusout: false,
+    onkeyup: false,
+    onclick: false
   });
 }
-function limpiarCamposPago() {
-  $("#formulario-pago input, #formulario-pago select").each(function (i, e) {
-    if (e.name !== "_token" && e.type !== "hidden") {
-      if ($(e).is("select")) {
-        $(e).prop("selectedIndex", 0);
-      } else {
-        e.value = "";
+function editarPago(idPago) {
+  obtenerDatosPago(idPago, function (d) {
+    if (urlImagenes !== "") {
+      limpiarCamposPago();
+      $("#motivo-actualizar-pago").val(d.motivo);
+      $("#estado-actualizar-pago").val(d.estado);
+      $("#descripcion-actualizar-pago").val(d.descripcion);
+      if (d.imagenesComprobante !== null && d.imagenesComprobante !== "") {
+        var imagenes = d.imagenesComprobante.split(",");
+        if (imagenes.length > 0 && imagenes[0] !== "") {
+          var rutaImagen = urlImagenes.replace("/0", "/" + imagenes[0]);
+          $("#imagen-comprobante-actualizar-pago").attr("href", rutaImagen);
+          $("#imagen-comprobante-actualizar-pago").find("img").attr("src", rutaImagen);
+        }
       }
+      $("#monto-actualizar-pago").val(redondear(d.monto, 2));
+      $("input[name='idPago']").val(d.id);
+      mostrarSeccionPago([3]);
     }
   });
 }
 
 //Datos
 function verDatosPago(idPago) {
-  urlDatosPago = (typeof (urlDatosPago) === "undefined" ? "" : urlDatosPago);
-  urlImagenes = (typeof (urlImagenes) === "undefined" ? "" : urlImagenes);
-  if (urlDatosPago !== "" && motivosPago !== "" && urlImagenes !== "" && estadosPago !== "") {
-    $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
-    llamadaAjax(urlDatosPago.replace("/0", "/" + idPago), "POST", {}, true,
-        function (d) {
-          $("#sec-descripcion-pago").hide();
-          if (d.descripcion !== null && d.descripcion.trim() !== "") {
-            $("#sec-descripcion-pago").show();
-          }
-          $("#dat-motivo-pago").text(motivosPago[d.motivo]);
-          $("#dat-descripcion-pago").text(d.descripcion);
-          $("#dat-monto-pago").html('S/. ' + redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="saldo-favor-utilizado">utilizado</span>)' : '') + '</b></small>' : ''));
-          $("#dat-estado-pago").html('<span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span>');
-          $("#dat-fecha-registro-pago").text(formatoFecha(d.fechaRegistro, true));
-          if (d.imagenesComprobante !== null && d.imagenesComprobante !== "") {
-            var imagenes = d.imagenesComprobante.split(",");
-            if (imagenes[0] !== null && imagenes[0] !== "") {
-              var rutaImagen = urlImagenes.replace("/0", "/" + imagenes[0]);
-              $("#dat-imagen-comprobante-pago").attr("href", rutaImagen);
-              $("#dat-imagen-comprobante-pago").find("img").attr("src", rutaImagen);
-            }
-          }
-          $("#mod-datos-pago").modal("show");
-          $("body").unblock();
-        },
-        function (d) {
-        },
-        function (de) {
-          $("body").unblock({
-            onUnblock: function () {
-              agregarMensaje("errores", "Ocurrió un problema durante la carga de datos del pago seleccionado. Por favor inténtelo nuevamente.", true, "#sec-mensajes-mod-datos-pago");
-            }
-          });
+  if (motivosPago !== "" && urlImagenes !== "" && estadosPago !== "") {
+    obtenerDatosPago(idPago, function (d) {
+      $("#sec-descripcion-pago").hide();
+      if (d.descripcion !== null && d.descripcion.trim() !== "") {
+        $("#sec-descripcion-pago").show();
+      }
+      $("#dat-motivo-pago").text(motivosPago[d.motivo]);
+      $("#dat-descripcion-pago").text(d.descripcion);
+      $("#dat-monto-pago").html('S/. ' + redondear(d.monto, 2));
+      $("#dat-estado-pago").html('<span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span>');
+      $("#dat-fecha-registro-pago").text(formatoFecha(d.fechaRegistro, true));
+      if (d.imagenesComprobante !== null && d.imagenesComprobante !== "") {
+        var imagenes = d.imagenesComprobante.split(",");
+        if (imagenes[0] !== null && imagenes[0] !== "") {
+          var rutaImagen = urlImagenes.replace("/0", "/" + imagenes[0]);
+          $("#dat-imagen-comprobante-pago").attr("href", rutaImagen);
+          $("#dat-imagen-comprobante-pago").find("img").attr("src", rutaImagen);
         }
-    );
+      }
+      $("#mod-datos-pago").modal("show");
+      $("body").unblock();
+    });
   }
 }
 
 //Util
+function limpiarCamposPago() {
+  $("#formulario-pago, #formulario-actualizar-pago").find(":input, select").each(function (i, e) {
+    if (e.name !== "_token" && e.type !== "hidden") {
+      if ($(e).is("select")) {
+        $(e).prop("selectedIndex", 0);
+      } else if ($(e).is(":checkbox")) {
+        $(e).attr("checked", false);
+        $(e).closest("label").removeClass("checked");
+      } else {
+        e.value = "";
+      }
+    }
+  });
+}
 function mostrarSeccionPago(numSecciones) {
   if (!numSecciones) {
     numSecciones = [1];
   }
+
   $("[id*='sec-pago']").hide();
   var auxSec = "";
   for (var i = 0; i < numSecciones.length; i++) {
     $("#sec-pago-" + auxSec + "" + numSecciones[i]).show();
     auxSec += "" + numSecciones[i];
+  }
+}
+function obtenerDatosPago(idPago, funcionRetorno) {
+  urlDatosPago = (typeof (urlDatosPago) === "undefined" ? "" : urlDatosPago);
+  if (urlDatosPago !== "") {
+    $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
+    llamadaAjax(urlDatosPago.replace("/0", "/" + idPago), "POST", {}, true,
+        function (d) {
+          if (funcionRetorno !== undefined)
+            funcionRetorno(d);
+          $("body").unblock();
+        },
+        function (d) {},
+        function (de) {
+          $('body').unblock({
+            onUnblock: function () {
+              agregarMensaje("errores", "Ocurrió un problema durante la carga de datos del pago seleccionado. Por favor inténtelo nuevamente.", true, "#sec-mensajes-pago");
+            }
+          });
+        }
+    );
   }
 }

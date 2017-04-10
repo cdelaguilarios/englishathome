@@ -22,16 +22,16 @@ class ReporteController extends Controller {
   }
 
   public function listarClases(BusquedaRequest $req) {
-    return Datatables::of(Clase::listar($req->all()))->filterColumn("nombreAlumno", function($q, $k) {
-              $q->whereRaw('CONCAT(entidadAlumno.nombre, " ", entidadAlumno.apellido) like ?', ["%{$k}%"]);
-            })->filterColumn("nombreProfesor", function($q, $k) {
+    return Datatables::of(Clase::listar($req->all()))->filterColumn("nombreProfesor", function($q, $k) {
               $q->whereRaw('CONCAT(entidadProfesor.nombre, " ", entidadProfesor.apellido) like ?', ["%{$k}%"]);
+            })->filterColumn("nombreAlumno", function($q, $k) {
+              $q->whereRaw('CONCAT(entidadAlumno.nombre, " ", entidadAlumno.apellido) like ?', ["%{$k}%"]);
             })->filterColumn("fechaInicio", function($q, $k) {
               $q->whereRaw("DATE_FORMAT(" . Clase::nombreTabla() . ".fechaInicio, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
-            })->filterColumn("duracion", function($q, $k) {
-              $q->whereRaw("SEC_TO_TIME(" . Clase::nombreTabla() . ".duracion) like ?", ["%{$k}%"]);
             })->filterColumn("estado", function($q, $k) {
               $q->whereRaw('CONCAT("Clase - ", ' . Clase::nombreTabla() . '.estado) like ?', ["%{$k}%"]);
+            })->filterColumn("duracion", function($q, $k) {
+              $q->whereRaw("SEC_TO_TIME(" . Clase::nombreTabla() . ".duracion) like ?", ["%{$k}%"]);
             })->make(true);
   }
 

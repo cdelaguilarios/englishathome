@@ -33,7 +33,7 @@
         <div class="form-group">      
           {{ Form::label("bus-tipo-fecha", "Fecha: ", ["class" => "col-sm-2 control-label"]) }} 
           <div class="col-sm-3">
-            {{ Form::select('tipoFecha', App\Helpers\Enum\TiposBusquedaFecha::listar(), App\Helpers\Enum\TiposBusquedaFecha::Mes, ["id" => "bus-tipo-fecha", "class" => "form-control"]) }}
+            {{ Form::select('tipoBusquedaFecha', App\Helpers\Enum\TiposBusquedaFecha::listar(), App\Helpers\Enum\TiposBusquedaFecha::Mes, ["id" => "bus-tipo-fecha", "class" => "form-control"]) }}
           </div>
           <div id="sec-bus-fecha-{{ App\Helpers\Enum\TiposBusquedaFecha::Dia }}">
             <div class="col-sm-3">            

@@ -51,7 +51,7 @@
         <hr> 
         @endif
         <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
-        <p class="text-muted">{{ $alumno->direccion }}<br/>{{ $alumno->direccionUbicacion }}</p>
+        <p class="text-muted">{{ $alumno->direccion }}{!! ((isset($alumno->numeroDepartamento) && $alumno->numeroDepartamento != "") ? "<br/>Depto./Int " . $alumno->numeroDepartamento : "") !!}{!! ((isset($alumno->referenciaDireccion) && $alumno->referenciaDireccion != "") ? " - " . $alumno->referenciaDireccion : "") !!}<br/>{{ $alumno->direccionUbicacion }}</p>
         <p class="text-muted">
           @include("util.ubicacionMapa", ["geoLatitud" => $alumno->geoLatitud, "geoLongitud" => $alumno->geoLongitud, "modo" => "visualizar"])
         </p>

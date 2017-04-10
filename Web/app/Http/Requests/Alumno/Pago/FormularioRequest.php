@@ -21,8 +21,7 @@ class FormularioRequest extends Request {
     $datos["cuenta"] = ReglasValidacion::formatoDato($datos, "cuenta");
     $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $datos["descripcion"] = ReglasValidacion::formatoDato($datos, "descripcion");
-    $datos["imagenComprobante"] = ReglasValidacion::formatoDato($datos, "imagenComprobante");
-    
+    $datos["imagenComprobante"] = ReglasValidacion::formatoDato($datos, "imagenComprobante");    
     $datos["usarSaldoFavor"] = (isset($datos["usarSaldoFavor"]) ? 1 : 0);
     $datos["costoHoraClase"] = ReglasValidacion::formatoDato($datos, "costoHoraClase");
     $datos["fechaInicioClases"] = ReglasValidacion::formatoDato($datos, "fechaInicioClases");

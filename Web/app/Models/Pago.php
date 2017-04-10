@@ -78,24 +78,44 @@ class Pago extends Model {
   private static function registrarActualizarImagenes($id, $request) {
     $pago = Pago::obtenerXId($id);
     if (isset($request)) {
-      $rutaImagenesComprobantes = NULL;
+      $imagenesAnt = ((!is_null($pago->imagenesComprobante) && $pago->imagenesComprobante != "") ? $pago->imagenesComprobante : NULL);
+      $rutaImagenComprobante = $rutaImagenComprobanteAnt = $rutaImagenDocumentoVerificacion = $rutaImagenDocumentoVerificacionAnt = "";
+
       $imagenComprobantePago = $request->file("imagenComprobante");
       if (isset($imagenComprobantePago) && $imagenComprobantePago != "") {
-        $rutaImagenesComprobantes = Archivo::registrar($pago["id"] . "_icp_", $imagenComprobantePago);
+        $rutaImagenComprobante = Archivo::registrar($pago["id"] . "_icp_", $imagenComprobantePago);
       }
       $imagenDocumentoVerificacion = $request->file("imagenDocumentoVerificacion");
       if (isset($imagenDocumentoVerificacion) && $imagenDocumentoVerificacion != "") {
-        $rutaImagenesComprobantes .= "," . Archivo::registrar($pago["id"] . "_idv_", $imagenDocumentoVerificacion);
+        $rutaImagenDocumentoVerificacion = Archivo::registrar($pago["id"] . "_idv_", $imagenDocumentoVerificacion);
       }
-      if (!is_null($pago->imagenesComprobante) && $pago->imagenesComprobante != "") {
-        $imagenesComprobante = explode(",", $pago->imagenesComprobante);
-        foreach ($imagenesComprobante as $imagenComprobante) {
-          if ($imagenComprobante != "") {
-            Archivo::eliminar($imagenComprobante);
-          }
+
+      if (!is_null($imagenesAnt)) {
+        $imagenesComprobante = explode(",", $imagenesAnt);
+        if (count($imagenesComprobante) == 2) {
+          $rutaImagenComprobanteAnt = $imagenesComprobante[0];
+          $rutaImagenDocumentoVerificacionAnt = $imagenesComprobante[1];
+        } else {
+          $rutaImagenComprobanteAnt = $imagenesAnt;
         }
       }
-      $pago->imagenesComprobante = $rutaImagenesComprobantes;
+
+      if ($rutaImagenComprobante != "") {
+        if ($rutaImagenComprobanteAnt != "") {
+          Archivo::eliminar($rutaImagenComprobanteAnt);
+        }
+      } else {
+        $rutaImagenComprobante = $rutaImagenComprobanteAnt;
+      }
+
+      if ($rutaImagenDocumentoVerificacion != "") {
+        if ($rutaImagenDocumentoVerificacionAnt != "") {
+          Archivo::eliminar($rutaImagenDocumentoVerificacionAnt);
+        }
+      } else {
+        $rutaImagenDocumentoVerificacion = $rutaImagenDocumentoVerificacionAnt;
+      }
+      $pago->imagenesComprobante = $rutaImagenComprobante . ($rutaImagenDocumentoVerificacion != "" ? "," . $rutaImagenDocumentoVerificacion : "");
       $pago->save();
     }
   }
@@ -111,6 +131,7 @@ class Pago extends Model {
     $pago->eliminado = 1;
     $pago->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $pago->save();
+    PagoClase::eliminarXIdPago($id);
   }
 
 }

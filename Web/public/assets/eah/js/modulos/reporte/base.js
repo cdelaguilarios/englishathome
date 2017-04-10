@@ -32,9 +32,9 @@ function cargarDatosGrafico(idsSel, nuevaCarga) {
           var datosCabecera = [(d[0].mes !== undefined ? "Mes" : (d[0].anho !== undefined ? "Año" : "Día"))];
           var total = 0;
           var colores = [];
-          $.each(estados, function (ind, ele) {
-            datosCabecera.push(ele[0]);
-            colores.push(ele[2]);
+          $.each(estados, function (i, e) {
+            datosCabecera.push(e[0]);
+            colores.push(e[2]);
           });
           datosBar.push(datosCabecera);
 

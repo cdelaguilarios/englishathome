@@ -49,5 +49,9 @@ class PagoClase extends Model {
   public static function obtenerXIdPago($idPago) {
     return PagoClase::where("idPago", $idPago)->get();
   }
+  
+  public static function eliminarXIdPago($idPago){
+    PagoClase::where("idPago", $idPago)->delete();
+  }
 
 }

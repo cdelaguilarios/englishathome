@@ -7,7 +7,7 @@ function cargarFiltrosBusqueda(funcionBusquedaCambio) {
     establecerCalendario("bus-fecha-anho-fin", false, false, false, funcionBusquedaCambio, false, true);
     establecerCalendario("bus-fecha-inicio", false, false, false, funcionBusquedaCambio);
     establecerCalendario("bus-fecha-fin", false, false, false, funcionBusquedaCambio);
-    $("#bus-estado-clase, #bus-estado-pago, #bus-tipo-fecha, #bus-tipo-pago").change(funcionBusquedaCambio);
+    $("#bus-estado-clase, #bus-estado-pago, #bus-tipo-pago, #bus-tipo-fecha").change(funcionBusquedaCambio);
     $("#bus-tipo-fecha").change(function () {
       $('[id*="sec-bus-fecha-"]').hide();
       $("#sec-bus-fecha-" + $(this).val()).show();
@@ -20,8 +20,9 @@ function obtenerDatosFiltrosBusqueda() {
   var datos = {};
   datos.estadoClase = ($("#bus-estado-clase").length > 0 ? $("#bus-estado-clase").val() : "");
   datos.estadoPago = ($("#bus-estado-pago").length > 0 ? $("#bus-estado-pago").val() : "");
-  datos.tipoBusquedaFecha = ($("#bus-tipo-fecha").length > 0 ? $("#bus-tipo-fecha").val() : "");
   datos.tipoPago = ($("#bus-tipo-pago").length > 0 ? $("#bus-tipo-pago").val() : "");
+  
+  datos.tipoBusquedaFecha = ($("#bus-tipo-fecha").length > 0 ? $("#bus-tipo-fecha").val() : "");
   datos.fechaDia = $("#bus-fecha-dia").val();
   datos.fechaMesInicio = $("#bus-fecha-mes-inicio").val();
   datos.fechaMesFin = $("#bus-fecha-mes-fin").val();

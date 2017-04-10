@@ -103,6 +103,7 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("profesor/{id}/pagos", ["uses" => "ProfesorController@listarPagos", "as" => "profesores.pagos.listar"]);
     Route::post("profesor/{id}/pago/actualizarEstado", ["uses" => "ProfesorController@actualizarEstadoPago", "as" => "profesores.pagos.actualizar.estado"]);
     Route::post("profesor/{id}/pago/registrar", ["uses" => "ProfesorController@registrarPago", "as" => "profesores.pagos.registrar"]);
+    Route::post("profesor/{id}/pago/actualizar", ["uses" => "ProfesorController@actualizarPago", "as" => "profesores.pagos.actualizar"]);
     Route::post("profesor/{id}/pago/{idPago}/datos", ["uses" => "ProfesorController@datosPago", "as" => "profesores.pagos.datos"]);
     Route::delete("profesor/{id}/pago/{idPago}/eliminar", ["uses" => "ProfesorController@eliminarPago", "as" => "profesores.pagos.eliminar"]);
     // </editor-fold>

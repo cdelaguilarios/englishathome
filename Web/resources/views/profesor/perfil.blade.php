@@ -20,7 +20,7 @@
   <div class="col-sm-3">
     <div class="box box-primary">
       <div class="box-body box-profile">
-        <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($profesor->imagenPerfil) && $profesor->imagenPerfil != "" ? $profesor->imagenPerfil : "-"), "tip" => ($profesor->sexo == "F" ? "f" : "m")]) }}" alt="User profile picture">
+        <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($profesor->imagenPerfil) && $profesor->imagenPerfil != "" ? $profesor->imagenPerfil : "-"), "tip" => ($profesor->sexo == "F" ? "f" : "m")]) }}" alt="Profesor{{ $profesor->sexo == "F" ? "a" : "" }} {{ $profesor->nombre . " " .  $profesor->apellido }}">
         <h3 class="profile-username">Profesor{{ $profesor->sexo == "F" ? "a" : "" }} {{ $profesor->nombre . " " .  $profesor->apellido }}</h3>
         <p class="text-muted">{{ $profesor->correoElectronico }}</p>
         <span class="label {{ App\Helpers\Enum\EstadosProfesor::listar()[$profesor->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosProfesor::listar()[$profesor->estado][0] }}</span>
@@ -28,7 +28,7 @@
     </div>
     <div class="sec-datos box box-primary">
       <div class="box-header with-border">
-        <h3 class="box-title">Datos principales del profesor{{ $profesor->sexo == "F" ? "a" : "" }}</h3>
+        <h3 class="box-title">Datos principales {{ $profesor->sexo == "F" ? "de la profesora" : "del profesor" }}</h3>
       </div>
       <div class="box-body">
         <strong><i class="fa fa-fw fa-calendar"></i> Horario</strong>
@@ -44,13 +44,13 @@
         <hr>
         @endif
         <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
-        <p class="text-muted">{{ $profesor->direccion }}<br/>{{ $profesor->direccionUbicacion }}</p>
+        <p class="text-muted">{{ $profesor->direccion }}{!! ((isset($profesor->numeroDepartamento) && $profesor->numeroDepartamento != "") ? "<br/>Depto./Int " . $profesor->numeroDepartamento : "") !!}{!! ((isset($profesor->referenciaDireccion) && $profesor->referenciaDireccion != "") ? " - " . $profesor->referenciaDireccion : "") !!}<br/>{{ $profesor->direccionUbicacion }}</p>
         <p class="text-muted">
           @include("util.ubicacionMapa", ["geoLatitud" => $profesor->geoLatitud, "geoLongitud" => $profesor->geoLongitud, "modo" => "visualizar"])
         </p>
         <hr>        
         @if(isset($profesor->numeroDocumento))
-        <strong><i class="fa fa-user margin-r-5"></i> {{ (isset($profesor->idTipoDocumento) ? $tiposDocumentos[$profesor->idTipoDocumento] : "") }}</strong>
+        <strong><i class="fa fa-user margin-r-5"></i> {{ (isset($profesor->idTipoDocumento) ? App\Models\TipoDocumento::listarSimple()[$profesor->idTipoDocumento] : "") }}</strong>
         <p class="text-muted">
           {{ $profesor->numeroDocumento }}
         </p>
@@ -103,6 +103,7 @@
         <div id="clase" class="tab-pane">
           @include("profesor.clase.principal", ["idProfesor" => $profesor->id])
         </div>
+        @include("profesor.pago.datos") 
       </div>
     </div>
   </div>
