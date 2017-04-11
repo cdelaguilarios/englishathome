@@ -11,30 +11,32 @@ class CronController extends Controller {
 
   public function test() {
     $nombreCompletoDestinatario = "usuario administrador";
-    $mensaje = '<p>Correo de prueba</p>';
+    $mensaje = "<p>Correo de prueba</p>";
     Mail::send("notificacion.plantillaCorreo", ["nombreCompletoDestinatario" => $nombreCompletoDestinatario, "mensaje" => $mensaje], function ($m) {
       $m->to("cdelaguilarios@gmail.com", "Administrador - English at home")->subject("English at home - Notificación Test");
     });
   }
 
   public function enviarCorreos() {
+    $cabecerasRespuesta = ["Content-Type" => "application/json; charset=UTF-8", "charset" => "utf-8"];
     try {
       Historial::enviarCorreosAdministracion();
     } catch (\Exception $e) {
       Log::error($e);
-      return response()->json(["mensaje" => "Ocurrió un problema durante el envío de correos."], 400);
+      return response()->json(["mensaje" => "Ocurrió un problema durante el envío de correos."], 400, $cabecerasRespuesta, JSON_UNESCAPED_UNICODE);
     }
-    return response()->json(["mensaje" => "Envío de correos exitosos."], 200);
+    return response()->json(["mensaje" => "Envío de correos exitosos."], 200, $cabecerasRespuesta, JSON_UNESCAPED_UNICODE);
   }
 
   public function sincronizarEstados() {
+    $cabecerasRespuesta = ["Content-Type" => "application/json; charset=UTF-8", "charset" => "utf-8"];
     try {
       Alumno::sincronizarEstados();
     } catch (\Exception $e) {
       Log::error($e);
-      return response()->json(["mensaje" => "Ocurrió un problema durante la sincronización de estados."], 400);
+      return response()->json(["mensaje" => "Ocurrió un problema durante la sincronización de estados."], 400, $cabecerasRespuesta, JSON_UNESCAPED_UNICODE);
     }
-    return response()->json(["mensaje" => "Sincronización exitosa."], 200);
+    return response()->json(["mensaje" => "Sincronización exitosa."], 200, $cabecerasRespuesta, JSON_UNESCAPED_UNICODE);
   }
 
 }

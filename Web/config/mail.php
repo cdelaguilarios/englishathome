@@ -94,7 +94,7 @@ return [
     |
     */
 
-    'password' => env('MAIL_PASSWORD', 'camviodeclabe1'),
+    'password' => env('MAIL_PASSWORD', 'takeofftime21'),
 
     /*
     |--------------------------------------------------------------------------

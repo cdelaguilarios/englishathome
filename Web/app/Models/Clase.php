@@ -503,9 +503,7 @@ class Clase extends Model {
   }
 
   public static function sincronizarEstados() {
-    $clasesProgramadas = Clase::listarXEstados(EstadosClase::Programada)
-            ->where("fechaFin", "<=", Carbon::now())
-            ->get();
+    $clasesProgramadas = Clase::listarXEstados(EstadosClase::Programada)->where("fechaFin", "<=", Carbon::now())->get();
     foreach ($clasesProgramadas as $claseProgramada) {
       $claseProgramada->estado = EstadosClase::PendienteConfirmar;
       $claseProgramada->save();

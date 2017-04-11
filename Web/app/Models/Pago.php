@@ -73,6 +73,7 @@ class Pago extends Model {
     $pago = Pago::obtenerXId($id);
     $pago->update($datos);
     Pago::registrarActualizarImagenes($id, $request);
+    return Pago::obtenerXId($id);
   }
 
   private static function registrarActualizarImagenes($id, $request) {
@@ -116,7 +117,7 @@ class Pago extends Model {
         $rutaImagenDocumentoVerificacion = $rutaImagenDocumentoVerificacionAnt;
       }
       $pago->imagenesComprobante = $rutaImagenComprobante . ($rutaImagenDocumentoVerificacion != "" ? "," . $rutaImagenDocumentoVerificacion : "");
-      $pago->save();
+      $pago->save();      
     }
   }
 
