@@ -1,7 +1,9 @@
 @if(isset($modo) && $modo == "visualizar")
 <div id="sec-perfil-horario">  
   <div id="sec-info-horario"></div>
+  @if(!(isset($bloquearEdicion) && $bloquearEdicion))
   <button id="btn-horario" type="button" class="btn btn-primary btn-xs">Editar horario</button>
+  @endif
 </div>
 {{ Form::hidden("horario", $horario) }} 
 @else

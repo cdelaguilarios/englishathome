@@ -14,7 +14,6 @@ Route::post("ubigeo/listarDepartamentos", ["uses" => "UbigeoController@listarDep
 Route::post("ubigeo/listarProvincias/{codigoDepartamento}", ["uses" => "UbigeoController@listarProvincias", "as" => "ubigeo.listarProvincias"]);
 Route::post("ubigeo/listarDistritos/{codigoProvincia}", ["uses" => "UbigeoController@listarDistritos", "as" => "ubigeo.listarDistritos"]);
 
-Route::get("cron/test", ["uses" => "CronController@test", "as" => "cron.test"]);
 Route::get("cron/enviarCorreos", ["uses" => "CronController@enviarCorreos", "as" => "cron.enviar.correos"]);
 Route::get("cron/sincronizarEstados", ["uses" => "CronController@sincronizarEstados", "as" => "cron.sincronizar.estados"]);
 
@@ -52,6 +51,7 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("alumno/{id}/actualizarEstado", ["uses" => "AlumnoController@actualizarEstado", "as" => "alumnos.actualizar.estado"]);
     Route::post("alumno/{id}/actualizarHorario", ["uses" => "AlumnoController@actualizarHorario", "as" => "alumnos.actualizar.horario"]);
     Route::get("alumno/{id}/perfil", ["uses" => "AlumnoController@perfil", "as" => "alumnos.perfil"]);
+    Route::get("alumno/{id}/ficha", ["uses" => "AlumnoController@ficha", "as" => "alumnos.ficha"]);
     Route::delete("alumno/{id}/eliminar", ["uses" => "AlumnoController@eliminar", "as" => "alumnos.eliminar"]);
     // </editor-fold>
     // <editor-fold desc="Alumnos - pagos">
@@ -85,6 +85,7 @@ Route::group(["middleware" => "auth"], function() {
     Route::get("postulante/{id}/editar", ["uses" => "PostulanteController@editar", "as" => "postulantes.editar"]);
     Route::patch("postulante/{id}/actualizar", ["uses" => "PostulanteController@actualizar", "as" => "postulantes.actualizar"]);
     Route::post("postulante/{id}/actualizarEstado", ["uses" => "PostulanteController@actualizarEstado", "as" => "postulantes.actualizar.estado"]);
+    Route::get("postulante/{id}/perfilProfesor", ["uses" => "PostulanteController@perfilProfesor", "as" => "postulantes.perfil.profesor"]);
     Route::delete("postulante/{id}/eliminar", ["uses" => "PostulanteController@eliminar", "as" => "postulantes.eliminar"]);
     // </editor-fold>
     // <editor-fold desc="Profesores">
@@ -128,7 +129,8 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("historial/{idEntidad}/registrar", ["uses" => "HistorialController@registrar", "as" => "historial.registrar"]);
     // </editor-fold>
     // <editor-fold desc="Calendario">
-    Route::post("{idEntidad}/calendario", ["uses" => "CalendarioController@listar", "as" => "calendario"]);
+    Route::get("calendario", ["uses" => "CalendarioController@index", "as" => "calendario"]);
+    Route::post("calendario/datos", ["uses" => "CalendarioController@datos", "as" => "calendario.datos"]);
     // </editor-fold>
     // <editor-fold desc="Cursos">
     Route::get("cursos", ["uses" => "CursoController@index", "as" => "cursos"]);
@@ -148,5 +150,14 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("reporte/listar/pagos", ["uses" => "ReporteController@listarPagos", "as" => "reporte.listar.pagos"]);
     Route::post("reporte/listar/pagos/grafico", ["uses" => "ReporteController@listarPagosGrafico", "as" => "reporte.listar.pagos.grafico"]);
     // </editor-fold> 
+    // <editor-fold desc="Correos">
+    Route::get("correos", ["uses" => "HistorialController@correos", "as" => "correos"]);
+    Route::post("correos/registrar", ["uses" => "HistorialController@registrarCorreos", "as" => "correos.registrar"]);
+    Route::post("correos/entidades", ["uses" => "HistorialController@listarEntidades", "as" => "correos.entidades"]);
+    // </editor-fold>
+    // <editor-fold desc="Configuración">
+    Route::get("configuracion", ["uses" => "ConfiguracionController@index", "as" => "configuracion"]);
+    Route::post("configuracion/actualizar", ["uses" => "ConfiguracionController@actualizar", "as" => "configuracion.actualizar"]);
+    // </editor-fold>
   });
 });

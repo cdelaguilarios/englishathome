@@ -82,7 +82,7 @@
             <a href="{{ route("profesores.crear")}}" class="btn btn-primary btn-clean">Nuevo profesor</a> 
           </div>           
           <div class="col-sm-4">
-            {{ Form::select("",App\Models\Profesor::listarBusqueda(), $profesor->id, ["id"=>"sel-profesor", "class" => "form-control", "data-seccion" => "perfil", "style" => "width: 100%;"]) }}
+            {{ Form::select("",App\Models\Profesor::listarBusqueda(), $profesor->id, ["id"=>"sel-profesor", "class" => "form-control", "data-seccion" => "perfil", "style" => "width: 100%"]) }}
           </div>
         </div> 
       </div>
@@ -92,6 +92,7 @@
         <li class="active"><a href="#historial" data-toggle="tab">Historial</a></li>
         <li><a href="#pago" data-toggle="tab">Pagos</a></li>
         <li><a href="#clase" data-toggle="tab">Clases</a></li>
+        <li><a href="#calendario" data-toggle="tab">Calendario</a></li>
       </ul>
       <div class="tab-content">
         <div id="historial" class="active tab-pane">
@@ -102,6 +103,9 @@
         </div>
         <div id="clase" class="tab-pane">
           @include("profesor.clase.principal", ["idProfesor" => $profesor->id])
+        </div>
+        <div id="calendario" class="tab-pane">
+          @include("util.calendario", ["idEntidad" => $profesor->id, "esEntidadProfesor" => 1]) 
         </div>
         @include("profesor.pago.datos") 
       </div>

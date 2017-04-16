@@ -30,15 +30,15 @@
         </tr>
         <tr>
           <td align="center" style="text-align: center; border-top: 1px dashed #999; font-size: 12px; padding: 10px;">
-            <p>					
-              Llámenos:   Telf. 3334306<br/>
-              Cel o Whatsapp:   970883890
+            <p>
+              {!! nl2br(App\Models\VariableSistema::obtenerXLlave("telefonosCelularesCorreos")) !!}
             </p>
             <p>
               También puede visitarnos en nuestra oficina:<br/>
-              Jr Loma de las Gardenias 235, 1° piso, Surco,<br/>
-              Ref. Entre la cdra 33 y 34 de la Av Caminos del Inca.<br/>
-              <img src="{{ asset("assets/eah/img/boton-ver-mapa.png")}}" width="100"/>				
+              {!! nl2br(App\Models\VariableSistema::obtenerXLlave("direccionCorreos")) !!}<br/>
+              <a href="https://www.google.com.pe/maps/place/Loma+De+Las+Cinerarias+235,+Distrito+de+Lima+15039/@-12.1428894,-76.9898311,16z/data=!4m5!3m4!1s0x9105b86bbbc9a4cd:0xc55066c28ade71f2!8m2!3d-12.1467049!4d-76.9835822?hl=es">
+                <img src="{{ asset("assets/eah/img/boton-ver-mapa.png")}}" width="100"/>
+              </a>			
             </p>
           </td>
         </tr>

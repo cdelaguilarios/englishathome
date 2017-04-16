@@ -89,6 +89,12 @@ function cargarListaHistorial() {
     );
   }
 }
+function reiniciarHistorial() {
+  $("input[name='numeroCarga']").val(0);
+  $("#sec-historial").html("");
+  ultimaFechaCargada = "";
+  cargarListaHistorial();
+}
 
 //Formulario
 function cargarFormularioHistorial() {

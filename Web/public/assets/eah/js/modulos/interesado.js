@@ -18,13 +18,13 @@ function cargarLista() {
   urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
   urlCotizar = (typeof (urlCotizar) === "undefined" ? "" : urlCotizar);
-  urlPerfilAlumno = (typeof (urlPerfilAlumno) === "undefined" ? "" : urlPerfilAlumno);
+  urlPerfilAlumnoInteresado = (typeof (urlPerfilAlumnoInteresado) === "undefined" ? "" : urlPerfilAlumnoInteresado);
   urlActualizarEstado = (typeof (urlActualizarEstado) === "undefined" ? "" : urlActualizarEstado);
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   estados = (typeof (estados) === "undefined" ? "" : estados);
   estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
   estadoAlumnoRegistrado = (typeof (estadoAlumnoRegistrado) === "undefined" ? "" : estadoAlumnoRegistrado);
-  if (urlListar !== "" && urlEditar !== "" && urlCotizar !== "" && urlPerfilAlumno !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "" && estadoAlumnoRegistrado !== "") {
+  if (urlListar !== "" && urlEditar !== "" && urlCotizar !== "" && urlPerfilAlumnoInteresado !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "" && estadoAlumnoRegistrado !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -49,7 +49,7 @@ function cargarLista() {
             if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined) {
               return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
             } else if (estados[d.estado] !== undefined) {
-              return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>' + ((d.estado === estadoAlumnoRegistrado) ? '<a href="' + (urlPerfilAlumno.replace("/0", "/" + d.id)) + '" title="Ver perfil del alumno" target="_blank" class="btn-perfil-alumno-interesado"><i class="fa fa-eye"></i></a>' : '');
+              return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>' + ((d.estado === estadoAlumnoRegistrado) ? '<a href="' + (urlPerfilAlumnoInteresado.replace("/0", "/" + d.id)) + '" title="Ver perfil del alumno" target="_blank" class="btn-perfil-relacion-entidad"><i class="fa fa-eye"></i></a>' : '');
             } else {
               return "";
             }

@@ -1,7 +1,7 @@
 $(document).ready(function () {
   cargarLista();
   cargarFormulario();
-  
+
   $("#sel-curso").select2();
   $("#sel-curso").change(function () {
     if (urlEditar !== "") {
@@ -31,7 +31,9 @@ function cargarLista() {
       responsive: true,
       order: [[0, "desc"]],
       columns: [
-        {data: "nombre", name: "nombre"},
+        {data: "nombre", name: "nombre", render: function (e, t, d, m) {
+            return '<a href="' + (urlEditar.replace("/0", "/" + d.id)) + '">' + d.nombre + '</a>';
+          }},
         {data: "descripcion", name: "descripcion", render: function (e, t, d, m) {
             return ((d.descripcion.length > 200) ? (d.descripcion.substr(0, d.descripcion.lastIndexOf(' ', 197)) + '...') : d.descripcion);
           }},

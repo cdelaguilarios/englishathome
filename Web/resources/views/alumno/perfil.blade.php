@@ -23,7 +23,7 @@
         <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($alumno->imagenPerfil) && $alumno->imagenPerfil != "" ? $alumno->imagenPerfil : "-"), "tip" => ($alumno->sexo == "F" ? "f" : "m")]) }}" alt="Alumn{{ $alumno->sexo == "F" ? "a" : "o" }} {{ $alumno->nombre . " " .  $alumno->apellido }}">
         <h3 class="profile-username">Alumn{{ $alumno->sexo == "F" ? "a" : "o" }} {{ $alumno->nombre . " " .  $alumno->apellido }}</h3>
         <p class="text-muted">{{ $alumno->correoElectronico }}</p>
-        <span class="label {{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][0] }}</span>
+        <p><span class="label {{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][0] }}</span></p>
       </div>
     </div>
     <div class="sec-datos box box-primary">
@@ -78,6 +78,7 @@
         <hr>    
         @endif                          
         <a href="{{ route("alumnos.editar", $alumno->id)}}" class="btn btn-primary btn-block"><b>Editar datos</b></a>
+        <a href="{{ route("alumnos.ficha", $alumno->id)}}" target="_blank" class="btn btn-primary btn-block"><b>Ver ficha</b></a>
       </div>
     </div>
   </div>
@@ -89,7 +90,7 @@
             <a href="{{ route("alumnos.crear")}}" class="btn btn-primary btn-clean">Nuevo alumno</a> 
           </div>           
           <div class="col-sm-4">
-            {{ Form::select("",App\Models\Alumno::listarBusqueda(), $alumno->id, ["id"=>"sel-alumno", "class" => "form-control", "data-seccion" => "perfil", "style" => "width: 100%;"]) }}
+            {{ Form::select("",App\Models\Alumno::listarBusqueda(), $alumno->id, ["id"=>"sel-alumno", "class" => "form-control", "data-seccion" => "perfil", "style" => "width: 100%"]) }}
           </div>
         </div> 
       </div>
@@ -106,16 +107,27 @@
           @include("util.historial", ["idEntidad" => $alumno->id]) 
         </div>
         <div id="pago" class="tab-pane">
-          @include("alumno.pago.principal", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "totalSaldoFavor" => $alumno->totalSaldoFavor, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : null)]) 
+          @if($alumno->horario != "[]")
+            @include("alumno.pago.principal", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "totalSaldoFavor" => $alumno->totalSaldoFavor, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : null)]) 
+          @else
+            Debe establecer un horario para el  alumn{{ $alumno->sexo == "F" ? "a" : "o" }}.
+          @endif
         </div>
         <div id="clase" class="tab-pane">
-          @include("alumno.clase.principal", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : null)])
+          @if($alumno->horario != "[]")
+            @include("alumno.clase.principal", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : null)])
+          @else
+            Debe establecer un horario para el  alumn{{ $alumno->sexo == "F" ? "a" : "o" }}.
+          @endif
         </div>
         <div id="calendario" class="tab-pane">
-          @include("util.calendario", ["idEntidad" => $alumno->id]) 
+          @if($alumno->horario != "[]")
+            @include("util.calendario", ["idEntidad" => $alumno->id]) 
+          @else
+            Debe establecer un horario para el  alumn{{ $alumno->sexo == "F" ? "a" : "o" }}.
+          @endif
         </div>
         @include("alumno.pago.datos") 
-        @include("util.datosClase") 
       </div>
     </div>
   </div>

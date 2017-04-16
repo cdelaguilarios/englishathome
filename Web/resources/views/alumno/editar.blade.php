@@ -25,7 +25,7 @@
             <a href="{{ route("alumnos.perfil", ["id" => $alumno->id]) }}" type="button" class="btn btn-primary"><i class="fa fa-eye"></i> Ver perfil</a>
           </div>           
           <div class="col-sm-4">
-            {{ Form::select("",App\Models\Alumno::listarBusqueda(), $alumno->id, ["id"=>"sel-alumno", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%;"]) }}
+            {{ Form::select("",App\Models\Alumno::listarBusqueda(), $alumno->id, ["id"=>"sel-alumno", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%"]) }}
           </div>
         </div> 
       </div>

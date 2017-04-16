@@ -81,7 +81,7 @@ return [
     |
     */
 
-    'username' => env('MAIL_USERNAME', 'englishathomelima@gmail.com'),
+    'username' => env('MAIL_USERNAME', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -94,7 +94,7 @@ return [
     |
     */
 
-    'password' => env('MAIL_PASSWORD', 'takeofftime21'),
+    'password' => env('MAIL_PASSWORD', ''),
 
     /*
     |--------------------------------------------------------------------------

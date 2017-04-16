@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\SexosEntidad;
+use App\Helpers\Enum\EstadosPostulante;
 use Illuminate\Database\Eloquent\Model;
 
 class Docente extends Model {
@@ -19,7 +20,7 @@ class Docente extends Model {
         $fechaFinOri = clone $claseGenerada["fechaFin"];
         $fechaInicioCop = clone $fechaInicioOri;
         $fechaFinCop = clone $fechaFinOri;
-        
+
         $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicioOri->subHour(), $fechaFinOri->addHour(), TRUE);
         $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($fechaInicioCop->dayOfWeek, $fechaInicioCop->format("H:i:s"), $fechaFinCop->format("H:i:s"), $tipoDocente);
         $idsDisponiblesSel = ($auxCont == 1 ? array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray()) : array_intersect($idsDisponiblesSel, array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray())));
@@ -89,7 +90,7 @@ class Docente extends Model {
               $q->whereNull("entidad.sexo")->orWhereIn("entidad.sexo", ($sexoDocentePago != "" ? [$sexoDocentePago] : array_keys(SexosEntidad::listar())));
             })->where(function ($q) use ($idCursoDocentePago) {
               $q->whereNull("entidadCurso.idCurso")->orWhereIn("entidadCurso.idCurso", ($idCursoDocentePago != "" ? [$idCursoDocentePago] : array_keys(Curso::listarSimple()->toArray())));
-            })->where("entidad.tipo", $datos["tipoDocente"]);
+            })->where("entidad.tipo", $datos["tipoDocente"])->where("entidad.estado", '!=', EstadosPostulante::ProfesorRegistrado);
   }
 
 }

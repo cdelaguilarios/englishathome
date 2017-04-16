@@ -6,6 +6,7 @@ use DB;
 use Mail;
 use Auth;
 use Crypt;
+use Config;
 use Storage;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\EstadosAlumno;
@@ -96,6 +97,8 @@ class Interesado extends Model {
     $nombresOriginalesArchivosAdjuntos = $datos["nombresOriginalesArchivosAdjuntos"];
     $esPrueba = (isset($datos["correoCotizacionPrueba"]));
 
+    Config::set("mail.username", VariableSistema::obtenerXLlave("correo"));
+    Config::set("mail.password", VariableSistema::obtenerXLlave("contrasenaCorreo"));
     Mail::send("interesado.plantillaCorreo.cotizacion", $datos, function ($m) use ($correo, $nombreDestinatario, $nombresArchivosAdjuntos, $nombresOriginalesArchivosAdjuntos) {
       $m->to($correo, $nombreDestinatario)->subject("English at home - Cotización");
       if (!is_null($nombresArchivosAdjuntos) && !is_null($nombresOriginalesArchivosAdjuntos)) {
@@ -138,8 +141,9 @@ class Interesado extends Model {
 
   public static function registrarAlumno($id, $idAlumno = NULL) {
     $datos = Interesado::obtenerXId($id, TRUE)->toArray();
-    if (!($datos["estado"] != EstadosInteresado::AlumnoRegistrado && Interesado::obtenerIdAlumno($id) == 0)) {
-      return;
+    $idAlumnoRel = Interesado::obtenerIdAlumno($id);
+    if (!($datos["estado"] != EstadosInteresado::AlumnoRegistrado && $idAlumnoRel == 0)) {
+      return ($idAlumnoRel != 0 ? $idAlumnoRel : NULL);
     }
     if (is_null($idAlumno)) {
       $idEntidad = Entidad::registrar($datos, TiposEntidad::Alumno, EstadosAlumno::PorConfirmar);
@@ -172,6 +176,7 @@ class Interesado extends Model {
         "titulo" => (Auth::guest() ? MensajesHistorial::TituloInteresadoRegistroAlumno : MensajesHistorial::TituloInteresadoRegistroAlumnoXUsuario),
         "mensaje" => ""
     ]);
+    return $idAlumno;
   }
 
   public static function eliminar($id) {

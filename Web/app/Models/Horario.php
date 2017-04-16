@@ -77,4 +77,18 @@ class Horario extends Model {
     }
   }
 
+  public static function copiarHorario($idEntidadOri, $idEntidadDes) {
+    Horario::where("idEntidad", $idEntidadDes)->delete();
+    $horario = Horario::obtener($idEntidadOri);
+    foreach ($horario as $datHorario) {
+      $horario = new Horario([
+          "idEntidad" => $idEntidadDes,
+          "numeroDiaSemana" => $datHorario->numeroDiaSemana,
+          "horaInicio" => $datHorario->horaInicio,
+          "horaFin" => $datHorario->horaFin
+      ]);
+      $horario->save();
+    }
+  }
+
 }

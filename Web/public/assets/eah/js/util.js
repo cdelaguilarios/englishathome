@@ -350,6 +350,7 @@ function verDatosClase(idAlumno, idClase) {
         $("#dat-notificar-clase").html('<i class="fa fa-check-circle-o icon-notificar-clase"></i>');
       }
       $("#dat-fecha-clase").html(formatoFecha(d.fechaInicio) + ' - De ' + formatoFecha(d.fechaInicio, false, true) + ' a ' + formatoFecha(d.fechaFin, false, true));
+      $("#dat-alumno-clase").html('<i class="fa fa-mortar-board"></i> <b>' + d.nombreAlumno + ' ' + d.apellidoAlumno + '</b> <a href=' + (urlPerfilAlumno.replace('/0', '/' + d.idAlumno)) + ' title="Ver perfil del alumno" target="_blank"><i class="fa fa-eye"></i></a>');
       $("#dat-costo-hora-clase").html('S/. ' + redondear(d.costoHora, 2));
       $("#dat-codigo-pago-clase").html(d.idPago);
       $("#sec-dat-profesor-clase").hide();
@@ -481,14 +482,15 @@ function incluirSeccionSubidaArchivos(idElemento, datosAdicionales, funcionSubir
   }
 }
 function rgb2hex(rgb) {
-    if (/^#[0-9A-F]{6}$/i.test(rgb)) return rgb;
+  if (/^#[0-9A-F]{6}$/i.test(rgb))
+    return rgb;
 
-    rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-    if(rgb === null){
-      return "#fff";
-    }
-    function hex(x) {
-        return ("0" + parseInt(x).toString(16)).slice(-2);
-    }
-    return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+  rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+  if (rgb === null) {
+    return "#fff";
+  }
+  function hex(x) {
+    return ("0" + parseInt(x).toString(16)).slice(-2);
+  }
+  return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }

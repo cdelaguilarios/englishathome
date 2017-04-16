@@ -61,23 +61,14 @@ class PagoProfesor extends Model {
         PagoClase::registrarActualizar($datosPago["id"], $idClaseAlumno[1], $idProfesor, FALSE);
       }
     }
-
-    $listaMotivosPago = MotivosPago::listar();
-    $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$listaMotivosPago[$datos["motivo"]], (isset($datos["descripcion"]) && $datos["descripcion"] != "" ? "<br/><strong>Descripción:</strong> " . $datos["descripcion"] : ""), number_format((float) ($datos["monto"]), 2, ".", "")], MensajesHistorial::MensajeProfesorRegistroPago);
-    Historial::registrar([
-        "idEntidades" => [$idProfesor, Auth::user()->idEntidad],
-        "titulo" => MensajesHistorial::TituloProfesorRegistroPago,
-        "mensaje" => $mensajeHistorial,
-        "imagenes" => $datosPago["imagenesComprobante"],
-        "idPago" => $datosPago["id"],
-        "tipo" => TiposHistorial::Pago
-    ]);
+    PagoProfesor::registrarActualizarEventoPago($idProfesor, $datosPago);
   }
 
   public static function actualizar($idProfesor, $request) {
     $datos = $request->all();
     PagoProfesor::obtenerXId($idProfesor, $datos["idPago"]);
-    Pago::actualizar($datos["idPago"], $datos, $request);
+    $datosPago = Pago::actualizar($datos["idPago"], $datos, $request);
+    PagoProfesor::registrarActualizarEventoPago($idProfesor, $datosPago);
   }
 
   public static function actualizarEstado($idProfesor, $datos) {
@@ -98,6 +89,26 @@ class PagoProfesor extends Model {
     PagoProfesor::obtenerXId($idProfesor, $id);
     Pago::eliminar($id);
     PagoProfesor::where("idProfesor", $idProfesor)->where("idPago", $id)->delete();
+  }
+
+  private static function registrarActualizarEventoPago($idProfesor, $datosPago) {
+    $listaMotivosPago = MotivosPago::listar();
+    $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$listaMotivosPago[$datosPago["motivo"]], (isset($datosPago["descripcion"]) && $datosPago["descripcion"] != "" ? "<br/><strong>Descripción:</strong> " . $datosPago["descripcion"] : ""), number_format((float) ($datosPago["monto"]), 2, ".", "")], MensajesHistorial::MensajeProfesorRegistroPago);
+
+    $historial = Historial::where("eliminado", 0)->where("idPago", $datosPago["id"])->first();
+    $datos = [
+        "idEntidades" => [$idProfesor, Auth::user()->idEntidad],
+        "titulo" => MensajesHistorial::TituloProfesorRegistroPago,
+        "mensaje" => $mensajeHistorial,
+        "imagenes" => $datosPago["imagenesComprobante"],
+        "idPago" => $datosPago["id"],
+        "tipo" => TiposHistorial::Pago
+    ];
+    if (isset($historial)) {
+      Historial::actualizar($historial->id, $datos);
+    } else {
+      Historial::registrar($datos);
+    }
   }
 
 }

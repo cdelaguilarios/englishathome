@@ -111,9 +111,9 @@ class InteresadoController extends Controller {
   }
 
   public function enviarCotizacion($id, FormularioCotizacionRequest $req) {
-    try {
       Interesado::enviarCotizacion($id, $req->all());
       Mensajes::agregarMensajeExitoso("Cotización enviada.");
+    try {
     } catch (\Exception $e) {
       Log::error($e->getMessage());
       Mensajes::agregarMensajeError("Ocurrió un problema durante el envío de la cotización. Por favor inténtelo nuevamente.");

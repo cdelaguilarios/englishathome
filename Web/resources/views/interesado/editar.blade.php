@@ -36,7 +36,7 @@
             @endif
           </div>
           <div class="col-sm-4">
-            {{ Form::select("", App\Models\Interesado::listarBusqueda(), $interesado->id, ["id"=>"sel-interesado", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%;"]) }}
+            {{ Form::select("", App\Models\Interesado::listarBusqueda(), $interesado->id, ["id"=>"sel-interesado", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%"]) }}
           </div> 
         </div> 
       </div>

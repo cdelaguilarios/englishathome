@@ -18,8 +18,25 @@ class Entidad extends Model {
     return $nombreTabla;
   }
 
+  public static function listar($tipo) {
+    return Entidad::where("eliminado", 0)->where("tipo", $tipo)->get();
+  }
+
   public static function ObtenerXId($id) {
     return Entidad::where("eliminado", 0)->where("id", $id)->firstOrFail();
+  }
+
+  public static function buscar($datos) {
+    $texto = $datos["texto"];
+    $pagina = $datos["pagina"];
+    $entidadesXPorPagina = 6;
+    $entidades = Entidad::where("eliminado", 0)->where(function ($q) use($texto) {
+      $q->where("nombre", 'like', "%" . $texto . "%")
+              ->orWhere("apellido", 'like', "%" . $texto . "%")
+              ->orWhere("correoElectronico", 'like', "%" . $texto . "%");
+    });
+    $total = $entidades->count();
+    return ["incomplete_results" => TRUE, "entidades" => $entidades->skip(($pagina - 1) * $entidadesXPorPagina)->take($entidadesXPorPagina)->get(), "total" => $total];
   }
 
   public static function registrar($datos, $tipo, $estado) {
@@ -63,6 +80,15 @@ class Entidad extends Model {
     $entidad->eliminado = 1;
     $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $entidad->save();
+  }
+
+  public static function verificarExistencia($id) {
+    try {
+      Entidad::obtenerXId($id, TRUE);
+    } catch (\Exception $ex) {
+      return FALSE;
+    }
+    return TRUE;
   }
 
 }

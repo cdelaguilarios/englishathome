@@ -93,6 +93,17 @@ class PostulanteController extends Controller {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
+  public function perfilProfesor($id) {
+    try {
+      $idProfesor = Postulante::obtenerIdProfesor($id);
+      return redirect($idProfesor > 0 ? route("profesores.perfil", ["id" => $idProfesor]) : route("postulantes"));
+    } catch (\Exception $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("No se encontraron datos del postulante o del profesor seleccionado.");
+      return redirect("postulantes");
+    }
+  }
+
   public function eliminar($id) {
     try {
       Postulante::eliminar($id);

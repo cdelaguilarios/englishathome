@@ -107,9 +107,9 @@ class PagoAlumno extends Model {
 
   public static function eliminar($idAlumno, $id) {
     PagoAlumno::obtenerXId($idAlumno, $id);
-    Pago::eliminar($id);
-    PagoAlumno::where("idAlumno", $idAlumno)->where("idPago", $id)->delete();
     Clase::eliminadXIdPago($idAlumno, $id);
+    PagoAlumno::where("idAlumno", $idAlumno)->where("idPago", $id)->delete();
+    Pago::eliminar($id);
   }
 
   private static function registrarActualizarEventoPago($idAlumno, $datosPago) {

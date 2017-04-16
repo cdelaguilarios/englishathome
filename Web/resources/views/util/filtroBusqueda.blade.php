@@ -45,7 +45,7 @@
               </div>
             </div>
           </div>
-          <div id="sec-bus-fecha-{{ App\Helpers\Enum\TiposBusquedaFecha::Mes }}" style="display: none;">
+          <div id="sec-bus-fecha-{{ App\Helpers\Enum\TiposBusquedaFecha::Mes }}" style="display: none">
             <div class="col-sm-3">
               <div class="input-group date">
                 <div class="input-group-addon">
@@ -63,7 +63,7 @@
               </div>
             </div>
           </div>
-          <div id="sec-bus-fecha-{{ App\Helpers\Enum\TiposBusquedaFecha::Anho }}" style="display: none;">
+          <div id="sec-bus-fecha-{{ App\Helpers\Enum\TiposBusquedaFecha::Anho }}" style="display: none">
             <div class="col-sm-3">
               <div class="input-group date">
                 <div class="input-group-addon">
@@ -81,7 +81,7 @@
               </div>
             </div>
           </div>
-          <div id="sec-bus-fecha-{{ App\Helpers\Enum\TiposBusquedaFecha::RangoFecha }}" style="display: none;">
+          <div id="sec-bus-fecha-{{ App\Helpers\Enum\TiposBusquedaFecha::RangoFecha }}" style="display: none">
             <div class="col-sm-3">
               <div class="input-group date">
                 <div class="input-group-addon">

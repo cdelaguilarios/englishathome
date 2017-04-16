@@ -131,5 +131,14 @@ class Alumno extends Model {
       Alumno::actualizarEstado($alumno->idEntidad, EstadosAlumno::CuotaProgramada);
     }
   }
+  
+  public static function verificarExistencia($id) {
+    try {
+      Alumno::obtenerXId($id, TRUE);
+    } catch (\Exception $ex) {
+      return FALSE;
+    }
+    return TRUE;
+  }
 
 }

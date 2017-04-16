@@ -5,10 +5,12 @@
 <script>
   var urlListar = "{{ route('postulantes.listar') }}";
   var urlEditar = "{{ route('postulantes.editar', ['id' => 0]) }}";
+  var urlPerfilProfesorPostulante = "{{ route('postulantes.perfil.profesor', ['id' => 0]) }}";
   var urlActualizarEstado = "{{ route('postulantes.actualizar.estado', ['id' => 0]) }}";
   var urlEliminar = "{{ route('postulantes.eliminar', ['id' => 0]) }}";
   var estados = {!! json_encode(App\Helpers\Enum\EstadosPostulante::listar()) !!};
   var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosPostulante::listarCambio()) !!};
+  var estadoProfesorRegistrado = "{{ App\Helpers\Enum\EstadosPostulante::ProfesorRegistrado }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/postulante.js") }}"></script>
 @endsection

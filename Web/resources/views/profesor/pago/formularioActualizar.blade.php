@@ -3,6 +3,11 @@
 </div>  
 <div class="box-body">
   <div class="form-group">
+    {{ Form::label("", "Motivo: ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("", "", ["id"=> "titulo-motivo-actualizar-pago", "class" => "col-sm-3 control-label", "style" => "text-align:left"]) }}
+    {{ Form::select("", App\Helpers\Enum\MotivosPago::listar(), null, ["id" => "lista-motivo-actualizar-pago", "class" => "form-control", "style" => "display: none"]) }}
+  </div>
+  <div class="form-group">
     {{ Form::label("estado-actualizar-pago", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       {{ Form::select("estado", App\Helpers\Enum\EstadosPago::listarCambio(), null, ["id" => "estado-actualizar-pago", "class" => "form-control"]) }}
@@ -25,6 +30,17 @@
       </a>
     </div>
   </div> 
+  <div id="sec-imagen-documento-verificacion-actualizar-pago" class="form-group" style="display:none;">
+    {{ Form::label("imagenDocumentoVerificacion", "Imagen del documento de verificación: ", ["class" => "col-sm-2 control-label"]) }}
+    <div class="col-sm-5">
+      {{ Form::file("imagenDocumentoVerificacion", null) }}
+    </div>
+    <div class="col-sm-3">
+      <a id="imagen-documento-verificacion-actualizar-pago" href="{{ route("archivos", ["nombre" => "0"]) }}" target="_blank">
+        <img src="{{ route("archivos", ["nombre" => "0"]) }}" width="40"/>
+      </a>
+    </div>
+  </div>
   <div class="form-group">
     {{ Form::label("monto-actualizar-pago", "Monto total (*): ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">

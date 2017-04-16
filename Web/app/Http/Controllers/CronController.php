@@ -3,24 +3,15 @@
 namespace App\Http\Controllers;
 
 use Log;
-use Mail;
 use App\Models\Alumno;
 use App\Models\Historial;
 
 class CronController extends Controller {
 
-  public function test() {
-    $nombreCompletoDestinatario = "usuario administrador";
-    $mensaje = "<p>Correo de prueba</p>";
-    Mail::send("notificacion.plantillaCorreo", ["nombreCompletoDestinatario" => $nombreCompletoDestinatario, "mensaje" => $mensaje], function ($m) {
-      $m->to("cdelaguilarios@gmail.com", "Administrador - English at home")->subject("English at home - Notificación Test");
-    });
-  }
-
   public function enviarCorreos() {
     $cabecerasRespuesta = ["Content-Type" => "application/json; charset=UTF-8", "charset" => "utf-8"];
     try {
-      Historial::enviarCorreosAdministracion();
+      Historial::enviarCorreos();
     } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante el envío de correos."], 400, $cabecerasRespuesta, JSON_UNESCAPED_UNICODE);

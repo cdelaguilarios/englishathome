@@ -6,9 +6,11 @@ use DB;
 use Auth;
 use Carbon\Carbon;
 use App\Helpers\Enum\TiposEntidad;
+use App\Helpers\Enum\EstadosProfesor;
 use App\Helpers\Enum\MensajesHistorial;
 use Illuminate\Database\Eloquent\Model;
 use App\Helpers\Enum\EstadosPostulante;
+use App\Helpers\Enum\TiposRelacionEntidad;
 
 class Postulante extends Model {
 
@@ -94,9 +96,63 @@ class Postulante extends Model {
     Horario::registrarActualizar($id, $horario);
   }
 
+  public static function obtenerIdProfesor($id) {
+    Postulante::obtenerXId($id, TRUE);
+    $relacionEntidad = RelacionEntidad::obtenerXIdEntidadB($id);
+    return ((count($relacionEntidad) > 0) ? $relacionEntidad[0]->idEntidadA : 0);
+  }
+
+  public static function registrarProfesor($id, $idProfesor = NULL) {
+    $datos = Postulante::obtenerXId($id, TRUE)->toArray();
+    $idProfesorRel = Postulante::obtenerIdProfesor($id);
+    if (!($datos["estado"] != EstadosPostulante::ProfesorRegistrado && $idProfesorRel == 0)) {
+      return ($idProfesorRel != 0 ? $idProfesorRel : NULL);
+    }
+    if (is_null($idProfesor)) {
+      $idEntidad = Entidad::registrar($datos, TiposEntidad::Profesor, EstadosProfesor::Registrado);
+      $entidadCursos = EntidadCurso::obtenerXEntidad($id, FALSE);
+      if (!is_null($entidadCursos)) {
+        $idsCursos = [];
+        foreach ($entidadCursos as $entidadCurso) {
+          array_push($idsCursos, $entidadCurso->idCurso);
+        }
+        EntidadCurso::registrarActualizar($idEntidad, $idsCursos);
+      }
+      Horario::copiarHorario($id, $idEntidad);
+
+      $profesor = new Profesor();
+      $profesor->idEntidad = $idEntidad;
+      $profesor->save();
+      $idProfesor = $idEntidad;
+
+      Historial::registrar([
+          "idEntidades" => [$idEntidad, Auth::user()->idEntidad],
+          "titulo" => MensajesHistorial::TituloProfesorRegistroXUsuario,
+          "mensaje" => ""
+      ]);
+    }
+    RelacionEntidad::registrar($idProfesor, $id, TiposRelacionEntidad::ProfesorPostulante);
+    Postulante::actualizarEstado($id, EstadosPostulante::ProfesorRegistrado);
+    Historial::registrar([
+        "idEntidades" => [$id, Auth::user()->idEntidad],
+        "titulo" => MensajesHistorial::TituloPostulanteRegistroProfesorXUsuario,
+        "mensaje" => ""
+    ]);
+    return $idProfesor;
+  }
+
   public static function eliminar($id) {
     Postulante::obtenerXId($id, TRUE);
     Entidad::eliminar($id);
+  }
+
+  public static function verificarExistencia($id) {
+    try {
+      Postulante::obtenerXId($id, TRUE);
+    } catch (\Exception $ex) {
+      return FALSE;
+    }
+    return TRUE;
   }
 
 }

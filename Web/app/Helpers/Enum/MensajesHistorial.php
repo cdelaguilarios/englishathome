@@ -17,7 +17,8 @@ class MensajesHistorial {
   const TituloProfesorRegistroXUsuario = "[" . TiposEntidad::Usuario . "] registró a [" . TiposEntidad::Profesor . "] como nuevo profesor(a)";
   const TituloProfesorRegistroPago = "[" . TiposEntidad::Usuario . "] registró un pago del profesor [" . TiposEntidad::Profesor . "]";
   const MensajeProfesorRegistroPago = "<strong>Motivo:</strong> [MOTIVO]<br/><strong>Monto:</strong> S/.[MONTO] [DESCRIPCION]<br/>";
-  const TituloPostulanteRegistroXUsuario = "[" . TiposEntidad::Usuario . "] registró a [" . TiposEntidad::Postulante . "] como nuevo postulante";
+  const TituloPostulanteRegistroXUsuario = "[" . TiposEntidad::Usuario . "] registró a [" . TiposEntidad::Postulante . "] como nuevo postulante";  
+  const TituloPostulanteRegistroProfesorXUsuario = "[" . TiposEntidad::Usuario . "] registró a [" . TiposEntidad::Postulante . "] como nuevo profesor(a)";
   const TituloCorreoAlumnoClase = "Estamos a [DIAS] de la clase del alumno [" . TiposEntidad::Alumno . "]";
   const MensajeCorreoAlumnoClase = "La próxima clase del alumno [" . TiposEntidad::Alumno . "] será el [FECHA]. Los datos principales de esta clase son:<br/><br/><strong>Período:</strong> [PERIODO]<br/><strong>Profesor asignado:</strong> [PROFESOR]<br/><strong>Duración:</strong> [DURACION]<br/>";
   const TituloCorreoAlumnoClaseSinProfesor = "Importante - Estamos a [DIAS] de la clase del alumno [" . TiposEntidad::Alumno . "] y no tiene profesor asignado";

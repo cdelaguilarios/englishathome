@@ -19,7 +19,7 @@
   </div>
   {{ Form::hidden("numeroCarga", 0) }} 
 </div>
-<div id="sec-historial-2" style="display: none;">
+<div id="sec-historial-2" style="display: none">
   {{ Form::open(["url" => route("historial.registrar", ["idEntidad" => $idEntidad]), "id" => "formulario-registrar-historial", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
   <div class="box-header">
     <h3 class="box-title with-border">Nuevo evento</h3>                
@@ -63,7 +63,7 @@
         </div>
       </div>
     </div>
-    <div id="sec-historial-21" style="display: none;" class="form-group"> 
+    <div id="sec-historial-21" style="display: none" class="form-group"> 
       {{ Form::label("fecha-notificacion-evento-historial", "Fecha notificación: ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-3">
         <div class="input-group date">

@@ -48,7 +48,7 @@ class Clase extends Model {
   public static function obtenerXId($idAlumno, $id, $incluirFechaProximaClase = FALSE) {
     $nombreTabla = Clase::nombreTabla();
     $clase = Clase::listarBase()
-            ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.id) AS idPago"))
+            ->select($nombreTabla . ".*", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.id) AS idPago"))
             ->leftJoin(PagoAlumno::nombreTabla() . " as pagoAlumno", "pagoClase.idPago", "=", "pagoAlumno.idPago")
             ->leftJoin(Pago::nombreTabla() . " as pago", "pagoAlumno.idPago", "=", "pago.id")
             ->where($nombreTabla . ".idAlumno", $idAlumno)
@@ -158,21 +158,27 @@ class Clase extends Model {
     return DB::table(DB::raw("({$sub->toSql()}) as sub"))->mergeBindings($sub->getQuery())->count();
   }
 
-  public static function calendario($idEntidad, $datos) {
+  public static function calendario($datos) {
     $nombreTabla = Clase::nombreTabla();
     $fechaInicio = Carbon::createFromFormat("Y-m-d H:i:s", $datos["start"] . " 00:00:00");
     $fechaFin = Carbon::createFromFormat("Y-m-d H:i:s", $datos["end"] . " 23:59:59");
-    $clases = Clase::listarBase()
-                    ->select($nombreTabla . ".*")
-                    ->where($nombreTabla . ".idAlumno", $idEntidad)
-                    ->where($nombreTabla . ".fechaInicio", ">=", $fechaInicio)
-                    ->where($nombreTabla . ".fechaFin", "<=", $fechaFin)->get();
+    $preClases = Clase::listarBase()
+            ->select($nombreTabla . ".*")
+            ->where($nombreTabla . ".fechaInicio", ">=", $fechaInicio)
+            ->where($nombreTabla . ".fechaFin", "<=", $fechaFin);
+    if ($datos["tipoEntidad"] !== "0") {
+      $preClases->where($nombreTabla . ".idProfesor", $datos["idProfesor"]);
+    } else {
+      $preClases->where($nombreTabla . ".idAlumno", $datos["idAlumno"]);
+    }
+    $clases = $preClases->get();
     $eventos = [];
     $estadosClase = EstadosClase::listar();
     foreach ($clases as $clase) {
       array_push($eventos, [
           "id" => $clase->id,
           "idAlumno" => $clase->idAlumno,
+          "idProfesor" => $clase->idProfesor,
           "title" => "Clase " . $estadosClase[$clase->estado][0],
           "start" => Carbon::createFromFormat("Y-m-d H:i:s", $clase->fechaInicio)->format("Y-m-d H:i:s"),
           "end" => Carbon::createFromFormat("Y-m-d H:i:s", $clase->fechaFin)->format("Y-m-d H:i:s"),
@@ -357,7 +363,11 @@ class Clase extends Model {
       $datos["fechaFin"]->addSeconds($datos["duracion"]);
     }
     $datos["idAlumno"] = $idAlumno;
-    $datos["idProfesor"] = $datos["idDocente"];
+    $idProfesor = $datos["idDocente"];
+    if (Postulante::verificarExistencia($datos["idDocente"])) {
+      $idProfesor = Postulante::registrarProfesor($datos["idDocente"]);
+    }
+    $datos["idProfesor"] = $idProfesor;
     $datos["costoHoraProfesor"] = $datos["costoHoraDocente"];
 
     $notificar = ($datos["notificar"] == 1);
@@ -425,7 +435,11 @@ class Clase extends Model {
         }
 
         if ($datos["editarDatosProfesor"] == 1) {
-          $datosActualizar["idProfesor"] = $datos["idDocente"];
+          $idProfesor = $datos["idDocente"];
+          if (Postulante::verificarExistencia($datos["idDocente"])) {
+            $idProfesor = Postulante::registrarProfesor($datos["idDocente"]);
+          }
+          $datosActualizar["idProfesor"] = $idProfesor;
           $datosActualizar["costoHoraProfesor"] = $datos["costoHoraDocente"];
         }
 

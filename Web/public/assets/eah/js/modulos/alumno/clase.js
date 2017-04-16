@@ -168,6 +168,7 @@ function listarClases(tr, fila, datosFila) {
                     paginate: false,
                     order: [[1, "asc"]],
                     columnDefs: [
+                      {targets: [1], type: "fecha"},
                       {targets: [3], orderable: false, searchable: false}
                     ]
                   });
@@ -178,6 +179,7 @@ function listarClases(tr, fila, datosFila) {
               }
             });
           } else {
+            recargarDatosTabla("tab-lista-periodos-clases");
             $("body").unblock();
           }
         },
@@ -621,8 +623,8 @@ function cargarDocentesDisponiblesClase(recargarListaPeriodos, recrearTabla) {
   }
 
   $('#mod-docentes-disponibles-clase').modal('show');
-  if ($.fn.DataTable.isDataTable('#tab-lista-docentes-clase') && recrearTabla){
-      $('#tab-lista-docentes-clase').DataTable().destroy();
+  if ($.fn.DataTable.isDataTable('#tab-lista-docentes-clase') && recrearTabla) {
+    $('#tab-lista-docentes-clase').DataTable().destroy();
   }
   if ($.fn.DataTable.isDataTable('#tab-lista-docentes-clase')) {
     if (recargarListaPeriodos) {
@@ -706,7 +708,7 @@ function cambioFechaHorario(idsClases, fecha, horaInicio, duracion, numFormulari
   (numFormulario === 1 ? $("#sec-clase-321").hide() : (numFormulario === 2 ? $("#sec-clase-441").hide() : mostrarSeccionClase([2])));
   limpiarCamposClase(true);
   urlTotalClasesXHorario = (typeof (urlTotalClasesXHorario) === "undefined" ? "" : urlTotalClasesXHorario);
-  if (urlTotalClasesXHorario !== "" && !cargandoDatosClaseXHorario) {
+  if (urlTotalClasesXHorario !== "" && !cargandoDatosClaseXHorario && ((idsClases !== "" && idsClases !== null) || ((idsClases === "" || idsClases === null) && (fecha !== "" && fecha !== null))) && (horaInicio !== "" && horaInicio !== null) && (duracion !== "" && duracion !== null)) {
     cargandoDatosClaseXHorario = true;
     llamadaAjax(urlTotalClasesXHorario, "POST", {"ids": idsClases, "fecha": fecha, "horaInicio": horaInicio, "duracion": duracion}, true,
         function (d) {

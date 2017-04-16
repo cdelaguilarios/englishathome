@@ -9,30 +9,36 @@
       </div>
       <div class="modal-body"> 
         <div class="row">
-          <div class="col-sm-4">
+          <div class="col-sm-6">
+            <div class="box-body sec-datos">
+              <strong><i class="fa  fa-check-square margin-r-5"></i> Alumno</strong>
+              <p id="dat-alumno-clase" class="text-muted"></p> 
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="box-body sec-datos">
+              <strong><i class="fa  fa-check-square margin-r-5"></i> Fecha</strong>
+              <p id="dat-fecha-clase" class="text-muted"></p>
+            </div>
+          </div>
+        </div>        
+        <div class="row">
+          <div class="col-sm-6">
             <div class="box-body sec-datos">
               <strong><i class="fa  fa-check-square margin-r-5"></i> Número de período</strong>
               <p id="dat-numero-periodo-clase" class="text-muted"></p>
             </div>
           </div>
-          <div class="col-sm-4">
+          <div class="col-sm-3">
             <div class="box-body sec-datos">
               <strong><i class="fa  fa-check-square margin-r-5"></i> Estado</strong>
               <p id="dat-estado-clase" class="text-muted"></p>
             </div>
           </div>
-          <div id="sec-dat-notificar-clase" class="col-sm-4">            
+          <div id="sec-dat-notificar-clase" class="col-sm-3">            
             <div class="box-body sec-datos">
               <strong><i class="fa  fa-check-square margin-r-5"></i> Notificar</strong>
               <p id="dat-notificar-clase" class="text-muted"></p>  
-            </div>
-          </div>
-        </div>        
-        <div class="row">
-          <div class="col-sm-12">
-            <div class="box-body sec-datos">
-              <strong><i class="fa  fa-check-square margin-r-5"></i> Fecha</strong>
-              <p id="dat-fecha-clase" class="text-muted"></p>
             </div>
           </div>
         </div>

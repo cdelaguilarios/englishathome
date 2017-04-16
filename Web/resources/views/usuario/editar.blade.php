@@ -29,7 +29,7 @@
             <a href="{{ route("usuarios.crear")}}" class="btn btn-primary btn-clean">Nuevo usuario</a>
           </div>           
           <div class="col-sm-4">
-            {{ Form::select("",App\Models\Usuario::listarBusqueda(), $usuario->id, ["id"=>"sel-usuario", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%;"]) }}
+            {{ Form::select("",App\Models\Usuario::listarBusqueda(), $usuario->id, ["id"=>"sel-usuario", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%"]) }}
           </div>
         </div> 
       </div>

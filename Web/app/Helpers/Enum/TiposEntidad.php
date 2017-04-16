@@ -12,11 +12,21 @@ class TiposEntidad {
 
   public static function listar() {
     return [
-        TiposEntidad::Alumno => ["Alumno", "alumnos.perfil"],
-        TiposEntidad::Interesado => ["Interesado", "interesados.editar"],
-        TiposEntidad::Profesor => ["Profesor", "profesores.perfil"],
-        TiposEntidad::Postulante => ["Postulante", "postulantes.editar"],
-        TiposEntidad::Usuario => ["Usuario", "usuarios.editar"]
+        TiposEntidad::Alumno => ["Alumno", "Alumna", "alumnos.perfil"],
+        TiposEntidad::Interesado => ["Interesado", "Interesada", "interesados.editar"],
+        TiposEntidad::Profesor => ["Profesor", "Profesora", "profesores.perfil"],
+        TiposEntidad::Postulante => ["Postulante", "Postulante", "postulantes.editar"],
+        TiposEntidad::Usuario => ["Usuario", "Usuaria", "usuarios.editar"]
+    ];
+  }
+
+  public static function listarSeccionCorreos() {
+    return [
+        TiposEntidad::Alumno => "Todos los alumnos",
+        TiposEntidad::Interesado => "Todos los interesados",
+        TiposEntidad::Profesor => "Todos los profesores",
+        TiposEntidad::Postulante => "Todos los postulantes",
+        TiposEntidad::Usuario => "Todos los usuarios"
     ];
   }
 

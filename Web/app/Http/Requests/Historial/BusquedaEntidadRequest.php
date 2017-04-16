@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Calendario;
+namespace App\Http\Requests\Historial;
 
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 
-class ListaRequest extends Request {
+class BusquedaEntidadRequest extends Request {
 
   public function authorize() {
     return true;
@@ -13,16 +13,16 @@ class ListaRequest extends Request {
 
   protected function getValidatorInstance() {
     $datos = $this->all();
-    $datos["start"] = ReglasValidacion::formatoDato($datos, "start");
-    $datos["end"] = ReglasValidacion::formatoDato($datos, "end");
+    $datos["texto"] = ReglasValidacion::formatoDato($datos, "texto");
+    $datos["pagina"] = ReglasValidacion::formatoDato($datos, "pagina", 1);
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
 
   public function rules() {
     $reglasValidacion = [
-      "start" => "required|date_format:Y-m-d",
-      "end" => "required|date_format:Y-m-d"
+        "texto" => "required|min:3|max:255",
+        "pagina" => "required|numeric|min:1"
     ];
 
     switch ($this->method()) {

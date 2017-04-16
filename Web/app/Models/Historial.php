@@ -14,7 +14,7 @@ class Historial extends Model {
 
   public $timestamps = false;
   protected $table = "historial";
-  protected $fillable = ["idPago", "idClase", "titulo", "mensaje", "imagenes", "enviarCorreo", "mostrarEnPerfil", "fechaNotificacion", "tipo"];
+  protected $fillable = ["idPago", "idClase", "titulo", "asunto", "mensaje", "imagenes", "idEntidadDestinataria", "correoDestinatario", "enviarCorreo", "mostrarEnPerfil", "fechaNotificacion", "tipo"];
 
   const numeroMensajesXCarga = 10;
 
@@ -77,7 +77,7 @@ class Historial extends Model {
       if (isset($datos["fechaNotificacion"])) {
         $datos["fechaNotificacion"] = (!(isset($datos["notificarInmediatamente"]) && $datos["notificarInmediatamente"] == 1) ? $datos["fechaNotificacion"] : Carbon::now()->toDateTimeString());
       }
-      $historial = Historial::obtenerXId($id, TRUE);
+      $historial = Historial::obtenerXId($id);
       $historial->update($datos);
       Historial::registrarActualizarEntidadHistorial($historial["id"], $idEntidadesSel);
     }
@@ -92,7 +92,39 @@ class Historial extends Model {
     }
   }
 
-  public static function enviarCorreosAdministracion() {
+  public static function registrarCorreos($datos) {
+    $datos["enviarCorreo"] = 1;
+    $datos["mostrarEnPerfil"] = 0;
+    $datos["fechaNotificacion"] = Carbon::now()->toDateTimeString();
+    $datos["tipo"] = TiposHistorial::Notificacion;
+    if (!is_null($datos["tipoEntidad"])) {
+      $entidades = Entidad::listar($datos["tipoEntidad"]);
+      foreach ($entidades as $entidad) {
+        $historial = new Historial($datos + ["idEntidadDestinataria" => $entidad->id]);
+        $historial->save();
+      }
+    } else if (!is_null($datos["idsEntidadesSeleccionadas"])) {
+      foreach ($datos["idsEntidadesSeleccionadas"] as $idEntidadSeleccionada) {
+        $historial = new Historial($datos + ["idEntidadDestinataria" => $idEntidadSeleccionada]);
+        $historial->save();
+      }
+    }
+    $correosAdicionalesExcluidos = "";
+    if (!is_null($datos["correosAdicionales"])) {
+      $correosAdicionales = explode(",", $datos["correosAdicionales"]);
+      foreach ($correosAdicionales as $correoAdicional) {
+        if (trim($correoAdicional) != "" && filter_var(trim($correoAdicional), FILTER_VALIDATE_EMAIL)) {
+          $historial = new Historial($datos + ["correoDestinatario" => trim($correoAdicional)]);
+          $historial->save();
+        } else if (trim($correoAdicional) != "") {
+          $correosAdicionalesExcluidos .= trim($correoAdicional) . ",";
+        }
+      }
+    }
+    return $correosAdicionalesExcluidos;
+  }
+
+  public static function enviarCorreos() {
     $nombreTabla = Historial::nombreTabla();
     $preHistoriales = Historial::listarBase()
                     ->where($nombreTabla . ".enviarCorreo", 1)
@@ -107,12 +139,17 @@ class Historial extends Model {
       $historialEnv = Historial::obtenerXId($historial->id);
       try {
         Historial::formatearDatosHistorialBase($historial);
-        $nombreCompletoDestinatario = "usuario administrador";
+        $asunto = (isset($historial->asunto) ? $historial->asunto : "English at home - Notificación");
         $mensaje = '<p>' . $historial->titulo . '</p><p>' . $historial->mensaje . '</p><p><b>Fecha notificación:</b> ' . \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $historial->fechaNotificacion)->format("d/m/Y H:i:s") . '</p>';
-        $correo = Config::get("eah.correoNotificaciones");
 
-        Mail::send("notificacion.plantillaCorreo", ["nombreCompletoDestinatario" => $nombreCompletoDestinatario, "mensaje" => $mensaje], function ($m) use ($correo) {
-          $m->to($correo, "Administrador - English at home")->bcc("cdelaguilarios@gmail.com")->subject("English at home - Notificación");
+        $entidadDestinataria = (isset($historial->idEntidadDestinataria) && Entidad::verificarExistencia($historial->idEntidadDestinataria) ? Entidad::ObtenerXId($historial->idEntidadDestinataria) : NULL);
+        $correoDestinatario = (!is_null($entidadDestinataria) ? $entidadDestinataria->correoElectronico : (isset($historial->correoDestinatario) ? $historial->correoDestinatario : Config::get("eah.correoNotificaciones")));
+        $nombreCompletoDestinatario = (!is_null($entidadDestinataria) ? $entidadDestinataria->nombre . " " . $entidadDestinataria->apellido : (isset($historial->correoDestinatario) ? "" : "Usuario administrador"));
+
+        Config::set("mail.username", VariableSistema::obtenerXLlave("correo"));
+        Config::set("mail.password", VariableSistema::obtenerXLlave("contrasenaCorreo"));
+        Mail::send("notificacion.plantillaCorreo", ["nombreCompletoDestinatario" => $nombreCompletoDestinatario, "mensaje" => $mensaje], function ($m) use ($correoDestinatario, $nombreCompletoDestinatario, $asunto) {
+          $m->to($correoDestinatario, $nombreCompletoDestinatario)->bcc("cdelaguilarios@gmail.com")->subject($asunto);
         });
         $historialEnv->correoEnviado = 1;
       } catch (\Exception $e) {
@@ -147,8 +184,8 @@ class Historial extends Model {
       if (!array_key_exists($entidad->tipo, $tiposEntidad)) {
         continue;
       }
-      $historial->titulo = str_replace("[" . $entidad->tipo . "]", "<a href='" . route($tiposEntidad[$entidad->tipo][1], ['id' => $entidad->id]) . "' target='_blank'>" . $entidad->nombre . " " . $entidad->apellido . "</a>", $historial->titulo);
-      $historial->mensaje = str_replace("[" . $entidad->tipo . "]", "<a href='" . route($tiposEntidad[$entidad->tipo][1], ['id' => $entidad->id]) . "' target='_blank'>" . $entidad->nombre . " " . $entidad->apellido . "</a>", $historial->mensaje);
+      $historial->titulo = str_replace("[" . $entidad->tipo . "]", "<a href='" . route($tiposEntidad[$entidad->tipo][2], ['id' => $entidad->id]) . "' target='_blank'>" . $entidad->nombre . " " . $entidad->apellido . "</a>", $historial->titulo);
+      $historial->mensaje = str_replace("[" . $entidad->tipo . "]", "<a href='" . route($tiposEntidad[$entidad->tipo][2], ['id' => $entidad->id]) . "' target='_blank'>" . $entidad->nombre . " " . $entidad->apellido . "</a>", $historial->mensaje);
     }
     $historial->horaNotificacion = Carbon::createFromFormat("Y-m-d H:i:s", $historial->fechaNotificacion)->format("H:i:s");
     $historial->icono = (array_key_exists($historial->tipo, $tiposNotificacion) ? $tiposNotificacion[$historial->tipo][1] : TiposHistorial::IconoDefecto);

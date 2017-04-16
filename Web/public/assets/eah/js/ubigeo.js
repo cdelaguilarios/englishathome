@@ -23,6 +23,11 @@ function cargarUbigeo() {
   $("#codigo-distrito").change(function () {
     $("input[name='codigoUbigeo']").val($(this).val()).trigger("change");
   });
+  setTimeout(function () {
+    if ($("#codigo-departamento").val() === "") {
+      $("#codigo-departamento").val(15).trigger("change");
+    }
+  }, 1000);
 }
 function cargarProvincias() {
   urlListarProvincias = (typeof (urlListarProvincias) === "undefined" ? "" : urlListarProvincias);

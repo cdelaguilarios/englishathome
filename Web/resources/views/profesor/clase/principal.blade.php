@@ -23,13 +23,13 @@
           </tfoot>
         </table>  
       </div>
-      <div id="sec-clase-11" style="display: none;">   
+      <div id="sec-clase-11" style="display: none">   
         <div class="box-body">
           <a id="btn-registrar-pago-clase" type="button" class="btn btn-primary btn-sm">Registrar pago</a>
         </div>                 
       </div>
     </div>    
-    <div id="sec-clase-2" style="display: none;">
+    <div id="sec-clase-2" style="display: none">
       {{ Form::open(["url" => route("profesores.clases.pagos.registrar", ["id" => $idProfesor]), "id" => "formulario-pago-clase", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
       @include("profesor.clase.formularioPago") 
       {{ Form::close() }}

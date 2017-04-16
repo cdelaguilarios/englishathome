@@ -120,7 +120,7 @@
           <div class="form-group">
             {{ Form::label("curso-interes", "Cursos de interes (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-5">
-              {{ Form::select("idCursos[]", $cursos, null, ["id" => "curso-interes", "class" => "form-control", "multiple" => "multiple", "style" => "width: 100%;"]) }}
+              {{ Form::select("idCursos[]", $cursos, null, ["id" => "curso-interes", "class" => "form-control", "multiple" => "multiple", "style" => "width: 100%"]) }}
             </div>    
             {{ Form::hidden("cursos", (isset($profesor) ? $profesor->cursos : null)) }}                
           </div>

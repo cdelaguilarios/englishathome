@@ -16,17 +16,17 @@
         </table>
       </div>
     </div> 
-    <div id="sec-clase-2" style="display: none;">
+    <div id="sec-clase-2" style="display: none">
       {{ Form::open(["url" => route("alumnos.clases.registrar.actualizar", ["id" => $idAlumno]), "id" => "formulario-registrar-actualizar-clase", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
       @include("alumno.clase.formulario") 
       {{ Form::close() }}
     </div>
-    <div id="sec-clase-3" style="display: none;">     
+    <div id="sec-clase-3" style="display: none">     
       {{ Form::open(["url" => route("alumnos.clases.cancelar", ["id" => $idAlumno]), "id" => "formulario-cancelar-clase", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
       @include("alumno.clase.formularioCancelar") 
       {{ Form::close() }}
     </div>  
-    <div id="sec-clase-4" style="display: none;">
+    <div id="sec-clase-4" style="display: none">
       {{ Form::open(["url" => route("alumnos.clases.actualizar.grupo", ["id" => $idAlumno]), "id" => "formulario-actualizar-clases", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
       @include("alumno.clase.formularioGrupo") 
       {{ Form::close() }}

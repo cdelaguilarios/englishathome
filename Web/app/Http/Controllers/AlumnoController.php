@@ -94,6 +94,18 @@ class AlumnoController extends Controller {
     return view("alumno.perfil", $this->data);
   }
 
+  public function ficha($id) {
+    try {
+      $this->data["vistaImpresion"] = TRUE;
+      $this->data["alumno"] = Alumno::obtenerXId($id);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("No se encontraron datos del alumno seleccionado.");
+      return redirect(route("alumnos"));
+    }
+    return view("alumno.ficha", $this->data);
+  }
+
   public function editar($id) {
     try {
       $this->data["alumno"] = Alumno::obtenerXId($id);

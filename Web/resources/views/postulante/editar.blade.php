@@ -24,7 +24,7 @@
             <a href="{{ route("postulantes.crear")}}" class="btn btn-primary btn-clean">Nuevo postulante</a>
           </div>           
           <div class="col-sm-4">
-            {{ Form::select("",App\Models\Postulante::listarBusqueda(), $postulante->id, ["id"=>"sel-postulante", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%;"]) }}
+            {{ Form::select("",App\Models\Postulante::listarBusqueda(), $postulante->id, ["id"=>"sel-postulante", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%"]) }}
           </div>
         </div> 
       </div>

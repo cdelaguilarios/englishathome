@@ -27,12 +27,12 @@
         </table>
       </div>
     </div>   
-    <div id="sec-pago-2" style="display: none;">     
+    <div id="sec-pago-2" style="display: none">     
       {{ Form::open(["url" => route("profesores.pagos.registrar", ["id" => $idProfesor]), "id" => "formulario-pago", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
       @include("profesor.pago.formulario") 
       {{ Form::close() }}
     </div>    
-    <div id="sec-pago-3" style="display: none;">
+    <div id="sec-pago-3" style="display: none">
       {{ Form::open(["url" => route("profesores.pagos.actualizar", ["id" => $idProfesor]), "id" => "formulario-actualizar-pago", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
       @include("profesor.pago.formularioActualizar") 
       {{ Form::close() }}
@@ -48,5 +48,6 @@
   var urlDatosPago = "{{ route('profesores.pagos.datos', ['id' => $idProfesor, 'idPago' => 0]) }}";
   var urlEliminarPago = "{{ route('profesores.pagos.eliminar', ['id' => $idProfesor, 'idPago' => 0]) }}";
   var motivosPago = {!!  json_encode(App\Helpers\Enum\MotivosPago::listar()) !!};
+  var motivoPagoClases = "{{ App\Helpers\Enum\MotivosPago::Clases }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/profesor/pago.js")}}"></script>

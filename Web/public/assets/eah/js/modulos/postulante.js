@@ -14,12 +14,14 @@ $(document).ready(function () {
 function cargarLista() {
   urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
+  urlPerfilProfesorPostulante = (typeof (urlPerfilProfesorPostulante) === "undefined" ? "" : urlPerfilProfesorPostulante);
   urlActualizarEstado = (typeof (urlActualizarEstado) === "undefined" ? "" : urlActualizarEstado);
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   estados = (typeof (estados) === "undefined" ? "" : estados);
   estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
+  estadoProfesorRegistrado = (typeof (estadoProfesorRegistrado) === "undefined" ? "" : estadoProfesorRegistrado);
 
-  if (urlListar !== "" && urlEditar !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "") {
+  if (urlListar !== "" && urlEditar !== "" && urlPerfilProfesorPostulante !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "" && estadoProfesorRegistrado !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -43,7 +45,7 @@ function cargarLista() {
             if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined) {
               return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
             } else if (estados[d.estado] !== undefined) {
-              return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>';
+              return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>' + ((d.estado === estadoProfesorRegistrado) ? '<a href="' + (urlPerfilProfesorPostulante.replace("/0", "/" + d.id)) + '" title="Ver perfil del profesor" target="_blank" class="btn-perfil-relacion-entidad"><i class="fa fa-eye"></i></a>' : '');
             } else {
               return "";
             }

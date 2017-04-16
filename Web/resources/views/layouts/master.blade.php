@@ -36,9 +36,10 @@
     <script src="{{ asset("assets/plugins/jquery/jquery.min.js") }}"></script>
     <script src="{{ asset("assets/bootstrap/js/bootstrap.min.js") }}"></script>      
     @else
-    @if (isset($vistaExterna) && $vistaExterna)  
+    @if ((isset($vistaExterna) && $vistaExterna) || (isset($vistaImpresion) && $vistaImpresion))  
     <div class="register-box">
       <div class="register-box-body">
+        @if(!(isset($vistaImpresion) && $vistaImpresion))
         <div class="register-logo">
           <div class="row">
             <div class="col-sm-6 vcenter">
@@ -50,12 +51,13 @@
               </a>
             </div>
           </div>        
-        </div>        
+        </div> 
+        @endif
         @yield("content")
       </div>
     </div> 
     @elseif(!(Auth::guest())) 
-    <div class="wrapper" style="display: none;">
+    <div class="wrapper" style="display: none">
       <header class="main-header">
         <a href="{{ route("/")}}" class="logo">
           <span class="logo-mini"><b>EAH</b></span>
@@ -126,6 +128,9 @@
             <li class="{{ ((isset($seccion) && $seccion == "cursos") ? "active" : "") }}">
               <a href="{{ route("cursos")}}"><i class="fa fa-book"></i> <span>Cursos</span></a>
             </li>
+            <li class="{{ ((isset($seccion) && $seccion == "calendario") ? "active" : "") }}">
+              <a href="{{ route("calendario")}}"><i class="fa fa-calendar"></i> <span>Calendario</span></a>
+            </li>
             <li class="{{ ((isset($seccion) && $seccion == "reportes") ? "active" : "") }} treeview">
               <a href="javascript:void(0);">
                 <i class="fa fa-bar-chart"></i> <span>Reportes</span>
@@ -145,6 +150,12 @@
             @if($usuarioActual->rol == App\Helpers\Enum\RolesUsuario::Principal)
             <li class="{{ ((isset($seccion) && $seccion == "usuarios") ? "active" : "") }}">
               <a href="{{ route("usuarios")}}"><i class="fa fa-users"></i> <span>Usuarios del sistema</span></a>
+            </li>
+            <li class="{{ ((isset($seccion) && $seccion == "configuracion") ? "active" : "") }}">
+              <a href="{{ route("configuracion")}}"><i class="fa fa-gears"></i> <span>Configuración</span></a>
+            </li>
+            <li class="{{ ((isset($seccion) && $seccion == "correos") ? "active" : "") }}">
+              <a href="{{ route("correos")}}"><i class="fa fa-envelope"></i> <span>Correos masivos</span></a>
             </li>
             @endif
           </ul>
@@ -180,7 +191,8 @@
     <script src="{{ asset("assets/plugins/jquery/jquery-migrate.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/jquery/globalize.js") }}"></script>
     <script src="{{ asset("assets/bootstrap/js/bootstrap.min.js") }}"></script>      
-    <script src="{{ asset("assets/plugins/select2/select2.full.min.js") }}"></script>      
+    <script src="{{ asset("assets/plugins/select2/select2.full.min.js") }}"></script> 
+    <script src="{{ asset("assets/plugins/select2/i18n/es.js") }}"></script>     
     <script src="{{ asset("assets/fuelux/3.13.0/js/fuelux.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/slimScroll/jquery.slimscroll.min.js") }}"></script>         
     <script src="{{ asset("assets/plugins/fastclick/fastclick.js") }}"></script>          
