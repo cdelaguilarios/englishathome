@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use PDF;
 use Log;
 use Crypt;
 use Input;
+use Storage;
 use Mensajes;
 use Datatables;
 use App\Models\Clase;
@@ -24,9 +26,16 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class AlumnoController extends Controller {
 
   protected $data = array();
+  protected $rutasArchivosEliminar = array();
 
   public function __construct() {
     $this->data["seccion"] = "alumnos";
+  }
+
+  public function __destruct() {
+    foreach ($this->rutasArchivosEliminar as $rutaArchivoEliminar) {
+      file_exists($rutaArchivoEliminar) ? unlink($rutaArchivoEliminar) : FALSE;
+    }
   }
 
   // <editor-fold desc="Alumno">
@@ -104,6 +113,30 @@ class AlumnoController extends Controller {
       return redirect(route("alumnos"));
     }
     return view("alumno.ficha", $this->data);
+  }
+
+  public function descargarFicha($id) {
+    try {
+      $alumno = Alumno::obtenerXId($id);
+      $this->data["vistaImpresion"] = TRUE;
+      $this->data["alumno"] = $alumno;
+      $pdf = PDF::loadView("alumno.ficha", $this->data);
+      $rutaBaseAlmacenamiento = Storage::disk("local")->getDriver()->getAdapter()->getPathPrefix();
+      $nombrePdf = "Ficha " . ($alumno->sexo == "F" ? "de la alumna" : "del alumno" ) . " " . $alumno->nombre . " " . $alumno->apellido . ".pdf";
+      $this->rutasArchivosEliminar[] = $rutaBaseAlmacenamiento . $nombrePdf;
+      $datosPdf = $pdf->setOption("margin-top", "30mm")
+              ->setOption("dpi", 108)->setOption("page-size", "A4")
+              ->setOption("viewport-size", "1280x1024")
+              ->setOption("footer-font-size", "8")
+              ->setOption("footer-left", "English at home " . date("Y") . " - Ficha " . ($alumno->sexo == "F" ? "de la alumna" : "del alumno" ) . " " . $alumno->nombre . " " . $alumno->apellido)
+              ->setOption("footer-right", '"Pag. [page] de [topage]"')
+              ->save($rutaBaseAlmacenamiento . $nombrePdf, true);
+    } catch (\Exception $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("Ocurrió un problema durante la descarga de la ficha del alumno.");
+      return redirect(route("alumnos"));
+    }
+    return $datosPdf->download($nombrePdf);
   }
 
   public function editar($id) {

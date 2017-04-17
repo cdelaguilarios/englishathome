@@ -1,7 +1,7 @@
 @if(isset($modo) && $modo == "visualizar")
 <div id="sec-perfil-horario">  
   <div id="sec-info-horario"></div>
-  @if(!(isset($bloquearEdicion) && $bloquearEdicion))
+  @if(!(isset($vistaImpresion) && $vistaImpresion))
   <button id="btn-horario" type="button" class="btn btn-primary btn-xs">Editar horario</button>
   @endif
 </div>
@@ -17,6 +17,7 @@
 </div>
 {{ Form::hidden("horario") }} 
 @endif
+@if(!(isset($vistaImpresion) && $vistaImpresion))
 <div id="mod-horario" class="modal" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -62,4 +63,5 @@
     </div>
   </div>
 </div>
+@endif
 <script type="text/javascript" src="{{ asset("assets/eah/js/horario.js")}}"></script>

@@ -52,6 +52,7 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("alumno/{id}/actualizarHorario", ["uses" => "AlumnoController@actualizarHorario", "as" => "alumnos.actualizar.horario"]);
     Route::get("alumno/{id}/perfil", ["uses" => "AlumnoController@perfil", "as" => "alumnos.perfil"]);
     Route::get("alumno/{id}/ficha", ["uses" => "AlumnoController@ficha", "as" => "alumnos.ficha"]);
+    Route::get("alumno/{id}/descargarFicha", ["uses" => "AlumnoController@descargarFicha", "as" => "alumnos.descargar.ficha"]);
     Route::delete("alumno/{id}/eliminar", ["uses" => "AlumnoController@eliminar", "as" => "alumnos.eliminar"]);
     // </editor-fold>
     // <editor-fold desc="Alumnos - pagos">

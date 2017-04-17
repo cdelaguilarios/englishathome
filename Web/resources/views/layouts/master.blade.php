@@ -3,12 +3,13 @@
   <head>        
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>English at home administrador - @yield("titulo")</title>
+    <title>English at home {{ ((isset($vistaImpresion) && $vistaImpresion) ? "" : "administrador") }} - @yield("titulo")</title>
     <meta name="_token" content="{!! csrf_token() !!}"/>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="icon" type="image/ico" href="{{ asset("assets/eah/img/favicon.ico") }}" />
     <link rel="stylesheet" href="{{ asset("assets/bootstrap/css/bootstrap.min.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/fuelux/3.13.0/css/fuelux.min.css") }}" />
+    @if (!(isset($vistaImpresion) && $vistaImpresion)) 
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css" />  
     <link rel="stylesheet" href="{{ asset("assets/eah/css/iconos-educacion/flaticon.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/datatables/dataTables.bootstrap.css") }}" />    
@@ -21,6 +22,9 @@
     <link rel="stylesheet" href="{{ asset("assets/plugins/datepicker/datepicker3.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/jQueryUploadFileMaster/css/uploadfile.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/datetimepicker/bootstrap-datetimepicker.min.css") }}" />
+    @else
+    <link rel="stylesheet" href="{{ asset("assets/dist/css/AdminLTE.min.css") }}" />
+    @endif
     <link rel="stylesheet" href="{{ asset("assets/eah/css/mystyles.css") }}" />
     @yield("section_style")   
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -39,11 +43,14 @@
     @if ((isset($vistaExterna) && $vistaExterna) || (isset($vistaImpresion) && $vistaImpresion))  
     <div class="register-box">
       <div class="register-box-body">
-        @if(!(isset($vistaImpresion) && $vistaImpresion))
         <div class="register-logo">
           <div class="row">
             <div class="col-sm-6 vcenter">
+              @if(isset($vistaImpresion) && $vistaImpresion && isset($alumno))
+              <b>Ficha {{ $alumno->sexo == "F" ? "de la alumna" : "del alumno" }}<br/>{{ $alumno->nombre . " " .  $alumno->apellido }}</b>
+              @else
               <b>Ficha del alumno</b>
+              @endif
             </div><!--
             --><div class="col-sm-6 vcenter">
               <a href="http://englishathomeperu.com/" target="_blank">
@@ -52,7 +59,6 @@
             </div>
           </div>        
         </div> 
-        @endif
         @yield("content")
       </div>
     </div> 
@@ -188,6 +194,7 @@
     @endif      
     <script src="{{ asset("assets/plugins/jquery/jquery.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/jquery/jquery-ui.min.js") }}"></script>
+    @if (!(isset($vistaImpresion) && $vistaImpresion)) 
     <script src="{{ asset("assets/plugins/jquery/jquery-migrate.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/jquery/globalize.js") }}"></script>
     <script src="{{ asset("assets/bootstrap/js/bootstrap.min.js") }}"></script>      
@@ -232,6 +239,12 @@ var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!}
     </script>
     <script src="{{ asset("assets/eah/js/util.js") }}"></script>
     <script src="{{ asset("assets/eah/js/mensajes.js") }}"></script>   
+    @else
+    <script type="text/javascript">
+var minHorario = "{{ $minHorario }}";
+var maxHorario = "{{ $maxHorario}}";
+    </script>
+    @endif
     @yield("section_script") 
     @endif
   </body> 

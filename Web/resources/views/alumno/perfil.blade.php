@@ -78,7 +78,7 @@
         <hr>    
         @endif                          
         <a href="{{ route("alumnos.editar", $alumno->id)}}" class="btn btn-primary btn-block"><b>Editar datos</b></a>
-        <a href="{{ route("alumnos.ficha", $alumno->id)}}" target="_blank" class="btn btn-primary btn-block"><b>Ver ficha</b></a>
+        <a href="{{ route("alumnos.descargar.ficha", $alumno->id)}}" class="btn btn-primary btn-block"><b>Descargar ficha</b></a>
       </div>
     </div>
   </div>
