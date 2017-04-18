@@ -142,6 +142,7 @@ class Historial extends Model {
         $asunto = (isset($historial->asunto) ? $historial->asunto : "English at home - Notificación");
         $mensaje = '<p>' . $historial->titulo . '</p><p>' . $historial->mensaje . '</p><p><b>Fecha notificación:</b> ' . \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $historial->fechaNotificacion)->format("d/m/Y H:i:s") . '</p>';
 
+        Config::set("eah.correoNotificaciones", VariableSistema::obtenerXLlave("correo"));
         $entidadDestinataria = (isset($historial->idEntidadDestinataria) && Entidad::verificarExistencia($historial->idEntidadDestinataria) ? Entidad::ObtenerXId($historial->idEntidadDestinataria) : NULL);
         $correoDestinatario = (!is_null($entidadDestinataria) ? $entidadDestinataria->correoElectronico : (isset($historial->correoDestinatario) ? $historial->correoDestinatario : Config::get("eah.correoNotificaciones")));
         $nombreCompletoDestinatario = (!is_null($entidadDestinataria) ? $entidadDestinataria->nombre . " " . $entidadDestinataria->apellido : (isset($historial->correoDestinatario) ? "" : "Usuario administrador"));

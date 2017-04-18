@@ -5,6 +5,6 @@ return [
     "maxHorasClase" => "5",
     "minHorario" => "7",
     "maxHorario" => "22",
-    "correoNotificaciones" => "cdelaguilarios@gmail.com",
+    "correoNotificaciones" => "",
     "numeroNotificacionesXLlamada" => 15
 ];

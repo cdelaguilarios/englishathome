@@ -35,7 +35,7 @@
         <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($alumno->imagenPerfil) && $alumno->imagenPerfil != "" ? $alumno->imagenPerfil : "-"), "tip" => ($alumno->sexo == "F" ? "f" : "m")]) }}" alt="Alumn{{ $alumno->sexo == "F" ? "a" : "o" }} {{ $alumno->nombre . " " .  $alumno->apellido }}">
       </td>
     </tr><tr>
-      <td><strong><i class="fa fa-fw fa-calendar"></i> Horario de clases:</strong></td>
+      <td><strong><i class="fa fa-fw fa-calendar"></i> Horario:</strong></td>
       <td>@include("util.horario", ["horario" => $alumno->horario, "modo" => "visualizar"])</td>
     </tr> 
     <tr>

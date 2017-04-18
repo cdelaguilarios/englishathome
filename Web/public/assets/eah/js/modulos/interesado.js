@@ -302,3 +302,7 @@ function cargarFormularioCotizacion() {
       return true;
     }, acceptFiles: "*", uploadStr: "Subir archivo"});
 }
+function copiarEnlaceFichaInscripcion(enlace){
+  window.prompt("Copiar enlace ficha de inscripción: Ctrl+C, Enter", enlace);
+  return false;
+}

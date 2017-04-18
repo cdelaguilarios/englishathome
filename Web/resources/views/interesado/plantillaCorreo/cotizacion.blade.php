@@ -32,6 +32,24 @@
       .bt {
         padding-top:10px;
       }
+      .btn-inscripcion{
+        color: #fff;
+        background-color: #286090;
+        border-color: #122b40;
+        text-decoration: none;
+        outline-offset: -2px;
+        border-radius: 6px;
+        margin: 2px 0 2px 4px;
+        border: 1px solid transparent;
+        padding: 2px 6px;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        cursor: pointer !important;
+      }
       p.callout {
         padding:9px;
         font-size:12px;
@@ -551,7 +569,7 @@
                       <span class="sub-title"><strong>Proceso de inscripción</strong></span>						
                     </p>
                     <ol>
-                      <li>Completar la ficha del alumno en el siguiente link: <a href="{{ $urlInscripcion }}">Ficha de inscripción</a></li>
+                      <li>Completar la ficha del alumno en el siguiente link: <a href="{{ $urlInscripcion }}" type="button" class="btn-inscripcion">Ficha de inscripción</a></li>
                       <li>Realizar la confirmación del abono de la inversión de acuerdo a los términos de la forma de pago especificada.</li>
                       <li>Esperar un plazo máximo entre dos y tres días para asignar al profesor y dejar los materiales listos para el inicio de clases.</li>
                     </ol>

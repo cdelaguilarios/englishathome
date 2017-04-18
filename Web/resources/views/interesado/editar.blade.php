@@ -20,12 +20,13 @@
     <div class="box box-primary">        
       <div class="box-body">
         <div class="form-group">
-          <div class="col-sm-6">
+          <div class="col-sm-7">
             <a href="{{ route("interesados.crear")}}" class="btn btn-primary btn-clean">Nuevo interesado</a>
             @if($interesado->estado != App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado)
             <button id="btn-registrar-alumno"  type="button" class="btn btn-primary"><i class="fa fa-mortar-board"></i> Registrar como alumno</button>
             @endif
-            <a href="{{ route("interesados.cotizar", ["id" => $interesado->idEntidad]) }}" type="button" class="btn btn-primary" ><i class="fa fa-dollar"></i> Enviar cotización</a>
+            <a href="{{ route("interesados.cotizar", ["id" => $interesado->idEntidad]) }}" type="button" class="btn btn-primary" ><i class="fa fa-dollar"></i> Enviar cotización</a>             
+            <button class="btn btn-primary" onclick="return copiarEnlaceFichaInscripcion('{{ route("alumnos.crear.externo", ["codigoVerificacion" => Crypt::encrypt($interesado->id)]) }}')">Copiar enlace ficha de inscripción</button>
           </div>    
           <div class="col-sm-2">
             @if(isset($interesado->idInteresadoSiguiente))
@@ -35,7 +36,7 @@
             <a href="{{ route("interesados.editar", ["id" => $interesado->idInteresadoAnterior]) }}" class="btn btn-default pull-right"><span class="glyphicon glyphicon-arrow-left"></span></a>
             @endif
           </div>
-          <div class="col-sm-4">
+          <div class="col-sm-3">
             {{ Form::select("", App\Models\Interesado::listarBusqueda(), $interesado->id, ["id"=>"sel-interesado", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%"]) }}
           </div> 
         </div> 

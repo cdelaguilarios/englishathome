@@ -200,7 +200,7 @@ function cargarFormulario() {
     }
 
     var numeroHorasClase = $("input[name='auxNumeroHorasClase']").val();
-    establecerCampoDuracion("numero-horas-clase", (numeroHorasClase !== "" ? numeroHorasClase : undefined));
+    establecerCampoDuracion("numero-horas-clase", (numeroHorasClase !== "" ? numeroHorasClase : 7200));
 
     $("#direccion").focusout(verificarDatosBusquedaMapa);
     $("input[name='codigoUbigeo']").change(verificarDatosBusquedaMapa);

@@ -51,7 +51,7 @@
         <div id="sec-entidades-seleccionadas-correos" class="form-group">
           {{ Form::label("entidades-seleccionadas-correos", "Seleccionar entidades: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {{ Form::select("idsEntidadesSeleccionadas", [], null, ["id" => "entidades-seleccionadas-correos", "class" => "form-control", "multiple" => "multiple", "style" => "width: 100%"]) }}
+            {{ Form::select("idsEntidadesSeleccionadas[]", [], null, ["id" => "entidades-seleccionadas-correos", "class" => "form-control", "multiple" => "multiple", "style" => "width: 100%"]) }}
           </div>
         </div>         
         <div class="form-group">
