@@ -125,6 +125,9 @@ Route::group(["middleware" => "auth"], function() {
     Route::get("usuario/{id}/editar", ["uses" => "UsuarioController@editar", "as" => "usuarios.editar"]);
     Route::patch("usuario/{id}/actualizar", ["uses" => "UsuarioController@actualizar", "as" => "usuarios.actualizar"]);
     // </editor-fold>
+    // <editor-fold desc="Imagen perfil">
+    Route::post("entidad/{id}/actualizarImagenPerfil", ["uses" => "EntidadController@actualizarImagenPerfil", "as" => "entidad.actualizar.imagen.perfil"]);
+    // </editor-fold>
     // <editor-fold desc="Historial">
     Route::post("historial/{idEntidad}/perfil", ["uses" => "HistorialController@obtener", "as" => "historial.perfil"]);
     Route::post("historial/{idEntidad}/registrar", ["uses" => "HistorialController@registrar", "as" => "historial.registrar"]);

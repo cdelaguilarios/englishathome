@@ -366,12 +366,15 @@ function verDatosClase(idAlumno, idClase) {
 
 //Wizard
 var mapa, google;
-function establecerWizard(idEntidad, modoEditar) {
-  $("#wiz-registro-" + idEntidad).wizard();
-  $("#wiz-registro-" + idEntidad).on("actionclicked.fu.wizard", function (e, d) {
-    var campos = $("#formulario-" + idEntidad).find("#sec-wiz-" + idEntidad + "-" + d.step).find(":input, select");
+function establecerWizard(tipoEntidad, modoEditar) {
+  $("#wiz-registro-" + tipoEntidad).wizard();
+  $("#wiz-registro-" + tipoEntidad).on("actionclicked.fu.wizard", function (e, d) {
+    var campos = $("#formulario-" + tipoEntidad).find("#sec-wiz-" + tipoEntidad + "-" + d.step).find(":input, select");
+    $("#formulario-" + tipoEntidad).find("#btn-guardar-secundario").show();
     if (d.direction === "next" && !campos.valid()) {
       e.preventDefault();
+    } else if (d.direction === "next" && $("#formulario-" + tipoEntidad).find(".step-pane:last").attr("id").replace("sec-wiz-" + tipoEntidad + "-", "") === ((parseInt(d.step) + 1) + "")) {
+      $("#formulario-" + tipoEntidad).find("#btn-guardar-secundario").hide();
     }
   }).on("changed.fu.wizard", function (e, d) {
     if (google !== undefined && mapa !== undefined) {
@@ -379,26 +382,29 @@ function establecerWizard(idEntidad, modoEditar) {
       verificarPosicionSel();
     }
   }).on("finished.fu.wizard", function (e, d) {
-    $("#formulario-" + idEntidad).submit();
+    $("#formulario-" + tipoEntidad).submit();
   });
 
   if (modoEditar) {
-    habilitarTodosPasosWizard(idEntidad);
-    $("#wiz-registro-" + idEntidad).find('.steps-container').find('li').click(function (e) {
-      var pasoActual = $("#wiz-registro-" + idEntidad).find('.steps-container').find('li.active').data("step");
-      var campos = $("#formulario-" + idEntidad).find("#sec-wiz-" + idEntidad + "-" + pasoActual).find(":input, select");
+    habilitarTodosPasosWizard(tipoEntidad);
+    $("#wiz-registro-" + tipoEntidad).find('.steps-container').find('li').click(function (e) {
+      var pasoActual = $("#wiz-registro-" + tipoEntidad).find('.steps-container').find('li.active').data("step");
+      var campos = $("#formulario-" + tipoEntidad).find("#sec-wiz-" + tipoEntidad + "-" + pasoActual).find(":input, select");
+      $("#formulario-" + tipoEntidad).find("#btn-guardar-secundario").show();
       if (!campos.valid()) {
         e.preventDefault();
         return false;
+      } else if ($("#formulario-" + tipoEntidad).find(".step-pane:last").attr("id").replace("sec-wiz-" + tipoEntidad + "-", "") === ($(this).data("step") + "")) {
+        $("#formulario-" + tipoEntidad).find("#btn-guardar-secundario").hide();
       }
     });
-    $("#wiz-registro-" + idEntidad).on("changed.fu.wizard", function (e, d) {
-      habilitarTodosPasosWizard(idEntidad);
+    $("#wiz-registro-" + tipoEntidad).on("changed.fu.wizard", function (e, d) {
+      habilitarTodosPasosWizard(tipoEntidad);
     });
   }
 }
-function habilitarTodosPasosWizard(idEntidad) {
-  var pasos = $("#wiz-registro-" + idEntidad).find('.steps-container').find('li');
+function habilitarTodosPasosWizard(tipoEntidad) {
+  var pasos = $("#wiz-registro-" + tipoEntidad).find('.steps-container').find('li');
   $.each(pasos, function (i, v) {
     if (!pasos.eq(i).hasClass('active')) {
       pasos.eq(i).addClass('complete');

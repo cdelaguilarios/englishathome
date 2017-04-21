@@ -3,6 +3,8 @@
 
 @section("section_script")
 <script>
+  var urlActualizarEstado = "{{ route('alumnos.actualizar.estado', ['id' => 0]) }}";
+  var estados = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listar()) !!};
   var urlActualizarHorario = "{{ route('alumnos.actualizar.horario', ['id' => $alumno->idEntidad]) }}";
   var urlPerfil = "{{ route('alumnos.perfil', ['id' => 0]) }}";
 </script>
@@ -20,10 +22,20 @@
   <div class="col-sm-3">
     <div class="box box-primary">
       <div class="box-body box-profile">
-        <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($alumno->imagenPerfil) && $alumno->imagenPerfil != "" ? $alumno->imagenPerfil : "-"), "tip" => ($alumno->sexo == "F" ? "f" : "m")]) }}" alt="Alumn{{ $alumno->sexo == "F" ? "a" : "o" }} {{ $alumno->nombre . " " .  $alumno->apellido }}">
+        @include("util.imagenPerfil", ["entidad" => $alumno])
         <h3 class="profile-username">Alumn{{ $alumno->sexo == "F" ? "a" : "o" }} {{ $alumno->nombre . " " .  $alumno->apellido }}</h3>
         <p class="text-muted">{{ $alumno->correoElectronico }}</p>
-        <p><span class="label {{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][0] }}</span></p>
+        <p>
+        @if(array_key_exists($alumno->estado, App\Helpers\Enum\EstadosAlumno::listarCambio()))
+        <div class="sec-btn-editar-estado">
+          <a href="javascript:void(0);" class="btn-editar-estado" data-id="{{ $alumno->id }}" data-estado="{{ $alumno->estado }}">
+            <span class="label {{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][0] }}</span>
+          </a>
+        </div>
+        @else
+        <span class="label {{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][0] }}</span>
+        @endif
+        </p>
       </div>
     </div>
     <div class="sec-datos box box-primary">
@@ -108,28 +120,31 @@
         </div>
         <div id="pago" class="tab-pane">
           @if($alumno->horario != "[]")
-            @include("alumno.pago.principal", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "totalSaldoFavor" => $alumno->totalSaldoFavor, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : null)]) 
+          @include("alumno.pago.principal", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "totalSaldoFavor" => $alumno->totalSaldoFavor, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : null)]) 
           @else
-            Debe establecer un horario para el  alumn{{ $alumno->sexo == "F" ? "a" : "o" }}.
+          Debe establecer un horario para el  alumn{{ $alumno->sexo == "F" ? "a" : "o" }}.
           @endif
         </div>
         <div id="clase" class="tab-pane">
           @if($alumno->horario != "[]")
-            @include("alumno.clase.principal", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : null)])
+          @include("alumno.clase.principal", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : null)])
           @else
-            Debe establecer un horario para el  alumn{{ $alumno->sexo == "F" ? "a" : "o" }}.
+          Debe establecer un horario para el  alumn{{ $alumno->sexo == "F" ? "a" : "o" }}.
           @endif
         </div>
         <div id="calendario" class="tab-pane">
           @if($alumno->horario != "[]")
-            @include("util.calendario", ["idEntidad" => $alumno->id]) 
+          @include("util.calendario", ["idEntidad" => $alumno->id]) 
           @else
-            Debe establecer un horario para el  alumn{{ $alumno->sexo == "F" ? "a" : "o" }}.
+          Debe establecer un horario para el  alumn{{ $alumno->sexo == "F" ? "a" : "o" }}.
           @endif
         </div>
         @include("alumno.pago.datos") 
       </div>
     </div>
   </div>
+</div>
+<div style="display: none">
+  {{ Form::select("", App\Helpers\Enum\EstadosAlumno::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control"]) }}
 </div>
 @endsection

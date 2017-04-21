@@ -7,10 +7,10 @@ class MensajesHistorial {
   const TituloInteresadoRegistro = "[" . TiposEntidad::Interesado . "] se registró como nuevo interesado(a)";
   const TituloInteresadoRegistroXUsuario = "[" . TiposEntidad::Usuario . "] registró a [" . TiposEntidad::Interesado . "] como nuevo interesado(a)";
   const TituloInteresadoEnvioCorreoCotizacion = "[" . TiposEntidad::Usuario . "] envió un correo de cotización a [" . TiposEntidad::Interesado . "]";  
-  const TituloInteresadoRegistroAlumno = "[" . TiposEntidad::Interesado . "] se registró como nuevo alumno(a)";
+  const TituloInteresadoRegistroAlumno = "[" . TiposEntidad::Interesado . "] lleno la ficha de inscripción y se registró se registró como nuevo alumno(a)";
   const TituloInteresadoRegistroAlumnoXUsuario = "[" . TiposEntidad::Usuario . "] registró a [" . TiposEntidad::Interesado . "] como nuevo alumno(a)";
   
-  const TituloAlumnoRegistro = "[" . TiposEntidad::Alumno . "] se registró como nuevo alumno(a)";
+  const TituloAlumnoRegistro = "[" . TiposEntidad::Alumno . "] lleno la ficha de inscripción y se registró como nuevo alumno(a)";
   const TituloAlumnoRegistroXUsuario = "[" . TiposEntidad::Usuario . "] registró a [" . TiposEntidad::Alumno . "] como nuevo alumno(a)";
   const TituloAlumnoRegistroPago = "[" . TiposEntidad::Usuario . "] registró un pago del alumno [" . TiposEntidad::Alumno . "]";
   const MensajeAlumnoRegistroPago = "<strong>Motivo:</strong> [MOTIVO]<br/><strong>Monto:</strong> S/.[MONTO] [DESCRIPCION]<br/>";

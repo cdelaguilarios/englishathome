@@ -3,6 +3,8 @@
 
 @section("section_script")
 <script>
+  var urlActualizarEstado = "{{ route('profesores.actualizar.estado', ['id' => 0]) }}";
+  var estados = {!! json_encode(App\Helpers\Enum\EstadosProfesor::listar()) !!};
   var urlActualizarHorario = "{{ route('profesores.actualizar.horario', ['id' => $profesor->idEntidad]) }}";
   var urlPerfil = "{{ route('profesores.perfil', ['id' => 0]) }}";
 </script>
@@ -20,10 +22,20 @@
   <div class="col-sm-3">
     <div class="box box-primary">
       <div class="box-body box-profile">
-        <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($profesor->imagenPerfil) && $profesor->imagenPerfil != "" ? $profesor->imagenPerfil : "-"), "tip" => ($profesor->sexo == "F" ? "f" : "m")]) }}" alt="Profesor{{ $profesor->sexo == "F" ? "a" : "" }} {{ $profesor->nombre . " " .  $profesor->apellido }}">
+        @include("util.imagenPerfil", ["entidad" => $profesor])
         <h3 class="profile-username">Profesor{{ $profesor->sexo == "F" ? "a" : "" }} {{ $profesor->nombre . " " .  $profesor->apellido }}</h3>
         <p class="text-muted">{{ $profesor->correoElectronico }}</p>
+        <p>
+        @if(array_key_exists($profesor->estado, App\Helpers\Enum\EstadosProfesor::listarCambio()))
+        <div class="sec-btn-editar-estado">
+          <a href="javascript:void(0);" class="btn-editar-estado" data-id="{{ $profesor->id }}" data-estado="{{ $profesor->estado }}">
+            <span class="label {{ App\Helpers\Enum\EstadosProfesor::listar()[$profesor->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosProfesor::listar()[$profesor->estado][0] }}</span>
+          </a>
+        </div>
+        @else
         <span class="label {{ App\Helpers\Enum\EstadosProfesor::listar()[$profesor->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosProfesor::listar()[$profesor->estado][0] }}</span>
+        @endif
+        </p>
       </div>
     </div>
     <div class="sec-datos box box-primary">
@@ -111,5 +123,8 @@
       </div>
     </div>
   </div>
+</div>
+<div style="display: none">
+  {{ Form::select("", App\Helpers\Enum\EstadosProfesor::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control"]) }}
 </div>
 @endsection

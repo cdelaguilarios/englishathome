@@ -77,6 +77,8 @@ function cargarLista() {
         establecerBotonRecargaTabla("tab-lista");
       }
     });
+  }
+  if (urlActualizarEstado !== "" && estados !== "") {
     establecerCambiosBusquedaEstados("tab-lista", urlActualizarEstado, estados);
   }
 }
@@ -145,10 +147,10 @@ function cargarFormulario() {
     },
     submitHandler: function (f) {
       if ($.parseJSON($("input[name='horario']").val()) !== null && $.parseJSON($("input[name='horario']").val()).length > 0) {
-        if (confirm($("#btn-guardar").text().trim() === "Guardar datos"
+        if (confirm($("input[name='modoEditar']").val() === "1"
             ? "¿Está seguro que desea guardar los cambios de los datos del alumno?"
             : "¿Está seguro que desea registrar estos datos?")) {
-          $.blockUI({message: "<h4>" + ($("#btn-guardar").text().trim() === "Guardar datos" ? "Guardando" : "Registrando") + " datos...</h4>"});
+          $.blockUI({message: "<h4>" + ($("input[name='modoEditar']").val() === "1" ? "Guardando" : "Registrando") + " datos...</h4>"});
           f.submit();
         }
       } else {

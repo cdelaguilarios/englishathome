@@ -75,6 +75,7 @@ class Alumno extends Model {
     Historial::registrar([
         "idEntidades" => [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
         "titulo" => (Auth::guest() ? MensajesHistorial::TituloAlumnoRegistro : MensajesHistorial::TituloAlumnoRegistroXUsuario),
+        "enviarCorreo" => (Auth::guest() ? 1 : 0),
         "mensaje" => ""
     ]);
     return $idEntidad;

@@ -166,6 +166,7 @@ class Interesado extends Model {
       Historial::registrar([
           "idEntidades" => [$idAlumno, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
           "titulo" => (Auth::guest() ? MensajesHistorial::TituloAlumnoRegistro : MensajesHistorial::TituloAlumnoRegistroXUsuario),
+          "enviarCorreo" => (Auth::guest() ? 1 : 0),
           "mensaje" => ""
       ]);
     }

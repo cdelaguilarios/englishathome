@@ -242,7 +242,10 @@
             <div class="col-sm-6">
               <span>(*) Campos obligatorios</span>
             </div>
-            <div class="col-sm-6">   
+            <div class="col-sm-6"> 
+              @if(!(isset($modo) && $modo == "registrar"))
+              <button id="btn-guardar-secundario" type="submit" class="btn btn-primary pull-right">Guardar datos</button>  
+              @endif
               <button id="btn-guardar" type="button" class="btn btn-primary btn-next pull-right" data-last="{{ ((isset($modo) && $modo == "registrar") ? "Registrar" : "Guardar") }} datos">
                 Siguiente
               </button>
