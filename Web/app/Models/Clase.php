@@ -188,7 +188,7 @@ class Clase extends Model {
     return $eventos;
   }
 
-  public static function listarIdsEntidadesXRangoFecha($fechaInicio, $fechaFin, $idsProfesores = FALSE) {
+  public static function listarIdsEntidadesXRangoFecha($fechaInicio, $fechaFin, $idsProfesores = FALSE, $incluirClasesCanceladas = FALSE) {
     $clases = Clase::where("eliminado", 0)->where(function ($q) use ($fechaInicio, $fechaFin) {
       $q->where(function ($q) use ($fechaInicio) {
         $q->where("fechaInicio", "<=", $fechaInicio)->where("fechaFin", ">=", $fechaInicio);
@@ -198,6 +198,9 @@ class Clase extends Model {
         $q->where("fechaInicio", ">=", $fechaInicio)->where("fechaFin", "<=", $fechaFin);
       });
     });
+    if (!$incluirClasesCanceladas) {
+      $clases->where("estado", '!=', EstadosClase::Cancelada);
+    }
     return ($idsProfesores ? $clases->groupBy("idProfesor")->lists("idProfesor") : $clases->groupBy("idAlumno")->lists("idAlumno"));
   }
 

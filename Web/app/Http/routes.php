@@ -99,6 +99,8 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("profesor/{id}/actualizarEstado", ["uses" => "ProfesorController@actualizarEstado", "as" => "profesores.actualizar.estado"]);
     Route::post("profesor/{id}/actualizarHorario", ["uses" => "ProfesorController@actualizarHorario", "as" => "profesores.actualizar.horario"]);
     Route::get("profesor/{id}/perfil", ["uses" => "ProfesorController@perfil", "as" => "profesores.perfil"]);
+    Route::get("profesor/{id}/ficha", ["uses" => "ProfesorController@ficha", "as" => "profesores.ficha"]);
+    Route::get("profesor/{id}/descargarFicha", ["uses" => "ProfesorController@descargarFicha", "as" => "profesores.descargar.ficha"]);
     Route::delete("profesor/{id}/eliminar", ["uses" => "ProfesorController@eliminar", "as" => "profesores.eliminar"]);
     // </editor-fold>
     // <editor-fold desc="Profesores - pagos">    

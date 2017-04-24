@@ -25,7 +25,7 @@
     </div>
   </div>             
   <div class="form-group">
-    {{ Form::label("imagenDocumentoVerificacion", "Imagen del documento de verificación (*): ", ["class" => "col-sm-3 control-label"]) }}
+    {{ Form::label("imagenDocumentoVerificacion", "Imagen de la ficha de conformidad (*): ", ["class" => "col-sm-3 control-label"]) }}
     <div class="col-sm-4">
       {{ Form::file("imagenDocumentoVerificacion", null) }}
     </div>

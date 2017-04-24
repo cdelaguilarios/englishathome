@@ -31,7 +31,7 @@
     </div>
   </div> 
   <div id="sec-imagen-documento-verificacion-actualizar-pago" class="form-group" style="display:none;">
-    {{ Form::label("imagenDocumentoVerificacion", "Imagen del documento de verificación: ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("imagenDocumentoVerificacion", "Imagen de la ficha de conformidad: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-5">
       {{ Form::file("imagenDocumentoVerificacion", null) }}
     </div>

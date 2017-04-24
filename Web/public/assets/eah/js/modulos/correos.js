@@ -1,9 +1,21 @@
+$.validator.addMethod("validarCkEditorCorreos", validarCkEditorCorreos, "Este campo es obligatorio.");
+function validarCkEditorCorreos(v, e, p) {
+  CKEDITOR.instances[$(e).attr("id")].updateElement();
+  if ($(e).val().trim() !== "") {
+    return true;
+  } else {
+    $(window).scrollTop($("#cke_" + $(e).attr("id")).offset().top);
+    return false;
+  }
+}
+
 $(document).ready(function () {
   urlBuscarEntidades = (typeof (urlBuscarEntidades) === "undefined" ? "" : urlBuscarEntidades);
   urlImagenes = (typeof (urlImagenes) === "undefined" ? "" : urlImagenes);
   tiposEntidades = (typeof (tiposEntidades) === "undefined" ? "" : tiposEntidades);
-  if (urlBuscarEntidades !== "" && urlImagenes !== "" && tiposEntidades !== "") {
-    $("#entidades-seleccionadas-correos").select2({
+  tipoEntidadInteresado = (typeof (tipoEntidadInteresado) === "undefined" ? "" : tipoEntidadInteresado);
+  if (urlBuscarEntidades !== "" && urlImagenes !== "" && tiposEntidades !== "" && tipoEntidadInteresado !== "") {
+    $("#entidades-seleccionadas-correos, #entidades-excluidas-correos").select2({
       ajax: {
         url: urlBuscarEntidades,
         dataType: 'json',
@@ -50,20 +62,22 @@ $(document).ready(function () {
       } else {
         $("#sec-entidades-seleccionadas-correos").show();
       }
+      if ($(this).val() === tipoEntidadInteresado) {
+        $("#sec-interesados-cursos-interes-correos").show();
+      } else {
+        $("#sec-interesados-cursos-interes-correos").hide();
+      }
     });
   }
 
   $("#formulario-correos").validate({
     ignore: "",
     rules: {
-      titulo: {
-        required: true
-      },
       asunto: {
         required: true
       },
       mensaje: {
-        required: true
+        validarCkEditorCorreos: true
       }
     },
     submitHandler: function (f) {
@@ -93,6 +107,7 @@ $(document).ready(function () {
     onkeyup: false,
     onclick: false
   });
+  CKEDITOR.replace("mensaje");
 });
 
 

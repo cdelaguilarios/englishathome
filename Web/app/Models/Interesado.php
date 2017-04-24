@@ -41,6 +41,10 @@ class Interesado extends Model {
     return Interesado::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))->lists("nombreCompleto", "entidad.id");
   }
 
+  public static function listarCursosInteres() {
+    return Interesado::listar()->select(DB::raw("(CASE WHEN " . Interesado::nombreTabla() . ".cursoInteres <> '' THEN " . Interesado::nombreTabla() . ".cursoInteres ELSE 'Otros' END) AS 'cursoInteres'"))->groupBy(Interesado::nombreTabla() . ".cursoInteres")->lists("cursoInteres", "cursoInteres");
+  }
+
   public static function obtenerXId($id, $simple = FALSE) {
     $interesado = Interesado::listar()->where("entidad.id", $id)->firstOrFail();
     if (!$simple) {

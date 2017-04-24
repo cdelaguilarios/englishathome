@@ -6,7 +6,6 @@ use Auth;
 use Config;
 use App\Models\Curso;
 use App\Models\Usuario;
-use App\Models\NivelIngles;
 use App\Helpers\Enum\RolesUsuario;
 use App\Helpers\Enum\SexosEntidad;
 use Illuminate\Contracts\View\View;
@@ -43,7 +42,6 @@ class ProfileComposer {
       $datosExtrasVistas = [
           "sexos" => SexosEntidad::listar(),
           "cursos" => Curso::listarSimple(),
-          "nivelesIngles" => NivelIngles::listarSimple(),
           "minHorasClase" => Config::get("eah.minHorasClase"),
           "maxHorasClase" => Config::get("eah.maxHorasClase"),
           "minHorario" => Config::get("eah.minHorario"),

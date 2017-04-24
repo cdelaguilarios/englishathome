@@ -121,7 +121,7 @@
           <div class="form-group">
             {{ Form::label("idNivelIngles", "Nivel de ingles logrado (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3">
-              {{ Form::select("idNivelIngles", $nivelesIngles, (isset($alumno) ? $alumno->idNivelIngles : null), ["class" => "form-control"]) }}
+              {{ Form::select("idNivelIngles", App\Models\NivelIngles::listarSimple(), (isset($alumno) ? $alumno->idNivelIngles : null), ["class" => "form-control"]) }}
             </div>                   
           </div>                    
           <div class="form-group">

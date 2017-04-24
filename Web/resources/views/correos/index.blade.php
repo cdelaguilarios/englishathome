@@ -4,6 +4,7 @@
 @section("section_script")
 <script>
   var tiposEntidades = {!!  json_encode(App\Helpers\Enum\TiposEntidad::listar()) !!};
+  var tipoEntidadInteresado = "{{ App\Helpers\Enum\TiposEntidad::Interesado }}";
   var urlBuscarEntidades = "{{ route('correos.entidades') }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/correos.js") }}"></script>
@@ -23,13 +24,7 @@
         <h3 class="box-title">Envio de correos masivos</h3>
         <button class="btn btn-default btn-clean pull-right" onclick="limpiarCampos();" type="button">Limpiar campos</button>
       </div>
-      <div class="box-body">            
-        <div class="form-group">
-          {{ Form::label("titulo", "Título (*): ", ["class" => "col-sm-2 control-label"]) }}
-          <div class="col-sm-10">
-            {{ Form::text("titulo", null, ["class" => "form-control", "maxlength" =>"255"]) }}
-          </div>
-        </div>            
+      <div class="box-body">           
         <div class="form-group">
           {{ Form::label("asunto", "Asunto (*): ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
@@ -49,9 +44,21 @@
           </div>
         </div>          
         <div id="sec-entidades-seleccionadas-correos" class="form-group">
-          {{ Form::label("entidades-seleccionadas-correos", "Seleccionar entidades: ", ["class" => "col-sm-2 control-label"]) }}
+          {{ Form::label("entidades-seleccionadas-correos", "Seleccionar entidades (*): ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
             {{ Form::select("idsEntidadesSeleccionadas[]", [], null, ["id" => "entidades-seleccionadas-correos", "class" => "form-control", "multiple" => "multiple", "style" => "width: 100%"]) }}
+          </div>
+        </div>          
+        <div id="sec-interesados-cursos-interes-correos" class="form-group" style="display:none">
+          {{ Form::label("interesados-cursos-interes-correos", "Curso interes: ", ["class" => "col-sm-2 control-label"]) }}
+          <div class="col-sm-2">
+            {{ Form::select("cursoInteres", App\Models\Interesado::listarCursosInteres(), null, ["id" => "interesados-cursos-interes-correos", "class" => "form-control", "placeholder" => "Todos"]) }}
+          </div>
+        </div>      
+        <div class="form-group">
+          {{ Form::label("entidades-excluidas-correos", "Excluir entidades: ", ["class" => "col-sm-2 control-label"]) }}
+          <div class="col-sm-10">
+            {{ Form::select("idsEntidadesExcluidas[]", [], null, ["id" => "entidades-excluidas-correos", "class" => "form-control", "multiple" => "multiple", "style" => "width: 100%"]) }}
           </div>
         </div>         
         <div class="form-group">

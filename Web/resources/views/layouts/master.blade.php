@@ -46,8 +46,12 @@
         <div class="register-logo">
           <div class="row">
             <div class="col-sm-6 vcenter">
-              @if(isset($vistaImpresion) && $vistaImpresion && isset($alumno))
-              <b>Ficha {{ $alumno->sexo == "F" ? "de la alumna" : "del alumno" }}<br/>{{ $alumno->nombre . " " .  $alumno->apellido }}</b>
+              @if(isset($vistaImpresion) && $vistaImpresion)              
+                @if(isset($alumno))
+                <b>Ficha {{ $alumno->sexo == "F" ? "de la alumna" : "del alumno" }}<br/>{{ $alumno->nombre . " " .  $alumno->apellido }}</b>
+                @elseif(isset($profesor))
+                <b>Ficha {{ $profesor->sexo == "F" ? "de la profesora" : "del profesor" }}<br/>{{ $profesor->nombre . " " .  $profesor->apellido }}</b>
+                @endif
               @else
               <b>Ficha del alumno</b>
               @endif

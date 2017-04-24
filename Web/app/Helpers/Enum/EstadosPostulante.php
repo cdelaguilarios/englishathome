@@ -8,13 +8,15 @@ class EstadosPostulante {
   const Activo = "ACTIVO";
   const Inactivo = "INACTIVO";
   const ProfesorRegistrado = "PROFESOR-REGISTRADO";
+  const Vetado = "VETADO";
 
   public static function listar() {
     return [
         EstadosPostulante::Registrado => ["Registrado", "label-primary"],
         EstadosPostulante::Activo => ["Activo", "label-info"],
         EstadosPostulante::Inactivo => ["Inactivo", "label-warning"],
-        EstadosPostulante::ProfesorRegistrado => ["Profesor registrado", "label-success"]
+        EstadosPostulante::ProfesorRegistrado => ["Profesor registrado", "label-success"],
+        EstadosPostulante::Vetado => ["Vetado", "label-danger"]
     ];
   }
 
@@ -29,7 +31,7 @@ class EstadosPostulante {
 
   public static function listarCambio() {
     $estadosBusqueda = EstadosPostulante::listarBusqueda();
-    $estadosDisponibleCambio = [EstadosPostulante::Registrado, EstadosPostulante::Activo, EstadosPostulante::Inactivo];
+    $estadosDisponibleCambio = [EstadosPostulante::Registrado, EstadosPostulante::Activo, EstadosPostulante::Inactivo, EstadosPostulante::Vetado];
     $estadosCambio = [];
     foreach ($estadosBusqueda as $k => $v) {
       if (in_array($k, $estadosDisponibleCambio)) {

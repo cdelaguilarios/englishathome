@@ -97,14 +97,21 @@ class Historial extends Model {
     $datos["mostrarEnPerfil"] = 0;
     $datos["fechaNotificacion"] = Carbon::now()->toDateTimeString();
     $datos["tipo"] = TiposHistorial::Notificacion;
+    $idsEntidadesExcluidas = (isset($datos["idsEntidadesExcluidas"]) ? $datos["idsEntidadesExcluidas"] : []);
     if (!is_null($datos["tipoEntidad"])) {
-      $entidades = Entidad::listar($datos["tipoEntidad"]);
+      if ($datos["tipoEntidad"] == TiposEntidad::Interesado && !is_null($datos["cursoInteres"])) {
+        $cursoInteres = ($datos["cursoInteres"] != "Otros" ? $datos["cursoInteres"] : "");
+        $entidades = Interesado::listar()->whereNotIn("entidad.id", $idsEntidadesExcluidas)
+                        ->where(Interesado::nombreTabla() . ".cursoInteres", $cursoInteres)->get();
+      } else {
+        $entidades = Entidad::listar($datos["tipoEntidad"], $idsEntidadesExcluidas);
+      }
       foreach ($entidades as $entidad) {
         $historial = new Historial($datos + ["idEntidadDestinataria" => $entidad->id]);
         $historial->save();
       }
     } else if (!is_null($datos["idsEntidadesSeleccionadas"])) {
-      foreach ($datos["idsEntidadesSeleccionadas"] as $idEntidadSeleccionada) {
+      foreach (array_diff($datos["idsEntidadesSeleccionadas"], $idsEntidadesExcluidas) as $idEntidadSeleccionada) {
         $historial = new Historial($datos + ["idEntidadDestinataria" => $idEntidadSeleccionada]);
         $historial->save();
       }
@@ -140,7 +147,7 @@ class Historial extends Model {
       try {
         Historial::formatearDatosHistorialBase($historial);
         $asunto = (isset($historial->asunto) ? $historial->asunto : "English at home - Notificación");
-        $mensaje = '<p>' . $historial->titulo . '</p><p>' . $historial->mensaje . '</p><p><b>Fecha notificación:</b> ' . \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $historial->fechaNotificacion)->format("d/m/Y H:i:s") . '</p>';
+        $mensaje = (isset($historial->titulo) && trim($historial->titulo) != "" ? '<p>' . $historial->titulo . '</p>' : '') . '<p>' . $historial->mensaje . '</p><p><b>Fecha notificación:</b> ' . \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $historial->fechaNotificacion)->format("d/m/Y H:i:s") . '</p>';
 
         Config::set("eah.correoNotificaciones", VariableSistema::obtenerXLlave("correo"));
         $entidadDestinataria = (isset($historial->idEntidadDestinataria) && Entidad::verificarExistencia($historial->idEntidadDestinataria) ? Entidad::ObtenerXId($historial->idEntidadDestinataria) : NULL);

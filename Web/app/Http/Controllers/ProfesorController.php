@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use PDF;
 use Log;
+use Storage;
 use Mensajes;
 use Datatables;
 use App\Models\Clase;
@@ -20,9 +22,16 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class ProfesorController extends Controller {
 
   protected $data = array();
+  protected $rutasArchivosEliminar = array();
 
   public function __construct() {
     $this->data["seccion"] = "profesores";
+  }
+
+  public function __destruct() {
+    foreach ($this->rutasArchivosEliminar as $rutaArchivoEliminar) {
+      file_exists($rutaArchivoEliminar) ? unlink($rutaArchivoEliminar) : FALSE;
+    }
   }
 
   // <editor-fold desc="Profesor">
@@ -63,6 +72,42 @@ class ProfesorController extends Controller {
       return redirect(route("profesores"));
     }
     return view("profesor.perfil", $this->data);
+  }
+
+  public function ficha($id) {
+    try {
+      $this->data["vistaImpresion"] = TRUE;
+      $this->data["profesor"] = Profesor::obtenerXId($id);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("No se encontraron datos del profesor seleccionado.");
+      return redirect(route("profesores"));
+    }
+    return view("profesor.ficha", $this->data);
+  }
+
+  public function descargarFicha($id) {
+    try {
+      $profesor = Profesor::obtenerXId($id);
+      $this->data["vistaImpresion"] = TRUE;
+      $this->data["profesor"] = $profesor;
+      $pdf = PDF::loadView("profesor.ficha", $this->data);
+      $rutaBaseAlmacenamiento = Storage::disk("local")->getDriver()->getAdapter()->getPathPrefix();
+      $nombrePdf = "Ficha " . ($profesor->sexo == "F" ? "de la profesora" : "del profesor" ) . " " . $profesor->nombre . " " . $profesor->apellido . ".pdf";
+      $this->rutasArchivosEliminar[] = $rutaBaseAlmacenamiento . $nombrePdf;
+      $datosPdf = $pdf->setOption("margin-top", "30mm")
+              ->setOption("dpi", 108)->setOption("page-size", "A4")
+              ->setOption("viewport-size", "1280x1024")
+              ->setOption("footer-font-size", "8")
+              ->setOption("footer-left", "English at home " . date("Y") . " - Ficha " . ($profesor->sexo == "F" ? "de la profesora" : "del profesor" ) . " " . $profesor->nombre . " " . $profesor->apellido)
+              ->setOption("footer-right", '"Pag. [page] de [topage]"')
+              ->save($rutaBaseAlmacenamiento . $nombrePdf, true);
+    } catch (\Exception $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("Ocurrió un problema durante la descarga de la ficha del profesor.");
+      return redirect(route("profesores"));
+    }
+    return $datosPdf->download($nombrePdf);
   }
 
   public function editar($id) {
