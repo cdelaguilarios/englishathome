@@ -19,8 +19,9 @@ class FormularioActualizarRequest extends Request {
     $datos["idPago"] = ReglasValidacion::formatoDato($datos, "idPago");
     $datos["motivo"] = ReglasValidacion::formatoDato($datos, "motivo");
     $datos["cuenta"] = ReglasValidacion::formatoDato($datos, "cuenta");
-    $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");  
-    $datos["usarSaldoFavor"] = (isset($datos["usarSaldoFavor"]) ? 1 : 0);   
+    $datos["fecha"] = ReglasValidacion::formatoDato($datos, "fecha");
+    $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
+    $datos["usarSaldoFavor"] = (isset($datos["usarSaldoFavor"]) ? 1 : 0);
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -32,19 +33,20 @@ class FormularioActualizarRequest extends Request {
         "idPago" => "required",
         "descripcion" => "max:255",
         "imagenComprobante" => "image",
-        "monto" => ["required", "regex:" . ReglasValidacion::RegexDecimal]
+        "monto" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
+        "fecha" => "required|date_format:d/m/Y"
     ];
 
     $listaMotivosPago = MotivosPago::listar();
     if (!array_key_exists($datos["motivo"], $listaMotivosPago)) {
       $reglasValidacion["motivoNoValido"] = "required";
     }
-    
+
     $listaCuentasBancoPago = CuentasBancoPago::listar();
     if (!array_key_exists($datos["cuenta"], $listaCuentasBancoPago)) {
       $reglasValidacion["cuentaNoValida"] = "required";
     }
-    
+
     $listaEstadosPago = EstadosPago::listar();
     if (!array_key_exists($datos["estado"], $listaEstadosPago)) {
       $reglasValidacion["estadoNoValido"] = "required";
@@ -70,7 +72,7 @@ class FormularioActualizarRequest extends Request {
     return [
         "motivoNoValido.required" => "El motivo seleccionado del pago no es válido.",
         "cuentaNoValida.required" => "La cuenta de banco seleccionada del pago no es válida.",
-        "estadoNoValido.required" => "El estado seleccionado del pago no es válido."        
+        "estadoNoValido.required" => "El estado seleccionado del pago no es válido."
     ];
   }
 

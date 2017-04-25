@@ -7,7 +7,7 @@
         <table id="tab-lista-clases" class="table table-bordered table-hover">
           <thead>
             <tr> 
-              <th>Seleccionar</th>  
+              <th>Seleccionar <input id="seleccionar-todas-clases-profesor" type="checkbox" /></th>  
               <th>Alumno</th>    
               <th>Fecha</th>
               <th class="all">Estado</th>

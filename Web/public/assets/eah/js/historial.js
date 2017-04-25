@@ -158,6 +158,7 @@ function limpiarCamposHistorial() {
       }
     }
   });
+  $("form .help-block-error").remove();
 }
 
 //Común - Util

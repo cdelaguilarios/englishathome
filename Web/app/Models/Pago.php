@@ -12,7 +12,7 @@ class Pago extends Model {
 
   public $timestamps = false;
   protected $table = "pago";
-  protected $fillable = ["motivo", "descripcion", "monto", "imagenesComprobante", "saldoFavor", "saldoFavorUtilizado", "cuenta", "estado"];
+  protected $fillable = ["motivo", "descripcion", "monto", "imagenesComprobante", "saldoFavor", "saldoFavorUtilizado", "cuenta", "estado", "fecha"];
 
   public static function nombreTabla() {
     $modeloPago = new Pago();
@@ -62,6 +62,7 @@ class Pago extends Model {
   }
 
   public static function registrar($datos, $estado, $request) {
+    $datos["fecha"] = (isset($datos["fecha"]) ? Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00") : Carbon::now());
     $pago = new Pago($datos);
     $pago->estado = $estado;
     $pago->save();
@@ -70,6 +71,9 @@ class Pago extends Model {
   }
 
   public static function actualizar($id, $datos, $request) {
+    if (isset($datos["fecha"])) {
+      $datos["fecha"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00");
+    }
     $pago = Pago::obtenerXId($id);
     $pago->update($datos);
     Pago::registrarActualizarImagenes($id, $request);
@@ -117,7 +121,7 @@ class Pago extends Model {
         $rutaImagenDocumentoVerificacion = $rutaImagenDocumentoVerificacionAnt;
       }
       $pago->imagenesComprobante = $rutaImagenComprobante . ($rutaImagenDocumentoVerificacion != "" ? "," . $rutaImagenDocumentoVerificacion : "");
-      $pago->save();      
+      $pago->save();
     }
   }
 

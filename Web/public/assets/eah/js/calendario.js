@@ -30,6 +30,13 @@ function  cargarSeccionCalendario() {
         $("#sec-calendario").fullCalendar("gotoDate", datFechaBus[2] + '-' + datFechaBus[1] + '-' + datFechaBus[0]);
       }
     });
+    $("#bus-tipo-filtro-calendario").change(function () {
+      if ($(this).val() !== "0") {
+        $("#sec-filtro-entidad-calendario").hide();
+      } else {
+        $("#sec-filtro-entidad-calendario").show();
+      }
+    });
     $("#bus-tipo-entidad-calendario").change(function () {
       if ($(this).val() !== "0") {
         $("#sec-bus-sel-alumno-calendario").hide();
@@ -43,7 +50,7 @@ function  cargarSeccionCalendario() {
       $("#bus-sel-alumno-calendario").select2();
       $("#bus-sel-profesor-calendario").select2();
     }
-    $("#bus-tipo-entidad-calendario, #bus-sel-alumno-calendario, #bus-sel-profesor-calendario").change(function () {
+    $("#bus-tipo-filtro-calendario, #bus-tipo-entidad-calendario, #bus-sel-alumno-calendario, #bus-sel-profesor-calendario").change(function () {
       var datosFuenteCalendario = obtenerDatosFuenteCalendario();
       $('#sec-calendario').fullCalendar('removeEventSource', datosFuenteCalendario);
       $('#sec-calendario').fullCalendar('addEventSource', datosFuenteCalendario);
@@ -53,6 +60,11 @@ function  cargarSeccionCalendario() {
 
 function obtenerDatosFuenteCalendario() {
   urlCalendario = (typeof (urlCalendario) === "undefined" ? "" : urlCalendario);
+  var idAlumno = idProfesor = null;
+  if (!($("#bus-tipo-filtro-calendario").length > 0 && $("#bus-tipo-filtro-calendario").val() !== "0")) {
+    idAlumno = ($("#bus-tipo-entidad-calendario").val() !== "0" ? null : $("#bus-sel-alumno-calendario").val());
+    idProfesor = ($("#bus-tipo-entidad-calendario").val() !== "0" ? $("#bus-sel-profesor-calendario").val() : null);
+  }
   return ((urlCalendario !== "") ?
       {
         url: urlCalendario,
@@ -60,8 +72,8 @@ function obtenerDatosFuenteCalendario() {
         data: {
           _token: $("meta[name=_token]").attr("content"),
           tipoEntidad: $("#bus-tipo-entidad-calendario").val(),
-          idAlumno: ($("#bus-tipo-entidad-calendario").val() !== "0" ? null : $("#bus-sel-alumno-calendario").val()),
-          idProfesor: ($("#bus-tipo-entidad-calendario").val() !== "0" ? $("#bus-sel-profesor-calendario").val() : null)
+          idAlumno: idAlumno,
+          idProfesor: idProfesor
         }
       } : []);
 }

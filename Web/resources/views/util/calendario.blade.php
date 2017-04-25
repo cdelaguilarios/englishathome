@@ -19,6 +19,12 @@
         </div>
         @if(isset($incluirListasBusqueda) && $incluirListasBusqueda == 1)
         <div class="form-group">          
+          {{ Form::label("bus-tipo-filtro-calendario", "Tipo de filtro: ", ["class" => "col-sm-2 control-label"]) }}
+          <div class="col-sm-3">
+            {{ Form::select("", ["0" => "Filtro por entidad", "1" => "Todas las clases"], null, ["id"=>"bus-tipo-filtro-calendario", "class" => "form-control"]) }}
+          </div>
+        </div>
+        <div id="sec-filtro-entidad-calendario" class="form-group">          
           {{ Form::label("bus-tipo-entidad-calendario", "Entidad: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-3">
             {{ Form::select("", ["0" => "Alumno", "1" => "Profesor"], null, ["id"=>"bus-tipo-entidad-calendario", "class" => "form-control"]) }}

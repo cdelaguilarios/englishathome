@@ -65,7 +65,7 @@ function cargarListaPago() {
       },
       autoWidth: false,
       responsive: true,
-      order: [[3, "desc"]],
+      order: [[4, "desc"]],
       columns: [
         {data: "id", name: "pago.id", className: "text-center"},
         {data: "motivo", name: "pago.motivo", render: function (e, t, d, m) {
@@ -74,6 +74,9 @@ function cargarListaPago() {
         {data: "cuenta", name: "pago.cuenta", render: function (e, t, d, m) {
             return cuentasBanco[d.cuenta];
           }, className: "text-center"},
+        {data: "fecha", name: "pago.fecha", render: function (e, t, d, m) {
+            return formatoFecha(d.fecha);
+          }, className: "text-center", type: "fecha"},
         {data: "fechaRegistro", name: "pago.fechaRegistro", render: function (e, t, d, m) {
             return formatoFecha(d.fechaRegistro, true);
           }, className: "text-center", type: "fecha"},
@@ -109,7 +112,7 @@ function cargarListaPago() {
         $('#tab-lista-pagos').DataTable().rows({page: 'current'}).data().each(function (i) {
           montoTotalPagina += parseFloat(i.monto);
         });
-        $(api.column(5).footer()).html("Total S/. " + redondear(montoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + redondear(montoTotalPagina, 2) : ""));
+        $(api.column(6).footer()).html("Total S/. " + redondear(montoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + redondear(montoTotalPagina, 2) : ""));
       }
     });
 
@@ -148,6 +151,10 @@ function cargarFormularioPago() {
   $("#formulario-pago").validate({
     ignore: ":hidden",
     rules: {
+      fecha: {
+        required: true,
+        validarFecha: true
+      },
       imagenComprobante: {
         validarImagen: true
       },
@@ -202,6 +209,8 @@ function cargarFormularioPago() {
     onkeyup: false,
     onclick: false
   });
+
+  establecerCalendario("fecha-pago", false, false, false);
 
   var fechaInicioClasesPago = $("#fecha-inicio-clases-pago").val();
   establecerCalendario("fecha-inicio-clases-pago", false, false, false);
@@ -384,6 +393,10 @@ function cargarFormularioActualizarPago() {
   $("#formulario-actualizar-pago").validate({
     ignore: ":hidden",
     rules: {
+      fecha: {
+        required: true,
+        validarFecha: true
+      },
       imagenComprobante: {
         validarImagen: true
       },
@@ -417,6 +430,7 @@ function cargarFormularioActualizarPago() {
     onkeyup: false,
     onclick: false
   });
+  establecerCalendario("fecha-actualizar-pago", false, false, false);
 }
 function editarPago(idPago) {
   obtenerDatosPago(idPago, function (d) {
@@ -424,6 +438,8 @@ function editarPago(idPago) {
       limpiarCamposPago();
       $("#motivo-actualizar-pago").val(d.motivo);
       $("#cuenta-actualizar-pago").val(d.cuenta);
+      var datFecha = formatoFecha(d.fecha).split("/");
+      $("#fecha-actualizar-pago").datepicker("setDate", (new Date(datFecha[1] + "/" + datFecha[0] + "/" + datFecha[2])));
       $("#estado-actualizar-pago").val(d.estado);
       $("#descripcion-actualizar-pago").val(d.descripcion);
       if (d.imagenesComprobante !== null && d.imagenesComprobante !== "") {
@@ -451,6 +467,7 @@ function verDatosPago(idPago) {
       $("#dat-descripcion-pago").text(d.descripcion);
       $("#dat-monto-pago").html('S/. ' + redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="saldo-favor-utilizado">utilizado</span>)' : '') + '</b></small>' : ''));
       $("#dat-estado-pago").html('<span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span>');
+      $("#dat-fecha-pago").text(formatoFecha(d.fecha));
       $("#dat-fecha-registro-pago").text(formatoFecha(d.fechaRegistro, true));
       if (d.imagenesComprobante !== null && d.imagenesComprobante !== "") {
         var rutaImagen = urlImagenes.replace("/0", "/" + d.imagenesComprobante);
@@ -469,7 +486,7 @@ function limpiarCamposPago(soloCamposDocente) {
   $("#nombre-docente-pago").html("");
   if (!soloCamposDocente) {
     $("#formulario-pago, #formulario-actualizar-pago").find(":input, select").each(function (i, e) {
-      if (e.name !== "costoHoraClase" && e.name !== "fechaInicioClases" && e.name !== "periodoClases" && e.name !== "_token" && e.type !== "hidden") {
+      if (e.name !== "fecha" && e.name !== "costoHoraClase" && e.name !== "fechaInicioClases" && e.name !== "periodoClases" && e.name !== "_token" && e.type !== "hidden") {
         if ($(e).is("select")) {
           $(e).prop("selectedIndex", 0);
         } else if ($(e).is(":checkbox")) {
@@ -480,6 +497,8 @@ function limpiarCamposPago(soloCamposDocente) {
         }
       }
     });
+    $("#fecha-pago").datepicker("setDate", "today");
+    $("form .help-block-error").remove();
   }
 }
 function mostrarSeccionPago(numSecciones) {

@@ -168,6 +168,7 @@ function listarClases(tr, fila, datosFila) {
                     paginate: false,
                     order: [[1, "asc"]],
                     columnDefs: [
+                      {targets: [0], orderable: false, searchable: false},
                       {targets: [1], type: "fecha"},
                       {targets: [3], orderable: false, searchable: false}
                     ]
@@ -232,12 +233,26 @@ function htmlListaClases(d) {
         '</td>' +
         '</tr>';
   }
+
+  $("#seleccionar-todas-clases-" + d[0].numeroPeriodo).live("click", function () {
+    var filas = $("#tab-lista-clases-" + d[0].numeroPeriodo).DataTable().rows({search: "applied"}).nodes();
+    $("input[type='checkbox']", filas).prop("checked", this.checked);
+  });
+  $("#tab-lista-clases-" + d[0].numeroPeriodo + " tbody").live("change", "input[type='checkbox']", function () {
+    if (!this.checked) {
+      var el = $("#seleccionar-todas-clases-" + d[0].numeroPeriodo).get(0);
+      if (el && el.checked && ("indeterminate" in el)) {
+        el.indeterminate = true;
+      }
+    }
+  });
+
   return '<div class="box-body">' +
       '<div id="sec-mensajes-periodo-' + d[0].numeroPeriodo + '"></div>' +
       '<table id="tab-lista-clases-' + d[0].numeroPeriodo + '" class="table table-bordered table-hover sub-table">' +
       '<thead>' +
       '<tr>' +
-      '<th class="text-center">Seleccionar</th>' +
+      '<th class="text-center">Seleccionar <input id="seleccionar-todas-clases-' + d[0].numeroPeriodo + '" type="checkbox" /></th>' +
       '<th>Datos</th>' +
       '<th>Estado</th>' +
       '<th>Opciones</th>' +
@@ -611,6 +626,7 @@ function limpiarCamposClasesGrupo(soloCamposDocente) {
         }
       }
     });
+    $("form .help-block-error").remove();
   }
 }
 
@@ -695,6 +711,7 @@ function limpiarCamposClase(soloCamposDocente) {
         }
       }
     });
+    $("form .help-block-error").remove();
   }
 }
 function verDatosPagosClase(idElemento) {

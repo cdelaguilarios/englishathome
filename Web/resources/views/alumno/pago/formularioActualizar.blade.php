@@ -6,15 +6,22 @@
     {{ Form::label("motivo-actualizar-pago", "Motivo: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       {{ Form::select("motivo", App\Helpers\Enum\MotivosPago::listar(), null, ["id" => "motivo-actualizar-pago", "class" => "form-control"]) }}
-    </div>                  
-  </div> 
-  <div class="form-group">
+    </div>     
     {{ Form::label("cuenta-actualizar-pago", "Cuenta: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       {{ Form::select("cuenta", App\Helpers\Enum\CuentasBancoPago::listar(), null, ["id" => "cuenta-actualizar-pago", "class" => "form-control"]) }}
-    </div>   
-  </div>
-  <div class="form-group">
+    </div>              
+  </div> 
+  <div class="form-group">  
+    {{ Form::label("fecha-actualizar-pago", "Fecha de pago (*): ", ["class" => "col-sm-2 control-label"]) }}
+    <div class="col-sm-3">
+      <div class="input-group date">
+        <div class="input-group-addon">
+          <i class="fa fa-calendar"></i>
+        </div>                                
+        {{ Form::text("fecha", null, ["id" => "fecha-actualizar-pago", "class" => "form-control", "placeholder" => "dd/mm/aaaa"]) }}
+      </div>
+    </div>
     {{ Form::label("estado-actualizar-pago", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       {{ Form::select("estado", App\Helpers\Enum\EstadosPago::listarCambio(), null, ["id" => "estado-actualizar-pago", "class" => "form-control"]) }}

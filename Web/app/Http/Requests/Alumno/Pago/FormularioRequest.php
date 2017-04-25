@@ -19,9 +19,10 @@ class FormularioRequest extends Request {
     $datos = $this->all();
     $datos["motivo"] = ReglasValidacion::formatoDato($datos, "motivo");
     $datos["cuenta"] = ReglasValidacion::formatoDato($datos, "cuenta");
+    $datos["fecha"] = ReglasValidacion::formatoDato($datos, "fecha");
     $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $datos["descripcion"] = ReglasValidacion::formatoDato($datos, "descripcion");
-    $datos["imagenComprobante"] = ReglasValidacion::formatoDato($datos, "imagenComprobante");    
+    $datos["imagenComprobante"] = ReglasValidacion::formatoDato($datos, "imagenComprobante");
     $datos["usarSaldoFavor"] = (isset($datos["usarSaldoFavor"]) ? 1 : 0);
     $datos["costoHoraClase"] = ReglasValidacion::formatoDato($datos, "costoHoraClase");
     $datos["fechaInicioClases"] = ReglasValidacion::formatoDato($datos, "fechaInicioClases");
@@ -40,19 +41,20 @@ class FormularioRequest extends Request {
     $reglasValidacion = [
         "descripcion" => "max:255",
         "imagenComprobante" => "image",
-        "monto" => ["required", "regex:" . ReglasValidacion::RegexDecimal]
+        "monto" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
+        "fecha" => "required|date_format:d/m/Y"
     ];
 
     $listaMotivosPago = MotivosPago::listar();
     if (!array_key_exists($datos["motivo"], $listaMotivosPago)) {
       $reglasValidacion["motivoNoValido"] = "required";
     }
-    
+
     $listaCuentasBancoPago = CuentasBancoPago::listar();
     if (!array_key_exists($datos["cuenta"], $listaCuentasBancoPago)) {
       $reglasValidacion["cuentaNoValida"] = "required";
     }
-    
+
     $listaEstadosPago = EstadosPago::listar();
     if (!array_key_exists($datos["estado"], $listaEstadosPago)) {
       $reglasValidacion["estadoNoValido"] = "required";
@@ -65,7 +67,7 @@ class FormularioRequest extends Request {
           "periodoClases" => "required|numeric|digits_between :1,11|min:1",
           "saldoFavor" => ["regex:" . ReglasValidacion::RegexDecimal]
       ];
-      
+
       if (!is_null($datos["idDocente"])) {
         $reglasValidacion += [
             "costoHoraDocente" => ["required", "regex:" . ReglasValidacion::RegexDecimal]

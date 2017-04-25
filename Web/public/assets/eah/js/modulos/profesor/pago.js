@@ -283,6 +283,7 @@ function limpiarCamposPago() {
       }
     }
   });
+  $("form .help-block-error").remove();
 }
 function mostrarSeccionPago(numSecciones) {
   if (!numSecciones) {

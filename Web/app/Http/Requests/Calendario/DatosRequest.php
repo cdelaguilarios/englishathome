@@ -32,12 +32,14 @@ class DatosRequest extends Request {
         "end" => "required|date_format:Y-m-d"
     ];
 
-    if ($datos["tipoEntidad"] !== "0") {
-      if (!Profesor::verificarExistencia($datos["idProfesor"])) {
-        $reglasValidacion["idProfesorNoValido"] = "required";
+    if (!(is_null($datos["idAlumno"]) && is_null($datos["idProfesor"]))) {
+      if ($datos["tipoEntidad"] !== "0") {
+        if (!Profesor::verificarExistencia($datos["idProfesor"])) {
+          $reglasValidacion["idProfesorNoValido"] = "required";
+        }
+      } else if (!Alumno::verificarExistencia($datos["idAlumno"])) {
+        $reglasValidacion["idAlumnoNoValido"] = "required";
       }
-    } else if (!Alumno::verificarExistencia($datos["idAlumno"])) {
-      $reglasValidacion["idAlumnoNoValido"] = "required";
     }
 
     switch ($this->method()) {

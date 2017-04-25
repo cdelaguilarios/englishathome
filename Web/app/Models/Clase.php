@@ -163,13 +163,15 @@ class Clase extends Model {
     $fechaInicio = Carbon::createFromFormat("Y-m-d H:i:s", $datos["start"] . " 00:00:00");
     $fechaFin = Carbon::createFromFormat("Y-m-d H:i:s", $datos["end"] . " 23:59:59");
     $preClases = Clase::listarBase()
-            ->select($nombreTabla . ".*")
+            ->select($nombreTabla . ".*", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor")
             ->where($nombreTabla . ".fechaInicio", ">=", $fechaInicio)
             ->where($nombreTabla . ".fechaFin", "<=", $fechaFin);
-    if ($datos["tipoEntidad"] !== "0") {
-      $preClases->where($nombreTabla . ".idProfesor", $datos["idProfesor"]);
-    } else {
-      $preClases->where($nombreTabla . ".idAlumno", $datos["idAlumno"]);
+    if (!(is_null($datos["idAlumno"]) && is_null($datos["idProfesor"]))) {
+      if ($datos["tipoEntidad"] !== "0") {
+        $preClases->where($nombreTabla . ".idProfesor", $datos["idProfesor"]);
+      } else {
+        $preClases->where($nombreTabla . ".idAlumno", $datos["idAlumno"]);
+      }
     }
     $clases = $preClases->get();
     $eventos = [];
@@ -179,7 +181,7 @@ class Clase extends Model {
           "id" => $clase->id,
           "idAlumno" => $clase->idAlumno,
           "idProfesor" => $clase->idProfesor,
-          "title" => "Clase " . $estadosClase[$clase->estado][0],
+          "title" => "Clase " . $estadosClase[$clase->estado][0] . ((is_null($datos["idAlumno"]) && is_null($datos["idProfesor"])) ? "\n- Alumno: " . $clase->nombreAlumno . " " . $clase->apellidoAlumno . (isset($clase->idProfesor) && isset($clase->nombreProfesor) && $clase->nombreProfesor != "" ? "\n- Profesor: " . $clase->nombreProfesor . " " . $clase->apellidoProfesor : "") : ""),
           "start" => Carbon::createFromFormat("Y-m-d H:i:s", $clase->fechaInicio)->format("Y-m-d H:i:s"),
           "end" => Carbon::createFromFormat("Y-m-d H:i:s", $clase->fechaFin)->format("Y-m-d H:i:s"),
           "backgroundColor" => $estadosClase[$clase->estado][2]

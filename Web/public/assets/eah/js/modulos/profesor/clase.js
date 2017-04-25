@@ -82,9 +82,23 @@ function cargarListaClase() {
         primeraRecargaListaClases = false;
       }
     });
+
+    $("#seleccionar-todas-clases-profesor").on("click", function () {
+      var filas = $("#tab-lista-clases").DataTable().rows({search: "applied"}).nodes();
+      $("input[type='checkbox']", filas).prop("checked", this.checked);
+    });
+    $("#tab-lista-clases tbody").on("change", "input[type='checkbox']", function () {
+      if (!this.checked) {
+        var el = $("#seleccionar-todas-clases-profesor").get(0);
+        if (el && el.checked && ("indeterminate" in el)) {
+          el.indeterminate = true;
+        }
+      }
+    });
   }
   $("#tab-lista-clases").find("input[type='checkbox']").live("change", function () {
-    mostrarSeccionClase(($("#tab-lista-clases").find("input[type='checkbox']:checked").length > 0) ? [1, 1] : [1]);
+    var filas = $("#tab-lista-clases").DataTable().rows({search: "applied"}).nodes();
+    mostrarSeccionClase(($("input[type='checkbox']:checked", filas).length > 0) ? [1, 1] : [1]);
   });
 }
 
@@ -107,7 +121,8 @@ function cargarFormularioPagoClase() {
     },
     submitHandler: function (f) {
       var datosClases = "";
-      $.each($("#tab-lista-clases").find("input[type='checkbox']:checked"), function (e, v) {
+      var filas = $("#tab-lista-clases").DataTable().rows({search: "applied"}).nodes();
+      $.each($("input[type='checkbox']:checked", filas), function (e, v) {
         datosClases += $(v).data("idalumno") + "-" + $(v).data("id") + ",";
       });
       if (datosClases !== "") {
@@ -143,7 +158,8 @@ function cargarFormularioPagoClase() {
   $("#btn-registrar-pago-clase").click(function () {
     limpiarCamposPagoClase();
     var totalPago = 0;
-    $.each($("#tab-lista-clases").find("input[type='checkbox']:checked"), function (e, v) {
+    var filas = $("#tab-lista-clases").DataTable().rows({search: "applied"}).nodes();
+    $.each($("input[type='checkbox']:checked", filas), function (e, v) {
       if ($(v).data("pagototal") !== undefined && $(v).data("pagototal") !== null) {
         totalPago += parseFloat($(v).data("pagototal"));
       } else {
@@ -170,7 +186,7 @@ function limpiarCamposPagoClase() {
       }
     }
   });
-
+  $("form .help-block-error").remove();
 }
 
 //Util
@@ -178,7 +194,6 @@ function mostrarSeccionClase(numSecciones) {
   if (!numSecciones) {
     numSecciones = [1];
   }
-  
   $('[id*="sec-clase-"]').hide();
   var auxSec = "";
   for (var i = 0; i < numSecciones.length; i++) {

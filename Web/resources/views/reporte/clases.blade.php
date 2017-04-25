@@ -43,7 +43,7 @@
                     <th>Profesor(a)</th>  
                     <th>Alumno(a)</th>    
                     <th>Fecha</th>
-                    <th>Estado</th>
+                    <th>Estado(s)</th>
                     <th>Duración</th>
                     <th>Pago por hora al profesor</th>
                   </tr>

@@ -22,6 +22,8 @@
               </div>
               <strong><i class="fa  fa-check-square margin-r-5"></i> Monto</strong>
               <p id="dat-monto-pago" class="text-muted"></p>  
+              <strong><i class="fa  fa-check-square margin-r-5"></i> Fecha de pago</strong>
+              <p id="dat-fecha-pago" class="text-muted"></p>
               <strong><i class="fa  fa-check-square margin-r-5"></i> Fecha registro</strong>
               <p id="dat-fecha-registro-pago" class="text-muted"></p>
               <strong><i class="fa  fa-check-square margin-r-5"></i> Estado</strong>
