@@ -122,7 +122,7 @@ class AlumnoController extends Controller {
       $this->data["alumno"] = $alumno;
       $pdf = PDF::loadView("alumno.ficha", $this->data);
       $rutaBaseAlmacenamiento = Storage::disk("local")->getDriver()->getAdapter()->getPathPrefix();
-      $nombrePdf = "Ficha " . ($alumno->sexo == "F" ? "de la alumna" : "del alumno" ) . " " . $alumno->nombre . " " . $alumno->apellido . ".pdf";
+      $nombrePdf = str_replace(["á","é", "í","ó","ú"], ["a","e","i","o","u"], "Ficha " . ($alumno->sexo == "F" ? "de la alumna" : "del alumno" ) . " " . mb_strtolower($alumno->nombre . " " . $alumno->apellido) . ".pdf");
       $this->rutasArchivosEliminar[] = $rutaBaseAlmacenamiento . $nombrePdf;
       $datosPdf = $pdf->setOption("margin-top", "30mm")
               ->setOption("dpi", 108)->setOption("page-size", "A4")

@@ -4,7 +4,7 @@
 @section("section_style")
 <style>
   body{
-    font-size: 15px;
+    font-size: 14px;
   }
   .titulo{
     text-align: center;
@@ -26,6 +26,9 @@
   }
   #sec-info-horario ul {
     margin-left: -40px
+  }
+  .login-logo, .register-logo{
+    font-size: 30px;
   }
 </style>
 @endsection
