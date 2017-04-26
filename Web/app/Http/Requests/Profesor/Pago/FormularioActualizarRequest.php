@@ -17,6 +17,7 @@ class FormularioActualizarRequest extends Request {
     $datos = $this->all();
     $datos["idPago"] = ReglasValidacion::formatoDato($datos, "idPago");
     $datos["motivo"] = ReglasValidacion::formatoDato($datos, "motivo");
+    $datos["fecha"] = ReglasValidacion::formatoDato($datos, "fecha");
     $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");  
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
@@ -29,7 +30,8 @@ class FormularioActualizarRequest extends Request {
         "idPago" => "required",
         "descripcion" => "max:255",
         "imagenComprobante" => "image",
-        "monto" => ["required", "regex:" . ReglasValidacion::RegexDecimal]
+        "monto" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
+        "fecha" => "required|date_format:d/m/Y"
     ];
 
     $listaMotivosPago = MotivosPago::listar();

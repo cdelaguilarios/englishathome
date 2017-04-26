@@ -62,10 +62,12 @@
       <td><strong><i class="fa fa-phone margin-r-5"></i> Nivel de ingles:</strong></td>
       <td>{{ App\Models\NivelIngles::listarSimple()[$alumno->idNivelIngles] }}</td>
     </tr>
+    @if(isset($alumno->comentarioAdicional) && trim($alumno->comentarioAdicional) != "")
     <tr>
       <td><strong><i class="fa fa-phone margin-r-5"></i> Comentarios adicionales:</strong></td>
       <td>{{ $alumno->comentarioAdicional }}</td>
-    </tr>   
+    </tr> 
+    @endif  
   </tbody>
 </table>
 @endsection

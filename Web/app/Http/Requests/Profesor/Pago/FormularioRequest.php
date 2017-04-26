@@ -18,6 +18,7 @@ class FormularioRequest extends Request {
   protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["motivo"] = ReglasValidacion::formatoDato($datos, "motivo");
+    $datos["fecha"] = ReglasValidacion::formatoDato($datos, "fecha");
     $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $datos["descripcion"] = ReglasValidacion::formatoDato($datos, "descripcion");
     $datos["imagenComprobante"] = ReglasValidacion::formatoDato($datos, "imagenComprobante");
@@ -31,7 +32,8 @@ class FormularioRequest extends Request {
     $reglasValidacion = [
         "descripcion" => "max:255",
         "imagenComprobante" => "image",
-        "monto" => ["required", "regex:" . ReglasValidacion::RegexDecimal]
+        "monto" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
+        "fecha" => "required|date_format:d/m/Y"
     ];
 
     $listaMotivosPago = MotivosPago::listar();

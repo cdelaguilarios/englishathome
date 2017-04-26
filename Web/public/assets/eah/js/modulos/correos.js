@@ -68,6 +68,7 @@ $(document).ready(function () {
         $("#sec-interesados-cursos-interes-correos").hide();
       }
     });
+    $("#tipo-entidad-correos").trigger("change");
   }
 
   $("#formulario-correos").validate({

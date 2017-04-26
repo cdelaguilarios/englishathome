@@ -167,7 +167,9 @@ class ProfesorController extends Controller {
   // </editor-fold>
   // // <editor-fold desc="Pagos">
   public function listarPagos($id) {
-    return Datatables::of(PagoProfesor::listar($id))->filterColumn("pago.fechaRegistro", function($q, $k) {
+    return Datatables::of(PagoProfesor::listar($id))->filterColumn("pago.fecha", function($q, $k) {
+              $q->whereRaw("DATE_FORMAT(pago.fecha, '%d/%m/%Y') like ?", ["%{$k}%"]);
+            })->filterColumn("pago.fechaRegistro", function($q, $k) {
               $q->whereRaw("DATE_FORMAT(pago.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
             })->make(true);
   }

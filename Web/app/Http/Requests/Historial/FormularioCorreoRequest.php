@@ -41,7 +41,7 @@ class FormularioCorreoRequest extends Request {
       $reglasValidacion["correosNoValido"] = "required";
     }
     $listaCursosInteres = Interesado::listarCursosInteres();
-    if (!is_null($datos["tipoEntidad"]) && $datos["tipoEntidad"] == TiposEntidad::Interesado && !is_null($datos["cursoInteres"]) && !array_key_exists($datos["cursoInteres"], $listaCursosInteres)) {
+    if (!is_null($datos["tipoEntidad"]) && $datos["tipoEntidad"] == TiposEntidad::Interesado && !is_null($datos["cursoInteres"]) && !array_key_exists($datos["cursoInteres"], $listaCursosInteres->toArray())) {
       $reglasValidacion["cursoInteresNoValido"] = "required";
     }
 

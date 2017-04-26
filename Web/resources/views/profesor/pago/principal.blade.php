@@ -11,6 +11,7 @@
             <tr>
               <th>Código</th> 
               <th>Motivo</th>   
+              <th>Fecha de pago</th>
               <th>Fecha de registro</th>
               <th>Estado</th>  
               <th>Monto</th>
@@ -19,7 +20,7 @@
           </thead>
           <tfoot>
             <tr>
-              <th colspan="4"></th>
+              <th colspan="5"></th>
               <th></th>
               <th></th>
             </tr>

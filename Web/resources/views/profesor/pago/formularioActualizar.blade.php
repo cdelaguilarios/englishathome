@@ -7,7 +7,16 @@
     {{ Form::label("", "", ["id"=> "titulo-motivo-actualizar-pago", "class" => "col-sm-3 control-label", "style" => "text-align:left"]) }}
     {{ Form::select("", App\Helpers\Enum\MotivosPago::listar(), null, ["id" => "lista-motivo-actualizar-pago", "class" => "form-control", "style" => "display: none"]) }}
   </div>
-  <div class="form-group">
+  <div class="form-group">  
+    {{ Form::label("fecha-actualizar-pago", "Fecha de pago (*): ", ["class" => "col-sm-2 control-label"]) }}
+    <div class="col-sm-3">
+      <div class="input-group date">
+        <div class="input-group-addon">
+          <i class="fa fa-calendar"></i>
+        </div>                                
+        {{ Form::text("fecha", null, ["id" => "fecha-actualizar-pago", "class" => "form-control", "placeholder" => "dd/mm/aaaa"]) }}
+      </div>
+    </div>
     {{ Form::label("estado-actualizar-pago", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       {{ Form::select("estado", App\Helpers\Enum\EstadosPago::listarCambio(), null, ["id" => "estado-actualizar-pago", "class" => "form-control"]) }}
