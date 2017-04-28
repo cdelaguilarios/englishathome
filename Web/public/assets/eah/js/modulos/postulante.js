@@ -178,6 +178,11 @@ function cargarFormulario() {
       });
       $("#curso-interes").val(selCursosVal).trigger("change");
     }
+
+    $("#btn-registrar-profesor").click(function () {
+      $("input[name='registrarComoProfesor']").val("1");
+      $("#formulario-postulante").submit();
+    });
   } else {
     $("input[name='horario']").change(function () {
       if (urlActualizarHorario !== "" && $(this).val() !== "") {

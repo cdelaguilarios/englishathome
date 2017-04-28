@@ -118,7 +118,7 @@
             <h4>Cursos asignados:</h4>
           </div>
           <div class="form-group">
-            {{ Form::label("curso-interes", "Cursos de interes (*): ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("curso-interes", "Cursos (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-5">
               {{ Form::select("idCursos[]", $cursos, null, ["id" => "curso-interes", "class" => "form-control", "multiple" => "multiple", "style" => "width: 100%"]) }}
             </div>    

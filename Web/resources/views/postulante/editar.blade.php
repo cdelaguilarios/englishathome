@@ -22,6 +22,9 @@
         <div class="form-group">
           <div class="col-sm-8">
             <a href="{{ route("postulantes.crear")}}" class="btn btn-primary btn-clean">Nuevo postulante</a>
+            @if($postulante->estado != App\Helpers\Enum\EstadosPostulante::ProfesorRegistrado)
+            <button id="btn-registrar-profesor"  type="button" class="btn btn-primary"><i class="fa flaticon-teach"></i> Registrar como profesor</button>
+            @endif
           </div>           
           <div class="col-sm-4">
             {{ Form::select("",App\Models\Postulante::listarBusqueda(), $postulante->id, ["id"=>"sel-postulante", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%"]) }}

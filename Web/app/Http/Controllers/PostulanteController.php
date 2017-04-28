@@ -62,8 +62,15 @@ class PostulanteController extends Controller {
 
   public function actualizar($id, FormularioRequest $req) {
     try {
-      Postulante::actualizar($id, $req);
-      Mensajes::agregarMensajeExitoso("Actualización exitosa.");
+      $datos = $req->all();
+      Postulante::actualizar($id, $req);      
+      if ($datos["registrarComoProfesor"] == 1) {
+        Postulante::registrarProfesor($id);
+        Mensajes::agregarMensajeExitoso("El postulante seleccionado ha sido registrado como nuevo profesor.");
+        return redirect(route("interesados"));
+      } else {
+        Mensajes::agregarMensajeExitoso("Actualización exitosa.");
+      }
     } catch (\Exception $e) {
       Log::error($e->getMessage());
       Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");

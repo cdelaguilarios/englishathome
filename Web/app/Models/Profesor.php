@@ -13,8 +13,9 @@ use Illuminate\Database\Eloquent\Model;
 class Profesor extends Model {
 
   public $timestamps = false;
+  protected $primaryKey = "idEntidad";
   protected $table = "profesor";
-  protected $fillable = [];
+  protected $fillable = ["ultimosTrabajos", "experienciaOtrosIdiomas", "descripcionPropia", "ensayo"];
 
   public static function nombreTabla() {
     $modeloProfesor = new Profesor();
@@ -64,7 +65,7 @@ class Profesor extends Model {
     EntidadCurso::registrarActualizar($idEntidad, $datos["idCursos"]);
     Horario::registrarActualizar($idEntidad, $datos["horario"]);
 
-    $profesor = new Profesor();
+    $profesor = new Profesor($datos);
     $profesor->idEntidad = $idEntidad;
     $profesor->save();
 
@@ -86,6 +87,8 @@ class Profesor extends Model {
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($id, $datos["idCursos"]);
     Horario::registrarActualizar($id, $datos["horario"]);
+    $profesor = Profesor::obtenerXId($id, TRUE);
+    $profesor->update($datos);
   }
 
   public static function actualizarEstado($id, $estado) {

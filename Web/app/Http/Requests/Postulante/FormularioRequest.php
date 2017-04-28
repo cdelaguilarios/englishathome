@@ -35,6 +35,7 @@ class FormularioRequest extends Request {
     $datos["horario"] = ReglasValidacion::formatoDato($datos, "horario");    
     
     $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
+    $datos["registrarComoProfesor"] = ReglasValidacion::formatoDato($datos, "registrarComoProfesor", 0);
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }

@@ -15,8 +15,9 @@ use App\Helpers\Enum\TiposRelacionEntidad;
 class Postulante extends Model {
 
   public $timestamps = false;
+  protected $primaryKey = "idEntidad";
   protected $table = "postulante";
-  protected $fillable = [];
+  protected $fillable = ["ultimosTrabajos", "experienciaOtrosIdiomas", "descripcionPropia", "ensayo"];
 
   public static function nombreTabla() {
     $modeloPostulante = new Postulante();
@@ -63,7 +64,7 @@ class Postulante extends Model {
     EntidadCurso::registrarActualizar($idEntidad, $datos["idCursos"]);
     Horario::registrarActualizar($idEntidad, $datos["horario"]);
 
-    $postulante = new Postulante();
+    $postulante = new Postulante($datos);
     $postulante->idEntidad = $idEntidad;
     $postulante->save();
 
@@ -84,6 +85,8 @@ class Postulante extends Model {
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($id, $datos["idCursos"]);
     Horario::registrarActualizar($id, $datos["horario"]);
+    $postulante = Postulante::obtenerXId($id, TRUE);
+    $postulante->update($datos);
   }
 
   public static function actualizarEstado($id, $estado) {

@@ -12,7 +12,11 @@
             <span class="chevron"></span>
           </li>
           <li data-step="3">
-            <span class="badge">3</span>Datos de cursos asignados
+            <span class="badge">3</span>Datos de experiencia laboral
+            <span class="chevron"></span>
+          </li>
+          <li data-step="4">
+            <span class="badge">4</span>Datos de cursos asignados
             <span class="chevron"></span>
           </li>
         </ul>
@@ -113,12 +117,38 @@
             {{ Form::hidden("geoLongitud", null) }} 
           </div>
         </div>               
-        <div id="sec-wiz-postulante-3" class="step-pane sample-pane alert" data-step="3">                    
+        <div id="sec-wiz-postulante-3" class="step-pane sample-pane alert" data-step="3">  
+          <div class="form-group">
+            {{ Form::label("ultimosTrabajos", "Últimos dos trabajos como profesor (*): ", ["class" => "col-sm-2 control-label"]) }}            
+            <div class="col-sm-10">
+              {{ Form::textarea("ultimosTrabajos", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
+            </div>               
+          </div> 
+          <div class="form-group">
+            {{ Form::label("experienciaOtrosIdiomas", "Experiencia como profesor de otros idiomas (*): ", ["class" => "col-sm-2 control-label"]) }}            
+            <div class="col-sm-10">
+              {{ Form::textarea("experienciaOtrosIdiomas", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
+            </div>               
+          </div>
+          <div class="form-group">
+            {{ Form::label("descripcionPropia", "Descripción propia como profesor (*): ", ["class" => "col-sm-2 control-label"]) }}            
+            <div class="col-sm-10">
+              {{ Form::textarea("descripcionPropia", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
+            </div>               
+          </div>
+          <div class="form-group">
+            {{ Form::label("ensayo", "Ensayo (*): ", ["class" => "col-sm-2 control-label"]) }}            
+            <div class="col-sm-10">
+              {{ Form::textarea("ensayo", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
+            </div>               
+          </div>
+        </div>             
+        <div id="sec-wiz-postulante-4" class="step-pane sample-pane alert" data-step="4">                    
           <div class="form-group">
             <h4>Cursos asignados:</h4>
           </div>
           <div class="form-group">
-            {{ Form::label("curso-interes", "Cursos de interes (*): ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("curso-interes", "Cursos (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-5">
               {{ Form::select("idCursos[]", $cursos, null, ["id" => "curso-interes", "class" => "form-control", "multiple" => "multiple", "style" => "width: 100%"]) }}
             </div>    
@@ -133,6 +163,7 @@
               @include("util.horario")  
             </div>                                        
           </div>
+        {{ Form::hidden("registrarComoProfesor", null) }}
         </div>
         <div class="box-footer">   
           <div class="form-group">
