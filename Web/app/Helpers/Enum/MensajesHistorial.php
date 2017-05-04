@@ -17,6 +17,7 @@ class MensajesHistorial {
   const TituloProfesorRegistroXUsuario = "[" . TiposEntidad::Usuario . "] registró a [" . TiposEntidad::Profesor . "] como nuevo profesor(a)";
   const TituloProfesorRegistroPago = "[" . TiposEntidad::Usuario . "] registró un pago del profesor [" . TiposEntidad::Profesor . "]";
   const MensajeProfesorRegistroPago = "<strong>Motivo:</strong> [MOTIVO]<br/><strong>Monto:</strong> S/.[MONTO] [DESCRIPCION]<br/>";
+  const TituloPostulanteRegistro = "[" . TiposEntidad::Postulante . "] se registró como nuevo postulante";  
   const TituloPostulanteRegistroXUsuario = "[" . TiposEntidad::Usuario . "] registró a [" . TiposEntidad::Postulante . "] como nuevo postulante";  
   const TituloPostulanteRegistroProfesorXUsuario = "[" . TiposEntidad::Usuario . "] registró a [" . TiposEntidad::Postulante . "] como nuevo profesor(a)";
   const TituloCorreoAlumnoClase = "Estamos a [DIAS] de la clase del alumno [" . TiposEntidad::Alumno . "]";

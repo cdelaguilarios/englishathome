@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Postulante;
 
 use App\Models\Curso;
+use App\Models\Postulante;
 use App\Models\TipoDocumento;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
@@ -32,8 +33,8 @@ class FormularioRequest extends Request {
     $datos["geoLatitud"] = ReglasValidacion::formatoDato($datos, "geoLatitud");
     $datos["geoLongitud"] = ReglasValidacion::formatoDato($datos, "geoLongitud");
     $datos["idCursos"] = ReglasValidacion::formatoDato($datos, "idCursos");
-    $datos["horario"] = ReglasValidacion::formatoDato($datos, "horario");    
-    
+    $datos["horario"] = ReglasValidacion::formatoDato($datos, "horario");
+
     $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $datos["registrarComoProfesor"] = ReglasValidacion::formatoDato($datos, "registrarComoProfesor", 0);
     $this->getInputSource()->replace($datos);
@@ -72,16 +73,20 @@ class FormularioRequest extends Request {
       $reglasValidacion["ubigeoNoValido"] = "required";
     }
 
-    $listaCursos = Curso::listarSimple();
-    if (!is_null($datos["idCursos"])) {
-      foreach ($datos["idCursos"] as $idCurso) {
-        if (!array_key_exists($idCurso, $listaCursos->toArray())) {
-          $reglasValidacion["cursosNoValido"] = "required";
-          break;
+    if (!($datos["vistaExterna"] && ((int) $datos["vistaExterna"]) == 1)) {
+      $listaCursos = Curso::listarSimple();
+      if (!is_null($datos["idCursos"])) {
+        foreach ($datos["idCursos"] as $idCurso) {
+          if (!array_key_exists($idCurso, $listaCursos->toArray())) {
+            $reglasValidacion["cursosNoValido"] = "required";
+            break;
+          }
         }
+      } else {
+        $reglasValidacion["cursosNoValido"] = "required";
       }
-    } else {
-      $reglasValidacion["cursosNoValido"] = "required";
+    } else if (isset($datos["correoElectronico"]) && Postulante::verificarExistenciaXCorreoElectronico($datos["correoElectronico"])) {
+      $reglasValidacion["correoElectronicoRegistradoNoValido"] = "required";
     }
 
     if (!ReglasValidacion::validarHorario($datos["horario"])) {
@@ -110,7 +115,8 @@ class FormularioRequest extends Request {
         "tipoDocumenoNoValido.required" => "El tipo de documento seleccionado no es válido.",
         "ubigeoNoValido.required" => "Los datos de dirección ingresados no son válidos.",
         "cursosNoValido.required" => "Uno o más de los cursos seleccionados no es válido.",
-        "horarioNoValido.required" => "El horario seleccionado no es válido."
+        "horarioNoValido.required" => "El horario seleccionado no es válido.",
+        "correoElectronicoRegistradoNoValido.required" => "El correo electrónico ingresado ya ha sido registrado."
     ];
   }
 

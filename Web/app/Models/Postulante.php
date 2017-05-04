@@ -59,9 +59,11 @@ class Postulante extends Model {
       $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
     }
 
-    $idEntidad = Entidad::registrar($datos, TiposEntidad::Postulante, EstadosPostulante::Registrado);
+    $idEntidad = Entidad::registrar($datos, TiposEntidad::Postulante, (!($datos["vistaExterna"] && ((int) $datos["vistaExterna"]) == 1) ? EstadosPostulante::Registrado : EstadosPostulante::RegistradoExterno));
     Entidad::registrarActualizarImagenPerfil($idEntidad, $req->file("imagenPerfil"));
-    EntidadCurso::registrarActualizar($idEntidad, $datos["idCursos"]);
+    if (!($datos["vistaExterna"] && ((int) $datos["vistaExterna"]) == 1)) {
+      EntidadCurso::registrarActualizar($idEntidad, $datos["idCursos"]);
+    }
     Horario::registrarActualizar($idEntidad, $datos["horario"]);
 
     $postulante = new Postulante($datos);
@@ -69,8 +71,9 @@ class Postulante extends Model {
     $postulante->save();
 
     Historial::registrar([
-        "idEntidades" => [$idEntidad, Auth::user()->idEntidad],
-        "titulo" => MensajesHistorial::TituloPostulanteRegistroXUsuario,
+        "idEntidades" => [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
+        "titulo" => (Auth::guest() ? MensajesHistorial::TituloPostulanteRegistro : MensajesHistorial::TituloPostulanteRegistroXUsuario),
+        "enviarCorreo" => (Auth::guest() ? 1 : 0),
         "mensaje" => ""
     ]);
     return $idEntidad;
@@ -152,6 +155,15 @@ class Postulante extends Model {
   public static function verificarExistencia($id) {
     try {
       Postulante::obtenerXId($id, TRUE);
+    } catch (\Exception $ex) {
+      return FALSE;
+    }
+    return TRUE;
+  }
+
+  public static function verificarExistenciaXCorreoElectronico($correoElectronico) {
+    try {
+      Postulante::listar()->where("entidad.correoElectronico", $correoElectronico)->firstOrFail();
     } catch (\Exception $ex) {
       return FALSE;
     }

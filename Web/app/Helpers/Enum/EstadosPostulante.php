@@ -5,6 +5,7 @@ namespace App\Helpers\Enum;
 class EstadosPostulante {
 
   const Registrado = "REGISTRADO";
+  const RegistradoExterno = "REGISTRADO-EXTERNO";
   const Activo = "ACTIVO";
   const Inactivo = "INACTIVO";
   const ProfesorRegistrado = "PROFESOR-REGISTRADO";
@@ -13,6 +14,7 @@ class EstadosPostulante {
   public static function listar() {
     return [
         EstadosPostulante::Registrado => ["Registrado", "label-primary"],
+        EstadosPostulante::RegistradoExterno => ["Registrado externo", "label-primary"],
         EstadosPostulante::Activo => ["Activo", "label-info"],
         EstadosPostulante::Inactivo => ["Inactivo", "label-warning"],
         EstadosPostulante::ProfesorRegistrado => ["Profesor registrado", "label-success"],
@@ -31,7 +33,7 @@ class EstadosPostulante {
 
   public static function listarCambio() {
     $estadosBusqueda = EstadosPostulante::listarBusqueda();
-    $estadosDisponibleCambio = [EstadosPostulante::Registrado, EstadosPostulante::Activo, EstadosPostulante::Inactivo, EstadosPostulante::Vetado];
+    $estadosDisponibleCambio = [EstadosPostulante::Registrado, EstadosPostulante::RegistradoExterno, EstadosPostulante::Activo, EstadosPostulante::Inactivo, EstadosPostulante::Vetado];
     $estadosCambio = [];
     foreach ($estadosBusqueda as $k => $v) {
       if (in_array($k, $estadosDisponibleCambio)) {

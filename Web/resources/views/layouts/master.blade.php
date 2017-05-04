@@ -53,7 +53,11 @@
                 <b>Ficha {{ $profesor->sexo == "F" ? "de la profesora" : "del profesor" }}<br/>{{ $profesor->nombre . " " .  $profesor->apellido }}</b>
                 @endif
               @else
-              <b>Ficha del alumno</b>
+                @if(isset($interesado))
+                <b>Ficha del alumno</b>
+                @else
+                <b>English teacher application</b>
+                @endif
               @endif
             </div><!--
             --><div class="col-sm-6 vcenter">

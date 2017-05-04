@@ -16,7 +16,7 @@
             <span class="chevron"></span>
           </li>
           <li data-step="4">
-            <span class="badge">4</span>Datos de cursos asignados
+            <span class="badge">4</span>Datos adicionales
             <span class="chevron"></span>
           </li>
         </ul>
@@ -24,19 +24,19 @@
       <div class="step-content box-body">
         <div id="sec-wiz-postulante-1" class="step-pane active sample-pane alert" data-step="1">
           <div class="form-group">
-            {{ Form::label("nombre", "Nombres (*): ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("nombre", (Auth::guest() ? "Name" : "Nombres") . " (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
               {{ Form::text("nombre", null, ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
           </div>
           <div class="form-group">
-            {{ Form::label("apellido", "Apellidos (*): ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("apellido", (Auth::guest() ? "Last name" : "Apellidos") . " (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
               {{ Form::text("apellido", null, ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
           </div>  
           <div class="form-group">
-            {{ Form::label("telefono", "Teléfono: ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("telefono", (Auth::guest() ? "Cell phone number" : "Teléfono") . " : ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3">
               {{ Form::text("telefono", null, ["class" => "form-control", "maxlength" =>"30"]) }}
             </div>
@@ -143,7 +143,8 @@
             </div>               
           </div>
         </div>             
-        <div id="sec-wiz-postulante-4" class="step-pane sample-pane alert" data-step="4">                    
+        <div id="sec-wiz-postulante-4" class="step-pane sample-pane alert" data-step="4">              
+          @if(!(Auth::guest()))      
           <div class="form-group">
             <h4>Cursos asignados:</h4>
           </div>
@@ -154,6 +155,7 @@
             </div>    
             {{ Form::hidden("cursos", (isset($postulante) ? $postulante->cursos : null)) }}                
           </div>
+          @endif
           <div class="form-group">
             <h4>Horario disponible (*):</h4>
           </div>

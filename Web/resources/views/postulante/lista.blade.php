@@ -10,8 +10,7 @@
   var urlEliminar = "{{ route('postulantes.eliminar', ['id' => 0]) }}";
   var estados = {!! json_encode(App\Helpers\Enum\EstadosPostulante::listar()) !!};
   var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosPostulante::listarCambio()) !!};
-  var estadoProfesorRegistrado = "{{ App\Helpers\Enum\EstadosPostulante::ProfesorRegistrado }}";
-</script>
+  var estadoProfesorRegistrado = "{{ App\Helpers\Enum\EstadosPostulante::ProfesorRegistrado }}";</script>
 <script src="{{ asset("assets/eah/js/modulos/postulante.js") }}"></script>
 @endsection
 
@@ -42,7 +41,7 @@
     <div class="box box-info">
       <div class="box-header">
         <h3 class="box-title">Lista de postulantes</h3>
-        <a href="{{ route("postulantes.crear")}}" class="btn btn-primary btn-clean">Nuevo postulante</a>   
+        <a href="{{ route("postulantes.crear")}}" class="btn btn-primary btn-clean">Nuevo postulante</a>
       </div>         
       <div class="box-body">
         <table id="tab-lista" class="table table-bordered table-hover">
@@ -56,6 +55,9 @@
             </tr>
           </thead>
         </table>
+      </div>
+      <div class="box-footer">
+        <span><b>Nota:</b> El enlace <b>{!! route("postulantes.crear.externo") !!}</b> permite el registro externo sin logueo de postulantes.</span>
       </div>
     </div>
   </div>

@@ -10,6 +10,9 @@ Route::post("interesado/registrar/externo", ["uses" => "InteresadoController@reg
 Route::get("alumno/nuevo/{codigoVerificacion}", ["uses" => "AlumnoController@crearExterno", "as" => "alumnos.crear.externo"]);
 Route::post("alumno/registrar/externo", ["uses" => "AlumnoController@registrarExterno", "as" => "alumnos.registrar.externo"]);
 
+Route::get("postulante/nuevo/externo", ["uses" => "PostulanteController@crearExterno", "as" => "postulantes.crear.externo"]);
+Route::post("postulante/registrar/externo", ["uses" => "PostulanteController@registrarExterno", "as" => "postulantes.registrar.externo"]);
+
 Route::post("ubigeo/listarDepartamentos", ["uses" => "UbigeoController@listarDepartamentos", "as" => "ubigeo.listarDepartamentos"]);
 Route::post("ubigeo/listarProvincias/{codigoDepartamento}", ["uses" => "UbigeoController@listarProvincias", "as" => "ubigeo.listarProvincias"]);
 Route::post("ubigeo/listarDistritos/{codigoProvincia}", ["uses" => "UbigeoController@listarDistritos", "as" => "ubigeo.listarDistritos"]);

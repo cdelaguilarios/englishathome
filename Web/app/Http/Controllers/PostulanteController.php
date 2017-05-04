@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Log;
+use Input;
 use Mensajes;
 use Datatables;
 use App\Models\Postulante;
@@ -49,6 +50,23 @@ class PostulanteController extends Controller {
     }
   }
 
+  public function crearExterno() {
+    $nuevoRegistro = Input::get("nr");
+    $this->data["nuevoRegistro"] = (isset($nuevoRegistro));
+    $this->data["vistaExterna"] = TRUE;
+    return view("postulante.crear", $this->data);
+  }
+
+  public function registrarExterno(FormularioRequest $req) {
+    try {
+      Postulante::registrar($req);
+    } catch (\Exception $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
+    }
+    return redirect(route("postulantes.crear.externo", ["nr" => 1]));
+  }
+
   public function editar($id) {
     try {
       $this->data["postulante"] = Postulante::obtenerXId($id);
@@ -63,7 +81,7 @@ class PostulanteController extends Controller {
   public function actualizar($id, FormularioRequest $req) {
     try {
       $datos = $req->all();
-      Postulante::actualizar($id, $req);      
+      Postulante::actualizar($id, $req);
       if ($datos["registrarComoProfesor"] == 1) {
         Postulante::registrarProfesor($id);
         Mensajes::agregarMensajeExitoso("El postulante seleccionado ha sido registrado como nuevo profesor.");
