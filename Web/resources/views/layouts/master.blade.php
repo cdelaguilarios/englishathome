@@ -47,17 +47,17 @@
           <div class="row">
             <div class="col-sm-6 vcenter">
               @if(isset($vistaImpresion) && $vistaImpresion)              
-                @if(isset($alumno))
-                <b>Ficha {{ $alumno->sexo == "F" ? "de la alumna" : "del alumno" }}<br/>{{ $alumno->nombre . " " .  $alumno->apellido }}</b>
-                @elseif(isset($profesor))
-                <b>Ficha {{ $profesor->sexo == "F" ? "de la profesora" : "del profesor" }}<br/>{{ $profesor->nombre . " " .  $profesor->apellido }}</b>
-                @endif
+              @if(isset($alumno))
+              <b>Ficha {{ $alumno->sexo == "F" ? "de la alumna" : "del alumno" }}<br/>{{ $alumno->nombre . " " .  $alumno->apellido }}</b>
+              @elseif(isset($profesor))
+              <b>Ficha {{ $profesor->sexo == "F" ? "de la profesora" : "del profesor" }}<br/>{{ $profesor->nombre . " " .  $profesor->apellido }}</b>
+              @endif
               @else
-                @if(isset($interesado))
-                <b>Ficha del alumno</b>
-                @else
-                <b>English teacher application</b>
-                @endif
+              @if(isset($interesado))
+              <b>Ficha del alumno</b>
+              @else
+              <b>English teacher application</b>
+              @endif
               @endif
             </div><!--
             --><div class="col-sm-6 vcenter">
@@ -219,7 +219,9 @@
     <script src="{{ asset("assets/plugins/datatables/extensions/Responsive/js/dataTables.responsive.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/blockui/jquery.blockUI.js") }}"></script>
     <script src="{{ asset("assets/plugins/jquery_validate/jquery.validate.min.js") }}"></script>
-    <script src="{{ asset("assets/plugins/jquery_validate/jquery.validate.messages_es.js") }}"></script>        
+    @if(!(isset($seccion) && $seccion == "postulantes" && Auth::guest()))
+    <script src="{{ asset("assets/plugins/jquery_validate/jquery.validate.messages_es.js") }}"></script> 
+    @endif
     <script src="{{ asset("assets/plugins/datepicker/bootstrap-datepicker.js") }}"></script>   
     <script src="{{ asset("assets/plugins/datepicker/locales/bootstrap-datepicker.es.js") }}"></script>         
     <script src="{{ asset("assets/plugins/datetimepicker/bootstrap-datetimepicker.min.js") }}"></script>   
@@ -244,6 +246,7 @@ var urlPerfilAlumno = "{{ route('alumnos.perfil', ['id' => 0]) }}";
 var estadosPago = {!!  json_encode(App\Helpers\Enum\EstadosPago::listar()) !!};
 var urlDatosClase = "{{ route('alumnos.clases.datos', ['id' => '[ID_ALUMNO]', 'idClase' => 0]) }}";
 var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
+var formularioExternoPostulante = {{ ((isset($seccion) && $seccion == "postulantes" && Auth::guest()) ? "true" : "false") }};
     </script>
     <script src="{{ asset("assets/eah/js/util.js") }}"></script>
     <script src="{{ asset("assets/eah/js/mensajes.js") }}"></script>   

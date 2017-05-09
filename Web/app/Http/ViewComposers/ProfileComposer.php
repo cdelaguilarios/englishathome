@@ -40,7 +40,6 @@ class ProfileComposer {
     $datosExtrasVistas = Cache::get("datosExtrasVistas");
     if (!isset($datosExtrasVistas)) {
       $datosExtrasVistas = [
-          "sexos" => SexosEntidad::listar(),
           "cursos" => Curso::listarSimple(),
           "minHorasClase" => Config::get("eah.minHorasClase"),
           "maxHorasClase" => Config::get("eah.maxHorasClase"),

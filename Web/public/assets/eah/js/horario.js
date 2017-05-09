@@ -20,13 +20,17 @@ function cargarHorario() {
   }
   if ($("#sec-calendario-horario").length > 0) {
     inicializarHorario();
-    $("#sec-calendario-horario").dayScheduleSelector({
+    var datIni = {
       days: diasNum,
       startTime: formatoHora(parseInt(minHorario) * 3600),
       endTime: formatoHora(parseInt(maxHorario) * 3600),
       interval: minutosIntervalo,
-      stringDays: diasLet
-    });
+    };    
+    formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
+    if(!formularioExternoPostulante){
+      datIni["stringDays"] = diasLet;
+    }
+    $("#sec-calendario-horario").dayScheduleSelector(datIni);
     $("#sec-calendario-horario").data("artsy.dayScheduleSelector").deserialize(horarioInicial);
     $("#sec-calendario-horario").on("selected.artsy.dayScheduleSelector", function (e, selected) {
       for (var i = 0; i < selected.length; i++) {

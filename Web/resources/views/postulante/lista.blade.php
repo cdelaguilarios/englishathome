@@ -57,7 +57,7 @@
         </table>
       </div>
       <div class="box-footer">
-        <span><b>Nota:</b> El enlace <b>{!! route("postulantes.crear.externo") !!}</b> permite el registro externo sin logueo de postulantes.</span>
+        <span><b>Nota:</b> El enlace <b>{!! route("postulantes.crear.externo") !!}</b> permite el registro de postulantes sin necesidad de ingresar al sistema.</span>
       </div>
     </div>
   </div>

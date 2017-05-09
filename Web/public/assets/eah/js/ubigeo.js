@@ -16,7 +16,7 @@ function cargarUbigeo() {
   $("#codigo-departamento").html("");
   $("#codigo-provincia").html("");
   $("#codigo-distrito").html("");
-  cargarDatosUbigeo($("#codigo-departamento"), urlListarDepartamentos, {}, "Seleccione un departamento", codigoDepartamento, true);
+  cargarDatosUbigeo($("#codigo-departamento"), urlListarDepartamentos, {}, (formularioExternoPostulante ? "Select department" : "Seleccione un departamento"), codigoDepartamento, true);
 
   $("#codigo-departamento").change(cargarProvincias);
   $("#codigo-provincia").change(cargarDistritos);
@@ -34,19 +34,20 @@ function cargarProvincias() {
   $("#codigo-provincia").html("");
   $("#codigo-distrito").html("");
   if ($("#codigo-departamento").val() !== "") {
-    cargarDatosUbigeo($("#codigo-provincia"), urlListarProvincias.replace("/0", "/" + $("#codigo-departamento").val()), {}, "Seleccione una provincia", codigoProvincia);
+    cargarDatosUbigeo($("#codigo-provincia"), urlListarProvincias.replace("/0", "/" + $("#codigo-departamento").val()), {}, (formularioExternoPostulante ? "Select province" : "Seleccione una provincia"), codigoProvincia);
   }
 }
 function cargarDistritos() {
   urlListarDistritos = (typeof (urlListarDistritos) === "undefined" ? "" : urlListarDistritos);
   $("#codigo-distrito").html("");
   if ($("#codigo-provincia").val() !== "") {
-    cargarDatosUbigeo($("#codigo-distrito"), urlListarDistritos.replace("/0", "/" + $("#codigo-provincia").val()), {}, "Seleccione un distrito", codigoDistrito);
+    cargarDatosUbigeo($("#codigo-distrito"), urlListarDistritos.replace("/0", "/" + $("#codigo-provincia").val()), {}, (formularioExternoPostulante ? "Select district" : "Seleccione un distrito"), codigoDistrito);
   }
 }
 function cargarDatosUbigeo(eleUbigeoLista, urlListarUbigeo, parametros, textoSeleccionDef, codigoUbigeoSel, noMostrarMensajeBloq) {
   if (urlListarUbigeo !== "") {
-    (!noMostrarMensajeBloq ? $.blockUI({message: "<h4>Cargando...</h4>"}) : "");
+    formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
+    (!noMostrarMensajeBloq ? $.blockUI({message: "<h4>" + (formularioExternoPostulante ? "Loading" : "Cargando") + "...</h4>"}) : "");
     llamadaAjax(urlListarUbigeo, "POST", parametros, true,
         function (d) {
           var elementosUbigeo = d["elementosUbigeo"];

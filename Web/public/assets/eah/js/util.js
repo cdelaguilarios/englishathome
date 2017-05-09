@@ -97,14 +97,17 @@ function validarFecha(value, element, param) {
 }
 
 ﻿$(document).ready(function () {
-  $.fn.datepicker.defaults.language = "es";
+  formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
+  if (!formularioExternoPostulante) {
+    $.fn.datepicker.defaults.language = "es";
+  }
   $.fn.dataTable.ext.errMode = "none";
   jQuery.extend(jQuery.fn.dataTableExt.oSort, {
     "fecha-pre": function (f) {
       var dateTimeParts = f.split(' ');
       var dateParts = dateTimeParts[0].split('/');
       var fechaSel = new Date();
-      
+
       if (dateTimeParts.length === 2) {
         var timeParts = dateTimeParts[1].split(':');
         fechaSel = new Date(dateParts[2], parseInt(dateParts[1], 10) - 1, dateParts[0], timeParts[0], timeParts[1], timeParts[2]);
@@ -147,7 +150,6 @@ function establecerCalendario(idElemento, incluirHora, soloFechasPasadas, soloFe
   /*$("#" + idElemento).keydown(function () {
    return false;
    });*/
-
   if (soloFechasPasadas) {
     var fechaFin = new Date();
     fechaFin.setFullYear(fechaFin.getFullYear() - 1);

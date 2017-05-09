@@ -1,5 +1,5 @@
 <div class="form-group">
-  {{ Form::label("codigo-departamento", "Ubicación: ", ["class" => "col-sm-2 control-label"]) }}
+  {{ Form::label("codigo-departamento", ((isset($seccion) && $seccion == "postulantes" && Auth::guest()) ? "Ubication" : "Ubicación") . ": ", ["class" => "col-sm-2 control-label"]) }}
   <div class="col-sm-3">
     {{ Form::select("codigoDepartamento", [], null, ["id" => "codigo-departamento", "class" => "form-control"]) }}
   </div>

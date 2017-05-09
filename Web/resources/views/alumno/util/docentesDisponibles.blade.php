@@ -23,7 +23,7 @@
           <div class="row">
             {{ Form::label("sexo-docente-disponible-" . $seccion, "Sexo: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-4">
-              {{ Form::select("sexoDocenteDisponible" . $seccion, $sexos, null, ["id" => "sexo-docente-disponible-" . $seccion, "placeholder" => "Todos", "class" => "form-control"]) }}
+              {{ Form::select("sexoDocenteDisponible" . $seccion, App\Helpers\Enum\SexosEntidad::listar(), null, ["id" => "sexo-docente-disponible-" . $seccion, "placeholder" => "Todos", "class" => "form-control"]) }}
             </div> 
           </div>
           <div class="row">

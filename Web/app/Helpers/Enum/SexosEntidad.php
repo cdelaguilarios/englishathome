@@ -7,10 +7,10 @@ class SexosEntidad {
   const Masculino = "M";
   const Femenino = "F";
 
-  public static function listar() {
+  public static function listar($ingles = FALSE) {
     return [
-        SexosEntidad::Masculino => "Masculino",
-        SexosEntidad::Femenino => "Femenino"
+        SexosEntidad::Masculino => ($ingles ? "Male" : "Masculino"),
+        SexosEntidad::Femenino => ($ingles ? "Female" : "Femenino")
     ];
   }
 

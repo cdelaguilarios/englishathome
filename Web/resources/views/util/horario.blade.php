@@ -10,7 +10,7 @@
 <div class="form-group">
   <div class="col-sm-3">
     <button id="btn-horario" type="button" class="btn btn-primary btn-sm">
-      <i class="fa fa-fw fa-calendar"></i> Establecer horario disponible
+      <i class="fa fa-fw fa-calendar"></i> {{ ((isset($seccion) && $seccion == "postulantes" && Auth::guest()) ? "Set schedule available" : "Establecer horario disponible") }}
     </button>
   </div>    
   <div id="sec-info-horario" class="col-sm-9"></div>
@@ -25,39 +25,45 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title">Horario {{ ((isset($modo) && $modo == "visualizar") ? "" : "disponible ") }}para clases</h4>
+        <h4 class="modal-title">
+        @if(isset($seccion) && $seccion == "postulantes" && Auth::guest())
+        Schedule available to work
+        @else
+        Horario {{ ((isset($modo) && $modo == "visualizar") ? "" : "disponible ") }}para clases
+        @endif
+        </h4>
       </div>
       <div id="sec-horario">
         <div class="modal-body">
           <p>
             <button id="btn-instrucciones-horario" class="btn btn-primary btn-xs" type="button">
-              <i class="fa fa-fw fa-info-circle"></i> Instrucciones
+              <i class="fa fa-fw fa-info-circle"></i> {{ ((isset($seccion) && $seccion == "postulantes" && Auth::guest()) ? "Instructions" : "Instrucciones") }}
             </button>
           </p>
           <div id="sec-calendario-horario"></div>
         </div>
         <div class="modal-footer">
           <div class="sec-btn-limpiar-seleccion">
-            <button id="btn-limpiar-seleccion" type="button" class="btn btn-xs"><i class="fa fa-fw fa-eraser"></i> Limpiar selección</button>
+            <button id="btn-limpiar-seleccion" type="button" class="btn btn-xs"><i class="fa fa-fw fa-eraser"></i> {{ ((isset($seccion) && $seccion == "postulantes" && Auth::guest()) ? "Clear" : "Limpiar selección") }}</button>
           </div>
-          <button id="btn-confirmar-horario" type="button" class="btn btn-success btn-sm">Confirmar</button>
+          <button id="btn-confirmar-horario" type="button" class="btn btn-success btn-sm">{{ ((isset($seccion) && $seccion == "postulantes" && Auth::guest()) ? "Confirm" : "Confirmar") }}</button>
         </div>
       </div>
       <div id="sec-instrucciones-horario" style="display:none;">
         <div class="modal-body">
           <div class="row">
-            <div class="col-sm-12">- Has click sobre una hora de inicio luego sobre una hora de fin, todas las casillas dentro de ese rango de horario quedaran seleccionadas.</div>
+            <div class="col-sm-12">- {{ ((isset($seccion) && $seccion == "postulantes" && Auth::guest()) ? "Click on a start time then on an end time, all the boxes within that time range will be selected." : "Haz click sobre una hora de inicio luego sobre una hora de fin, todas las casillas dentro de ese rango de horario quedaran seleccionadas.") }}</div>
             <div class="col-sm-12">
               <img src="{{ asset("assets/eah/img/instrucciones-horario-disponible-1.gif")}}"/>
             </div>
-            <div class="col-sm-12">- Para deseleccionar una hora solo has click sobre la celda correspondiente.</div>
+            <div class="col-sm-12">- {{ ((isset($seccion) && $seccion == "postulantes" && Auth::guest()) ? "To deselect an hour, just click on the corresponding cell." : "Para deseleccionar una hora solo has click sobre la celda correspondiente.") }}</div>
             <div class="col-sm-12">
               <img src="{{ asset("assets/eah/img/instrucciones-horario-disponible-2.gif")}}"/>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button id="btn-regresar-horario" class="btn btn-primary" type="button">Regresar</button>
+          <button id="btn-regresar-horario" class="btn btn-primary" type="button">{{ ((isset($seccion) && $seccion == "postulantes" && Auth::guest()) ? "Return" : "Regresar") }}</button>
         </div>
       </div>
     </div>

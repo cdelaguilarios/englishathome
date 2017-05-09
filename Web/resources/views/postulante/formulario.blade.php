@@ -36,13 +36,13 @@
             </div>
           </div>  
           <div class="form-group">
-            {{ Form::label("telefono", (Auth::guest() ? "Cell phone number" : "Teléfono") . " : ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("telefono", (Auth::guest() ? "Cell phone number" : "Teléfono") . ": ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3">
               {{ Form::text("telefono", null, ["class" => "form-control", "maxlength" =>"30"]) }}
             </div>
           </div>                 
           <div class="form-group">
-            {{ Form::label("fechaNacimiento", "Fecha nacimiento: ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("fechaNacimiento", (Auth::guest() ? "Birthday (*)" : "Fecha nacimiento") .  ": ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3">
               <div class="input-group date">
                 <div class="input-group-addon">
@@ -51,13 +51,13 @@
                 {{ Form::text("fechaNacimiento", (isset($postulante->fechaNacimiento) ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $postulante->fechaNacimiento)->format("d/m/Y") : null), ["id" => "fecha-nacimiento", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
               </div>
             </div>
-            {{ Form::label("sexo", "Sexo: ", ["class" => "col-sm-1 control-label"]) }}
+            {{ Form::label("sexo", (Auth::guest() ? "Gender" : "Sexo") .  ": ", ["class" => "col-sm-1 control-label"]) }}
             <div class="col-sm-2">
-              {{ Form::select("sexo", $sexos, null, ["class" => "form-control"]) }}
+              {{ Form::select("sexo", App\Helpers\Enum\SexosEntidad::listar(Auth::guest()), null, ["class" => "form-control"]) }}
             </div>
           </div>            
           <div class="form-group">
-            {{ Form::label("numeroDocumento", "Doc. de identidad: ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("numeroDocumento", (Auth::guest() ? "ID card (*)" : "Doc. de identidad") .  ": ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3" style="display:none">
               {{ Form::select("idTipoDocumento", App\Models\TipoDocumento::listarSimple(), null, ["class" => "form-control"]) }}
             </div>
@@ -66,13 +66,13 @@
             </div>                    
           </div> 
           <div class="form-group">
-            {{ Form::label("correoElectronico", "Correo electrónico (*): ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("correoElectronico", (Auth::guest() ? "E-mail adress" : "Correo electrónico") .  " (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
               {{ Form::email("correoElectronico", null, ["class" => "form-control", "maxlength" =>"245"]) }}
             </div>
           </div> 
           <div class="form-group">
-            {{ Form::label("imagenPerfil", "Imagen de perfil: ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("imagenPerfil", (Auth::guest() ? "Profile Image" : "Imagen de perfil") .  ": ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-4">
               {{ Form::file("imagenPerfil", null) }}
             </div>
@@ -88,59 +88,64 @@
         <div id="sec-wiz-postulante-2" class="step-pane sample-pane alert" data-step="2">
           @include("util.ubigeo")  
           <div class="form-group">    
-            {{ Form::label("direccion", "Dirección (*): ", ["class" => "col-sm-2 control-label"]) }}                
+            {{ Form::label("direccion", (Auth::guest() ? "Address" : "Dirección") .  " (*): ", ["class" => "col-sm-2 control-label"]) }}                
             <div class="col-sm-10">
               {{ Form::text("direccion", null, ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
           </div>
           <div class="form-group">
-            {{ Form::label("numeroDepartamento", "Depto./Int: ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("numeroDepartamento", (Auth::guest() ? "Apartment number" : "Depto./Int") .  ": ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
               {{ Form::text("numeroDepartamento", null, ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
           </div>  
           <div class="form-group">
-            {{ Form::label("referenciaDireccion", "Referencia: ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("referenciaDireccion", (Auth::guest() ? "Reference" : "Referencia") .  ": ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
               {{ Form::text("referenciaDireccion", null, ["class" => "form-control", "maxlength" =>"255"]) }}
             </div>
           </div>                
           <div class="form-group">
-            {{ Form::label("geoLocalizacion", "Ubicación mapa: ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("geoLocalizacion", (Auth::guest() ? "Current location" : "Ubicación mapa") .  ": ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10 sec-mapa">
               @include("util.ubicacionMapa")              
             </div>
+            @if(!Auth::guest())
             <div class="col-sm-10 col-sm-offset-2">
-              <b>SSugerimos seleccionar la ubicación exacta en el mapa de la dirección del postulante.</b>
+              <b>Sugerimos seleccionar la ubicación exacta en el mapa de la dirección del postulante.</b>
             </div>
+            @endif
             {{ Form::hidden("geoLatitud", null) }} 
             {{ Form::hidden("geoLongitud", null) }} 
           </div>
         </div>               
         <div id="sec-wiz-postulante-3" class="step-pane sample-pane alert" data-step="3">  
           <div class="form-group">
-            {{ Form::label("ultimosTrabajos", "Últimos dos trabajos como profesor (*): ", ["class" => "col-sm-2 control-label"]) }}            
+            {{ Form::label("ultimosTrabajos", (Auth::guest() ? "Mention last two teaching jobs" : "Últimos dos trabajos como profesor") .  " (*): ", ["class" => "col-sm-2 control-label"]) }}            
             <div class="col-sm-10">
               {{ Form::textarea("ultimosTrabajos", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
             </div>               
           </div> 
           <div class="form-group">
-            {{ Form::label("experienciaOtrosIdiomas", "Experiencia como profesor de otros idiomas (*): ", ["class" => "col-sm-2 control-label"]) }}            
+            {{ Form::label("experienciaOtrosIdiomas", (Auth::guest() ? "Do you have experience teaching other languages?" : "Experiencia como profesor de otros idiomas") .  " (*): ", ["class" => "col-sm-2 control-label"]) }}            
             <div class="col-sm-10">
               {{ Form::textarea("experienciaOtrosIdiomas", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
             </div>               
           </div>
           <div class="form-group">
-            {{ Form::label("descripcionPropia", "Descripción propia como profesor (*): ", ["class" => "col-sm-2 control-label"]) }}            
+            {{ Form::label("descripcionPropia", (Auth::guest() ? "Do you consider yourself a good teacher? why?" : "Descripción propia como profesor") .  " (*): ", ["class" => "col-sm-2 control-label"]) }}            
             <div class="col-sm-10">
               {{ Form::textarea("descripcionPropia", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
             </div>               
           </div>
           <div class="form-group">
-            {{ Form::label("ensayo", "Ensayo (*): ", ["class" => "col-sm-2 control-label"]) }}            
+            {{ Form::label("ensayo", (Auth::guest() ? "Write a short Essay (150 words) (Be original, don´t copy and paste, please)" : "Ensayo") .  " (*): ", ["class" => "col-sm-2 control-label"]) }}            
             <div class="col-sm-10">
+              @if(Auth::guest())
+              <b>What are the positive and/or negative aspects of the internet:</b><br/>
+              @endif 
               {{ Form::textarea("ensayo", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
-            </div>               
+            </div>              
           </div>
         </div>             
         <div id="sec-wiz-postulante-4" class="step-pane sample-pane alert" data-step="4">              
@@ -157,7 +162,7 @@
           </div>
           @endif
           <div class="form-group">
-            <h4>Horario disponible (*):</h4>
+            <h4>{{ (Auth::guest() ? "Schedule available to work" : "Horario disponible") }} (*):</h4>
           </div>
           <div class="form-group">
             <div class="col-sm-offset-1 col-sm-10">
@@ -170,17 +175,17 @@
         <div class="box-footer">   
           <div class="form-group">
             <div class="col-sm-6">
-              <span>(*) Campos obligatorios</span>
+              <span>(*) {{ (Auth::guest() ? "Fields required" : "Campos obligatorios") }}</span>
             </div>
             <div class="col-sm-6">  
               @if(!(isset($modo) && $modo == "registrar"))
               <button id="btn-guardar-secundario" type="submit" class="btn btn-primary pull-right">Guardar datos</button>  
               @endif
-              <button id="btn-guardar" type="button" class="btn btn-primary btn-next pull-right" data-last="{{ ((isset($modo) && $modo == "registrar") ? "Registrar" : "Guardar") }} datos">
-                Siguiente
+              <button id="btn-guardar" type="button" class="btn btn-primary btn-next pull-right" data-last="{{ (Auth::guest() ? "Save" : ((isset($modo) && $modo == "registrar") ? "Registrar datos" : "Guardar datos")) }}">
+                {{ (Auth::guest() ? "Next" : "Siguiente") }}
               </button>
               <button type="button" class="btn btn-default btn-prev pull-right">
-                Anterior
+                {{ (Auth::guest() ? "Prev" : "Anterior") }}
               </button>
             </div>
           </div>

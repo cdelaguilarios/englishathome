@@ -49,7 +49,7 @@
             </div>
             {{ Form::label("sexo", "Sexo: ", ["class" => "col-sm-1 control-label"]) }}
             <div class="col-sm-2">
-              {{ Form::select("sexo", $sexos, null, ["class" => "form-control"]) }}
+              {{ Form::select("sexo", App\Helpers\Enum\SexosEntidad::listar(), null, ["class" => "form-control"]) }}
             </div>
           </div>            
           <div class="form-group">
