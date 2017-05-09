@@ -59,9 +59,9 @@ class Postulante extends Model {
       $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
     }
 
-    $idEntidad = Entidad::registrar($datos, TiposEntidad::Postulante, (!($datos["vistaExterna"] && ((int) $datos["vistaExterna"]) == 1) ? EstadosPostulante::Registrado : EstadosPostulante::RegistradoExterno));
+    $idEntidad = Entidad::registrar($datos, TiposEntidad::Postulante, (Auth::guest() ? EstadosPostulante::RegistradoExterno : EstadosPostulante::Registrado));
     Entidad::registrarActualizarImagenPerfil($idEntidad, $req->file("imagenPerfil"));
-    if (!($datos["vistaExterna"] && ((int) $datos["vistaExterna"]) == 1)) {
+    if (!(Auth::guest())) {
       EntidadCurso::registrarActualizar($idEntidad, $datos["idCursos"]);
     }
     Horario::registrarActualizar($idEntidad, $datos["horario"]);

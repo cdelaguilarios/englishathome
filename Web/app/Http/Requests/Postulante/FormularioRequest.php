@@ -73,7 +73,7 @@ class FormularioRequest extends Request {
       $reglasValidacion["ubigeoNoValido"] = "required";
     }
 
-    if (!($datos["vistaExterna"] && ((int) $datos["vistaExterna"]) == 1)) {
+    if (!(Auth::guest())) {
       $listaCursos = Curso::listarSimple();
       if (!is_null($datos["idCursos"])) {
         foreach ($datos["idCursos"] as $idCurso) {

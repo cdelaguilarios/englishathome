@@ -59,10 +59,10 @@ function cargarListaClases() {
 
         var totalPagoProfesor = 0, totalPagoProfesorPagina = 0;
         $('#tab-lista').DataTable().rows({filter: 'applied'}).data().each(function (i) {
-          totalPagoProfesor += (i.pagoTotalProfesor !== null ? parseFloat(i.pagoTotalProfesor) : ((i.duracion !== 0 ? (i.duracion / 3600) : 0) * parseFloat(i.costoHoraProfesor)));
+          totalPagoProfesor += (d.idProfesor !== null && d.nombreProfesor !== null && d.nombreProfesor !== '' ? (i.pagoTotalProfesor !== null ? parseFloat(i.pagoTotalProfesor) : ((i.duracion !== 0 ? (i.duracion / 3600) : 0) * parseFloat(i.costoHoraProfesor))) : 0);
         });
         $('#tab-lista').DataTable().rows({page: 'current'}).data().each(function (i) {
-          totalPagoProfesorPagina += (i.pagoTotalProfesor !== null ? parseFloat(i.pagoTotalProfesor) : ((i.duracion !== 0 ? (i.duracion / 3600) : 0) * parseFloat(i.costoHoraProfesor)));
+          totalPagoProfesorPagina += (d.idProfesor !== null && d.nombreProfesor !== null && d.nombreProfesor !== '' ? (i.pagoTotalProfesor !== null ? parseFloat(i.pagoTotalProfesor) : ((i.duracion !== 0 ? (i.duracion / 3600) : 0) * parseFloat(i.costoHoraProfesor))) : 0);
         });
         $(api.column(5).footer()).html("Total S/. " + redondear(totalPagoProfesor, 2) + (totalPagoProfesor !== totalPagoProfesorPagina ? "<br/>Total de la página S/." + redondear(totalPagoProfesorPagina, 2) : ""));
       },
