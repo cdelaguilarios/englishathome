@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Postulante;
 
+use Auth;
 use App\Models\Curso;
 use App\Models\Postulante;
 use App\Models\TipoDocumento;
@@ -48,8 +49,8 @@ class FormularioRequest extends Request {
         "nombre" => ["required", "max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
         "apellido" => ["required", "max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
         "telefono" => "max:30",
-        "fechaNacimiento" => "date_format:d/m/Y",
-        "numeroDocumento" => "numeric|digits_between:8,20",
+        "fechaNacimiento" => (Auth::guest() ? "required|" : "") . "date_format:d/m/Y",
+        "numeroDocumento" => (Auth::guest() ? "required|" : "") . "numeric|digits_between:8,20",
         "correoElectronico" => "required|email|max:245",
         "imagenPerfil" => "image",
         "direccion" => "required|max:255",
@@ -58,6 +59,13 @@ class FormularioRequest extends Request {
         "geoLatitud" => ["regex:" . ReglasValidacion::RegexGeoLatitud],
         "geoLongitud" => ["regex:" . ReglasValidacion::RegexGeoLongitud]
     ];
+
+    if (Auth::guest()) {
+      $reglasValidacion["ultimosTrabajos"] = "required";
+      $reglasValidacion["experienciaOtrosIdiomas"] = "required";
+      $reglasValidacion["descripcionPropia"] = "required";
+      $reglasValidacion["ensayo"] = "required";
+    }
 
     $listaSexos = SexosEntidad::listar();
     if (!array_key_exists($datos["sexo"], $listaSexos)) {
@@ -116,7 +124,7 @@ class FormularioRequest extends Request {
         "ubigeoNoValido.required" => "Los datos de dirección ingresados no son válidos.",
         "cursosNoValido.required" => "Uno o más de los cursos seleccionados no es válido.",
         "horarioNoValido.required" => "El horario seleccionado no es válido.",
-        "correoElectronicoRegistradoNoValido.required" => "El correo electrónico ingresado ya ha sido registrado."
+        "correoElectronicoRegistradoNoValido.required" => (Auth::guest() ? "The email entered has already been registered." : "El correo electrónico ingresado ya ha sido registrado.")
     ];
   }
 

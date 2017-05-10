@@ -3,7 +3,13 @@
   <div class="box-body contenedor-alerta">
     <div class="alert alert-danger alert-dismissible">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-      <h4><i class="icon fa fa-ban"></i> @lang("auth.errors_title")</h4>
+      <h4>
+        @if(Auth::guest())
+        <i class="icon fa fa-ban"></i> Please fix the following errors
+        @else
+        <i class="icon fa fa-ban"></i> Por favor corregir los siguientes errores
+        @endif
+      </h4>
       <ul>
         @foreach($errors->all() as $error)
         <li>{{$error}}</li>

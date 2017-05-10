@@ -6,6 +6,7 @@ function verificarJqueryUbigeo() {
 var codigoDepartamento = "";
 var codigoProvincia = "";
 var codigoDistrito = "";
+formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
 function cargarUbigeo() {
   if ($("input[name='codigoUbigeo']").length > 0 && $("input[name='codigoUbigeo']").val().length === 6) {
     codigoDepartamento = $("input[name='codigoUbigeo']").val().slice(0, 2);
@@ -46,7 +47,6 @@ function cargarDistritos() {
 }
 function cargarDatosUbigeo(eleUbigeoLista, urlListarUbigeo, parametros, textoSeleccionDef, codigoUbigeoSel, noMostrarMensajeBloq) {
   if (urlListarUbigeo !== "") {
-    formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
     (!noMostrarMensajeBloq ? $.blockUI({message: "<h4>" + (formularioExternoPostulante ? "Loading" : "Cargando") + "...</h4>"}) : "");
     llamadaAjax(urlListarUbigeo, "POST", parametros, true,
         function (d) {

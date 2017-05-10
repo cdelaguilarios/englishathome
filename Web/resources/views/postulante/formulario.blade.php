@@ -48,7 +48,7 @@
                 <div class="input-group-addon">
                   <i class="fa fa-calendar"></i>
                 </div>                          
-                {{ Form::text("fechaNacimiento", (isset($postulante->fechaNacimiento) ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $postulante->fechaNacimiento)->format("d/m/Y") : null), ["id" => "fecha-nacimiento", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
+                {{ Form::text("fechaNacimiento", (isset($postulante->fechaNacimiento) ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $postulante->fechaNacimiento)->format("d/m/Y") : null), ["id" => "fecha-nacimiento", "class" => "form-control  pull-right", "placeholder" => (Auth::guest() ? "dd/mm/yyyy" : "dd/mm/aaaa")]) }}
               </div>
             </div>
             {{ Form::label("sexo", (Auth::guest() ? "Gender" : "Sexo") .  ": ", ["class" => "col-sm-1 control-label"]) }}
@@ -121,31 +121,40 @@
         </div>               
         <div id="sec-wiz-postulante-3" class="step-pane sample-pane alert" data-step="3">  
           <div class="form-group">
-            {{ Form::label("ultimosTrabajos", (Auth::guest() ? "Mention last two teaching jobs" : "Últimos dos trabajos como profesor") .  " (*): ", ["class" => "col-sm-2 control-label"]) }}            
+            {{ Form::label("ultimosTrabajos", (Auth::guest() ? "Mention last two teaching jobs (*)" : "Últimos dos trabajos como profesor") .  ": ", ["class" => "col-sm-2 control-label"]) }}            
             <div class="col-sm-10">
               {{ Form::textarea("ultimosTrabajos", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
             </div>               
           </div> 
           <div class="form-group">
-            {{ Form::label("experienciaOtrosIdiomas", (Auth::guest() ? "Do you have experience teaching other languages?" : "Experiencia como profesor de otros idiomas") .  " (*): ", ["class" => "col-sm-2 control-label"]) }}            
+            {{ Form::label("experienciaOtrosIdiomas", (Auth::guest() ? "Do you have experience teaching other languages? (*)" : "Experiencia como profesor de otros idiomas") .  ": ", ["class" => "col-sm-2 control-label"]) }}            
             <div class="col-sm-10">
               {{ Form::textarea("experienciaOtrosIdiomas", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
             </div>               
           </div>
           <div class="form-group">
-            {{ Form::label("descripcionPropia", (Auth::guest() ? "Do you consider yourself a good teacher? why?" : "Descripción propia como profesor") .  " (*): ", ["class" => "col-sm-2 control-label"]) }}            
+            {{ Form::label("descripcionPropia", (Auth::guest() ? "Do you consider yourself a good teacher? why? (*)" : "Descripción propia como profesor") .  ": ", ["class" => "col-sm-2 control-label"]) }}            
             <div class="col-sm-10">
               {{ Form::textarea("descripcionPropia", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
             </div>               
           </div>
           <div class="form-group">
-            {{ Form::label("ensayo", (Auth::guest() ? "Write a short Essay (150 words) (Be original, don´t copy and paste, please)" : "Ensayo") .  " (*): ", ["class" => "col-sm-2 control-label"]) }}            
+            {{ Form::label("ensayo", (Auth::guest() ? "Write a short Essay (150 words) (Be original, don´t copy and paste, please) (*)" : "Ensayo") .  ": ", ["class" => "col-sm-2 control-label"]) }}            
             <div class="col-sm-10">
               @if(Auth::guest())
               <b>What are the positive and/or negative aspects of the internet:</b><br/>
               @endif 
               {{ Form::textarea("ensayo", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
             </div>              
+          </div>
+          <div class="form-group">
+            {{ Form::label("documentosPersonales", (Auth::guest() ? "Personal documents (International Certificates, CV, etc)" : " Documentos personales (Certificados internacioales, CV, etc)") .  ": ", ["class" => "col-sm-2 control-label"]) }}   
+            <div class="col-sm-10">
+              <div id="documentos-personales">{{ (Auth::guest() ? "Upload" : "Subir") }}</div>
+              {{ Form::hidden("nombresDocumentosPersonales", "", ["id" => "nombres-documentos-personales"]) }}
+              {{ Form::hidden("nombresOriginalesDocumentosPersonales", "", ["id" => "nombres-originales-documentos-personales"]) }}
+            </div>
+            <div class="clearfix"></div>
           </div>
         </div>             
         <div id="sec-wiz-postulante-4" class="step-pane sample-pane alert" data-step="4">              
@@ -170,7 +179,7 @@
               @include("util.horario")  
             </div>                                        
           </div>
-        {{ Form::hidden("registrarComoProfesor", null) }}
+          {{ Form::hidden("registrarComoProfesor", null) }}
         </div>
         <div class="box-footer">   
           <div class="form-group">

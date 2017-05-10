@@ -38,7 +38,11 @@
 @if(isset($vistaExterna) && $vistaExterna && isset($nuevoRegistro) && $nuevoRegistro)
 <div class="row text-center">
   <h4>    
+    @if(Auth::guest())
+    Thank you very much for registering your data. We will contact you soon.
+    @else
     Muchas gracias por registrar sus datos, pronto nos estaremos comunicando con usted.
+    @endif
   </h4>
 </div>
 @else

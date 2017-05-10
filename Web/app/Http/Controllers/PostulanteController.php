@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Log;
+use Auth;
 use Input;
 use Mensajes;
 use Datatables;
@@ -28,10 +29,10 @@ class PostulanteController extends Controller {
 
   public function listar(BusquedaRequest $req) {
     return Datatables::of(Postulante::listar($req->all()))->filterColumn("entidad.nombre", function($q, $k) {
-          $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
-        })->filterColumn("entidad.fechaRegistro", function($q, $k) {
-          $q->whereRaw("DATE_FORMAT(entidad.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
-        })->make(true);
+              $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
+            })->filterColumn("entidad.fechaRegistro", function($q, $k) {
+              $q->whereRaw("DATE_FORMAT(entidad.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
+            })->make(true);
   }
 
   public function crear() {

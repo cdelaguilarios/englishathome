@@ -75,6 +75,7 @@ function cargarLista() {
 }
 
 function cargarFormulario() {
+  formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
   urlActualizarHorario = (typeof (urlActualizarHorario) === "undefined" ? "" : urlActualizarHorario);
   $("#formulario-postulante").validate({
     ignore: "",
@@ -88,12 +89,14 @@ function cargarFormulario() {
         validarAlfabetico: true
       },
       fechaNacimiento: {
+        required: formularioExternoPostulante,
         validarFecha: true
       },
       idTipoDocumento: {
         required: true
       },
       numeroDocumento: {
+        required: formularioExternoPostulante,
         number: true
       },
       correoElectronico: {
@@ -115,20 +118,32 @@ function cargarFormulario() {
       direccion: {
         required: true
       },
+      ultimosTrabajos: {
+        required: formularioExternoPostulante
+      },
+      experienciaOtrosIdiomas: {
+        required: formularioExternoPostulante
+      },
+      descripcionPropia: {
+        required: formularioExternoPostulante
+      },
+      ensayo: {
+        required: formularioExternoPostulante
+      },
       "idCursos[]": {
-        required: true
+        required: !formularioExternoPostulante
       }
     },
     submitHandler: function (f) {
       if ($.parseJSON($("input[name='horario']").val()) !== null && $.parseJSON($("input[name='horario']").val()).length > 0) {
         if (confirm($("input[name='modoEditar']").val() === "1"
             ? "¿Está seguro que desea guardar los cambios de los datos del postulante?"
-            : "¿Está seguro que desea registrar estos datos?")) {
-          $.blockUI({message: "<h4>" + ($("input[name='modoEditar']").val() === "1" ? "Guardando" : "Registrando") + " datos...</h4>"});
+            : (formularioExternoPostulante ? "Are you sure you want to register this data?" : "¿Está seguro que desea registrar estos datos?"))) {
+          $.blockUI({message: "<h4>" + ($("input[name='modoEditar']").val() === "1" ? "Guardando datos..." : (formularioExternoPostulante ? "Saving Your Data" : "Registrando datos...")) + "</h4>"});
           f.submit();
         }
       } else {
-        agregarMensaje("advertencias", "Debe ingresar un horario disponible", true, "#sec-men-alerta-horario");
+        agregarMensaje("advertencias", (formularioExternoPostulante ? "Must enter your schedule available to work" : "Debe ingresar un horario disponible"), true, "#sec-men-alerta-horario");
       }
     },
     highlight: function () {
@@ -155,15 +170,22 @@ function cargarFormulario() {
     onkeyup: false,
     onclick: false
   });
+
   if ($("input[name='modoEditarRegistrar']").val() === "1") {
     establecerWizard("postulante", ($("input[name='modoEditar']").length > 0 && $("input[name='modoEditar']").val() === "1"));
 
-    var fechaNacimiento = $("#fecha-nacimiento").val();
-    establecerCalendario("fecha-nacimiento", false, true, false);
-    if (fechaNacimiento !== "") {
-      var datFechaNacimiento = fechaNacimiento.split("/");
-      $("#fecha-nacimiento").datepicker("setDate", (new Date(datFechaNacimiento[1] + "/" + datFechaNacimiento[0] + "/" + datFechaNacimiento[2])));
+    if (!formularioExternoPostulante) {
+      var fechaNacimiento = $("#fecha-nacimiento").val();
+      establecerCalendario("fecha-nacimiento", false, true, false);
+      if (fechaNacimiento !== "") {
+        var datFechaNacimiento = fechaNacimiento.split("/");
+        $("#fecha-nacimiento").datepicker("setDate", (new Date(datFechaNacimiento[1] + "/" + datFechaNacimiento[0] + "/" + datFechaNacimiento[2])));
+      }
     }
+
+    incluirSeccionSubidaArchivos("documentos-personales", {onSubmit: function () {
+        return true;
+      }, acceptFiles: "*", uploadStr: (formularioExternoPostulante ? "Upload file" : "Subir archivo")});
 
     $("#curso-interes").select2();
     $("#direccion").focusout(verificarDatosBusquedaMapa);

@@ -51,6 +51,7 @@ function obtenerParametroUrlXNombre(nombre, url) {
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
 $.validator.addMethod("validarDecimal", validarDecimal, "Ingreso no valido.");
 function validarDecimal(value, element, param) {
   if (value.trim() === "")
@@ -78,26 +79,25 @@ function validarEntero(value, element, param) {
     return true;
   return (/^\d+$/.test(("" + value)));
 }
-$.validator.addMethod("validarImagen", validarImagen, "Por favor seleccione una imagen válida (formatos válidos: jpg, jpeg, png y gif).");
+$.validator.addMethod("validarImagen", validarImagen, (formularioExternoPostulante ? "Invalid image (valid formats: jpg, jpeg, png and gif)" : "Por favor seleccione una imagen válida (formatos válidos: jpg, jpeg, png y gif)."));
 function validarImagen(value, element, param) {
   var extension = value.split(".").pop().toLowerCase();
   return (value.trim() === "" || extension.trim() === "jpg" || extension.trim() === "jpeg" || extension.trim() === "png" || extension.trim() === "gif");
 }
-$.validator.addMethod("validarAlfanumerico", validarAlfanumerico, "Por favor solo ingrese valores alfanuméricos.");
+$.validator.addMethod("validarAlfanumerico", validarAlfanumerico, (formularioExternoPostulante ? "Please enter only alphanumeric values." : "Por favor solo ingrese valores alfanuméricos."));
 function validarAlfanumerico(value, element, param) {
   return this.optional(element) || /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/i.test(value);
 }
-$.validator.addMethod("validarAlfabetico", validarAlfabetico, "Por favor solo ingrese letras.");
+$.validator.addMethod("validarAlfabetico", validarAlfabetico, (formularioExternoPostulante ? "Please enter only letters." : "Por favor solo ingrese solo letras."));
 function validarAlfabetico(value, element, param) {
   return this.optional(element) || /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/i.test(value);
 }
-$.validator.addMethod("validarFecha", validarFecha, "Por favor ingrese una fecha válida (formato válido: dd/mm/aaaa)");
+$.validator.addMethod("validarFecha", validarFecha, (formularioExternoPostulante ? "Please enter a valid date (valid format: dd/mm/yyyy)." : "Por favor ingrese una fecha válida (formato válido: dd/mm/aaaa)"));
 function validarFecha(value, element, param) {
   return this.optional(element) || /(^(((0[1-9]|1[0-9]|2[0-8])[\/](0[1-9]|1[012]))|((29|30|31)[\/](0[13578]|1[02]))|((29|30)[\/](0[4,6,9]|11)))[\/](19|[2-9][0-9])\d\d$)|(^29[\/]02[\/](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)/i.test(value);
 }
 
 ﻿$(document).ready(function () {
-  formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
   if (!formularioExternoPostulante) {
     $.fn.datepicker.defaults.language = "es";
   }
@@ -451,8 +451,9 @@ function procesarDatosFormulario(f) {
 function incluirSeccionSubidaArchivos(idElemento, datosAdicionales, funcionSubirCompletado, funcionEliminarCompletado) {
   urlRegistrarArchivo = (typeof (urlRegistrarArchivo) === "undefined" ? "" : urlRegistrarArchivo);
   urlEliminarArchivo = (typeof (urlEliminarArchivo) === "undefined" ? "" : urlEliminarArchivo);
+  formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
   if (urlRegistrarArchivo !== "" && urlEliminarArchivo !== "") {
-    $("#" + idElemento).uploadFile($.extend(true, {}, {
+    var datIni = {
       url: urlRegistrarArchivo,
       fileName: "archivo",
       multiple: true,
@@ -479,20 +480,23 @@ function incluirSeccionSubidaArchivos(idElemento, datosAdicionales, funcionSubir
           funcionEliminarCompletado(d, p);
         p.statusbar.hide();
       },
-      showFileCounter: true,
-      dragDropStr: "<span><b>Arrastrar y soltar</b></span>",
-      previewHeight: "50px",
-      previewWidth: "50px",
-      abortStr: "Cancelar",
-      cancelStr: "Cancelar",
-      deletelStr: "Eliminar",
-      doneStr: "Realizado",
-      downloadStr: "Descargar",
-      maxFileCountErrorStr: " no se agregó. Máximo numero de archivos permitidos: ",
-      multiDragErrorStr: "Arrastrar y soltar los archivos no esta permitido",
-      extErrorStr: "Extensión permitidas: ",
-      sizeErrorStr: "Tamaño máximo: "
-    }, datosAdicionales));
+      showFileCounter: true
+    };
+    if (!formularioExternoPostulante) {
+      datIni.dragDropStr = "<span><b>Arrastrar y soltar</b></span>";
+      datIni.previewHeight = "50px";
+      datIni.previewWidth = "50px";
+      datIni.abortStr = "Cancelar";
+      datIni.cancelStr = "Cancelar";
+      datIni.deletelStr = "Eliminar";
+      datIni.doneStr = "Realizado";
+      datIni.downloadStr = "Descargar";
+      datIni.maxFileCountErrorStr = " no se agregó. Máximo numero de archivos permitidos: ";
+      datIni.multiDragErrorStr = "Arrastrar y soltar los archivos no esta permitido";
+      datIni.extErrorStr = "Extensión permitidas: ";
+      datIni.sizeErrorStr = "Tamaño máximo: ";
+    }
+    $("#" + idElemento).uploadFile($.extend(true, {}, datIni, datosAdicionales));
   }
 }
 function rgb2hex(rgb) {

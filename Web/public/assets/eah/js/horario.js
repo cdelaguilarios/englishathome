@@ -28,7 +28,7 @@ function cargarHorario() {
     };    
     formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
     if(!formularioExternoPostulante){
-      datIni["stringDays"] = diasLet;
+      datIni.stringDays = diasLet;
     }
     $("#sec-calendario-horario").dayScheduleSelector(datIni);
     $("#sec-calendario-horario").data("artsy.dayScheduleSelector").deserialize(horarioInicial);

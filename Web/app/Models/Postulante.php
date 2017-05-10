@@ -17,7 +17,7 @@ class Postulante extends Model {
   public $timestamps = false;
   protected $primaryKey = "idEntidad";
   protected $table = "postulante";
-  protected $fillable = ["ultimosTrabajos", "experienciaOtrosIdiomas", "descripcionPropia", "ensayo"];
+  protected $fillable = ["ultimosTrabajos", "experienciaOtrosIdiomas", "descripcionPropia", "ensayo", "documentosPersonales"];
 
   public static function nombreTabla() {
     $modeloPostulante = new Postulante();
