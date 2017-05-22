@@ -65,7 +65,7 @@ class Entidad extends Model {
   }
 
   public static function registrarActualizarImagenPerfil($id, $imagenPerfil) {
-    if (isset($imagenPerfil) && !is_null($imagenPerfil) && $imagenPerfil != "") {
+    if (isset($imagenPerfil) && !is_null($imagenPerfil)) {
       $entidad = Entidad::ObtenerXId($id);
       if (isset($entidad->imagenPerfil) && $entidad->imagenPerfil != "") {
         Archivo::eliminar($entidad->imagenPerfil);

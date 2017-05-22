@@ -8,7 +8,7 @@ class EntidadHistorial extends Model {
 
   public $timestamps = false;
   protected $table = "entidadHistorial";
-  protected $fillable = ["idEntidad", "idHistorial"];
+  protected $fillable = ["idEntidad", "idHistorial", "esObservador", "revisado"];
 
   public static function nombreTabla() {
     $modeloEntidadHistorial = new EntidadHistorial();

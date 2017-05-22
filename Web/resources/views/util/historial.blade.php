@@ -5,12 +5,14 @@
 @endif
 <div id="sec-men-historial"></div>
 <div id="sec-historial-1">
+  @if(!(isset($observador) && $observador == 1))
   <div>
     <a id="btn-nuevo-evento-historial" class="btn btn-sm btn-primary pull-right">
       <i class="fa fa-plus"></i> Agregar evento
     </a>
   </div>
   <div class="clearfix"></div>
+  @endif
   <ul id="sec-historial" class="timeline timeline-inverse"></ul>
   <div id="sec-boton-carga-mas-historial" style="display:none">
     <a class="btn btn-sm btn-primary" onclick="cargarListaHistorial()">
@@ -19,6 +21,7 @@
   </div>
   {{ Form::hidden("numeroCarga", 0) }} 
 </div>
+@if(!(isset($observador) && $observador == 1))
 <div id="sec-historial-2" style="display: none">
   {{ Form::open(["url" => route("historial.registrar", ["idEntidad" => $idEntidad]), "id" => "formulario-registrar-historial", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
   <div class="box-header">
@@ -81,7 +84,8 @@
   </div>
   {{ Form::close() }}
 </div>
+@endif
 <script>
-  var urlCargarHistorial = "{{ route('historial.perfil', ['idEntidad' => $idEntidad]) }}";
+  var urlCargarHistorial = "{{ route('historial.perfil', ['idEntidad' => $idEntidad, 'observador' => $observador]) }}";
 </script>
 <script src="{{ asset("assets/eah/js/historial.js")}}"></script>

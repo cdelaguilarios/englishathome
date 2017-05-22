@@ -132,13 +132,27 @@ function cargarFormulario() {
       },
       "idCursos[]": {
         required: !formularioExternoPostulante
+      },
+      audio: {
+        validarAudio: true,
+        archivoTamanho: 2097152,
+        required: formularioExternoPostulante
+      }
+    },
+    messages: {
+      audio: {
+        archivoTamanho: (formularioExternoPostulante ? "File must be less than 2MB" : "Archivo debe ser menor a 2MB.")
       }
     },
     submitHandler: function (f) {
       if ($.parseJSON($("input[name='horario']").val()) !== null && $.parseJSON($("input[name='horario']").val()).length > 0) {
-        if (confirm($("input[name='modoEditar']").val() === "1"
-            ? "¿Está seguro que desea guardar los cambios de los datos del postulante?"
-            : (formularioExternoPostulante ? "Are you sure you want to register this data?" : "¿Está seguro que desea registrar estos datos?"))) {
+        var mensajeConfirmacion = "¿Está seguro que desea registrar a este postulante como un nuevo profesor?";
+        if ($("input[name='registrarComoProfesor']").val() !== "1") {
+          mensajeConfirmacion = ($("input[name='modoEditar']").val() === "1"
+              ? "¿Está seguro que desea guardar los cambios de los datos del postulante?"
+              : (formularioExternoPostulante ? "Are you sure you want to register this data?" : "¿Está seguro que desea registrar estos datos?"));
+        }
+        if (confirm(mensajeConfirmacion)) {
           $.blockUI({message: "<h4>" + ($("input[name='modoEditar']").val() === "1" ? "Guardando datos..." : (formularioExternoPostulante ? "Saving Your Data" : "Registrando datos...")) + "</h4>"});
           f.submit();
         }
@@ -185,7 +199,7 @@ function cargarFormulario() {
 
     incluirSeccionSubidaArchivos("documentos-personales", {onSubmit: function () {
         return true;
-      }, acceptFiles: "*", uploadStr: (formularioExternoPostulante ? "Upload file" : "Subir archivo")});
+      }, acceptFiles: "*", uploadStr: (formularioExternoPostulante ? "Upload file" : "Subir archivo"), maxFileSize: 5000000, maxFileCount: 3});
 
     $("#curso-interes").select2();
     $("#direccion").focusout(verificarDatosBusquedaMapa);
@@ -230,6 +244,11 @@ function cargarFormulario() {
       }
     });
   }
+}
+
+function eliminarDocumentoPersonal(ele, nombreArchivo) {
+  $("#nombres-archivos-documentos-personales-eliminados").val(nombreArchivo + "," + $("#nombres-archivos-documentos-personales-eliminados").val());
+  $(ele).closest(".ajax-file-upload-container").remove();
 }
 
 

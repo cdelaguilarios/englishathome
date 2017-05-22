@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use Input;
 use App\Models\Archivo;
 use App\Http\Requests\ArchivoRequest;
@@ -9,8 +10,9 @@ use App\Http\Requests\ArchivoRequest;
 class ArchivoController extends Controller {
 
   public function obtener($nombre) {
+    $esAudio = Input::get("audio");
     $tipoImagenPerfil = Input::get("tip");
-    return Archivo::obtener($nombre, (isset($tipoImagenPerfil) ? $tipoImagenPerfil : NULL));
+    return Archivo::obtener($nombre, (isset($esAudio) && ((int) $esAudio) == 1), (isset($tipoImagenPerfil) ? $tipoImagenPerfil : NULL));
   }
 
   public function registrar(ArchivoRequest $req) {

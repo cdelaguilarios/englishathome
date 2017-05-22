@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DB;
+use Log;
 use Auth;
 use Carbon\Carbon;
 use App\Helpers\Enum\TiposEntidad;
@@ -17,7 +18,7 @@ class Postulante extends Model {
   public $timestamps = false;
   protected $primaryKey = "idEntidad";
   protected $table = "postulante";
-  protected $fillable = ["ultimosTrabajos", "experienciaOtrosIdiomas", "descripcionPropia", "ensayo", "documentosPersonales"];
+  protected $fillable = ["ultimosTrabajos", "experienciaOtrosIdiomas", "descripcionPropia", "ensayo", "documentosPersonales", "audio"];
 
   public static function nombreTabla() {
     $modeloPostulante = new Postulante();
@@ -65,11 +66,13 @@ class Postulante extends Model {
       EntidadCurso::registrarActualizar($idEntidad, $datos["idCursos"]);
     }
     Horario::registrarActualizar($idEntidad, $datos["horario"]);
+    $datos["documentosPersonales"] = Docente::procesarDocumentosPersonales("", $datos);
 
     $postulante = new Postulante($datos);
     $postulante->idEntidad = $idEntidad;
     $postulante->save();
 
+    Docente::registrarActualizarAudio($idEntidad, $req->file("audio"));
     Historial::registrar([
         "idEntidades" => [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
         "titulo" => (Auth::guest() ? MensajesHistorial::TituloPostulanteRegistro : MensajesHistorial::TituloPostulanteRegistroXUsuario),
@@ -88,7 +91,11 @@ class Postulante extends Model {
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($id, $datos["idCursos"]);
     Horario::registrarActualizar($id, $datos["horario"]);
+    Docente::registrarActualizarAudio($id, $req->file("audio"));
+    unset($datos["audio"]);
+
     $postulante = Postulante::obtenerXId($id, TRUE);
+    $datos["documentosPersonales"] = Docente::procesarDocumentosPersonales($postulante->documentosPersonales, $datos);
     $postulante->update($datos);
   }
 
@@ -128,6 +135,12 @@ class Postulante extends Model {
 
       $profesor = new Profesor();
       $profesor->idEntidad = $idEntidad;
+      $profesor->ultimosTrabajos = $datos["ultimosTrabajos"];
+      $profesor->experienciaOtrosIdiomas = $datos["experienciaOtrosIdiomas"];
+      $profesor->descripcionPropia = $datos["descripcionPropia"];
+      $profesor->ensayo = $datos["ensayo"];
+      $profesor->documentosPersonales = $datos["documentosPersonales"];
+      $profesor->audio = $datos["audio"];
       $profesor->save();
       $idProfesor = $idEntidad;
 

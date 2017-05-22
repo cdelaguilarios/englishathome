@@ -15,7 +15,7 @@ class Profesor extends Model {
   public $timestamps = false;
   protected $primaryKey = "idEntidad";
   protected $table = "profesor";
-  protected $fillable = ["ultimosTrabajos", "experienciaOtrosIdiomas", "descripcionPropia", "ensayo"];
+  protected $fillable = ["ultimosTrabajos", "experienciaOtrosIdiomas", "descripcionPropia", "ensayo", "documentosPersonales", "audio"];
 
   public static function nombreTabla() {
     $modeloProfesor = new Profesor();
@@ -64,11 +64,13 @@ class Profesor extends Model {
     Entidad::registrarActualizarImagenPerfil($idEntidad, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($idEntidad, $datos["idCursos"]);
     Horario::registrarActualizar($idEntidad, $datos["horario"]);
+    $datos["documentosPersonales"] = Docente::procesarDocumentosPersonales("", $datos);
 
     $profesor = new Profesor($datos);
     $profesor->idEntidad = $idEntidad;
     $profesor->save();
 
+    Docente::registrarActualizarAudio($idEntidad, $req->file("audio"));
     Historial::registrar([
         "idEntidades" => [$idEntidad, Auth::user()->idEntidad],
         "titulo" => MensajesHistorial::TituloProfesorRegistroXUsuario,
@@ -87,7 +89,11 @@ class Profesor extends Model {
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($id, $datos["idCursos"]);
     Horario::registrarActualizar($id, $datos["horario"]);
+    Docente::registrarActualizarAudio($id, $req->file("audio"));
+    unset($datos["audio"]);
+    
     $profesor = Profesor::obtenerXId($id, TRUE);
+    $datos["documentosPersonales"] = Docente::procesarDocumentosPersonales($profesor->documentosPersonales, $datos);
     $profesor->update($datos);
   }
 

@@ -79,10 +79,18 @@ function validarEntero(value, element, param) {
     return true;
   return (/^\d+$/.test(("" + value)));
 }
+$.validator.addMethod('archivoTamanho', function (value, element, param) {
+  return this.optional(element) || (element.files[0].size <= param);
+});
 $.validator.addMethod("validarImagen", validarImagen, (formularioExternoPostulante ? "Invalid image (valid formats: jpg, jpeg, png and gif)" : "Por favor seleccione una imagen válida (formatos válidos: jpg, jpeg, png y gif)."));
 function validarImagen(value, element, param) {
   var extension = value.split(".").pop().toLowerCase();
   return (value.trim() === "" || extension.trim() === "jpg" || extension.trim() === "jpeg" || extension.trim() === "png" || extension.trim() === "gif");
+}
+$.validator.addMethod("validarAudio", validarAudio, (formularioExternoPostulante ? "Invalid audio (valid formats: mp3, wav and ogg)" : "Por favor seleccione un audio válido (formatos válidos: mp3, wav y ogg)."));
+function validarAudio(value, element, param) {
+  var extension = value.split(".").pop().toLowerCase();
+  return (value.trim() === "" || extension.trim() === "mp3" || extension.trim() === "wav" || extension.trim() === "ogg");
 }
 $.validator.addMethod("validarAlfanumerico", validarAlfanumerico, (formularioExternoPostulante ? "Please enter only alphanumeric values." : "Por favor solo ingrese valores alfanuméricos."));
 function validarAlfanumerico(value, element, param) {
@@ -409,6 +417,11 @@ function establecerWizard(tipoEntidad, modoEditar) {
     $("#wiz-registro-" + tipoEntidad).on("changed.fu.wizard", function (e, d) {
       habilitarTodosPasosWizard(tipoEntidad);
     });
+    setInterval(function () {
+      if ($("#formulario-" + tipoEntidad).find(".step-pane:last").attr("id").replace("sec-wiz-" + tipoEntidad + "-", "") === ($("#wiz-registro-" + tipoEntidad).find('.steps-container').find('li.active').data("step") + "")) {
+        $("#formulario-" + tipoEntidad).find("#btn-guardar-secundario").hide();
+      }
+    }, 100);
   }
 }
 function habilitarTodosPasosWizard(tipoEntidad) {

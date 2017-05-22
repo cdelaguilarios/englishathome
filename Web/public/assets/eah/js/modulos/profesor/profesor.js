@@ -126,6 +126,15 @@ function cargarFormulario() {
       },
       "idCursos[]": {
         required: true
+      },
+      audio: {
+        validarAudio: true,
+        archivoTamanho: 2097152,
+      }
+    },
+    messages: {
+      audio: {
+        archivoTamanho: "Archivo debe ser menor a 2MB."
       }
     },
     submitHandler: function (f) {
@@ -174,6 +183,10 @@ function cargarFormulario() {
       $("#fecha-nacimiento").datepicker("setDate", (new Date(datFechaNacimiento[1] + "/" + datFechaNacimiento[0] + "/" + datFechaNacimiento[2])));
     }
 
+    incluirSeccionSubidaArchivos("documentos-personales", {onSubmit: function () {
+        return true;
+      }, acceptFiles: "*", uploadStr: "Subir archivo", maxFileSize: 5000000, maxFileCount: 3});
+
     $("#curso-interes").select2();
     $("#direccion").focusout(verificarDatosBusquedaMapa);
     $("input[name='codigoUbigeo']").change(verificarDatosBusquedaMapa);
@@ -214,3 +227,7 @@ function cargarFormulario() {
   }
 }
 
+function eliminarDocumentoPersonal(ele, nombreArchivo) {
+  $("#nombres-archivos-documentos-personales-eliminados").val(nombreArchivo + "," + $("#nombres-archivos-documentos-personales-eliminados").val());
+  $(ele).closest(".ajax-file-upload-container").remove();
+}

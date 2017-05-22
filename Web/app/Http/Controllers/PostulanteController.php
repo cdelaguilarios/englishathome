@@ -87,7 +87,7 @@ class PostulanteController extends Controller {
       if ($datos["registrarComoProfesor"] == 1) {
         Postulante::registrarProfesor($id);
         Mensajes::agregarMensajeExitoso("El postulante seleccionado ha sido registrado como nuevo profesor.");
-        return redirect(route("interesados"));
+        return redirect(route("posultantes"));
       } else {
         Mensajes::agregarMensajeExitoso("Actualización exitosa.");
       }

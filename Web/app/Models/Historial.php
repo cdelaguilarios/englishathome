@@ -46,17 +46,41 @@ class Historial extends Model {
     return Historial::where("id", $id)->where("eliminado", 0)->firstOrFail();
   }
 
-  public static function obtenerPerfil($numeroCarga, $idEntidad) {
+  public static function obtenerPerfil($numeroCarga, $idEntidad, $entidadObservadora = FALSE, $nuevasNotificaciones = FALSE, $seccionWidget = FALSE, $idNotificacion = NULL) {
     $nombreTabla = Historial::nombreTabla();
     $historiales = Historial::listarBase()
             ->where($nombreTabla . ".mostrarEnPerfil", 1)
             ->where("entidadHistorial.idEntidad", $idEntidad);
-    $historialesTotal = $historiales->count();
-    $historialesSel = $historiales->orderBy($nombreTabla . ".fechaNotificacion", "DESC")
-                    ->skip(((int) $numeroCarga) * Historial::numeroMensajesXCarga)
-                    ->take(Historial::numeroMensajesXCarga)->get();
 
-    return ["datos" => Historial::formatearDatosHistorialPerfil($historialesSel), "mostrarBotonCargar" => (((((int) $numeroCarga) + 1) * Historial::numeroMensajesXCarga) < $historialesTotal)];
+    if ($entidadObservadora) {
+      $historiales->where("entidadHistorial.esObservador", 1);
+    }
+    if ($nuevasNotificaciones) {
+      $historiales->where("entidadHistorial.revisado", 0);
+    }
+    if (!is_null($idNotificacion)) {
+      $historiales->where($nombreTabla . ".id", $idNotificacion);
+    }
+
+    $historialesTotal = $historiales->count();
+    if ($nuevasNotificaciones) {
+      $historialesSel = $historiales->orderBy($nombreTabla . ".fechaNotificacion", "DESC")->get();
+    } else {
+      $historialesSel = $historiales->orderBy($nombreTabla . ".fechaNotificacion", "DESC")
+                      ->skip(((int) $numeroCarga) * Historial::numeroMensajesXCarga)
+                      ->take(Historial::numeroMensajesXCarga)->get();
+    }
+
+    return ["datos" => Historial::formatearDatosHistorialPerfil($historialesSel, $seccionWidget), "mostrarBotonCargar" => (((((int) $numeroCarga) + 1) * Historial::numeroMensajesXCarga) < $historialesTotal)];
+  }
+
+  public static function revisarNotificaciones($idEntidadObservadora, $idsNuevasNotificaciones = []) {
+    $idsNuevasNotificacionesSel = (is_array($idsNuevasNotificaciones) ? $idsNuevasNotificaciones : [$idsNuevasNotificaciones]);
+    $registros = EntidadHistorial::where("idEntidad", $idEntidadObservadora)->where("esObservador", 1);
+    if (count($idsNuevasNotificacionesSel) > 0) {
+      $registros->whereIn("idHistorial", $idsNuevasNotificacionesSel);
+    }
+    $registros->update(["revisado" => 1]);
   }
 
   public static function registrar($datos) {
@@ -168,36 +192,38 @@ class Historial extends Model {
     }
   }
 
-  private static function formatearDatosHistorialPerfil($historiales) {
+  private static function formatearDatosHistorialPerfil($historiales, $seccionWidget = FALSE) {
     $historialesFormateados = [];
 
     foreach ($historiales as $historial) {
       $fechaNotificacion = date("Y-m-d 00:00:00", strtotime($historial->fechaNotificacion));
-      Historial::formatearDatosHistorialBase($historial);
+      Historial::formatearDatosHistorialBase($historial, $seccionWidget);
       $historialesFormateados[$fechaNotificacion] = ((array_key_exists($fechaNotificacion, $historialesFormateados)) ? $historialesFormateados[$fechaNotificacion] : []);
       array_push($historialesFormateados[$fechaNotificacion], $historial);
     }
     return $historialesFormateados;
   }
 
-  private static function formatearDatosHistorialBase(&$historial) {
+  private static function formatearDatosHistorialBase(&$historial, $seccionWidget = FALSE) {
     $tiposNotificacion = TiposHistorial::listar();
     $tiposEntidad = TiposEntidad::listar();
     $nombreTabla = Entidad::nombreTabla();
     $entidades = Entidad::select($nombreTabla . ".*")
                     ->leftJoin(EntidadHistorial::nombreTabla() . " as entidadHistorial", $nombreTabla . ".id", "=", "entidadHistorial.idEntidad")
                     ->where("entidadHistorial.idHistorial", $historial->id)
+                    ->where("entidadHistorial.esObservador", 0)
                     ->where($nombreTabla . ".eliminado", 0)->get();
     foreach ($entidades as $entidad) {
       if (!array_key_exists($entidad->tipo, $tiposEntidad)) {
         continue;
       }
-      $historial->titulo = str_replace("[" . $entidad->tipo . "]", "<a href='" . route($tiposEntidad[$entidad->tipo][2], ['id' => $entidad->id]) . "' target='_blank'>" . $entidad->nombre . " " . $entidad->apellido . "</a>", $historial->titulo);
-      $historial->mensaje = str_replace("[" . $entidad->tipo . "]", "<a href='" . route($tiposEntidad[$entidad->tipo][2], ['id' => $entidad->id]) . "' target='_blank'>" . $entidad->nombre . " " . $entidad->apellido . "</a>", $historial->mensaje);
+      $historial->titulo = str_replace("[" . $entidad->tipo . "]", ($seccionWidget ? "" : "<a href='" . route($tiposEntidad[$entidad->tipo][2], ['id' => $entidad->id]) . "' target='_blank'>") . $entidad->nombre . " " . $entidad->apellido . ($seccionWidget ? "" : "</a>"), $historial->titulo);
+      $historial->mensaje = str_replace("[" . $entidad->tipo . "]", ($seccionWidget ? "" : "<a href='" . route($tiposEntidad[$entidad->tipo][2], ['id' => $entidad->id]) . "' target='_blank'>") . $entidad->nombre . " " . $entidad->apellido . ($seccionWidget ? "" : "</a>"), $historial->mensaje);
     }
     $historial->horaNotificacion = Carbon::createFromFormat("Y-m-d H:i:s", $historial->fechaNotificacion)->format("H:i:s");
     $historial->icono = (array_key_exists($historial->tipo, $tiposNotificacion) ? $tiposNotificacion[$historial->tipo][1] : TiposHistorial::IconoDefecto);
     $historial->claseColorIcono = (array_key_exists($historial->tipo, $tiposNotificacion) ? $tiposNotificacion[$historial->tipo][2] : TiposHistorial::ClaseColorIconoDefecto);
+    $historial->claseTextoColorIcono = (array_key_exists($historial->tipo, $tiposNotificacion) ? $tiposNotificacion[$historial->tipo][3] : TiposHistorial::ClaseTextoColorIconoDefecto);
   }
 
   private static function registrarActualizarEntidadHistorial($idHistorial, $idEntidades) {
@@ -207,6 +233,12 @@ class Historial extends Model {
         $entidadHitorial = new EntidadHistorial([ "idEntidad" => $idEntidad, "idHistorial" => $idHistorial]);
         $entidadHitorial->save();
       }
+    }
+
+    $entidadesUsuarios = Entidad::listar(TiposEntidad::Usuario);
+    foreach ($entidadesUsuarios as $entidadUsuario) {
+      $entidadHitorial = new EntidadHistorial([ "idEntidad" => $entidadUsuario->id, "idHistorial" => $idHistorial, "esObservador" => 1]);
+      $entidadHitorial->save();
     }
   }
 

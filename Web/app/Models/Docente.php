@@ -93,4 +93,55 @@ class Docente extends Model {
             })->where("entidad.tipo", $datos["tipoDocente"])->where("entidad.estado", '!=', EstadosPostulante::ProfesorRegistrado);
   }
 
+  public static function procesarDocumentosPersonales($documentosPersonales, $datos) {
+    if (!is_null($datos["nombresDocumentosPersonalesEliminados"])) {
+      $nombresDocumentosPersonalesEliminados = explode(",", $datos["nombresDocumentosPersonalesEliminados"]);
+      for ($i = 0; $i < count($nombresDocumentosPersonalesEliminados); $i++) {
+        if (trim($nombresDocumentosPersonalesEliminados[$i]) == "") {
+          continue;
+        }
+        try {
+          Archivo::eliminar($nombresDocumentosPersonalesEliminados[$i]);
+          $documentosPersonalesSel = explode(",", $documentosPersonales);
+          for ($j = 0; $j < count($documentosPersonalesSel); $j++) {
+            if (strpos($documentosPersonalesSel[$j], $nombresDocumentosPersonalesEliminados[$i] . ":") !== false) {
+              $documentosPersonales = str_replace($documentosPersonalesSel[$j] . ",", "", $documentosPersonales);
+              break;
+            }
+          }
+        } catch (\Exception $e) {
+          Log::error($e);
+        }
+      }
+    }
+    if (!is_null($datos["nombresDocumentosPersonales"]) && !is_null($datos["nombresOriginalesDocumentosPersonales"])) {
+      $nombresDocumentosPersonales = explode(",", $datos["nombresDocumentosPersonales"]);
+      $nombresOriginalesDocumentosPersonales = explode(",", $datos["nombresOriginalesDocumentosPersonales"]);
+      for ($i = 0; $i < count($nombresDocumentosPersonales); $i++) {
+        if (count(explode(",", $documentosPersonales)) == 4) {
+          break;
+        }
+        if (trim($nombresDocumentosPersonales[$i]) == "") {
+          continue;
+        }
+        $documentosPersonales .= $nombresDocumentosPersonales[$i] . ":" . (array_key_exists($i, $nombresOriginalesDocumentosPersonales) && $nombresOriginalesDocumentosPersonales[$i] != "" ? $nombresOriginalesDocumentosPersonales[$i] : $nombresDocumentosPersonales[$i]) . ",";
+      }
+    }
+    return $documentosPersonales;
+  }
+
+  public static function registrarActualizarAudio($id, $audio) {
+    if (isset($audio) && !is_null($audio)) {
+      $entidad = Entidad::ObtenerXId($id);
+      $docente = ($entidad->tipo == TiposEntidad::Profesor ? Profesor::obtenerXId($id, TRUE) : ($entidad->tipo == TiposEntidad::Postulante ? Postulante::obtenerXId($id, TRUE) : NULL));
+      if ($docente !== NULL) {
+        if (isset($docente->audio) && $docente->audio != "") {
+          Archivo::eliminar($docente->audio);
+        }
+        $docente->audio = Archivo::registrar($id . "_pa_", $audio);
+        $docente->save();
+      }
+    }
+  }
+
 }

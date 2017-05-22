@@ -31,7 +31,11 @@ function cargarListaHistorial() {
         '</div>' +
         '</li>');
 
-    llamadaAjax(urlCargarHistorial, "POST", {numeroCarga: numeroCarga}, true,
+    var datosLLamada = {numeroCarga: numeroCarga};
+    if (obtenerParametroUrlXNombre("id", window.location.href) !== null) {
+      datosLLamada.id = obtenerParametroUrlXNombre("id", window.location.href);
+    }
+    llamadaAjax(urlCargarHistorial, "POST", datosLLamada, true,
         function (d) {
           var datosHistorial = d.datos;
           var htmlHistorial = "";

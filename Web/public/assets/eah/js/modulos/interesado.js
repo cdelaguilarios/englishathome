@@ -109,7 +109,7 @@ function cargarFormulario() {
       }
     },
     submitHandler: function (f) {
-      var mensajeConfirmacion = "¿Está seguro que desea registrar a esta persona interesada como un alumno?";
+      var mensajeConfirmacion = "¿Está seguro que desea registrar a esta persona interesada como un nuevo alumno?";
       if ($("input[name='registrarComoAlumno']").val() !== "1") {
         mensajeConfirmacion = ($("#btn-guardar").text().trim() === "Guardar"
             ? "¿Está seguro que desea guardar los cambios de los datos de la persona interesada?"

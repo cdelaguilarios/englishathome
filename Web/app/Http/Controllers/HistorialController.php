@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Log;
 use Auth;
+use Input;
 use Mensajes;
 use Carbon\Carbon;
 use App\Models\Entidad;
@@ -24,7 +25,9 @@ class HistorialController extends Controller {
 
   public function obtener($idEntidad, ListaRequest $req) {
     $datos = $req->all();
-    $datosHistorial = Historial::obtenerPerfil($datos["numeroCarga"], $idEntidad);
+    $observador = Input::get("observador");
+    $idNotificacion = Input::get("id");
+    $datosHistorial = Historial::obtenerPerfil($datos["numeroCarga"], $idEntidad, (isset($observador) && ((int) $observador) == 1), FALSE, FALSE, $idNotificacion);
     return response()->json($datosHistorial, 200);
   }
 
@@ -63,6 +66,23 @@ class HistorialController extends Controller {
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos de los correos. Por favor inténtelo nuevamente.");
     }
     return redirect(route("correos"));
+  }
+
+  public function listarNuevasNotificaciones() {
+    $datosHistorial = Historial::obtenerPerfil(1, Auth::id(), TRUE, TRUE, TRUE);
+    return response()->json($datosHistorial, 200);
+  }
+
+  public function revisarNuevasNotificaciones() {
+    $idsNuevasNotificaciones = Input::get("idsNuevasNotificaciones");
+    Historial::revisarNotificaciones(Auth::id(), $idsNuevasNotificaciones);
+  }
+
+  public function listarNotificaciones() {
+    $idNotificacion = Input::get("id");
+    Historial::revisarNotificaciones(Auth::id(), (isset($idNotificacion) ? $idNotificacion : []));
+    $this->data["seccion"] = "notificaciones";
+    return view("notificacion.lista", $this->data);
   }
 
 }

@@ -12,7 +12,11 @@
             <span class="chevron"></span>
           </li>
           <li data-step="3">
-            <span class="badge">3</span>Datos de cursos asignados
+            <span class="badge">3</span>Datos de experiencia laboral
+            <span class="chevron"></span>
+          </li>
+          <li data-step="4">
+            <span class="badge">4</span>Datos de cursos asignados
             <span class="chevron"></span>
           </li>
         </ul>
@@ -113,7 +117,68 @@
             {{ Form::hidden("geoLongitud", null) }} 
           </div>
         </div>               
-        <div id="sec-wiz-profesor-3" class="step-pane sample-pane alert" data-step="3">                    
+        <div id="sec-wiz-postulante-3" class="step-pane sample-pane alert" data-step="3">  
+          <div class="form-group">
+            {{ Form::label("ultimosTrabajos", "Últimos dos trabajos como profesor: ", ["class" => "col-sm-2 control-label"]) }}            
+            <div class="col-sm-10">
+              {{ Form::textarea("ultimosTrabajos", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
+            </div>               
+          </div> 
+          <div class="form-group">
+            {{ Form::label("experienciaOtrosIdiomas", "Experiencia como profesor de otros idiomas: ", ["class" => "col-sm-2 control-label"]) }}            
+            <div class="col-sm-10">
+              {{ Form::textarea("experienciaOtrosIdiomas", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
+            </div>               
+          </div>
+          <div class="form-group">
+            {{ Form::label("descripcionPropia", "Descripción propia como profesor: ", ["class" => "col-sm-2 control-label"]) }}            
+            <div class="col-sm-10">
+              {{ Form::textarea("descripcionPropia", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
+            </div>               
+          </div>
+          <div class="form-group">
+            {{ Form::label("ensayo", "Ensayo: ", ["class" => "col-sm-2 control-label"]) }}            
+            <div class="col-sm-10">
+              {{ Form::textarea("ensayo", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
+            </div>              
+          </div>
+          <div class="form-group">
+            {{ Form::label("documentosPersonales", "Documentos personales (Certificados internacioales, CV, etc). Max. 3 documentos: ", ["class" => "col-sm-2 control-label"]) }}   
+            <div class="col-sm-10">
+              <div id="documentos-personales">{{ "Subir" }}</div>
+              @if(isset($profesor) && $profesor->documentosPersonales != null)
+              @php
+                $documentosPersonales = explode(",", $profesor->documentosPersonales);
+              @endphp
+              @for($i=0; $i < count($documentosPersonales); $i++)
+                @if($documentosPersonales[$i] != "")  
+                  @php
+                    $datosDocumentoPersonal = explode(":", $documentosPersonales[$i]);
+                  @endphp         
+                  @if(count($datosDocumentoPersonal) == 2)
+                  <div class="ajax-file-upload-container">
+                    <div class="ajax-file-upload-statusbar" style="width: 400px;">
+                      <div class="ajax-file-upload-filename">
+                        <a href="{{ route("archivos", ["nombre" => $datosDocumentoPersonal[0]]) }}" download="{{ $datosDocumentoPersonal[1] }}">{{ $datosDocumentoPersonal[1] }}</a>
+                      </div>
+                      <div class="ajax-file-upload-progress">
+                        <div class="ajax-file-upload-bar" style="width: 100%;"></div>
+                      </div>
+                      <div class="ajax-file-upload-red" onclick="eliminarDocumentoPersonal(this, '{{ $datosDocumentoPersonal[0] }}')">Eliminar</div>
+                    </div>
+                  </div>
+                  @endif
+                @endif
+              @endfor
+              @endif
+              {{ Form::hidden("nombresDocumentosPersonales", "", ["id" => "nombres-archivos-documentos-personales"]) }}
+              {{ Form::hidden("nombresDocumentosPersonalesEliminados", "", ["id" => "nombres-archivos-documentos-personales-eliminados"]) }}
+              {{ Form::hidden("nombresOriginalesDocumentosPersonales", "", ["id" => "nombres-originales-archivos-documentos-personales"]) }}
+            </div>
+            <div class="clearfix"></div>
+          </div>
+        </div>               
+        <div id="sec-wiz-profesor-4" class="step-pane sample-pane alert" data-step="4">                    
           <div class="form-group">
             <h4>Cursos asignados:</h4>
           </div>
@@ -133,6 +198,24 @@
               @include("util.horario")  
             </div>                                        
           </div>
+          <div class="form-group">
+            <h4>Audio:</h4>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-1 col-sm-10">
+              {{ Form::file("audio", null) }}
+            </div>  
+          </div>
+          @if (isset($profesor) && isset($profesor->audio) && !empty($profesor->audio))
+          <div class="form-group">
+            <div class="col-sm-offset-1 col-sm-10">
+              <audio controls>
+                <source src="{{ route("archivos", ["nombre" => ($profesor->audio), "audio" => 1]) }}">
+                Tu explorador no soporta este elemento de audio
+              </audio>
+            </div>            
+          </div>
+          @endif
         </div>
         <div class="box-footer">   
           <div class="form-group">

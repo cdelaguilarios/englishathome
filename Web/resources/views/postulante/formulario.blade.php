@@ -148,11 +148,37 @@
             </div>              
           </div>
           <div class="form-group">
-            {{ Form::label("documentosPersonales", (Auth::guest() ? "Personal documents (International Certificates, CV, etc)" : " Documentos personales (Certificados internacioales, CV, etc)") .  ": ", ["class" => "col-sm-2 control-label"]) }}   
+            {{ Form::label("documentosPersonales", (Auth::guest() ? "Personal documents (International Certificates, CV, etc)" : "Documentos personales (Certificados internacioales, CV, etc). Max. 3 documentos") .  ": ", ["class" => "col-sm-2 control-label"]) }}   
             <div class="col-sm-10">
               <div id="documentos-personales">{{ (Auth::guest() ? "Upload" : "Subir") }}</div>
-              {{ Form::hidden("nombresDocumentosPersonales", "", ["id" => "nombres-documentos-personales"]) }}
-              {{ Form::hidden("nombresOriginalesDocumentosPersonales", "", ["id" => "nombres-originales-documentos-personales"]) }}
+              @if(isset($postulante) && $postulante->documentosPersonales != null)
+              @php
+                $documentosPersonales = explode(",", $postulante->documentosPersonales);
+              @endphp
+              @for($i=0; $i < count($documentosPersonales); $i++)
+                @if($documentosPersonales[$i] != "")  
+                  @php
+                    $datosDocumentoPersonal = explode(":", $documentosPersonales[$i]);
+                  @endphp         
+                  @if(count($datosDocumentoPersonal) == 2)
+                  <div class="ajax-file-upload-container">
+                    <div class="ajax-file-upload-statusbar" style="width: 400px;">
+                      <div class="ajax-file-upload-filename">
+                        <a href="{{ route("archivos", ["nombre" => $datosDocumentoPersonal[0]]) }}" download="{{ $datosDocumentoPersonal[1] }}">{{ $datosDocumentoPersonal[1] }}</a>
+                      </div>
+                      <div class="ajax-file-upload-progress">
+                        <div class="ajax-file-upload-bar" style="width: 100%;"></div>
+                      </div>
+                      <div class="ajax-file-upload-red" onclick="eliminarDocumentoPersonal(this, '{{ $datosDocumentoPersonal[0] }}')">Eliminar</div>
+                    </div>
+                  </div>
+                  @endif
+                @endif
+              @endfor
+              @endif
+              {{ Form::hidden("nombresDocumentosPersonales", "", ["id" => "nombres-archivos-documentos-personales"]) }}
+              {{ Form::hidden("nombresDocumentosPersonalesEliminados", "", ["id" => "nombres-archivos-documentos-personales-eliminados"]) }}
+              {{ Form::hidden("nombresOriginalesDocumentosPersonales", "", ["id" => "nombres-originales-archivos-documentos-personales"]) }}
             </div>
             <div class="clearfix"></div>
           </div>
@@ -179,6 +205,24 @@
               @include("util.horario")  
             </div>                                        
           </div>
+          <div class="form-group">
+            <h4>Audio{{ (Auth::guest() ? " (*)" : "") }}:</h4>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-1 col-sm-10">
+              {{ Form::file("audio", null) }}
+            </div>  
+          </div>
+          @if (!Auth::guest() && isset($postulante) && isset($postulante->audio) && !empty($postulante->audio))
+          <div class="form-group">
+            <div class="col-sm-offset-1 col-sm-10">
+              <audio controls>
+                <source src="{{ route("archivos", ["nombre" => ($postulante->audio), "audio" => 1]) }}">
+                Tu explorador no soporta este elemento de audio
+              </audio>
+            </div>            
+          </div>
+          @endif
           {{ Form::hidden("registrarComoProfesor", null) }}
         </div>
         <div class="box-footer">   

@@ -20,15 +20,14 @@ Route::post("ubigeo/listarDistritos/{codigoProvincia}", ["uses" => "UbigeoContro
 Route::get("cron/enviarCorreos", ["uses" => "CronController@enviarCorreos", "as" => "cron.enviar.correos"]);
 Route::get("cron/sincronizarEstados", ["uses" => "CronController@sincronizarEstados", "as" => "cron.sincronizar.estados"]);
 
+// <editor-fold desc="Archivos">
+Route::post("archivos", ["uses" => "ArchivoController@registrar", "as" => "archivos.reqistrar"]);
 Route::get("archivos/{nombre}", ["uses" => "ArchivoController@obtener", "as" => "archivos"]);
+Route::delete("archivos/eliminar", ["uses" => "ArchivoController@eliminar", "as" => "archivos.eliminar"]);
+// </editor-fold>  
 
 Route::group(["middleware" => "auth"], function() {
   Route::get("/", ["uses" => "InicioController@inicio", "as" => "/"]);
-
-  // <editor-fold desc="Archivos">
-  Route::post("archivos", ["uses" => "ArchivoController@registrar", "as" => "archivos.reqistrar"]);
-  Route::delete("archivos/eliminar", ["uses" => "ArchivoController@eliminar", "as" => "archivos.eliminar"]);
-  // </editor-fold>  
 
   Route::group(["middleware" => "verificacion.usuario:,"], function() {
     // <editor-fold desc="Interesados">
@@ -136,6 +135,10 @@ Route::group(["middleware" => "auth"], function() {
     // <editor-fold desc="Historial">
     Route::post("historial/{idEntidad}/perfil", ["uses" => "HistorialController@obtener", "as" => "historial.perfil"]);
     Route::post("historial/{idEntidad}/registrar", ["uses" => "HistorialController@registrar", "as" => "historial.registrar"]);
+    Route::post("notificaciones/nuevas", ["uses" => "HistorialController@listarNuevasNotificaciones", "as" => "historial.notificaciones.nuevas"]);
+    Route::post("notificaciones/nuevas/revisar", ["uses" => "HistorialController@revisarNuevasNotificaciones", "as" => "historial.notificaciones.nuevas.revisar"]);
+    Route::get("notificaciones", ["uses" => "HistorialController@listarNotificaciones", "as" => "historial.notificaciones"]);
+    Route::post("notificaciones", ["uses" => "HistorialController@listarNotificaciones", "as" => "historial.notificaciones"]);
     // </editor-fold>
     // <editor-fold desc="Calendario">
     Route::get("calendario", ["uses" => "CalendarioController@index", "as" => "calendario"]);

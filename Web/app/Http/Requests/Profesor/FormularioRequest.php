@@ -31,9 +31,14 @@ class FormularioRequest extends Request {
     $datos["referenciaDireccion"] = ReglasValidacion::formatoDato($datos, "referenciaDireccion");
     $datos["geoLatitud"] = ReglasValidacion::formatoDato($datos, "geoLatitud");
     $datos["geoLongitud"] = ReglasValidacion::formatoDato($datos, "geoLongitud");
+
+    $datos["nombresDocumentosPersonales"] = ReglasValidacion::formatoDato($datos, "nombresDocumentosPersonales");
+    $datos["nombresDocumentosPersonalesEliminados"] = ReglasValidacion::formatoDato($datos, "nombresDocumentosPersonalesEliminados");
+    $datos["nombresOriginalesDocumentosPersonales"] = ReglasValidacion::formatoDato($datos, "nombresOriginalesDocumentosPersonales");
     
     $datos["idCursos"] = ReglasValidacion::formatoDato($datos, "idCursos");
     $datos["horario"] = ReglasValidacion::formatoDato($datos, "horario");    
+    $datos["audio"] = ReglasValidacion::formatoDato($datos, "audio");
     
     $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $this->getInputSource()->replace($datos);
@@ -55,7 +60,8 @@ class FormularioRequest extends Request {
         "numeroDepartamento" => "max:255",
         "referenciaDireccion" => "max:255",
         "geoLatitud" => ["regex:" . ReglasValidacion::RegexGeoLatitud],
-        "geoLongitud" => ["regex:" . ReglasValidacion::RegexGeoLongitud]
+        "geoLongitud" => ["regex:" . ReglasValidacion::RegexGeoLongitud],
+        "audio" => "mimes:mpga,wav,oga,ogv,ogx|max:2048"
     ];
 
     $listaSexos = SexosEntidad::listar();
@@ -110,7 +116,8 @@ class FormularioRequest extends Request {
         "tipoDocumenoNoValido.required" => "El tipo de documento seleccionado no es válido.",
         "ubigeoNoValido.required" => "Los datos de dirección ingresados no son válidos.",
         "cursosNoValido.required" => "Uno o más de los cursos seleccionados no es válido.",
-        "horarioNoValido.required" => "El horario seleccionado no es válido."
+        "horarioNoValido.required" => "El horario seleccionado no es válido.",
+        "audio.mimes" => "Por favor seleccione un audio válido (formatos válidos: mp3, wav y ogg)."
     ];
   }
 
