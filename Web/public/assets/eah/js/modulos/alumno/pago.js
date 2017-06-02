@@ -65,15 +65,11 @@ function cargarListaPago() {
       },
       autoWidth: false,
       responsive: true,
-      order: [[4, "desc"]],
+      order: [[2, "desc"]],
       columns: [
-        {data: "id", name: "pago.id", className: "text-center"},
-        {data: "motivo", name: "pago.motivo", render: function (e, t, d, m) {
-            return motivosPago[d.motivo];
+        {data: "id", name: "pago.id", render: function (e, t, d, m) {
+            return '<b>Código: </b>' + d.id + '<br/><b>Motivo: </b>' + motivosPago[d.motivo] + '<br/><b>Cuenta: </b>' + cuentasBanco[d.cuenta];
           }},
-        {data: "cuenta", name: "pago.cuenta", render: function (e, t, d, m) {
-            return cuentasBanco[d.cuenta];
-          }, className: "text-center"},
         {data: "fecha", name: "pago.fecha", render: function (e, t, d, m) {
             return formatoFecha(d.fecha);
           }, className: "text-center", type: "fecha"},
@@ -84,7 +80,7 @@ function cargarListaPago() {
             return '<div class="sec-btn-editar-estado-pago"><a href="javascript:void(0);" class="btn-editar-estado-pago" data-idpago="' + d.id + '" data-idalumno="' + d.idAlumno + '" data-estado="' + d.estado + '"><span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span></a></div>';
           }, className: "text-center"},
         {data: "monto", name: "pago.monto", render: function (e, t, d, m) {
-            return 'S/. ' + redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="saldo-favor-utilizado">utilizado</span>)' : '') + '</b></small>' : '');
+            return 'S/. ' + redondear(d.monto, 2) + (d.costoHoraPromedio !== null ? '<br/>S/. ' + redondear(d.costoHoraPromedio, 2) + ' por hora de clase' : '') + (d.duracionCostoRealizado !== null ? '<br/><span class="text-green" data-toggle="tooltip" title="Horas realizadas"><i class="fa fa-clock-o" style="width: inherit;"></i> ' + formatoHora(d.duracionCostoRealizado.split("-")[0]) + ' (S/. ' + redondear(d.duracionCostoRealizado.split("-")[1], 2) + ')</span>' : '') + (d.duracionCostoPendiente !== null ? '<br/><span class="text-yellow" data-toggle="tooltip" title="Horas pendientes"><i class="fa fa-clock-o" style="width: inherit;"></i> ' + formatoHora(d.duracionCostoPendiente.split("-")[0]) + ' (S/. ' + redondear(d.duracionCostoPendiente.split("-")[1], 2) + ')</span>' : '') + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="saldo-favor-utilizado">utilizado</span>)' : '') + '</b></small>' : '');
           }, className: "text-center", type: "monto"},
         {data: "id", name: "pago.id", orderable: false, searchable: false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
@@ -112,7 +108,7 @@ function cargarListaPago() {
         $('#tab-lista-pagos').DataTable().rows({page: 'current'}).data().each(function (i) {
           montoTotalPagina += parseFloat(i.monto);
         });
-        $(api.column(6).footer()).html("Total S/. " + redondear(montoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + redondear(montoTotalPagina, 2) : ""));
+        $(api.column(4).footer()).html("Total S/. " + redondear(montoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + redondear(montoTotalPagina, 2) : ""));
       }
     });
 

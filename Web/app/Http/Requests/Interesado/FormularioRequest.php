@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Interesado;
 
+use Auth;
 use App\Models\Curso;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
@@ -32,10 +33,10 @@ class FormularioRequest extends Request {
   public function rules() {
     $datos = $this->all();
     $reglasValidacion = [
-        "nombre" => ["required", "max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
-        "apellido" => ["required", "max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
-        "telefono" => "required|max:30",
-        "correoElectronico" => "required|email|max:245",
+        "nombre" => [(Auth::guest() ? "" : "required"), "max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
+        "apellido" => [(Auth::guest() ? "" : "required"), "max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
+        "telefono" => (Auth::guest() ? "" : "required|") . "max:30",
+        "correoElectronico" => (Auth::guest() ? "" : "required|email|") . "max:245",
         "consulta" => "max:255",
         "cursoInteres" => "max:255",
         "comentarioAdicional" => "max:255"

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use DB;
 use Auth;
 use App\Helpers\Enum\MotivosPago;
+use App\Helpers\Enum\EstadosClase;
 use App\Helpers\Enum\EstadosAlumno;
 use App\Helpers\Enum\TiposHistorial;
 use App\Helpers\Enum\MensajesHistorial;
@@ -26,7 +28,8 @@ class PagoAlumno extends Model {
     $nombreTabla = PagoAlumno::nombreTabla();
     $pagosAlumno = PagoAlumno::leftJoin(Pago::nombreTabla() . " as pago", $nombreTabla . ".idPago", "=", "pago.id")
             ->where("pago.eliminado", 0)
-            ->where($nombreTabla . ".idAlumno", $idAlumno);
+            ->where($nombreTabla . ".idAlumno", $idAlumno)
+            ->select($nombreTabla . ".*", "pago.*", DB::raw("(SELECT SUM(costoHora)/COUNT(*) FROM " . Clase::nombreTabla() . " WHERE id IN (SELECT idClase FROM " . PagoClase::nombreTabla() . " WHERE idPago = pago.id)) AS costoHoraPromedio"), DB::raw("(SELECT CONCAT(SUM(duracion), '-', ((SUM(duracion)/3600) * (SUM(costoHora)/COUNT(*)))) FROM " . Clase::nombreTabla() . " WHERE id IN (SELECT idClase FROM " . PagoClase::nombreTabla() . " WHERE idPago = pago.id) AND estado = '" . EstadosClase::Realizada . "') AS duracionCostoRealizado"), DB::raw("(SELECT CONCAT(SUM(duracion), '-', ((SUM(duracion)/3600) * (SUM(costoHora)/COUNT(*)))) FROM " . Clase::nombreTabla() . " WHERE id IN (SELECT idClase FROM " . PagoClase::nombreTabla() . " WHERE idPago = pago.id) AND estado <> '" . EstadosClase::Realizada . "') AS duracionCostoPendiente"));
     if ($soloMotivoClases) {
       $pagosAlumno->where("pago.motivo", MotivosPago::Clases);
     }

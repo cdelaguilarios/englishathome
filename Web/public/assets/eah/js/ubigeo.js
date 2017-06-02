@@ -6,6 +6,7 @@ function verificarJqueryUbigeo() {
 var codigoDepartamento = "";
 var codigoProvincia = "";
 var codigoDistrito = "";
+var primeraCargaProvincias = true;
 formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
 function cargarUbigeo() {
   if ($("input[name='codigoUbigeo']").length > 0 && $("input[name='codigoUbigeo']").val().length === 6) {
@@ -24,6 +25,8 @@ function cargarUbigeo() {
   $("#codigo-distrito").change(function () {
     $("input[name='codigoUbigeo']").val($(this).val()).trigger("change");
   });
+
+  //Selección departamento de Lima por defecto
   setTimeout(function () {
     if ($("#codigo-departamento").val() === "") {
       $("#codigo-departamento").val(15).trigger("change");
@@ -35,7 +38,15 @@ function cargarProvincias() {
   $("#codigo-provincia").html("");
   $("#codigo-distrito").html("");
   if ($("#codigo-departamento").val() !== "") {
-    cargarDatosUbigeo($("#codigo-provincia"), urlListarProvincias.replace("/0", "/" + $("#codigo-departamento").val()), {}, (formularioExternoPostulante ? "Select province" : "Seleccione una provincia"), codigoProvincia);
+    cargarDatosUbigeo($("#codigo-provincia"), urlListarProvincias.replace("/0", "/" + $("#codigo-departamento").val()), {}, (formularioExternoPostulante ? "Select province" : "Seleccione una provincia"), codigoProvincia, false, function () {
+      if (primeraCargaProvincias) {
+        //Selección departamento de Lima por defecto
+        if ($("#codigo-provincia").val() === "") {
+          $("#codigo-provincia").val(1501).trigger("change");
+        }
+        primeraCargaProvincias = false;
+      }
+    });
   }
 }
 function cargarDistritos() {
@@ -45,7 +56,7 @@ function cargarDistritos() {
     cargarDatosUbigeo($("#codigo-distrito"), urlListarDistritos.replace("/0", "/" + $("#codigo-provincia").val()), {}, (formularioExternoPostulante ? "Select district" : "Seleccione un distrito"), codigoDistrito);
   }
 }
-function cargarDatosUbigeo(eleUbigeoLista, urlListarUbigeo, parametros, textoSeleccionDef, codigoUbigeoSel, noMostrarMensajeBloq) {
+function cargarDatosUbigeo(eleUbigeoLista, urlListarUbigeo, parametros, textoSeleccionDef, codigoUbigeoSel, noMostrarMensajeBloq, funcionCompletado) {
   if (urlListarUbigeo !== "") {
     (!noMostrarMensajeBloq ? $.blockUI({message: "<h4>" + (formularioExternoPostulante ? "Loading" : "Cargando") + "...</h4>"}) : "");
     llamadaAjax(urlListarUbigeo, "POST", parametros, true,
@@ -74,6 +85,8 @@ function cargarDatosUbigeo(eleUbigeoLista, urlListarUbigeo, parametros, textoSel
               $("input[name='codigoUbigeo']").trigger("change");
             }
           }
+          if (funcionCompletado !== undefined)
+            funcionCompletado(d);
         },
         function (d) {
           $("body").unblock();

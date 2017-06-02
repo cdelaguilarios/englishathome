@@ -133,7 +133,7 @@
             </div>               
           </div>
           <div class="form-group">
-            {{ Form::label("descripcionPropia", (Auth::guest() ? "Do you consider yourself a good teacher? why? (*)" : "Descripción propia como profesor") .  ": ", ["class" => "col-sm-2 control-label"]) }}            
+            {{ Form::label("descripcionPropia", (Auth::guest() ? "Do you consider yourself a good teacher? why?(100 words)(*)" : "Descripción propia como profesor") .  ": ", ["class" => "col-sm-2 control-label"]) }}            
             <div class="col-sm-10">
               {{ Form::textarea("descripcionPropia", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
             </div>               
@@ -142,7 +142,7 @@
             {{ Form::label("ensayo", (Auth::guest() ? "Write a short Essay (150 words) (Be original, don´t copy and paste, please) (*)" : "Ensayo") .  ": ", ["class" => "col-sm-2 control-label"]) }}            
             <div class="col-sm-10">
               @if(Auth::guest())
-              <b>What are the positive and/or negative aspects of the internet:</b><br/>
+              <b>What are the positive and/or negative aspects of the internet?</b><br/>
               @endif 
               {{ Form::textarea("ensayo", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
             </div>              

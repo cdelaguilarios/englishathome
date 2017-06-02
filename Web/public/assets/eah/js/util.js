@@ -106,6 +106,7 @@ function validarFecha(value, element, param) {
 }
 
 ﻿$(document).ready(function () {
+  $('[data-toggle="tooltip"]').tooltip();
   if (!formularioExternoPostulante) {
     $.fn.datepicker.defaults.language = "es";
   }

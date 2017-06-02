@@ -20,7 +20,8 @@ class PostulanteController extends Controller {
   protected $data = array();
 
   public function __construct() {
-    $this->data["seccion"] = "postulantes";
+    $this->data["seccion"] = "docentes";
+    $this->data["subSeccion"] = "postulantes";
   }
 
   public function index() {

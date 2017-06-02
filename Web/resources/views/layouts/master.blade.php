@@ -134,11 +134,24 @@
             <li class="{{ ((isset($seccion) && $seccion == "alumnos") ? "active" : "") }}">
               <a href="{{ route("alumnos")}}"><i class="fa fa-mortar-board"></i> <span>Alumnos</span></a>
             </li> 
-            <li class="{{ ((isset($seccion) && $seccion == "postulantes") ? "active" : "") }}">
-              <a href="{{ route("postulantes")}}">CV&nbsp;&nbsp;&nbsp;<span>Postulantes</span></a>
-            </li>
-            <li class="{{ ((isset($seccion) && $seccion == "profesores") ? "active" : "") }}">
-              <a href="{{ route("profesores")}}"><i class="fa flaticon-teach"></i> <span>Profesores</span></a>
+            <li class="{{ ((isset($seccion) && $seccion == "docentes") ? "active" : "") }}">         
+              <a href="javascript:void(0);">
+                <i class="fa flaticon-teach"></i> <span>Docentes</span>
+                <span class="pull-right-container">
+                  <i class="fa fa-angle-left pull-right"></i>
+                </span>
+              </a>
+              <ul class="treeview-menu">
+                <li class="{{ ((isset($subSeccion) && $subSeccion == "postulantes") ? "active" : "") }}">
+                  <a href="{{ route("postulantes")}}">CV&nbsp;&nbsp;&nbsp;<span>Postulantes</span></a>
+                </li>
+                <li class="{{ ((isset($subSeccion) && $subSeccion == "profesores") ? "active" : "") }}">
+                  <a href="{{ route("profesores")}}"><i class="fa flaticon-teacher-with-stick"></i> <span>Profesores</span></a>
+                </li>
+                <li class="{{ ((isset($subSeccion) && $subSeccion == "disponibles") ? "active" : "") }}">
+                  <a href="{{ route("docentes.disponibles")}}"><i class="fa fa-search"></i> <span>Buscar disponibles</span></a>
+                </li>
+              </ul>
             </li> 
             <li class="{{ ((isset($seccion) && $seccion == "cursos") ? "active" : "") }}">
               <a href="{{ route("cursos")}}"><i class="fa fa-book"></i> <span>Cursos</span></a>
@@ -161,16 +174,16 @@
                   <a href="{{ route("reporte.pagos")}}"><i class="fa fa-line-chart"></i> Reporte de pagos</a>
                 </li>
               </ul>
-            </li>            
+            </li> 
+            <li class="{{ ((isset($seccion) && $seccion == "correos") ? "active" : "") }}">
+              <a href="{{ route("correos")}}"><i class="fa fa-envelope"></i> <span>Correos masivos</span></a>
+            </li>           
             @if($usuarioActual->rol == App\Helpers\Enum\RolesUsuario::Principal)
             <li class="{{ ((isset($seccion) && $seccion == "usuarios") ? "active" : "") }}">
               <a href="{{ route("usuarios")}}"><i class="fa fa-users"></i> <span>Usuarios del sistema</span></a>
             </li>
             <li class="{{ ((isset($seccion) && $seccion == "configuracion") ? "active" : "") }}">
               <a href="{{ route("configuracion")}}"><i class="fa fa-gears"></i> <span>Configuración</span></a>
-            </li>
-            <li class="{{ ((isset($seccion) && $seccion == "correos") ? "active" : "") }}">
-              <a href="{{ route("correos")}}"><i class="fa fa-envelope"></i> <span>Correos masivos</span></a>
             </li>
             @endif
           </ul>
@@ -247,7 +260,7 @@ var urlPerfilAlumno = "{{ route('alumnos.perfil', ['id' => 0]) }}";
 var estadosPago = {!!  json_encode(App\Helpers\Enum\EstadosPago::listar()) !!};
 var urlDatosClase = "{{ route('alumnos.clases.datos', ['id' => '[ID_ALUMNO]', 'idClase' => 0]) }}";
 var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
-var formularioExternoPostulante = {{ ((isset($seccion) && $seccion == "postulantes" && Auth::guest()) ? "true" : "false") }};
+var formularioExternoPostulante = {{ ((isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()) ? "true" : "false") }};
     </script>
     <script src="{{ asset("assets/eah/js/util.js") }}"></script>
     <script src="{{ asset("assets/eah/js/mensajes.js") }}"></script>   

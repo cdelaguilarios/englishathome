@@ -117,6 +117,10 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("profesor/{id}/clases", ["uses" => "ProfesorController@listarClases", "as" => "profesores.clases.listar"]);
     Route::post("profesor/{id}/clases/pago/registrar", ["uses" => "ProfesorController@registrarPagoXClases", "as" => "profesores.clases.pagos.registrar"]);
     // </editor-fold>   
+    // <editor-fold desc="Docentes">
+    Route::get("docentes/disponibles", ["uses" => "DocenteController@disponibles", "as" => "docentes.disponibles"]);
+    Route::post("docentes/disponibles/listar", ["uses" => "DocenteController@listarDisponibles", "as" => "docentes.disponibles.listar"]);
+    // </editor-fold>
     // <editor-fold desc="Usuarios">
     Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Principal . "],true"], function() {
       Route::get("usuarios", ["uses" => "UsuarioController@index", "as" => "usuarios"]);

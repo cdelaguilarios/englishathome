@@ -416,3 +416,7 @@ table.dataTable > tbody > tr.child span.dtr-title {
     width: 280px;
   }
 }
+
+.sec-filtro-busqueda-dias input[type=checkbox]{
+  margin: 0 10px 0 0;
+}

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DB;
 use Carbon\Carbon;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\SexosEntidad;
@@ -9,6 +10,19 @@ use App\Helpers\Enum\EstadosPostulante;
 use Illuminate\Database\Eloquent\Model;
 
 class Docente extends Model {
+
+  public static function listarDisponibles($datos = NULL) {
+    $nombreTabla = Postulante::nombreTabla();
+    $postulantes = Postulante::select($nombreTabla . ".*", "entidad.*", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))
+                    ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
+                    ->leftJoin(EntidadCurso::nombreTabla() . " as entidadCurso", $nombreTabla . ".idEntidad", "=", "entidadCurso.idEntidad")
+                    ->where("entidad.eliminado", 0)->groupBy("entidad.id")->distinct();
+
+    if (isset($datos["estado"])) {
+      $postulantes->where("entidad.estado", $datos["estado"]);
+    }
+    return $postulantes;
+  }
 
   public static function listarIdsDisponiblesXDatosClasesGeneradas($clasesGeneradas, $tipoDocente = NULL) {
     $idsDisponiblesSel = [];

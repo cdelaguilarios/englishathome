@@ -9,19 +9,17 @@
         <table id="tab-lista-pagos" class="table table-bordered table-hover">
           <thead>
             <tr>
-              <th>Código</th> 
-              <th>Motivo</th>  
-              <th>Cuenta</th>    
+              <th>Datos generales</th>                
               <th>Fecha de pago</th>
               <th>Fecha de registro</th>
               <th>Estado</th> 
-              <th>Monto</th>
+              <th>Montos</th>
               <th class="all">Opciones</th>
             </tr>
           </thead>
           <tfoot>
             <tr>
-              <th colspan="6"></th>
+              <th colspan="4"></th>
               <th></th>
               <th></th>
             </tr>

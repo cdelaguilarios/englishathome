@@ -86,6 +86,6 @@
 </div>
 @endif
 <script>
-  var urlCargarHistorial = "{{ route('historial.perfil', ['idEntidad' => $idEntidad, 'observador' => $observador]) }}";
+  var urlCargarHistorial = "{{ route('historial.perfil', ['idEntidad' => $idEntidad, 'observador' => (isset($observador) ? $observador : 0)]) }}";
 </script>
 <script src="{{ asset("assets/eah/js/historial.js")}}"></script>
