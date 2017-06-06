@@ -11,10 +11,10 @@ function validarCkEditorCorreos(v, e, p) {
 
 $(document).ready(function () {
   urlBuscarEntidades = (typeof (urlBuscarEntidades) === "undefined" ? "" : urlBuscarEntidades);
-  urlImagenes = (typeof (urlImagenes) === "undefined" ? "" : urlImagenes);
+  urlArchivos = (typeof (urlArchivos) === "undefined" ? "" : urlArchivos);
   tiposEntidades = (typeof (tiposEntidades) === "undefined" ? "" : tiposEntidades);
   tipoEntidadInteresado = (typeof (tipoEntidadInteresado) === "undefined" ? "" : tipoEntidadInteresado);
-  if (urlBuscarEntidades !== "" && urlImagenes !== "" && tiposEntidades !== "" && tipoEntidadInteresado !== "") {
+  if (urlBuscarEntidades !== "" && urlArchivos !== "" && tiposEntidades !== "" && tipoEntidadInteresado !== "") {
     $("#entidades-seleccionadas-correos, #entidades-excluidas-correos").select2({
       ajax: {
         url: urlBuscarEntidades,
@@ -47,7 +47,7 @@ $(document).ready(function () {
         if (d.loading)
           return d.text;
         var tipoEntidad = tiposEntidades[d.tipo][(d.sexo === "F" ? 1 : 0)]
-        var rutaImagenPerfil = urlImagenes.replace("/0", "/" + (d.imagenPerfil !== null && d.imagenPerfil !== "" ? d.imagenPerfil : "-")) + "?tip=" + (d.sexo === "F" ? "f" : "m");
+        var rutaImagenPerfil = urlArchivos.replace("/0", "/" + (d.imagenPerfil !== null && d.imagenPerfil !== "" ? d.imagenPerfil : "-")) + "?tip=" + (d.sexo === "F" ? "f" : "m");
         return '<div class="clearfix">' +
             '<div><img src="' + rutaImagenPerfil + '" width="25"/> ' + tipoEntidad + " " + d.nombre + " " + d.apellido + ' (' + d.correoElectronico + ')</div>' +
             '<div>';

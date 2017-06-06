@@ -68,7 +68,7 @@ class Clase extends Model {
         while ($flg) {
           $fechaProximaClase->addDay();
           foreach ($horarioAlumno as $datHorarioAlumno) {
-            if ($fechaProximaClase->dayOfWeek == $datHorarioAlumno->numeroDiaSemana) {
+            if (($fechaProximaClase->dayOfWeek != 0 ? $fechaProximaClase->dayOfWeek : 7) == $datHorarioAlumno->numeroDiaSemana) {
               $flg = FALSE;
             }
           }
@@ -315,7 +315,7 @@ class Clase extends Model {
 
     while ($duracionTotalSeg < ($horasPagadas * 3600)) {
       foreach ($horarioAlumno as $datHorarioAlumno) {
-        if ($fechaInicioClase->dayOfWeek == $datHorarioAlumno->numeroDiaSemana) {
+        if (($fechaInicioClase->dayOfWeek != 0 ? $fechaInicioClase->dayOfWeek : 7) == $datHorarioAlumno->numeroDiaSemana) {
           $fechaInicio = Carbon::createFromFormat("d/m/Y H:i:s", $fechaInicioClase->format("d/m/Y") . " " . $datHorarioAlumno->horaInicio);
           $preFechaFin = Carbon::createFromFormat("d/m/Y H:i:s", $fechaInicioClase->format("d/m/Y") . " " . $datHorarioAlumno->horaFin);
 

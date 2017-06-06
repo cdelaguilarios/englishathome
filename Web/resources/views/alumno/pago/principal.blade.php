@@ -11,7 +11,6 @@
             <tr>
               <th>Datos generales</th>                
               <th>Fecha de pago</th>
-              <th>Fecha de registro</th>
               <th>Estado</th> 
               <th>Montos</th>
               <th class="all">Opciones</th>
@@ -19,7 +18,7 @@
           </thead>
           <tfoot>
             <tr>
-              <th colspan="4"></th>
+              <th colspan="3"></th>
               <th></th>
               <th></th>
             </tr>
@@ -48,7 +47,6 @@
   var urlActualizarEstadoPago = "{{ route('alumnos.pagos.actualizar.estado', ['id' => $idAlumno]) }}";
   var urlGenerarClasesPago = "{{ route('alumnos.pagos.generarClases', ['id' => $idAlumno]) }}";
   var urlListarDocentesDisponiblesPago = "{{ route('alumnos.pagos.docentesDisponibles.listar', ['id' => $idAlumno]) }}";
-  var saldoFavorTotal = {{ ($totalSaldoFavor != "" ? $totalSaldoFavor : 0) }};
   var urlDatosPago = "{{ route('alumnos.pagos.datos', ['id' => $idAlumno, 'idPago' => 0]) }}";
   var urlEliminarPago = "{{ route('alumnos.pagos.eliminar', ['id' => $idAlumno, 'idPago' => 0]) }}";
   var motivosPago = {!!  json_encode(App\Helpers\Enum\MotivosPago::listar()) !!};

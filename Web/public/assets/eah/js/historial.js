@@ -15,11 +15,11 @@ function  cargarSeccionHistorial() {
 var ultimaFechaCargada = "";
 function cargarListaHistorial() {
   urlCargarHistorial = (typeof (urlCargarHistorial) === "undefined" ? "" : urlCargarHistorial);
-  urlImagenes = (typeof (urlImagenes) === "undefined" ? "" : urlImagenes);
+  urlArchivos = (typeof (urlArchivos) === "undefined" ? "" : urlArchivos);
   meses = (typeof (meses) === "undefined" ? "" : meses);
 
   var numeroCarga = $("input[name='numeroCarga']").val();
-  if (urlCargarHistorial !== "" && urlImagenes !== "" && meses !== "" && !isNaN(parseInt(numeroCarga))) {
+  if (urlCargarHistorial !== "" && urlArchivos !== "" && meses !== "" && !isNaN(parseInt(numeroCarga))) {
     $("#sec-historial").find("#sec-cierre-historial").hide("slow");
     $("#sec-historial").find("#sec-cierre-historial").remove();
     $("#sec-boton-carga-mas-historial").hide();
@@ -59,14 +59,29 @@ function cargarListaHistorial() {
                   '<div class="timeline-item">' +
                   '<span class="time"><i class="fa fa-clock-o"></i> ' + datHistorial[i].horaNotificacion + '</span>' +
                   '<h3 class="timeline-header">' + datHistorial[i].titulo + '</h3>';
-              if (datHistorial[i].mensaje !== "" || datHistorial[i].imagenes !== null) {
+              if (datHistorial[i].mensaje !== "" || datHistorial[i].imagenes !== null || datHistorial[i].adjuntos !== null) {
                 htmlHistorial += '<div class="timeline-body">' + (datHistorial[i].mensaje !== "" ? datHistorial[i].mensaje : "");
                 if (datHistorial[i].imagenes !== null) {
                   var imagenes = datHistorial[i].imagenes.split(",");
                   $.each(imagenes, function (e, v) {
                     if (v !== null && v !== "") {
-                      var rutaImagen = urlImagenes.replace("/0", "/" + v);
+                      var rutaImagen = urlArchivos.replace("/0", "/" + v);
                       htmlHistorial += '<a href="' + rutaImagen + '" target="_blank"><img src="' + rutaImagen + '" class="margin" width="100"></a>';
+                    }
+                  });
+                }
+                if (datHistorial[i].adjuntos !== null) {
+                  var adjuntos = datHistorial[i].adjuntos.split(",");
+                  if (adjuntos.length > 0) {
+                    htmlHistorial += "<br/><br/><b>Adjuntos</b><br/>";
+                  }
+                  $.each(adjuntos, function (e, v) {
+                    if (v !== null && v !== "") {
+                      var datosAdjunto = v.split(":");
+                      if (datosAdjunto.length === 2) {
+                        var rutaAdjunto = urlArchivos.replace("/0", "/" + datosAdjunto[0]);
+                        htmlHistorial += '<a href="' + rutaAdjunto + '" target="_blank">' + datosAdjunto[1] + '</a><br/>';
+                      }
                     }
                   });
                 }
@@ -140,6 +155,10 @@ function cargarFormularioHistorial() {
     onclick: false
   });
   establecerCalendario("fecha-notificacion-evento-historial", false, false);
+  incluirSeccionSubidaArchivos("adjuntos", {onSubmit: function () {
+      return true;
+    }, acceptFiles: "*", uploadStr: "Subir archivo", maxFileCount: 20});
+
   $("#btn-nuevo-evento-historial").click(function () {
     limpiarCamposHistorial();
     mostrarSeccionHistorial([2]);

@@ -29,7 +29,7 @@ class PagoAlumno extends Model {
     $pagosAlumno = PagoAlumno::leftJoin(Pago::nombreTabla() . " as pago", $nombreTabla . ".idPago", "=", "pago.id")
             ->where("pago.eliminado", 0)
             ->where($nombreTabla . ".idAlumno", $idAlumno)
-            ->select($nombreTabla . ".*", "pago.*", DB::raw("(SELECT SUM(costoHora)/COUNT(*) FROM " . Clase::nombreTabla() . " WHERE id IN (SELECT idClase FROM " . PagoClase::nombreTabla() . " WHERE idPago = pago.id)) AS costoHoraPromedio"), DB::raw("(SELECT CONCAT(SUM(duracion), '-', ((SUM(duracion)/3600) * (SUM(costoHora)/COUNT(*)))) FROM " . Clase::nombreTabla() . " WHERE id IN (SELECT idClase FROM " . PagoClase::nombreTabla() . " WHERE idPago = pago.id) AND estado = '" . EstadosClase::Realizada . "') AS duracionCostoRealizado"), DB::raw("(SELECT CONCAT(SUM(duracion), '-', ((SUM(duracion)/3600) * (SUM(costoHora)/COUNT(*)))) FROM " . Clase::nombreTabla() . " WHERE id IN (SELECT idClase FROM " . PagoClase::nombreTabla() . " WHERE idPago = pago.id) AND estado <> '" . EstadosClase::Realizada . "') AS duracionCostoPendiente"));
+            ->select($nombreTabla . ".*", "pago.*", DB::raw("(SELECT SUM(costoHora)/COUNT(*) FROM " . Clase::nombreTabla() . " WHERE id IN (SELECT idClase FROM " . PagoClase::nombreTabla() . " WHERE idPago = pago.id) AND eliminado = 0) AS costoHoraPromedio"), DB::raw("(SELECT CONCAT(SUM(duracion), '-', ((SUM(duracion)/3600) * (SUM(costoHora)/COUNT(*)))) FROM " . Clase::nombreTabla() . " WHERE id IN (SELECT idClase FROM " . PagoClase::nombreTabla() . " WHERE idPago = pago.id) AND estado = '" . EstadosClase::Realizada . "' AND estado <> '" . EstadosClase::Cancelada . "' AND eliminado = 0) AS duracionMontoRealizado"), DB::raw("(SELECT CONCAT(SUM(duracion), '-', ((SUM(duracion)/3600) * (SUM(costoHora)/COUNT(*)))) FROM " . Clase::nombreTabla() . " WHERE id IN (SELECT idClase FROM " . PagoClase::nombreTabla() . " WHERE idPago = pago.id) AND estado <> '" . EstadosClase::Realizada . "' AND estado <> '" . EstadosClase::Cancelada . "' AND eliminado = 0) AS duracionMontoPendiente"));
     if ($soloMotivoClases) {
       $pagosAlumno->where("pago.motivo", MotivosPago::Clases);
     }
@@ -58,12 +58,8 @@ class PagoAlumno extends Model {
 
     if ($datos["usarSaldoFavor"] == 1) {
       Pago::whereIn("id", function($q) use ($idAlumno) {
-        $nombreTabla = PagoAlumno::nombreTabla();
-        $q->select($nombreTabla . ".idPago")
-                ->from($nombreTabla)
-                ->where($nombreTabla . ".idAlumno", $idAlumno)
-                ->where($nombreTabla . ".eliminado", 0);
-      })->update(["saldoFavorUtilizado" => 1]);
+        $q->select("idPago")->from(PagoAlumno::nombreTabla())->where("idAlumno", $idAlumno);
+      })->where("eliminado", 0)->update(["saldoFavorUtilizado" => 1]);
     }
 
     if ($datos["motivo"] == MotivosPago::Clases) {
@@ -93,10 +89,6 @@ class PagoAlumno extends Model {
   public static function actualizarEstado($idAlumno, $datos) {
     PagoAlumno::obtenerXId($idAlumno, $datos["idPago"]);
     Pago::actualizarEstado($datos["idPago"], $datos["estado"]);
-  }
-
-  public static function totalSaldoFavor($idAlumno) {
-    return PagoAlumno::listar($idAlumno)->where("pago.saldoFavorUtilizado", 0)->sum("pago.saldoFavor");
   }
 
   public static function verificarExistencia($idAlumno, $id) {

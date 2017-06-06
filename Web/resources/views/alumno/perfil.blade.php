@@ -120,7 +120,7 @@
         </div>
         <div id="pago" class="tab-pane">
           @if($alumno->horario != "[]")
-          @include("alumno.pago.principal", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "totalSaldoFavor" => $alumno->totalSaldoFavor, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : null)]) 
+          @include("alumno.pago.principal", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : null)]) 
           @else
           Debe establecer un horario para el  alumn{{ $alumno->sexo == "F" ? "a" : "o" }}.
           @endif

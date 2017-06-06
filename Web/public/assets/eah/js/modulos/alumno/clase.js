@@ -106,8 +106,10 @@ function cargarListaPeriodos() {
       }
     });
     $(".btn-editar-estado-clase").live("click", function () {
-      $("#sel-estados-clase").clone().val($(this).data("estado")).data("idclase", $(this).data("idclase")).data("idalumno", $(this).data("idalumno")).data("estado", $(this).data("estado")).appendTo($(this).closest(".sec-btn-editar-estado-clase"));
+      var sel = $("#sel-estados-clase").clone();
+      $(sel).val($(this).data("estado")).data("idclase", $(this).data("idclase")).data("idalumno", $(this).data("idalumno")).data("estado", $(this).data("estado")).appendTo($(this).closest(".sec-btn-editar-estado-clase"));
       $(this).remove();
+      $(sel).prop('selectedIndex', (($(sel)[0].length !== ($(sel)[0].selectedIndex + 1)) ? ($(sel)[0].selectedIndex + 1) : 0)).trigger("change");
       event.stopPropagation();
     });
     $(".sec-btn-editar-estado-clase select").live("change", function () {

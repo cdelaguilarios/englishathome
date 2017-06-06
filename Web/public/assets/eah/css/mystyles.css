@@ -69,10 +69,10 @@
 .table td:not(.text-center){
   text-align: justify !important;
 }
-.table i{
+/*.table i{
   width: 100%;
   text-align: center;
-}
+}*/
 .table .btn i{
   width: inherit;
 }
@@ -280,9 +280,6 @@ textarea{
   white-space: inherit;
   width: 160%;
 }
-.saldo-favor-utilizado{
-  color:green;
-}
 
 /*Sección clase*/
 #tab-lista-periodos-clases .fa-remove{
@@ -386,8 +383,7 @@ table.dataTable > tbody > tr.child span.dtr-title {
 }
 
 .btn-perfil-relacion-entidad{
-  float: right;
-  margin-left: -20px;
+  margin-left: 5px;
 }
 
 .icon-notificar-clase{

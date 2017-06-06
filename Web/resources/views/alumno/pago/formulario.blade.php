@@ -50,16 +50,14 @@
           {{ Form::text("monto", null, ["class" => "monto-pago form-control", "maxlength" =>"19", "data-modo" =>"registrar"]) }}
         </div>
       </div>
-      @if($totalSaldoFavor > 0)
-      <div class="col-sm-7">
+      <div id="sec-saldo-favor" class="col-sm-7" style="display: none">
         <div class="checkbox">
           <label class="checkbox-custom" data-initialize="checkbox">
-            {{ Form::label("usarSaldoFavor", "Utilizar saldo a favor total (S/. " . number_format($totalSaldoFavor, 2, ".", ",") . ")", ["class" => "checkbox-label"]) }}
+            {{ Form::label("usarSaldoFavor", "", ["id" => "lbl-usar-saldo-favor", "class" => "checkbox-label"]) }}
             {{ Form::checkbox("usarSaldoFavor", null, FALSE, ["class" => "usar-saldo-favor", "data-modo" =>"registrar"]) }}
           </label>
         </div>
       </div> 
-      @endIf
     </div>                     
     <div id="sec-pago-211">
       <div class="form-group">  

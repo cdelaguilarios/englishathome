@@ -14,7 +14,9 @@ class FormularioRequest extends Request {
   protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["titulo"] = ReglasValidacion::formatoDato($datos, "titulo");
-    $datos["mensaje"] = ReglasValidacion::formatoDato($datos, "mensaje", "");
+    $datos["mensaje"] = ReglasValidacion::formatoDato($datos, "mensaje", "");    
+    $datos["nombresArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresArchivosAdjuntos");
+    $datos["nombresOriginalesArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresOriginalesArchivosAdjuntos");
     $datos["enviarCorreo"] = (isset($datos["enviarCorreo"]) ? 1 : 0);
     $datos["mostrarEnPerfil"] = (isset($datos["mostrarEnPerfil"]) ? 1 : 0);
     $datos["notificarInmediatamente"] = (isset($datos["notificarInmediatamente"]) ? 1 : 0);

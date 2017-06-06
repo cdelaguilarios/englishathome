@@ -64,7 +64,7 @@ class Profesor extends Model {
     Entidad::registrarActualizarImagenPerfil($idEntidad, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($idEntidad, $datos["idCursos"]);
     Horario::registrarActualizar($idEntidad, $datos["horario"]);
-    $datos["documentosPersonales"] = Docente::procesarDocumentosPersonales("", $datos);
+    $datos["documentosPersonales"] = Archivo::procesarArchivosSubidos("", $datos, 3, "nombresDocumentosPersonales", "nombresOriginalesDocumentosPersonales", "nombresDocumentosPersonalesEliminados");
 
     $profesor = new Profesor($datos);
     $profesor->idEntidad = $idEntidad;
@@ -91,9 +91,9 @@ class Profesor extends Model {
     Horario::registrarActualizar($id, $datos["horario"]);
     Docente::registrarActualizarAudio($id, $req->file("audio"));
     unset($datos["audio"]);
-    
+
     $profesor = Profesor::obtenerXId($id, TRUE);
-    $datos["documentosPersonales"] = Docente::procesarDocumentosPersonales($profesor->documentosPersonales, $datos);
+    $datos["documentosPersonales"] = Archivo::procesarArchivosSubidos($profesor->documentosPersonales, $datos, 3, "nombresDocumentosPersonales", "nombresOriginalesDocumentosPersonales", "nombresDocumentosPersonalesEliminados");
     $profesor->update($datos);
   }
 

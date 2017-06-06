@@ -44,7 +44,6 @@ class Alumno extends Model {
       $alumno->horario = Horario::obtenerFormatoJson($id);
       $alumno->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($alumno->codigoUbigeo);
       $alumno->numeroPeriodos = Clase::totalPeriodos($id);
-      $alumno->totalSaldoFavor = PagoAlumno::totalSaldoFavor($id);
       $entidadNivelIngles = EntidadNivelIngles::obtenerXEntidad($id);
       $alumno->idNivelIngles = (isset($entidadNivelIngles) ? $entidadNivelIngles->idNivelIngles : NULL);
       $entidadCurso = EntidadCurso::obtenerXEntidad($id);

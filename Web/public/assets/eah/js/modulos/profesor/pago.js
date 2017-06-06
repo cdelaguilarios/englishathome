@@ -5,7 +5,7 @@ function verificarJqueryPago() {
 function cargarSeccionPagos() {
   motivosPago = (typeof (motivosPago) === "undefined" ? "" : motivosPago);
   estadosPago = (typeof (estadosPago) === "undefined" ? "" : estadosPago);
-  urlImagenes = (typeof (urlImagenes) === "undefined" ? "" : urlImagenes);
+  urlArchivos = (typeof (urlArchivos) === "undefined" ? "" : urlArchivos);
 
   cargarListaPago();
   cargarFormularioPago();
@@ -222,7 +222,7 @@ function cargarFormularioActualizarPago() {
 function editarPago(idPago) {
   obtenerDatosPago(idPago, function (d) {
     motivoPagoClases = (typeof (motivoPagoClases) === "undefined" ? "" : motivoPagoClases);
-    if (urlImagenes !== "" && motivoPagoClases !== "") {
+    if (urlArchivos !== "" && motivoPagoClases !== "") {
       limpiarCamposPago();
       $("#lista-motivo-actualizar-pago").val(d.motivo);
       $("#titulo-motivo-actualizar-pago").text($("#lista-motivo-actualizar-pago option:selected").text());
@@ -235,12 +235,12 @@ function editarPago(idPago) {
         var imagenes = d.imagenesComprobante.split(",");
         if (imagenes.length > 0) {
           if (imagenes[0] !== "") {
-            var rutaImagen = urlImagenes.replace("/0", "/" + imagenes[0]);
+            var rutaImagen = urlArchivos.replace("/0", "/" + imagenes[0]);
             $("#imagen-comprobante-actualizar-pago").attr("href", rutaImagen);
             $("#imagen-comprobante-actualizar-pago").find("img").attr("src", rutaImagen);
           }
           if (imagenes[1] !== "") {
-            var rutaImagenDocumentoVerificacion = urlImagenes.replace("/0", "/" + imagenes[1]);
+            var rutaImagenDocumentoVerificacion = urlArchivos.replace("/0", "/" + imagenes[1]);
             $("#imagen-documento-verificacion-actualizar-pago").attr("href", rutaImagenDocumentoVerificacion);
             $("#imagen-documento-verificacion-actualizar-pago").find("img").attr("src", rutaImagenDocumentoVerificacion);
           }
@@ -260,7 +260,7 @@ function editarPago(idPago) {
 
 //Datos
 function verDatosPago(idPago) {
-  if (motivosPago !== "" && urlImagenes !== "" && estadosPago !== "") {
+  if (motivosPago !== "" && urlArchivos !== "" && estadosPago !== "") {
     obtenerDatosPago(idPago, function (d) {
       $("#sec-descripcion-pago").hide();
       if (d.descripcion !== null && d.descripcion.trim() !== "") {
@@ -275,7 +275,7 @@ function verDatosPago(idPago) {
       if (d.imagenesComprobante !== null && d.imagenesComprobante !== "") {
         var imagenes = d.imagenesComprobante.split(",");
         if (imagenes[0] !== null && imagenes[0] !== "") {
-          var rutaImagen = urlImagenes.replace("/0", "/" + imagenes[0]);
+          var rutaImagen = urlArchivos.replace("/0", "/" + imagenes[0]);
           $("#dat-imagen-comprobante-pago").attr("href", rutaImagen);
           $("#dat-imagen-comprobante-pago").find("img").attr("src", rutaImagen);
         }

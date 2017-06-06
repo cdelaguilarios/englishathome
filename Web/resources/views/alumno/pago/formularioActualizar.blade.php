@@ -54,16 +54,6 @@
         {{ Form::text("monto", null, ["id" => "monto-actualizar-pago", "class" => "monto-pago form-control", "maxlength" =>"19", "data-modo" =>"actualizar"]) }}
       </div>
     </div>
-    @if($totalSaldoFavor > 0)
-    <div class="col-sm-7">
-      <div class="checkbox">
-        <label class="checkbox-custom" data-initialize="checkbox">
-          {{ Form::label("usarSaldoFavor", "Utilizar saldo a favor total (S/. " . number_format($totalSaldoFavor, 2, ".", ",") . ")", ["class" => "checkbox-label"]) }}
-          {{ Form::checkbox("usarSaldoFavor", null, FALSE, ["class" => "usar-saldo-favor", "data-modo" =>"actualizar"]) }}
-        </label>
-      </div>
-    </div> 
-    @endIf
   </div>             
   <div class="form-group">
     <div class="col-sm-12">

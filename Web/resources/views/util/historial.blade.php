@@ -39,7 +39,16 @@
       <div class="col-sm-10">
         {{ Form::textarea("mensaje", null, ["id" => "fmensaje-evento-historial", "class" => "form-control", "rows" => "5", "maxlength" =>"4000"]) }}
       </div>                                        
-    </div>    
+    </div> 
+    <div class="form-group">
+      {{ Form::label("adjuntos", "Adjuntos: ", ["class" => "col-sm-2 control-label"]) }}   
+      <div class="col-sm-10">
+        <div id="adjuntos">Subir</div>
+        {{ Form::hidden("nombresArchivosAdjuntos", "", ["id" => "nombres-archivos-adjuntos"]) }}
+        {{ Form::hidden("nombresOriginalesArchivosAdjuntos", "", ["id" => "nombres-originales-archivos-adjuntos"]) }}
+      </div>
+      <div class="clearfix"></div>
+    </div>   
     <div class="form-group">
       <div class="col-sm-3 col-sm-offset-2">
         <div class="checkbox">

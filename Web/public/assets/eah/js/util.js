@@ -134,9 +134,9 @@ function validarFecha(value, element, param) {
   });
   jQuery.extend(jQuery.fn.dataTableExt.oSort, {
     "monto-pre": function (m) {
-      return parseFloat(m.replace("S/. ", "")
-          .replace(/<br\/><small><b>Saldo a favor de .*<\/b><\/small>/, '')
-          .replace(/<br\/><small><b>Saldo a favor de .* (<span class="saldo-favor-utilizado">utilizado<\/span>)<\/b><\/small>/, ''));
+      var a = $(m).clone();
+      $(a).find("#info-adicional").remove();
+      return parseFloat($(a).text().replace("S/. ", ""));
     },
     "monto-asc": function (a, b) {
       return ((a < b) ? -1 : ((a > b) ? 1 : 0));
@@ -248,7 +248,7 @@ function formatoHora(tiempoSegundos, incluirSegundos) {
   var h = Math.floor(tiempoSegundos / 3600);
   var m = Math.floor(tiempoSegundos % 3600 / 60);
   var s = Math.floor(tiempoSegundos % 3600 % 60);
-  return ((h > 0 ? h + ":" + (m < 10 ? "0" : "") : "") + m + (incluirSegundos ? ":" + (s < 10 ? "0" : "") + s : ""));
+  return ((h >= 0 ? h + ":" + (m < 10 ? "0" : "") : "") + m + (incluirSegundos ? ":" + (s < 10 ? "0" : "") + s : ""));
 
 }
 function tiempoSegundos(fecha) {

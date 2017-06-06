@@ -225,9 +225,9 @@ class AlumnoController extends Controller {
   }
 
   public function registrarPago($id, PagoRequest\FormularioRequest $req) {
-    try {
       PagoAlumno::registrar($id, $req);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
+    try {
     } catch (\Exception $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");

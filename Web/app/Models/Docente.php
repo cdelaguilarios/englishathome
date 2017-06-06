@@ -36,7 +36,7 @@ class Docente extends Model {
         $fechaFinCop = clone $fechaFinOri;
 
         $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicioOri->subHour(), $fechaFinOri->addHour(), TRUE);
-        $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($fechaInicioCop->dayOfWeek, $fechaInicioCop->format("H:i:s"), $fechaFinCop->format("H:i:s"), $tipoDocente);
+        $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha(($fechaInicioCop->dayOfWeek != 0 ? $fechaInicioCop->dayOfWeek : 7), $fechaInicioCop->format("H:i:s"), $fechaFinCop->format("H:i:s"), $tipoDocente);
         $idsDisponiblesSel = ($auxCont == 1 ? array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray()) : array_intersect($idsDisponiblesSel, array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray())));
         $auxCont++;
       }
@@ -68,7 +68,7 @@ class Docente extends Model {
         $auxFechaInicio = clone $fechaInicio;
         $auxFechaFin = clone $fechaFin;
         $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicio->subHour(), $fechaFin->addHour(), TRUE);
-        $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($auxFechaInicio->dayOfWeek, $auxFechaInicio->format("H:i:s"), $auxFechaFin->format("H:i:s"), $datos["tipoDocente"]);
+        $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha(($auxFechaInicio->dayOfWeek != 0 ? $auxFechaInicio->dayOfWeek : 7), $auxFechaInicio->format("H:i:s"), $auxFechaFin->format("H:i:s"), $datos["tipoDocente"]);
         $idsDisponiblesSel = ($auxCont == 1 ? array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray()) : array_intersect($idsDisponiblesSel, array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray())));
         $auxCont++;
       }
@@ -80,7 +80,7 @@ class Docente extends Model {
       $auxFechaInicio = clone $fechaInicio;
       $auxFechaFin = clone $fechaFin;
       $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicio->subHour(), $fechaFin->addHour(), TRUE);
-      $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha($auxFechaInicio->dayOfWeek, $auxFechaInicio->format("H:i:s"), $auxFechaFin->format("H:i:s"), $datos["tipoDocente"]);
+      $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha(($auxFechaInicio->dayOfWeek != 0 ? $auxFechaInicio->dayOfWeek : 7), $auxFechaInicio->format("H:i:s"), $auxFechaFin->format("H:i:s"), $datos["tipoDocente"]);
       $idsDisponiblesSel = array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray());
     }
     return Docente::listarXFiltrosBusqueda($datos)->whereIn("entidad.id", $idsDisponiblesSel);
@@ -105,43 +105,6 @@ class Docente extends Model {
             })->where(function ($q) use ($idCursoDocentePago) {
               $q->whereNull("entidadCurso.idCurso")->orWhereIn("entidadCurso.idCurso", ($idCursoDocentePago != "" ? [$idCursoDocentePago] : array_keys(Curso::listarSimple()->toArray())));
             })->where("entidad.tipo", $datos["tipoDocente"])->where("entidad.estado", '!=', EstadosPostulante::ProfesorRegistrado);
-  }
-
-  public static function procesarDocumentosPersonales($documentosPersonales, $datos) {
-    if (!is_null($datos["nombresDocumentosPersonalesEliminados"])) {
-      $nombresDocumentosPersonalesEliminados = explode(",", $datos["nombresDocumentosPersonalesEliminados"]);
-      for ($i = 0; $i < count($nombresDocumentosPersonalesEliminados); $i++) {
-        if (trim($nombresDocumentosPersonalesEliminados[$i]) == "") {
-          continue;
-        }
-        try {
-          Archivo::eliminar($nombresDocumentosPersonalesEliminados[$i]);
-          $documentosPersonalesSel = explode(",", $documentosPersonales);
-          for ($j = 0; $j < count($documentosPersonalesSel); $j++) {
-            if (strpos($documentosPersonalesSel[$j], $nombresDocumentosPersonalesEliminados[$i] . ":") !== false) {
-              $documentosPersonales = str_replace($documentosPersonalesSel[$j] . ",", "", $documentosPersonales);
-              break;
-            }
-          }
-        } catch (\Exception $e) {
-          Log::error($e);
-        }
-      }
-    }
-    if (!is_null($datos["nombresDocumentosPersonales"]) && !is_null($datos["nombresOriginalesDocumentosPersonales"])) {
-      $nombresDocumentosPersonales = explode(",", $datos["nombresDocumentosPersonales"]);
-      $nombresOriginalesDocumentosPersonales = explode(",", $datos["nombresOriginalesDocumentosPersonales"]);
-      for ($i = 0; $i < count($nombresDocumentosPersonales); $i++) {
-        if (count(explode(",", $documentosPersonales)) == 4) {
-          break;
-        }
-        if (trim($nombresDocumentosPersonales[$i]) == "") {
-          continue;
-        }
-        $documentosPersonales .= $nombresDocumentosPersonales[$i] . ":" . (array_key_exists($i, $nombresOriginalesDocumentosPersonales) && $nombresOriginalesDocumentosPersonales[$i] != "" ? $nombresOriginalesDocumentosPersonales[$i] : $nombresDocumentosPersonales[$i]) . ",";
-      }
-    }
-    return $documentosPersonales;
   }
 
   public static function registrarActualizarAudio($id, $audio) {

@@ -66,7 +66,7 @@ class Postulante extends Model {
       EntidadCurso::registrarActualizar($idEntidad, $datos["idCursos"]);
     }
     Horario::registrarActualizar($idEntidad, $datos["horario"]);
-    $datos["documentosPersonales"] = Docente::procesarDocumentosPersonales("", $datos);
+    $datos["documentosPersonales"] = Archivo::procesarArchivosSubidos("", $datos, 3, "nombresDocumentosPersonales", "nombresOriginalesDocumentosPersonales", "nombresDocumentosPersonalesEliminados");
 
     $postulante = new Postulante($datos);
     $postulante->idEntidad = $idEntidad;
@@ -95,7 +95,7 @@ class Postulante extends Model {
     unset($datos["audio"]);
 
     $postulante = Postulante::obtenerXId($id, TRUE);
-    $datos["documentosPersonales"] = Docente::procesarDocumentosPersonales($postulante->documentosPersonales, $datos);
+    $datos["documentosPersonales"] = Archivo::procesarArchivosSubidos($postulante->documentosPersonales, $datos, 3, "nombresDocumentosPersonales", "nombresOriginalesDocumentosPersonales", "nombresDocumentosPersonalesEliminados");
     $postulante->update($datos);
   }
 

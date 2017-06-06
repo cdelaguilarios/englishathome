@@ -18,7 +18,7 @@ class Archivo {
       $archivo = File::get($nombreImgAux);
       $tipo = File::mimeType($nombreImgAux);
     }
-    
+
     if ($esAudio) {
       $storagePath = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix();
       return response()->file($storagePath . "/" . $nombre, [
@@ -49,6 +49,43 @@ class Archivo {
 
   public static function eliminar($nombre) {
     Storage::delete($nombre);
+  }
+
+  public static function procesarArchivosSubidos($archivosActuales, $datos, $maxCantidadArchivos, $variableNombresArchivos, $variableNombresOriginalesArchivos, $variableNombresArchivosEliminados = "") {
+    if (isset($datos[$variableNombresArchivosEliminados])) {
+      $nombresArchivosEliminados = explode(",", $datos[$variableNombresArchivosEliminados]);
+      for ($i = 0; $i < count($nombresArchivosEliminados); $i++) {
+        if (trim($nombresArchivosEliminados[$i]) == "") {
+          continue;
+        }
+        try {
+          Archivo::eliminar($nombresArchivosEliminados[$i]);
+          $archivosActualesSel = explode(",", $archivosActuales);
+          for ($j = 0; $j < count($archivosActualesSel); $j++) {
+            if (strpos($archivosActualesSel[$j], $nombresArchivosEliminados[$i] . ":") !== false) {
+              $archivosActuales = str_replace($archivosActualesSel[$j] . ",", "", $archivosActuales);
+              break;
+            }
+          }
+        } catch (\Exception $e) {
+          Log::error($e);
+        }
+      }
+    }
+    if (isset($datos[$variableNombresArchivos]) && isset($datos[$variableNombresOriginalesArchivos])) {
+      $nombresArchivos = explode(",", $datos[$variableNombresArchivos]);
+      $nombresOriginalesArchivos = explode(",", $datos[$variableNombresOriginalesArchivos]);
+      for ($i = 0; $i < count($nombresArchivos); $i++) {
+        if (count(explode(",", $archivosActuales)) == ($maxCantidadArchivos + 1)) {
+          break;
+        }
+        if (trim($nombresArchivos[$i]) == "") {
+          continue;
+        }
+        $archivosActuales .= $nombresArchivos[$i] . ":" . (array_key_exists($i, $nombresOriginalesArchivos) && $nombresOriginalesArchivos[$i] != "" ? $nombresOriginalesArchivos[$i] : $nombresArchivos[$i]) . ",";
+      }
+    }
+    return $archivosActuales;
   }
 
 }

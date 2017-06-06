@@ -248,7 +248,7 @@
     <script type="text/javascript">
 var urlBase = "{{ url('/') }}";
 var urlBaseImagen = "{{ route('archivos', ['nombre' => '[RUTA_IMAGEN]']) }}";
-var urlImagenes = "{{ route('archivos', ['nombre' => '0']) }}";
+var urlArchivos = "{{ route('archivos', ['nombre' => '0']) }}";
 var urlRegistrarArchivo = "{{ route('archivos.reqistrar') }}";
 var urlEliminarArchivo = "{{ route('archivos.eliminar') }}";
 var minHorasClase = "{{ $minHorasClase }}";

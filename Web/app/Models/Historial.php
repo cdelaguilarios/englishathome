@@ -14,7 +14,7 @@ class Historial extends Model {
 
   public $timestamps = false;
   protected $table = "historial";
-  protected $fillable = ["idPago", "idClase", "titulo", "asunto", "mensaje", "imagenes", "idEntidadDestinataria", "correoDestinatario", "enviarCorreo", "mostrarEnPerfil", "fechaNotificacion", "tipo"];
+  protected $fillable = ["idPago", "idClase", "titulo", "asunto", "mensaje", "imagenes", "adjuntos", "idEntidadDestinataria", "correoDestinatario", "enviarCorreo", "mostrarEnPerfil", "fechaNotificacion", "tipo"];
 
   const numeroMensajesXCarga = 10;
 
@@ -88,6 +88,7 @@ class Historial extends Model {
     if (count($idEntidadesSel) > 0) {
       $datos["fechaNotificacion"] = (isset($datos["fechaNotificacion"]) && !(isset($datos["notificarInmediatamente"]) && $datos["notificarInmediatamente"] == 1) ? $datos["fechaNotificacion"] : Carbon::now()->toDateTimeString());
       $datos["tipo"] = (isset($datos["tipo"]) ? $datos["tipo"] : TiposHistorial::Notificacion);
+      $datos["adjuntos"] = Archivo::procesarArchivosSubidos("", $datos, 20, "nombresArchivosAdjuntos", "nombresOriginalesArchivosAdjuntos");
 
       $historial = new Historial($datos);
       $historial->save();
@@ -102,6 +103,7 @@ class Historial extends Model {
         $datos["fechaNotificacion"] = (!(isset($datos["notificarInmediatamente"]) && $datos["notificarInmediatamente"] == 1) ? $datos["fechaNotificacion"] : Carbon::now()->toDateTimeString());
       }
       $historial = Historial::obtenerXId($id);
+      $datos["adjuntos"] = Archivo::procesarArchivosSubidos($historial->adjuntos, $datos, 20, "nombresArchivosAdjuntos", "nombresOriginalesArchivosAdjuntos", "nombresArchivosAdjuntosEliminados");
       $historial->update($datos);
       Historial::registrarActualizarEntidadHistorial($historial["id"], $idEntidadesSel);
     }
