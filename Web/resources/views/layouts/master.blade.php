@@ -261,6 +261,7 @@ var estadosPago = {!!  json_encode(App\Helpers\Enum\EstadosPago::listar()) !!};
 var urlDatosClase = "{{ route('alumnos.clases.datos', ['id' => '[ID_ALUMNO]', 'idClase' => 0]) }}";
 var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
 var formularioExternoPostulante = {{ ((isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()) ? "true" : "false") }};
+var maxTamanhoSubida = {{ Config::get("eah.maxTamanhoSubida") }};
     </script>
     <script src="{{ asset("assets/eah/js/util.js") }}"></script>
     <script src="{{ asset("assets/eah/js/mensajes.js") }}"></script>   

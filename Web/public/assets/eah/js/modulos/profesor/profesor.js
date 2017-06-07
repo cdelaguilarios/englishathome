@@ -185,7 +185,7 @@ function cargarFormulario() {
 
     incluirSeccionSubidaArchivos("documentos-personales", {onSubmit: function () {
         return true;
-      }, acceptFiles: "*", uploadStr: "Subir archivo", maxFileSize: 5000000, maxFileCount: 3});
+      }, acceptFiles: "*", uploadStr: "Subir archivo", maxFileCount: 3});
 
     $("#curso-interes").select2();
     $("#direccion").focusout(verificarDatosBusquedaMapa);

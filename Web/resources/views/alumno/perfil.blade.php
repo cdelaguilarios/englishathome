@@ -6,8 +6,7 @@
   var urlActualizarEstado = "{{ route('alumnos.actualizar.estado', ['id' => 0]) }}";
   var estados = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listar()) !!};
   var urlActualizarHorario = "{{ route('alumnos.actualizar.horario', ['id' => $alumno->idEntidad]) }}";
-  var urlPerfil = "{{ route('alumnos.perfil', ['id' => 0]) }}";
-</script>
+  var urlPerfil = "{{ route('alumnos.perfil', ['id' => 0]) }}";</script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/alumno.js") }}"></script>
 @endsection
 
@@ -26,7 +25,7 @@
         <h3 class="profile-username">Alumn{{ $alumno->sexo == "F" ? "a" : "o" }} {{ $alumno->nombre . " " .  $alumno->apellido }}</h3>
         <p class="text-muted">{{ $alumno->correoElectronico }}</p>
         <p>
-        @if(array_key_exists($alumno->estado, App\Helpers\Enum\EstadosAlumno::listarCambio()))
+          @if(array_key_exists($alumno->estado, App\Helpers\Enum\EstadosAlumno::listarCambio()))
         <div class="sec-btn-editar-estado">
           <a href="javascript:void(0);" class="btn-editar-estado" data-id="{{ $alumno->id }}" data-estado="{{ $alumno->estado }}">
             <span class="label {{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][0] }}</span>
@@ -113,6 +112,7 @@
         <li><a href="#pago" data-toggle="tab">Pagos</a></li>
         <li><a href="#clase" data-toggle="tab">Clases</a></li>
         <li><a href="#calendario" data-toggle="tab">Calendario</a></li>
+        <li><a href="#sec-comentarios-administrador" data-toggle="tab">Comentarios</a></li>
       </ul>
       <div class="tab-content">
         <div id="historial" class="active tab-pane">
@@ -138,6 +138,9 @@
           @else
           Debe establecer un horario para el  alumn{{ $alumno->sexo == "F" ? "a" : "o" }}.
           @endif
+        </div>
+        <div id="sec-comentarios-administrador" class="tab-pane">
+          @include("util.comentariosAdministrador", ["idEntidad" => $alumno->id, "comentarioAdministrador" => $alumno->comentarioAdministrador]) 
         </div>
         @include("alumno.pago.datos") 
       </div>

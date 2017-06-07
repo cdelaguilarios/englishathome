@@ -199,7 +199,7 @@ function cargarFormulario() {
 
     incluirSeccionSubidaArchivos("documentos-personales", {onSubmit: function () {
         return true;
-      }, acceptFiles: "*", uploadStr: (formularioExternoPostulante ? "Upload file" : "Subir archivo"), maxFileSize: 5000000, maxFileCount: 3});
+      }, acceptFiles: "*", uploadStr: (formularioExternoPostulante ? "Upload file" : "Subir archivo"), maxFileCount: 3});
 
     $("#curso-interes").select2();
     $("#direccion").focusout(verificarDatosBusquedaMapa);

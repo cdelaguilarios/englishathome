@@ -6,5 +6,6 @@ return [
     "minHorario" => "7",
     "maxHorario" => "22",
     "correoNotificaciones" => "",
-    "numeroNotificacionesXLlamada" => 15
+    "numeroNotificacionesXLlamada" => 15,
+    "maxTamanhoSubida" => 2097152
 ];

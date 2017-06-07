@@ -31,7 +31,7 @@ class FormularioCorreoRequest extends Request {
     $datos = $this->all();
     $reglasValidacion = [
         "asunto" => "required|max:255",
-        "mensaje" => "required|max:4000"
+        "mensaje" => "required|max:8000"
     ];
 
     $listaTiposEntidades = TiposEntidad::listarSeccionCorreos();

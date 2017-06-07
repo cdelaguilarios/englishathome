@@ -30,12 +30,12 @@ class FormularioRequest extends Request {
     $reglasValidacion = [
         "nombre" => ["required", "max:255"],
         "imagenPerfil" => "image",
-        "descripcion" => "required|max:4000",
-        "modulos" => "required|max:4000",
-        "metodologia" => "required|max:4000",
-        "incluye" => "required|max:4000",
-        "inversion" => "required|max:4000",
-        "inversionCuotas" => "required|max:4000"
+        "descripcion" => "required|max:8000",
+        "modulos" => "required|max:8000",
+        "metodologia" => "required|max:8000",
+        "incluye" => "required|max:8000",
+        "inversion" => "required|max:8000",
+        "inversionCuotas" => "required|max:8000"
     ];
 
     switch ($this->method()) {

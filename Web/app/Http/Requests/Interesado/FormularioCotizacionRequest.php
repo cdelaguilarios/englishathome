@@ -34,13 +34,13 @@ class FormularioCotizacionRequest extends Request {
   public function rules() {
     $datos = $this->all();
     $reglasValidacion = [
-        "textoIntroductorio" => "required|max:4000",
-        "descripcionCurso" => "required|max:4000",
-        "modulos" => "required|max:4000",
-        "metodologia" => "required|max:4000",
-        "cursoIncluye" => "required|max:4000",
-        "inversion" => "required|max:4000",
-        "inversionCuotas" => "required|max:4000",
+        "textoIntroductorio" => "required|max:8000",
+        "descripcionCurso" => "required|max:8000",
+        "modulos" => "required|max:8000",
+        "metodologia" => "required|max:8000",
+        "cursoIncluye" => "required|max:8000",
+        "inversion" => "required|max:8000",
+        "inversionCuotas" => "required|max:8000",
         "costoHoraClase" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
         "correoCotizacionPrueba" => "email|max:245"
     ];

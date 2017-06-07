@@ -466,7 +466,8 @@ function incluirSeccionSubidaArchivos(idElemento, datosAdicionales, funcionSubir
   urlRegistrarArchivo = (typeof (urlRegistrarArchivo) === "undefined" ? "" : urlRegistrarArchivo);
   urlEliminarArchivo = (typeof (urlEliminarArchivo) === "undefined" ? "" : urlEliminarArchivo);
   formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
-  if (urlRegistrarArchivo !== "" && urlEliminarArchivo !== "") {
+  maxTamanhoSubida = (typeof (maxTamanhoSubida) === "undefined" ? "" : maxTamanhoSubida);
+  if (urlRegistrarArchivo !== "" && urlEliminarArchivo !== "" && maxTamanhoSubida !== "") {
     var datIni = {
       url: urlRegistrarArchivo,
       fileName: "archivo",
@@ -475,6 +476,7 @@ function incluirSeccionSubidaArchivos(idElemento, datosAdicionales, funcionSubir
       formData: {"_token": $('meta[name=_token]').attr("content"), "idElemento": idElemento},
       showPreview: true,
       showDelete: true,
+      maxFileSize: maxTamanhoSubida,
       onSuccess: function (f, d, xhr, pd)
       {
         var nombresArchivosSubidos = $("#nombres-archivos-" + d.idElemento).val();

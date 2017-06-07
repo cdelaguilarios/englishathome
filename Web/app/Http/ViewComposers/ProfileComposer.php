@@ -7,7 +7,6 @@ use Config;
 use App\Models\Curso;
 use App\Models\Usuario;
 use App\Helpers\Enum\RolesUsuario;
-use App\Helpers\Enum\SexosEntidad;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
 
