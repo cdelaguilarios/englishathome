@@ -489,9 +489,13 @@ function incluirSeccionSubidaArchivos(idElemento, datosAdicionales, funcionSubir
       deleteCallback: function (d, p) {
         llamadaAjax(urlEliminarArchivo, "DELETE", {"nombre": d.nombre}, true);
         var nombresArchivosSubidos = $("#nombres-archivos-" + d.idElemento).val();
+        if (nombresArchivosSubidos !== undefined && nombresArchivosSubidos !== null)
+          $("#nombres-archivos-" + d.idElemento).val(nombresArchivosSubidos.replace(d.nombre + ",", ""));
+
         var nombresOriginalesArchivosSubidos = $("#nombres-originales-archivos-" + d.idElemento).val();
-        $("#nombres-archivos-" + d.idElemento).val(nombresArchivosSubidos.replace(d.nombre + ",", ""));
-        $("#nombres-originales-archivos-" + d.idElemento).val(nombresOriginalesArchivosSubidos.replace(d.nombreOriginal + ",", ""));
+        if (nombresOriginalesArchivosSubidos !== undefined && nombresOriginalesArchivosSubidos !== null)
+          $("#nombres-originales-archivos-" + d.idElemento).val(nombresOriginalesArchivosSubidos.replace(d.nombreOriginal + ",", ""));
+
         if (funcionEliminarCompletado !== undefined)
           funcionEliminarCompletado(d, p);
         p.statusbar.hide();

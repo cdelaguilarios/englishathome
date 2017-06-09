@@ -52,6 +52,8 @@ class Archivo {
   }
 
   public static function procesarArchivosSubidos($archivosActuales, $datos, $maxCantidadArchivos, $variableNombresArchivos, $variableNombresOriginalesArchivos, $variableNombresArchivosEliminados = "") {
+    $archivosActualesSel = (!is_null($archivosActuales) ? $archivosActuales : "");
+
     if (isset($datos[$variableNombresArchivosEliminados])) {
       $nombresArchivosEliminados = explode(",", $datos[$variableNombresArchivosEliminados]);
       for ($i = 0; $i < count($nombresArchivosEliminados); $i++) {
@@ -60,10 +62,10 @@ class Archivo {
         }
         try {
           Archivo::eliminar($nombresArchivosEliminados[$i]);
-          $archivosActualesSel = explode(",", $archivosActuales);
-          for ($j = 0; $j < count($archivosActualesSel); $j++) {
-            if (strpos($archivosActualesSel[$j], $nombresArchivosEliminados[$i] . ":") !== false) {
-              $archivosActuales = str_replace($archivosActualesSel[$j] . ",", "", $archivosActuales);
+          $datArchivosActualesSel = explode(",", $archivosActualesSel);
+          for ($j = 0; $j < count($datArchivosActualesSel); $j++) {
+            if (strpos($datArchivosActualesSel[$j], $nombresArchivosEliminados[$i] . ":") !== false) {
+              $archivosActualesSel = str_replace($datArchivosActualesSel[$j] . ",", "", $archivosActualesSel);
               break;
             }
           }
@@ -76,16 +78,16 @@ class Archivo {
       $nombresArchivos = explode(",", $datos[$variableNombresArchivos]);
       $nombresOriginalesArchivos = explode(",", $datos[$variableNombresOriginalesArchivos]);
       for ($i = 0; $i < count($nombresArchivos); $i++) {
-        if (count(explode(",", $archivosActuales)) == ($maxCantidadArchivos + 1)) {
+        if (count(explode(",", $archivosActualesSel)) == ($maxCantidadArchivos + 1)) {
           break;
         }
         if (trim($nombresArchivos[$i]) == "") {
           continue;
         }
-        $archivosActuales .= $nombresArchivos[$i] . ":" . (array_key_exists($i, $nombresOriginalesArchivos) && $nombresOriginalesArchivos[$i] != "" ? $nombresOriginalesArchivos[$i] : $nombresArchivos[$i]) . ",";
+        $archivosActualesSel .= $nombresArchivos[$i] . ":" . (array_key_exists($i, $nombresOriginalesArchivos) && $nombresOriginalesArchivos[$i] != "" ? $nombresOriginalesArchivos[$i] : $nombresArchivos[$i]) . ",";
       }
     }
-    return $archivosActuales;
+    return $archivosActualesSel;
   }
 
 }

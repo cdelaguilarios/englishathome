@@ -107,6 +107,10 @@ function cargarFormularioPagoClase() {
   $("#formulario-pago-clase").validate({
     ignore: ":hidden",
     rules: {
+      fecha: {
+        required: true,
+        validarFecha: true
+      },
       monto: {
         required: true,
         validarDecimal: true
@@ -126,10 +130,14 @@ function cargarFormularioPagoClase() {
         datosClases += $(v).data("idalumno") + "-" + $(v).data("id") + ",";
       });
       if (datosClases !== "") {
-        if (confirm("¿Está seguro que desea registrar los datos de este pago?")) {
-          $("input[name='datosClases']").val(datosClases);
-          $.blockUI({message: "<h4>Registrando datos...</h4>"});
-          f.submit();
+        if ($("#nombres-archivos-documentos-verificacion-clases").val() !== "") {
+          if (confirm("¿Está seguro que desea registrar los datos de este pago?")) {
+            $("input[name='datosClases']").val(datosClases);
+            $.blockUI({message: "<h4>Registrando datos...</h4>"});
+            f.submit();
+          }
+        } else {
+          agregarMensaje("advertencias", "Debe subir la imagen de por lo menos una ficha de conformidad.", true, "#sec-mensajes-clase");
         }
       } else {
         $("#tab-lista-clases").find("input[type='checkbox']").trigger("change");
@@ -155,6 +163,11 @@ function cargarFormularioPagoClase() {
     onkeyup: false,
     onclick: false
   });
+  establecerCalendario("fecha-pago-clases", false, false, false);
+  incluirSeccionSubidaArchivos("documentos-verificacion-clases", {onSubmit: function () {
+      return true;
+    }, acceptFiles: "image/*", uploadStr: "Subir archivo", maxFileCount: 20});
+
   $("#btn-registrar-pago-clase").click(function () {
     limpiarCamposPagoClase();
     var totalPago = 0;

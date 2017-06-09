@@ -75,6 +75,12 @@ class Entidad extends Model {
     }
   }
 
+  public static function actualizarComentariosAdministrador($id, $datos) {
+    $entidad = Entidad::ObtenerXId($id);
+    $entidad->comentarioAdministrador = $datos["comentarioAdministrador"];
+    $entidad->save();
+  }
+
   public static function eliminar($id) {
     $entidad = Entidad::ObtenerXId($id);
     $entidad->eliminado = 1;

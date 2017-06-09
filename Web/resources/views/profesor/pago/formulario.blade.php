@@ -3,15 +3,15 @@
 </div>  
 <div class="box-body">
   <div class="form-group">  
-      {{ Form::label("fecha-pago", "Fecha de pago (*): ", ["class" => "col-sm-2 control-label"]) }}
-      <div class="col-sm-3">
-        <div class="input-group date">
-          <div class="input-group-addon">
-            <i class="fa fa-calendar"></i>
-          </div>                                
-          {{ Form::text("fecha", null, ["id" => "fecha-pago", "class" => "form-control", "placeholder" => "dd/mm/aaaa"]) }}
-        </div>
+    {{ Form::label("fecha-pago", "Fecha de pago (*): ", ["class" => "col-sm-2 control-label"]) }}
+    <div class="col-sm-3">
+      <div class="input-group date">
+        <div class="input-group-addon">
+          <i class="fa fa-calendar"></i>
+        </div>                                
+        {{ Form::text("fecha", null, ["id" => "fecha-pago", "class" => "form-control", "placeholder" => "dd/mm/aaaa"]) }}
       </div>
+    </div>
     {{ Form::label("estado", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       {{ Form::select("estado", App\Helpers\Enum\EstadosPago::listarCambio(), null, ["class" => "form-control"]) }}

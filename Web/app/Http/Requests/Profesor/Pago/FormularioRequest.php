@@ -21,6 +21,8 @@ class FormularioRequest extends Request {
     $datos["fecha"] = ReglasValidacion::formatoDato($datos, "fecha");
     $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $datos["descripcion"] = ReglasValidacion::formatoDato($datos, "descripcion");
+    $datos["nombresDocumentosVerificacion"] = ReglasValidacion::formatoDato($datos, "nombresDocumentosVerificacion");
+    $datos["nombresDocumentosVerificacionEliminados"] = ReglasValidacion::formatoDato($datos, "nombresDocumentosVerificacionEliminados");
     $datos["imagenComprobante"] = ReglasValidacion::formatoDato($datos, "imagenComprobante");
     $datos["datosClases"] = ReglasValidacion::formatoDato($datos, "datosClases");
     $this->getInputSource()->replace($datos);
@@ -47,7 +49,7 @@ class FormularioRequest extends Request {
     }
 
     if ($datos["motivo"] == MotivosPago::Clases) {
-      $reglasValidacion["imagenDocumentoVerificacion"] = "required|image";
+      $reglasValidacion["nombresDocumentosVerificacion"] = "required|max:3950";
       $datosClases = explode(",", $datos["datosClases"]);
       $datosClasesValidas = (count($datosClases) > 0);
       $totalClasesValidas = 0;

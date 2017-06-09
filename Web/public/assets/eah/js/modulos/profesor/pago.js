@@ -165,7 +165,7 @@ function cargarFormularioPago() {
     onclick: false
   });
   establecerCalendario("fecha-pago", false, false, false);
-  
+
   $("#btn-nuevo-pago").click(function () {
     limpiarCamposPago();
     mostrarSeccionPago([2]);
@@ -193,9 +193,13 @@ function cargarFormularioActualizarPago() {
       }
     },
     submitHandler: function (f) {
-      if (confirm("¿Está seguro que desea guardar los datos de este pago?")) {
-        $.blockUI({message: "<h4>Guardando datos...</h4>"});
-        f.submit();
+      if ($("#sec-documentos-verificacion-lista").html() !== "" || $("#nombres-archivos-documentos-verificacion").val() !== "") {
+        if (confirm("¿Está seguro que desea guardar los datos de este pago?")) {
+          $.blockUI({message: "<h4>Guardando datos...</h4>"});
+          f.submit();
+        }
+      } else {
+        agregarMensaje("advertencias", "Debe subir la imagen de por lo menos una ficha de conformidad.", true, "#sec-mensajes-pago");
       }
     },
     highlight: function () {
@@ -218,6 +222,9 @@ function cargarFormularioActualizarPago() {
     onclick: false
   });
   establecerCalendario("fecha-actualizar-pago", false, false, false);
+  incluirSeccionSubidaArchivos("documentos-verificacion", {onSubmit: function () {
+      return true;
+    }, acceptFiles: "image/*", uploadStr: "Subir archivo", maxFileCount: 20});
 }
 function editarPago(idPago) {
   obtenerDatosPago(idPago, function (d) {
@@ -239,23 +246,41 @@ function editarPago(idPago) {
             $("#imagen-comprobante-actualizar-pago").attr("href", rutaImagen);
             $("#imagen-comprobante-actualizar-pago").find("img").attr("src", rutaImagen);
           }
-          if (imagenes[1] !== "") {
-            var rutaImagenDocumentoVerificacion = urlArchivos.replace("/0", "/" + imagenes[1]);
-            $("#imagen-documento-verificacion-actualizar-pago").attr("href", rutaImagenDocumentoVerificacion);
-            $("#imagen-documento-verificacion-actualizar-pago").find("img").attr("src", rutaImagenDocumentoVerificacion);
+          for (var i = 1; i < imagenes.length; i++) {
+            if (imagenes[i] !== "") {
+              var datosImagen = imagenes[i].split(":");
+              if (datosImagen.length === 2) {
+                var rutaImagenDocumentoVerificacion = urlArchivos.replace("/0", "/" + datosImagen[0]);
+                $("#sec-documentos-verificacion-lista").append('<div class="ajax-file-upload-container">' +
+                    '<div class="ajax-file-upload-statusbar" style="width: 400px;">' +
+                    '<div class="ajax-file-upload-filename">' +
+                    '<a href="' + rutaImagenDocumentoVerificacion + '" target="_blank">' + datosImagen[1] + '</a>' +
+                    '</div>' +
+                    '<div class="ajax-file-upload-progress">' +
+                    '<div class="ajax-file-upload-bar" style="width: 100%;"></div>' +
+                    '</div>' +
+                    '<div class="ajax-file-upload-red" onclick="eliminarDocumentoVerificacion(this, \'' + datosImagen[0] + '\')">Eliminar</div>' +
+                    '</div>' +
+                    '</div>');
+              }
+            }
           }
         }
       }
       if (d.motivo === motivoPagoClases) {
-        $("#sec-imagen-documento-verificacion-actualizar-pago").show();
+        $("#sec-documentos-verificacion-actualizar-pago").show();
       } else {
-        $("#sec-imagen-documento-verificacion-actualizar-pago").hide();
+        $("#sec-documentos-verificacion-actualizar-pago").hide();
       }
       $("#monto-actualizar-pago").val(redondear(d.monto, 2));
       $("input[name='idPago']").val(d.id);
       mostrarSeccionPago([3]);
     }
   });
+}
+function eliminarDocumentoVerificacion(ele, nombreArchivo) {
+  $("#nombres-archivos-documentos-verificacion-eliminados").val(nombreArchivo + "," + $("#nombres-archivos-documentos-verificacion-eliminados").val());
+  $(ele).closest(".ajax-file-upload-container").remove();
 }
 
 //Datos

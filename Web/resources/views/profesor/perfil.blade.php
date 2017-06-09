@@ -106,6 +106,7 @@
         <li><a href="#pago" data-toggle="tab">Pagos</a></li>
         <li><a href="#clase" data-toggle="tab">Clases</a></li>
         <li><a href="#calendario" data-toggle="tab">Calendario</a></li>
+        <li><a href="#sec-comentarios-administrador" data-toggle="tab">Comentarios</a></li>
       </ul>
       <div class="tab-content">
         <div id="historial" class="active tab-pane">
@@ -119,6 +120,9 @@
         </div>
         <div id="calendario" class="tab-pane">
           @include("util.calendario", ["idEntidad" => $profesor->id, "esEntidadProfesor" => 1]) 
+        </div>
+        <div id="sec-comentarios-administrador" class="tab-pane">
+          @include("util.comentariosAdministrador", ["idEntidad" => $profesor->id, "comentarioAdministrador" => $profesor->comentarioAdministrador]) 
         </div>
         @include("profesor.pago.datos") 
       </div>

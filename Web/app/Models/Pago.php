@@ -44,7 +44,6 @@ class Pago extends Model {
   }
 
   public static function reporte($datos) {
-    $nombreTabla = Pago::nombreTabla();
     $pagos = Pago::where("eliminado", 0)
             ->select(($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes ? DB::raw("MONTH(fechaRegistro) AS mes") : ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho ? DB::raw("YEAR(fechaRegistro) AS anho") : "fechaRegistro")), "estado", DB::raw("SUM(monto) AS total"))
             ->groupBy(($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes ? DB::raw("MONTH(fechaRegistro)") : ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho ? DB::raw("YEAR(fechaRegistro)") : "fechaRegistro")), "estado")
@@ -81,46 +80,26 @@ class Pago extends Model {
   }
 
   private static function registrarActualizarImagenes($id, $request) {
+    if (!isset($request)) {
+      return;
+    }
     $pago = Pago::obtenerXId($id);
-    if (isset($request)) {
-      $imagenesAnt = ((!is_null($pago->imagenesComprobante) && $pago->imagenesComprobante != "") ? $pago->imagenesComprobante : NULL);
-      $rutaImagenComprobante = $rutaImagenComprobanteAnt = $rutaImagenDocumentoVerificacion = $rutaImagenDocumentoVerificacionAnt = "";
+    $imagenesComprobante = (isset($pago->imagenesComprobante) ? $pago->imagenesComprobante : "");
+    $nombreImagenComprobante = explode(",", $imagenesComprobante)[0];
 
-      $imagenComprobantePago = $request->file("imagenComprobante");
-      if (isset($imagenComprobantePago) && $imagenComprobantePago != "") {
-        $rutaImagenComprobante = Archivo::registrar($pago["id"] . "_icp_", $imagenComprobantePago);
+    $imagenComprobantePago = $request->file("imagenComprobante");
+    if (isset($imagenComprobantePago) && $imagenComprobantePago != "") {
+      $nombreNuevaImagenComprobante = Archivo::registrar($pago["id"] . "_icp_", $imagenComprobantePago);
+      if ($nombreImagenComprobante != "") {
+        Archivo::eliminar($nombreImagenComprobante);
+        $imagenesComprobante = str_replace($nombreImagenComprobante . ",", "", $imagenesComprobante);
       }
-      $imagenDocumentoVerificacion = $request->file("imagenDocumentoVerificacion");
-      if (isset($imagenDocumentoVerificacion) && $imagenDocumentoVerificacion != "") {
-        $rutaImagenDocumentoVerificacion = Archivo::registrar($pago["id"] . "_idv_", $imagenDocumentoVerificacion);
-      }
+      $nombreImagenComprobante = $nombreNuevaImagenComprobante;
+    }
 
-      if (!is_null($imagenesAnt)) {
-        $imagenesComprobante = explode(",", $imagenesAnt);
-        if (count($imagenesComprobante) == 2) {
-          $rutaImagenComprobanteAnt = $imagenesComprobante[0];
-          $rutaImagenDocumentoVerificacionAnt = $imagenesComprobante[1];
-        } else {
-          $rutaImagenComprobanteAnt = $imagenesAnt;
-        }
-      }
-
-      if ($rutaImagenComprobante != "") {
-        if ($rutaImagenComprobanteAnt != "") {
-          Archivo::eliminar($rutaImagenComprobanteAnt);
-        }
-      } else {
-        $rutaImagenComprobante = $rutaImagenComprobanteAnt;
-      }
-
-      if ($rutaImagenDocumentoVerificacion != "") {
-        if ($rutaImagenDocumentoVerificacionAnt != "") {
-          Archivo::eliminar($rutaImagenDocumentoVerificacionAnt);
-        }
-      } else {
-        $rutaImagenDocumentoVerificacion = $rutaImagenDocumentoVerificacionAnt;
-      }
-      $pago->imagenesComprobante = $rutaImagenComprobante . ($rutaImagenDocumentoVerificacion != "" ? "," . $rutaImagenDocumentoVerificacion : "");
+    $nombresImagenesDocumentosVerificacion = Archivo::procesarArchivosSubidos($imagenesComprobante, $request->all(), 20, "nombresDocumentosVerificacion", "nombresDocumentosVerificacion", "nombresDocumentosVerificacionEliminados");
+    if ($nombreImagenComprobante != "" || $nombresImagenesDocumentosVerificacion != "") {
+      $pago->imagenesComprobante = $nombreImagenComprobante . "," . $nombresImagenesDocumentosVerificacion;
       $pago->save();
     }
   }

@@ -18,7 +18,9 @@ class FormularioActualizarRequest extends Request {
     $datos["idPago"] = ReglasValidacion::formatoDato($datos, "idPago");
     $datos["motivo"] = ReglasValidacion::formatoDato($datos, "motivo");
     $datos["fecha"] = ReglasValidacion::formatoDato($datos, "fecha");
-    $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");  
+    $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
+    $datos["nombresDocumentosVerificacion"] = ReglasValidacion::formatoDato($datos, "nombresDocumentosVerificacion");
+    $datos["nombresDocumentosVerificacionEliminados"] = ReglasValidacion::formatoDato($datos, "nombresDocumentosVerificacionEliminados");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -38,10 +40,14 @@ class FormularioActualizarRequest extends Request {
     if (!array_key_exists($datos["motivo"], $listaMotivosPago)) {
       $reglasValidacion["motivoNoValido"] = "required";
     }
-    
+
     $listaEstadosPago = EstadosPago::listar();
     if (!array_key_exists($datos["estado"], $listaEstadosPago)) {
       $reglasValidacion["estadoNoValido"] = "required";
+    }
+
+    if ($datos["motivo"] == MotivosPago::Clases) {
+      $reglasValidacion["nombresDocumentosVerificacion"] = "required|max:3950";
     }
 
     switch ($this->method()) {
@@ -63,7 +69,7 @@ class FormularioActualizarRequest extends Request {
   public function messages() {
     return [
         "motivoNoValido.required" => "El motivo seleccionado del pago no es válido.",
-        "estadoNoValido.required" => "El estado seleccionado del pago no es válido."        
+        "estadoNoValido.required" => "El estado seleccionado del pago no es válido."
     ];
   }
 

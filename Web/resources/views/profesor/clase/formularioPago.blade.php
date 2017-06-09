@@ -7,8 +7,17 @@
       <span>Ingrese los datos solicitados para registrar el pago al profesor por las clases que ha seleccionado.</span></b>
     </div>                                        
   </div> 
-  <div class="form-group">
-    {{ Form::label("estado", "Estado: ", ["class" => "col-sm-3 control-label"]) }}
+  <div class="form-group">  
+    {{ Form::label("fecha-pago-clases", "Fecha de pago (*): ", ["class" => "col-sm-3 control-label"]) }}
+    <div class="col-sm-3">
+      <div class="input-group date">
+        <div class="input-group-addon">
+          <i class="fa fa-calendar"></i>
+        </div>                                
+        {{ Form::text("fecha", null, ["id" => "fecha-pago-clases", "class" => "form-control", "placeholder" => "dd/mm/aaaa"]) }}
+      </div>
+    </div>
+    {{ Form::label("estado", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
       {{ Form::select("estado", App\Helpers\Enum\EstadosPago::listarCambio(), null, ["class" => "form-control"]) }}
     </div>   
@@ -23,13 +32,15 @@
         {{ Form::text("monto", null, ["id" => "monto-clase-pago", "class" => "form-control", "maxlength" =>"19"]) }}
       </div>
     </div>
-  </div>             
+  </div>    
   <div class="form-group">
-    {{ Form::label("imagenDocumentoVerificacion", "Imagen de la ficha de conformidad (*): ", ["class" => "col-sm-3 control-label"]) }}
-    <div class="col-sm-4">
-      {{ Form::file("imagenDocumentoVerificacion", null) }}
+    {{ Form::label("documentosVerificacion", "Imagenes de las fichas de conformidad (*): ", ["class" => "col-sm-3 control-label"]) }}  
+    <div class="col-sm-9">
+      <div id="documentos-verificacion-clases">{{ "Subir" }}</div>
+      {{ Form::hidden("nombresDocumentosVerificacion", "", ["id" => "nombres-archivos-documentos-verificacion-clases"]) }}
+      {{ Form::hidden("nombresOriginalesDocumentosVerificacion", "", ["id" => "nombres-originales-archivos-documentos-verificacion-clases"]) }}
     </div>
-  </div> 
+  </div>
   <div class="form-group">
     {{ Form::label("imagenComprobante", "Imagen de comprobante: ", ["class" => "col-sm-3 control-label"]) }}
     <div class="col-sm-4">
