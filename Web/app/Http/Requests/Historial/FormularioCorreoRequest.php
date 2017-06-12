@@ -18,7 +18,10 @@ class FormularioCorreoRequest extends Request {
     $datos["titulo"] = "";
     $datos["asunto"] = ReglasValidacion::formatoDato($datos, "asunto");
     $datos["mensaje"] = ReglasValidacion::formatoDato($datos, "mensaje");
-    $datos["tipoEntidad"] = ReglasValidacion::formatoDato($datos, "tipoEntidad");
+    $datos["tipoEntidad"] = ReglasValidacion::formatoDato($datos, "tipoEntidad");    
+    foreach(TiposEntidad::listarSeccionCorreos() as $estado => $v){
+      $datos["estado" . $estado] = ReglasValidacion::formatoDato($datos, "estado" . $estado);      
+    }    
     $datos["idsEntidadesSeleccionadas"] = ReglasValidacion::formatoDato($datos, "idsEntidadesSeleccionadas");
     $datos["cursoInteres"] = ReglasValidacion::formatoDato($datos, "cursoInteres");
     $datos["idsEntidadesExcluidas"] = ReglasValidacion::formatoDato($datos, "idsEntidadesExcluidas", []);

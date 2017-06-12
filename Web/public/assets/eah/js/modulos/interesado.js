@@ -150,16 +150,6 @@ function cargarFormulario() {
 }
 
 var editorCargado = false;
-$.validator.addMethod("validarCkEditor", validarCkEditor, "Este campo es obligatorio.");
-function validarCkEditor(v, e, p) {
-  CKEDITOR.instances[$(e).attr("id")].updateElement();
-  if ($(e).val().trim() !== "") {
-    return true;
-  } else {
-    $(window).scrollTop($("#cke_" + $(e).attr("id")).offset().top);
-    return false;
-  }
-}
 function cargarFormularioCotizacion() {
   if ($("#descripcion-curso").length === 0) {
     return;

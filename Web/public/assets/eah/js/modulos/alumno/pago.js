@@ -388,7 +388,8 @@ function cargarDocentesDisponiblesPago(recargarListaPago) {
     }
   } else {
     urlListarDocentesDisponiblesPago = (typeof (urlListarDocentesDisponiblesPago) === "undefined" ? "" : urlListarDocentesDisponiblesPago);
-    if (urlListarDocentesDisponiblesPago !== "" && urlPerfilProfesor !== "") {
+    estadosProfesor = (typeof (estadosProfesor) === "undefined" ? "" : estadosProfesor);
+    if (urlListarDocentesDisponiblesPago !== "" && urlPerfilProfesor !== "" && estadosProfesor !== "") {
       $("#tab-lista-docentes-pago").DataTable({
         processing: true,
         serverSide: true,
@@ -408,13 +409,16 @@ function cargarDocentesDisponiblesPago(recargarListaPago) {
         autoWidth: false,
         columns: [
           {data: "nombreCompleto", name: "nombreCompleto", render: function (e, t, d, m) {
-              return d.nombreCompleto + ' <a href=' + (urlPerfilProfesor.replace('/0', '/' + d.id)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>';
+              return '<a href=' + (urlPerfilProfesor.replace('/0', '/' + d.id)) + ' title="Ver perfil del profesor" target="_blank">' + d.nombreCompleto + '</a>';
+            }},
+          {data: "estado", name: "estado", render: function (e, t, d, m) {
+              return ((estadosProfesor[d.estado] !== undefined) ? '<span class="label ' + estadosProfesor[d.estado][1] + ' btn-estado">' + estadosProfesor[d.estado][0] + '</span>' : '');
             }},
           {data: "id", name: "id", orderable: false, "searchable": false, width: "5%"}
         ],
         createdRow: function (r, d, i) {
-          $("td", r).eq(1).html('<input type="radio" name="idDocenteDisponiblePago" value="' + d.id + '" data-nombrecompleto="' + d.nombreCompleto + '"/>');
-          $("td", r).eq(1).addClass("text-center");
+          $("td", r).eq(2).html('<input type="radio" name="idDocenteDisponiblePago" value="' + d.id + '" data-nombrecompleto="' + d.nombreCompleto + '"/>');
+          $("td", r).eq(2).addClass("text-center");
         },
         initComplete: function (s, j) {
           establecerBotonRecargaTabla("tab-lista-docentes-pago");

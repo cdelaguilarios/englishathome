@@ -294,8 +294,8 @@ class Clase extends Model {
 
   public static function reporte($datos) {
     $clases = Clase::where("eliminado", 0)
-            ->select(($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes ? DB::raw("MONTH(fechaInicio) AS mes") : ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho ? DB::raw("YEAR(fechaInicio) AS anho") : "fechaInicio")), "estado", DB::raw("count(id) AS total"))
-            ->groupBy(($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes ? DB::raw("MONTH(fechaInicio)") : ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho ? DB::raw("YEAR(fechaInicio)") : "fechaInicio")), "estado")
+            ->select((($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoMeses) ? DB::raw("MONTH(fechaInicio) AS mes") : (($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoAnhos) ? DB::raw("YEAR(fechaInicio) AS anho") : "fechaInicio")), "estado", DB::raw("count(id) AS total"))
+            ->groupBy((($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoMeses) ? DB::raw("MONTH(fechaInicio)") : (($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoAnhos) ? DB::raw("YEAR(fechaInicio)") : "fechaInicio")), "estado")
             ->orderBy("fechaInicio", "ASC");
     if (isset($datos["ids"]) && is_array($datos["ids"])) {
       return $clases->whereIn("id", $datos["ids"])->get();

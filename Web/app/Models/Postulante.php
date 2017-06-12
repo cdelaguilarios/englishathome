@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use DB;
-use Log;
 use Auth;
 use Carbon\Carbon;
 use App\Helpers\Enum\TiposEntidad;
@@ -18,7 +17,7 @@ class Postulante extends Model {
   public $timestamps = false;
   protected $primaryKey = "idEntidad";
   protected $table = "postulante";
-  protected $fillable = ["ultimosTrabajos", "experienciaOtrosIdiomas", "descripcionPropia", "ensayo", "documentosPersonales", "audio"];
+  protected $fillable = ["ultimosTrabajos", "experienciaOtrosIdiomas", "descripcionPropia", "ensayo", "cv", "certificadoInternacional", "imagenDocumentoIdentidad", "audio"];
 
   public static function nombreTabla() {
     $modeloPostulante = new Postulante();
@@ -66,7 +65,9 @@ class Postulante extends Model {
       EntidadCurso::registrarActualizar($idEntidad, $datos["idCursos"]);
     }
     Horario::registrarActualizar($idEntidad, $datos["horario"]);
-    $datos["documentosPersonales"] = Archivo::procesarArchivosSubidos("", $datos, 3, "nombresDocumentosPersonales", "nombresOriginalesDocumentosPersonales", "nombresDocumentosPersonalesEliminados");
+    $datos["cv"] = Archivo::procesarArchivosSubidos("", $datos, 1, "nombreDocumentoCv", "nombreOriginalDocumentoCv", "nombreDocumentoCvEliminado");
+    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidos("", $datos, 1, "nombreDocumentoCertificadoInternacional", "nombreOriginalDocumentoCertificadoInternacional", "nombreDocumentoCertificadoInternacionalEliminado");
+    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidos("", $datos, 1, "nombreImagenDocumentoIdentidad", "nombreOriginalImagenDocumentoIdentidad", "nombreImagenDocumentoIdentidadEliminado");
 
     $postulante = new Postulante($datos);
     $postulante->idEntidad = $idEntidad;
@@ -95,7 +96,9 @@ class Postulante extends Model {
     unset($datos["audio"]);
 
     $postulante = Postulante::obtenerXId($id, TRUE);
-    $datos["documentosPersonales"] = Archivo::procesarArchivosSubidos($postulante->documentosPersonales, $datos, 3, "nombresDocumentosPersonales", "nombresOriginalesDocumentosPersonales", "nombresDocumentosPersonalesEliminados");
+    $datos["cv"] = Archivo::procesarArchivosSubidos($postulante->cv, $datos, 1, "nombreDocumentoCv", "nombreOriginalDocumentoCv", "nombreDocumentoCvEliminado");
+    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidos($postulante->certificadoInternacional, $datos, 1, "nombreDocumentoCertificadoInternacional", "nombreOriginalDocumentoCertificadoInternacional", "nombreDocumentoCertificadoInternacionalEliminado");
+    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidos($postulante->imagenDocumentoIdentidad, $datos, 1, "nombreImagenDocumentoIdentidad", "nombreOriginalImagenDocumentoIdentidad", "nombreImagenDocumentoIdentidadEliminado");
     $postulante->update($datos);
   }
 
@@ -139,7 +142,9 @@ class Postulante extends Model {
       $profesor->experienciaOtrosIdiomas = $datos["experienciaOtrosIdiomas"];
       $profesor->descripcionPropia = $datos["descripcionPropia"];
       $profesor->ensayo = $datos["ensayo"];
-      $profesor->documentosPersonales = $datos["documentosPersonales"];
+      $profesor->cv = $datos["cv"];
+      $profesor->certificadoInternacional = $datos["certificadoInternacional"];
+      $profesor->imagenDocumentoIdentidad = $datos["imagenDocumentoIdentidad"];
       $profesor->audio = $datos["audio"];
       $profesor->save();
       $idProfesor = $idEntidad;

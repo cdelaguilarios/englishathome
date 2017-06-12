@@ -59,16 +59,6 @@ function cargarLista() {
   }
 }
 
-$.validator.addMethod("validarCkEditorCurso", validarCkEditorCurso, "Este campo es obligatorio.");
-function validarCkEditorCurso(v, e, p) {
-  CKEDITOR.instances[$(e).attr("id")].updateElement();
-  if ($(e).val().trim() !== "") {
-    return true;
-  } else {
-    $(window).scrollTop($("#cke_" + $(e).attr("id")).offset().top);
-    return false;
-  }
-}
 function cargarFormulario() {
   if ($("#descripcion").length === 0) {
     return;
@@ -80,25 +70,25 @@ function cargarFormulario() {
         required: true
       },
       descripcion: {
-        validarCkEditorCurso: true
+        validarCkEditor: true
       },
       modulos: {
-        validarCkEditorCurso: true
+        validarCkEditor: true
       },
       metodologia: {
-        validarCkEditorCurso: true
+        validarCkEditor: true
       },
       incluye: {
-        validarCkEditorCurso: true
+        validarCkEditor: true
       },
       inversion: {
-        validarCkEditorCurso: true
+        validarCkEditor: true
       },
       inversionCuotas: {
-        validarCkEditorCurso: true
+        validarCkEditor: true
       },
       notasAdicionales: {
-        validarCkEditorCurso: true
+        validarCkEditor: true
       }
     },
     submitHandler: function (f) {

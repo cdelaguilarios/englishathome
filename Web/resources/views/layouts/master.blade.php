@@ -61,9 +61,13 @@
               @endif
             </div><!--
             --><div class="col-sm-6 vcenter">
+              @if(isset($vistaImpresion) && $vistaImpresion) 
+                <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login"/>
+              @else
               <a href="http://englishathomeperu.com/" target="_blank">
                 <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login"/>
               </a>
+              @endif
             </div>
           </div>        
         </div> 
@@ -233,7 +237,7 @@
     <script src="{{ asset("assets/plugins/datatables/extensions/Responsive/js/dataTables.responsive.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/blockui/jquery.blockUI.js") }}"></script>
     <script src="{{ asset("assets/plugins/jquery_validate/jquery.validate.min.js") }}"></script>
-    @if(!(isset($seccion) && $seccion == "postulantes" && Auth::guest()))
+    @if(!(isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()))
     <script src="{{ asset("assets/plugins/jquery_validate/jquery.validate.messages_es.js") }}"></script> 
     @endif
     <script src="{{ asset("assets/plugins/datepicker/bootstrap-datepicker.js") }}"></script>   

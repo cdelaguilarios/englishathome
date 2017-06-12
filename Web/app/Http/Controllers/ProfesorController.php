@@ -78,6 +78,7 @@ class ProfesorController extends Controller {
   public function ficha($id) {
     try {
       $this->data["vistaImpresion"] = TRUE;
+      $this->data["impresionDirecta"] = TRUE;
       $this->data["profesor"] = Profesor::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
       Log::error($e);

@@ -1,6 +1,14 @@
 @extends("layouts.master")
 @section("titulo", "Ficha " . ($profesor->sexo == "F" ? "de la profesora" : "del profesor") . " " . $profesor->nombre . " " .  $profesor->apellido)
 
+@section("section_script")
+@if(isset($impresionDirecta) && $impresionDirecta)
+<script>
+  window.print();
+</script>
+@endif
+@endsection
+
 @section("section_style")
 <style>
   body{

@@ -1,14 +1,3 @@
-$.validator.addMethod("validarCkEditorCorreos", validarCkEditorCorreos, "Este campo es obligatorio.");
-function validarCkEditorCorreos(v, e, p) {
-  CKEDITOR.instances[$(e).attr("id")].updateElement();
-  if ($(e).val().trim() !== "") {
-    return true;
-  } else {
-    $(window).scrollTop($("#cke_" + $(e).attr("id")).offset().top);
-    return false;
-  }
-}
-
 $(document).ready(function () {
   urlBuscarEntidades = (typeof (urlBuscarEntidades) === "undefined" ? "" : urlBuscarEntidades);
   urlArchivos = (typeof (urlArchivos) === "undefined" ? "" : urlArchivos);
@@ -57,7 +46,10 @@ $(document).ready(function () {
       }
     });
     $("#tipo-entidad-correos").change(function () {
+      $('[id*="sec-estados-"]').hide();
       if ($(this).val() !== "") {
+        $("#sec-estados-" + $(this).val()).show();
+        $("#sec-estados-entidades").show();
         $("#sec-entidades-seleccionadas-correos").hide();
       } else {
         $("#sec-entidades-seleccionadas-correos").show();
@@ -78,7 +70,7 @@ $(document).ready(function () {
         required: true
       },
       mensaje: {
-        validarCkEditorCorreos: true
+        validarCkEditor: true
       }
     },
     submitHandler: function (f) {

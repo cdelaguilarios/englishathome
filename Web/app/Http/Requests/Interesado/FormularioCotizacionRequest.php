@@ -26,6 +26,7 @@ class FormularioCotizacionRequest extends Request {
     $datos["nombresArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresArchivosAdjuntos");
     $datos["nombresOriginalesArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresOriginalesArchivosAdjuntos");
     $datos["costoHoraClase"] = ReglasValidacion::formatoDato($datos, "costoHoraClase");
+    $datos["cuentaBancoEmpresarial"] = (isset($datos["cuentaBancoEmpresarial"]));
     $datos["correoCotizacionPrueba"] = ReglasValidacion::formatoDato($datos, "correoCotizacionPrueba");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();

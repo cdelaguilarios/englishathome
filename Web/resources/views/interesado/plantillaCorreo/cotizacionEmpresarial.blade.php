@@ -578,22 +578,7 @@
                     <table class="sec-cuentas-bancarias">
                       <tr>
                         <td class="center">
-                          <img src="{{ asset("assets/eah/img/bcp.jpg") }}" width="110"/><br/>
-                          Ahorro Soles: {{ App\Models\VariableSistema::obtenerXLlave("cuentaSolesBcp") }}
-                        </td>
-                        <td class="center">
-                          <img src="{{ asset("assets/eah/img/interbank.jpg") }}" width="110"/><br/>
-                          Ahorros Soles : {{ App\Models\VariableSistema::obtenerXLlave("cuentaSolesInterbank") }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="center">
-                          <img src="{{ asset("assets/eah/img/scotiabank.jpg") }}" width="110"/><br/> 
-                          Ahorros Soles: {{ App\Models\VariableSistema::obtenerXLlave("cuentaSolesScotiabank") }}
-                        </td>
-                        <td class="center">
-                          <img src="{{ asset("assets/eah/img/banco-continental.jpg") }}" width="110"/><br/> 
-                          Ahorro Soles: {{ App\Models\VariableSistema::obtenerXLlave("cuentaSolesBancoContinental") }}
+                          Cuenta empresarial: {{ App\Models\VariableSistema::obtenerXLlave("cuentaEmpresarial") }}
                         </td>
                       </tr>
                     </table>

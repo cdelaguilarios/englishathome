@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Profesor;
 
 use App\Models\Curso;
+use App\Helpers\Util;
 use App\Models\TipoDocumento;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
@@ -31,10 +32,8 @@ class FormularioRequest extends Request {
     $datos["referenciaDireccion"] = ReglasValidacion::formatoDato($datos, "referenciaDireccion");
     $datos["geoLatitud"] = ReglasValidacion::formatoDato($datos, "geoLatitud");
     $datos["geoLongitud"] = ReglasValidacion::formatoDato($datos, "geoLongitud");
-
-    $datos["nombresDocumentosPersonales"] = ReglasValidacion::formatoDato($datos, "nombresDocumentosPersonales");
-    $datos["nombresDocumentosPersonalesEliminados"] = ReglasValidacion::formatoDato($datos, "nombresDocumentosPersonalesEliminados");
-    $datos["nombresOriginalesDocumentosPersonales"] = ReglasValidacion::formatoDato($datos, "nombresOriginalesDocumentosPersonales");
+    
+    Util::preProcesarDocumentosDocente($datos);
     
     $datos["idCursos"] = ReglasValidacion::formatoDato($datos, "idCursos");
     $datos["horario"] = ReglasValidacion::formatoDato($datos, "horario");    

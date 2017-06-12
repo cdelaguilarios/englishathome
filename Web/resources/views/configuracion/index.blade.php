@@ -15,9 +15,13 @@
         @else
           {{ $variableSistema->llave }}: {
             @if($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::Correo)
-                email: true,     
+                email: true,    
             @endif 
+            @if ($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::TextoAreaEditor)
+            validarCkEditor: true
+            @else
             required: true
+            @endif 
           },    
         @endif
       @endForeach
@@ -47,7 +51,13 @@
       onkeyup: false,
       onclick: false
     });
-  });</script>
+  });  
+  @foreach($variablesSistema as $variableSistema)
+    @if ($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::TextoAreaEditor)
+    CKEDITOR.replace("{{ $variableSistema->llave }}");
+    @endif 
+  @endForeach
+</script>
 @endsection
 
 @section("breadcrumb")
@@ -68,33 +78,35 @@
         @foreach($variablesSistema as $variableSistema)
         @if($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::Password)        
         <div class="form-group">
-          {{ Form::label($variableSistema->llave, $variableSistema->nombre . ": ", ["class" => "col-sm-3 control-label"]) }}
+          {{ Form::label($variableSistema->llave, $variableSistema->titulo . ": ", ["class" => "col-sm-3 control-label"]) }}
           <div class="col-sm-9">
             {{ Form::password($variableSistema->llave, ["class" => "form-control", "maxlength" =>"255", "placeholder" =>"******"]) }}
+            @if(isset($variableSistema->recomendacionesAdicionales) && $variableSistema->recomendacionesAdicionales != "")
+            <small>{{ $variableSistema->recomendacionesAdicionales }}</small>
+            @endif
           </div>
         </div>
         <div class="form-group">
-          {{ Form::label($variableSistema->llave . "_confirmation", "Confirmación - " . $variableSistema->nombre  . ": ", ["class" => "col-sm-3 control-label"]) }}
+          {{ Form::label($variableSistema->llave . "_confirmation", "Confirmación - " . $variableSistema->titulo  . ": ", ["class" => "col-sm-3 control-label"]) }}
           <div class="col-sm-9">
             {{ Form::password($variableSistema->llave . "_confirmation", ["class" => "form-control", "maxlength" =>"255"]) }}
           </div>
         </div>
         @else
           <div class="form-group">
-            {{ Form::label($variableSistema->llave, $variableSistema->nombre . ": ", ["class" => "col-sm-3 control-label"]) }}
+            {{ Form::label($variableSistema->llave, $variableSistema->titulo . ": ", ["class" => "col-sm-3 control-label"]) }}
+            <div class="col-sm-9">
             @if($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::Correo)
-            <div class="col-sm-9">
               {{ Form::email($variableSistema->llave, Crypt::decrypt($variableSistema->valor), ["class" => "form-control", "maxlength" =>"255"]) }}
-            </div>
             @elseif($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::Texto)
-            <div class="col-sm-9">
               {{ Form::text($variableSistema->llave, Crypt::decrypt($variableSistema->valor), ["class" => "form-control", "maxlength" =>"255"]) }}
-            </div>
-            @elseif($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::TextoArea)
-            <div class="col-sm-9">
+            @elseif($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::TextoArea || $variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::TextoAreaEditor)
               {{ Form::textarea($variableSistema->llave, Crypt::decrypt($variableSistema->valor), ["class" => "form-control", "rows" => "2", "maxlength" =>"4000"]) }}
-            </div>
             @endif
+            @if(isset($variableSistema->recomendacionesAdicionales) && $variableSistema->recomendacionesAdicionales != "")
+            <small><b>{{ $variableSistema->recomendacionesAdicionales }}</b></small>
+            @endif
+            </div>
           </div>
         @endif
         @endForeach

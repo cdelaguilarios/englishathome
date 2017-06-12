@@ -83,7 +83,8 @@
         <hr>    
         @endif                           
         <a href="{{ route("profesores.editar", $profesor->id)}}" class="btn btn-primary btn-block"><b>Editar datos</b></a>
-        <a href="{{ route("profesores.descargar.ficha", $profesor->id)}}" class="btn btn-primary btn-block"><b>Descargar ficha</b></a>
+        <!--<a href="{{ route("profesores.descargar.ficha", $profesor->id)}}" class="btn btn-primary btn-block"><b>Descargar ficha</b></a>-->
+        <a href="{{ route("profesores.ficha", $profesor->id)}}" target="_blank" class="btn btn-primary btn-block"><b>Descargar ficha</b></a>
       </div>
     </div>
   </div>

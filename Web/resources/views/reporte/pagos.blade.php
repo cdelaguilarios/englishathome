@@ -45,7 +45,7 @@
                     <th>Alumno/Profesor</th>  
                     <th>Motivo</th>    
                     <th>Cuenta</th>
-                    <th>Fecha de registro</th>
+                    <th>Fecha de pago</th>
                     <th>Estado</th>
                     <th>Monto</th>
                   </tr>

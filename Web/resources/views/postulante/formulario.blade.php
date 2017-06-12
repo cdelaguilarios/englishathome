@@ -147,41 +147,7 @@
               {{ Form::textarea("ensayo", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
             </div>              
           </div>
-          <div class="form-group">
-            {{ Form::label("documentosPersonales", (Auth::guest() ? "Personal documents (International Certificates, CV, etc)" : "Documentos personales (Certificados internacioales, CV, etc). Max. 3 documentos") .  ": ", ["class" => "col-sm-2 control-label"]) }}   
-            <div class="col-sm-10">
-              <div id="documentos-personales">{{ (Auth::guest() ? "Upload" : "Subir") }}</div>
-              @if(isset($postulante) && $postulante->documentosPersonales != null)
-              @php
-                $documentosPersonales = explode(",", $postulante->documentosPersonales);
-              @endphp
-              @for($i=0; $i < count($documentosPersonales); $i++)
-                @if($documentosPersonales[$i] != "")  
-                  @php
-                    $datosDocumentoPersonal = explode(":", $documentosPersonales[$i]);
-                  @endphp         
-                  @if(count($datosDocumentoPersonal) == 2)
-                  <div class="ajax-file-upload-container">
-                    <div class="ajax-file-upload-statusbar" style="width: 400px;">
-                      <div class="ajax-file-upload-filename">
-                        <a href="{{ route("archivos", ["nombre" => $datosDocumentoPersonal[0]]) }}" download="{{ $datosDocumentoPersonal[1] }}">{{ $datosDocumentoPersonal[1] }}</a>
-                      </div>
-                      <div class="ajax-file-upload-progress">
-                        <div class="ajax-file-upload-bar" style="width: 100%;"></div>
-                      </div>
-                      <div class="ajax-file-upload-red" onclick="eliminarDocumentoPersonal(this, '{{ $datosDocumentoPersonal[0] }}')">Eliminar</div>
-                    </div>
-                  </div>
-                  @endif
-                @endif
-              @endfor
-              @endif
-              {{ Form::hidden("nombresDocumentosPersonales", "", ["id" => "nombres-archivos-documentos-personales"]) }}
-              {{ Form::hidden("nombresDocumentosPersonalesEliminados", "", ["id" => "nombres-archivos-documentos-personales-eliminados"]) }}
-              {{ Form::hidden("nombresOriginalesDocumentosPersonales", "", ["id" => "nombres-originales-archivos-documentos-personales"]) }}
-            </div>
-            <div class="clearfix"></div>
-          </div>
+          @include("util.documentosPersonalesDocente", ["docente" => (isset($postulante) ? $postulante : null)]) 
         </div>             
         <div id="sec-wiz-postulante-4" class="step-pane sample-pane alert" data-step="4">              
           @if(!(Auth::guest()))      
@@ -206,13 +172,28 @@
             </div>                                        
           </div>
           <div class="form-group">
-            <h4>Audio{{ (Auth::guest() ? " (*)" : "") }}:</h4>
+            <h4>{{ (Auth::guest() ? "Presentation Audio (*)" : "Audio de presentación") }}:</h4>
           </div>
           <div class="form-group">
             <div class="col-sm-offset-1 col-sm-10">
               {{ Form::file("audio", null) }}
             </div>  
           </div>
+          @if(Auth::guest())
+          <div class="form-group">
+            <div class="col-sm-offset-1 col-sm-10">
+              <span>Record a self introduction of about a minute and send it to us. To facilitate this process you can do the following steps: </span><br/>
+              <ol>
+                <li>Click <b><a href="http://vocaroo.com/" target="_blank" class="text-blue">here</a></b>.</li>
+                <li>Click in <b>"Click to record"</b>. If necessary enable adobe flash player and allow the site use your microphone</li>
+                <li>Record your audio and click in <b>"Click to Stop"</b>.</li>
+                <li>Verify your audio by clicking on <b>"Listen"</b>. You can record again by clicking on <b>"Retry"</b>.</li>
+                <li>Click in <b>"Click here to save"</b> and later in <b>"Download as MP3"</b> or <b>"Upload it as Ogg"</b>.</li>
+                <li>Upload it.</li>
+              </ol>
+            </div>  
+          </div>
+          @endif
           @if (!Auth::guest() && isset($postulante) && isset($postulante->audio) && !empty($postulante->audio))
           <div class="form-group">
             <div class="col-sm-offset-1 col-sm-10">

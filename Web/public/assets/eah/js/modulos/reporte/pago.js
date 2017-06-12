@@ -40,8 +40,8 @@ function cargarListaPagos() {
         {data: "cuenta", name: "cuenta", render: function (e, t, d, m) {
             return cuentasBanco[d.cuenta];
           }, className: "text-center"},
-        {data: "fechaRegistro", name: "fechaRegistro", render: function (e, t, d, m) {
-            return formatoFecha(d.fechaRegistro, true);
+        {data: "fecha", name: "fecha", render: function (e, t, d, m) {
+            return formatoFecha(d.fecha);
           }, className: "text-center", type: "fecha"},
         {data: "estado", name: "estado", render: function (e, t, d, m) {
             return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>';

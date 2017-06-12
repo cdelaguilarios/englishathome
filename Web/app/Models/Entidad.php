@@ -18,8 +18,12 @@ class Entidad extends Model {
     return $nombreTabla;
   }
 
-  public static function listar($tipo, $idsExcluir = []) {
-    return Entidad::where("eliminado", 0)->whereNotIn("id", $idsExcluir)->where("tipo", $tipo)->get();
+  public static function listar($tipo, $estado = NULL, $idsExcluir = []) {
+    $entidades = Entidad::where("eliminado", 0)->whereNotIn("id", $idsExcluir)->where("tipo", $tipo);
+    if(isset($estado) && $estado != ""){
+      $entidades->where("estado", $estado);
+    }
+    return $entidades->get();
   }
 
   public static function ObtenerXId($id) {

@@ -15,7 +15,7 @@ class Profesor extends Model {
   public $timestamps = false;
   protected $primaryKey = "idEntidad";
   protected $table = "profesor";
-  protected $fillable = ["ultimosTrabajos", "experienciaOtrosIdiomas", "descripcionPropia", "ensayo", "documentosPersonales", "audio"];
+  protected $fillable = ["ultimosTrabajos", "experienciaOtrosIdiomas", "descripcionPropia", "ensayo", "cv", "certificadoInternacional", "imagenDocumentoIdentidad", "audio"];
 
   public static function nombreTabla() {
     $modeloProfesor = new Profesor();
@@ -64,7 +64,9 @@ class Profesor extends Model {
     Entidad::registrarActualizarImagenPerfil($idEntidad, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($idEntidad, $datos["idCursos"]);
     Horario::registrarActualizar($idEntidad, $datos["horario"]);
-    $datos["documentosPersonales"] = Archivo::procesarArchivosSubidos("", $datos, 3, "nombresDocumentosPersonales", "nombresOriginalesDocumentosPersonales", "nombresDocumentosPersonalesEliminados");
+    $datos["cv"] = Archivo::procesarArchivosSubidos("", $datos, 1, "nombreDocumentoCv", "nombreOriginalDocumentoCv", "nombreDocumentoCvEliminado");
+    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidos("", $datos, 1, "nombreDocumentoCertificadoInternacional", "nombreOriginalDocumentoCertificadoInternacional", "nombreDocumentoCertificadoInternacionalEliminado");
+    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidos("", $datos, 1, "nombreImagenDocumentoIdentidad", "nombreOriginalImagenDocumentoIdentidad", "nombreImagenDocumentoIdentidadEliminado");
 
     $profesor = new Profesor($datos);
     $profesor->idEntidad = $idEntidad;
@@ -93,7 +95,9 @@ class Profesor extends Model {
     unset($datos["audio"]);
 
     $profesor = Profesor::obtenerXId($id, TRUE);
-    $datos["documentosPersonales"] = Archivo::procesarArchivosSubidos($profesor->documentosPersonales, $datos, 3, "nombresDocumentosPersonales", "nombresOriginalesDocumentosPersonales", "nombresDocumentosPersonalesEliminados");
+    $datos["cv"] = Archivo::procesarArchivosSubidos($profesor->cv, $datos, 1, "nombreDocumentoCv", "nombreOriginalDocumentoCv", "nombreDocumentoCvEliminado");
+    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidos($profesor->certificadoInternacional, $datos, 1, "nombreDocumentoCertificadoInternacional", "nombreOriginalDocumentoCertificadoInternacional", "nombreDocumentoCertificadoInternacionalEliminado");
+    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidos($profesor->imagenDocumentoIdentidad, $datos, 1, "nombreImagenDocumentoIdentidad", "nombreOriginalImagenDocumentoIdentidad", "nombreImagenDocumentoIdentidadEliminado");
     $profesor->update($datos);
   }
 

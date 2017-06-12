@@ -650,7 +650,8 @@ function cargarDocentesDisponiblesClase(recargarListaPeriodos, recrearTabla) {
     }
   } else {
     urlListarDocentesDisponiblesClase = (typeof (urlListarDocentesDisponiblesClase) === "undefined" ? "" : urlListarDocentesDisponiblesClase);
-    if (urlListarDocentesDisponiblesClase !== "" && urlPerfilProfesor !== "") {
+    estadosProfesor = (typeof (estadosProfesor) === "undefined" ? "" : estadosProfesor);
+    if (urlListarDocentesDisponiblesClase !== "" && urlPerfilProfesor !== "" && estadosProfesor !== "") {
       $('#tab-lista-docentes-clase').DataTable({
         "processing": true,
         "serverSide": true,
@@ -670,13 +671,16 @@ function cargarDocentesDisponiblesClase(recargarListaPeriodos, recrearTabla) {
         autoWidth: false,
         columns: [
           {data: "nombreCompleto", name: "nombreCompleto", render: function (e, t, d, m) {
-              return d.nombreCompleto + ' <a href=' + (urlPerfilProfesor.replace('/0', '/' + d.id)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>';
+              return '<a href=' + (urlPerfilProfesor.replace('/0', '/' + d.id)) + ' title="Ver perfil del profesor" target="_blank">' + d.nombreCompleto + '</a>';
+            }},
+          {data: "estado", name: "estado", render: function (e, t, d, m) {
+              return ((estadosProfesor[d.estado] !== undefined) ? '<span class="label ' + estadosProfesor[d.estado][1] + ' btn-estado">' + estadosProfesor[d.estado][0] + '</span>' : '');
             }},
           {data: "id", name: "id", orderable: false, "searchable": false, width: "5%"}
         ],
         createdRow: function (r, d, i) {
-          $("td", r).eq(1).html('<input type="radio" name="idDocenteDisponibleClase" value="' + d.id + '" data-nombrecompleto="' + d.nombreCompleto + '"/>');
-          $("td", r).eq(1).addClass("text-center");
+          $("td", r).eq(2).html('<input type="radio" name="idDocenteDisponibleClase" value="' + d.id + '" data-nombrecompleto="' + d.nombreCompleto + '"/>');
+          $("td", r).eq(2).addClass("text-center");
         },
         initComplete: function (s, j) {
           establecerBotonRecargaTabla("tab-lista-docentes-clase");

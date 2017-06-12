@@ -8,5 +8,6 @@ class TipoVariableConfiguracion {
   const Correo = "CORREO";
   const Texto = "TEXTO";
   const TextoArea = "TEXTO_AREA";
+  const TextoAreaEditor = "TEXTO_AREA_EDITOR";
 
 }

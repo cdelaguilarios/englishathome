@@ -5,6 +5,7 @@
 <script>
   var urlActualizarEstado = "{{ route('alumnos.actualizar.estado', ['id' => 0]) }}";
   var estados = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listar()) !!};
+  var estadosProfesor = {!! json_encode(App\Helpers\Enum\EstadosProfesor::listar()) !!};
   var urlActualizarHorario = "{{ route('alumnos.actualizar.horario', ['id' => $alumno->idEntidad]) }}";
   var urlPerfil = "{{ route('alumnos.perfil', ['id' => 0]) }}";</script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/alumno.js") }}"></script>
@@ -89,7 +90,8 @@
         <hr>    
         @endif                          
         <a href="{{ route("alumnos.editar", $alumno->id)}}" class="btn btn-primary btn-block"><b>Editar datos</b></a>
-        <a href="{{ route("alumnos.descargar.ficha", $alumno->id)}}" class="btn btn-primary btn-block"><b>Descargar ficha</b></a>
+        <!--<a href="{{ route("alumnos.descargar.ficha", $alumno->id)}}" class="btn btn-primary btn-block"><b>Descargar ficha</b></a>-->
+        <a href="{{ route("alumnos.ficha", $alumno->id)}}" target="_blank" class="btn btn-primary btn-block"><b>Descargar ficha</b></a>
       </div>
     </div>
   </div>

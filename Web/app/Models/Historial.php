@@ -92,7 +92,7 @@ class Historial extends Model {
 
       $historial = new Historial($datos);
       $historial->save();
-      Historial::registrarActualizarEntidadHistorial($historial["id"], $idEntidadesSel);
+      Historial::registrarActualizarEntidadHistorial($historial["id"], $idEntidadesSel, (isset($historial["enviarCorreo"]) && ((int) $historial["enviarCorreo"] == 1)));
     }
   }
 
@@ -105,7 +105,7 @@ class Historial extends Model {
       $historial = Historial::obtenerXId($id);
       $datos["adjuntos"] = Archivo::procesarArchivosSubidos($historial->adjuntos, $datos, 20, "nombresArchivosAdjuntos", "nombresOriginalesArchivosAdjuntos", "nombresArchivosAdjuntosEliminados");
       $historial->update($datos);
-      Historial::registrarActualizarEntidadHistorial($historial["id"], $idEntidadesSel);
+      Historial::registrarActualizarEntidadHistorial($historial["id"], $idEntidadesSel, (isset($historial["enviarCorreo"]) && ((int) $historial["enviarCorreo"] == 1)));
     }
   }
 
@@ -127,10 +127,14 @@ class Historial extends Model {
     if (!is_null($datos["tipoEntidad"])) {
       if ($datos["tipoEntidad"] == TiposEntidad::Interesado && !is_null($datos["cursoInteres"])) {
         $cursoInteres = ($datos["cursoInteres"] != "Otros" ? $datos["cursoInteres"] : "");
-        $entidades = Interesado::listar()->whereNotIn("entidad.id", $idsEntidadesExcluidas)
+        $preEntidades = Interesado::listar()->whereNotIn("entidad.id", $idsEntidadesExcluidas)
                         ->where(Interesado::nombreTabla() . ".cursoInteres", $cursoInteres)->get();
+        if (isset($datos["estado" . $datos["tipoEntidad"]]) && $datos["estado" . $datos["tipoEntidad"]] != "") {
+          $preEntidades->where("estado", $datos["estado" . $datos["tipoEntidad"]]);
+        }
+        $entidades = $preEntidades->get();
       } else {
-        $entidades = Entidad::listar($datos["tipoEntidad"], $idsEntidadesExcluidas);
+        $entidades = Entidad::listar($datos["tipoEntidad"], $datos["estado" . $datos["tipoEntidad"]], $idsEntidadesExcluidas);
       }
       foreach ($entidades as $entidad) {
         $historial = new Historial($datos + ["idEntidadDestinataria" => $entidad->id]);
@@ -228,7 +232,7 @@ class Historial extends Model {
     $historial->claseTextoColorIcono = (array_key_exists($historial->tipo, $tiposNotificacion) ? $tiposNotificacion[$historial->tipo][3] : TiposHistorial::ClaseTextoColorIconoDefecto);
   }
 
-  private static function registrarActualizarEntidadHistorial($idHistorial, $idEntidades) {
+  private static function registrarActualizarEntidadHistorial($idHistorial, $idEntidades, $incluirObservadores = FALSE) {
     EntidadHistorial::where("idHistorial", $idHistorial)->delete();
     foreach ($idEntidades as $idEntidad) {
       if (!is_null($idEntidad)) {
@@ -237,10 +241,12 @@ class Historial extends Model {
       }
     }
 
-    $entidadesUsuarios = Entidad::listar(TiposEntidad::Usuario);
-    foreach ($entidadesUsuarios as $entidadUsuario) {
-      $entidadHitorial = new EntidadHistorial([ "idEntidad" => $entidadUsuario->id, "idHistorial" => $idHistorial, "esObservador" => 1]);
-      $entidadHitorial->save();
+    if ($incluirObservadores) {
+      $entidadesUsuarios = Entidad::listar(TiposEntidad::Usuario);
+      foreach ($entidadesUsuarios as $entidadUsuario) {
+        $entidadHitorial = new EntidadHistorial([ "idEntidad" => $entidadUsuario->id, "idHistorial" => $idHistorial, "esObservador" => 1]);
+        $entidadHitorial->save();
+      }
     }
   }
 

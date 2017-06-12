@@ -106,6 +106,7 @@ class AlumnoController extends Controller {
   public function ficha($id) {
     try {
       $this->data["vistaImpresion"] = TRUE;
+      $this->data["impresionDirecta"] = TRUE;
       $this->data["alumno"] = Alumno::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
       Log::error($e);

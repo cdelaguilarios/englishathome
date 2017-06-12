@@ -22,12 +22,14 @@ class BusquedaRequest extends Request {
 
     $datos["tipoBusquedaFecha"] = ReglasValidacion::formatoDato($datos, "tipoBusquedaFecha");
     $datos["fechaDia"] = ReglasValidacion::formatoDato($datos, "fechaDia");
+    $datos["fechaMes"] = ReglasValidacion::formatoDato($datos, "fechaMes");
+    $datos["fechaAnho"] = ReglasValidacion::formatoDato($datos, "fechaAnho");
+    $datos["fechaDiaInicio"] = ReglasValidacion::formatoDato($datos, "fechaDiaInicio");
+    $datos["fechaDiaFin"] = ReglasValidacion::formatoDato($datos, "fechaDiaFin");
     $datos["fechaMesInicio"] = ReglasValidacion::formatoDato($datos, "fechaMesInicio");
     $datos["fechaMesFin"] = ReglasValidacion::formatoDato($datos, "fechaMesFin");
     $datos["fechaAnhoInicio"] = ReglasValidacion::formatoDato($datos, "fechaAnhoInicio");
     $datos["fechaAnhoFin"] = ReglasValidacion::formatoDato($datos, "fechaAnhoFin");
-    $datos["fechaInicio"] = ReglasValidacion::formatoDato($datos, "fechaInicio");
-    $datos["fechaFin"] = ReglasValidacion::formatoDato($datos, "fechaFin");
     $datos["ids"] = ReglasValidacion::formatoDato($datos, "ids", []);
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
@@ -53,15 +55,19 @@ class BusquedaRequest extends Request {
     }
     if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Dia && !preg_match(ReglasValidacion::RegexFecha, $datos["fechaDia"])) {
       $datos["fechaDia"] = NULL;
-    } else if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes) {
+    } else if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes && !preg_match(ReglasValidacion::RegexFecha, "01/" . $datos["fechaMes"])) {
+      $datos["fechaMes"] = NULL;
+    } else if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho && !preg_match(ReglasValidacion::RegexFecha, "01/01/" . $datos["fechaAnho"])) {
+      $datos["fechaAnho"] = NULL;
+    } else if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoDias) {
+      $datos["fechaDiaInicio"] = ((!is_null($datos["fechaDiaInicio"]) && preg_match(ReglasValidacion::RegexFecha, $datos["fechaDiaInicio"])) ? $datos["fechaDiaInicio"] : NULL);
+      $datos["fechaDiaFin"] = ((!is_null($datos["fechaDiaFin"]) && preg_match(ReglasValidacion::RegexFecha, $datos["fechaDiaFin"])) ? $datos["fechaDiaFin"] : NULL);
+    } else if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoMeses) {
       $datos["fechaMesInicio"] = ((!is_null($datos["fechaMesInicio"]) && preg_match(ReglasValidacion::RegexFecha, "01/" . $datos["fechaMesInicio"])) ? $datos["fechaMesInicio"] : NULL);
       $datos["fechaMesFin"] = ((!is_null($datos["fechaMesFin"]) && preg_match(ReglasValidacion::RegexFecha, "01/" . $datos["fechaMesFin"])) ? $datos["fechaMesFin"] : NULL);
-    } else if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho) {
+    } else if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoAnhos) {
       $datos["fechaAnhoInicio"] = ((!is_null($datos["fechaAnhoInicio"]) && preg_match(ReglasValidacion::RegexFecha, "01/01/" . $datos["fechaAnhoInicio"])) ? $datos["fechaAnhoInicio"] : NULL);
       $datos["fechaAnhoFin"] = ((!is_null($datos["fechaAnhoFin"]) && preg_match(ReglasValidacion::RegexFecha, "01/01/" . $datos["fechaAnhoFin"])) ? $datos["fechaAnhoFin"] : NULL);
-    } else if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoFecha) {
-      $datos["fechaInicio"] = ((!is_null($datos["fechaInicio"]) && preg_match(ReglasValidacion::RegexFecha, $datos["fechaInicio"])) ? $datos["fechaInicio"] : NULL);
-      $datos["fechaFin"] = ((!is_null($datos["fechaFin"]) && preg_match(ReglasValidacion::RegexFecha, $datos["fechaFin"])) ? $datos["fechaFin"] : NULL);
     }
 
     switch ($this->method()) {

@@ -197,10 +197,6 @@ function cargarFormulario() {
       }
     }
 
-    incluirSeccionSubidaArchivos("documentos-personales", {onSubmit: function () {
-        return true;
-      }, acceptFiles: "*", uploadStr: (formularioExternoPostulante ? "Upload file" : "Subir archivo"), maxFileCount: 3});
-
     $("#curso-interes").select2();
     $("#direccion").focusout(verificarDatosBusquedaMapa);
     $("input[name='codigoUbigeo']").change(verificarDatosBusquedaMapa);
@@ -244,11 +240,6 @@ function cargarFormulario() {
       }
     });
   }
-}
-
-function eliminarDocumentoPersonal(ele, nombreArchivo) {
-  $("#nombres-archivos-documentos-personales-eliminados").val(nombreArchivo + "," + $("#nombres-archivos-documentos-personales-eliminados").val());
-  $(ele).closest(".ajax-file-upload-container").remove();
 }
 
 

@@ -153,6 +153,14 @@
             </span>
             {{ Form::text("costoHoraClase", (isset($interesado->costoHoraClase) ? number_format($interesado->costoHoraClase, 2, ".", ",") : null), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
           </div>
+        </div>
+        <div class="col-sm-7">
+          <div class="checkbox">
+            <label class="checkbox-custom" data-initialize="checkbox">
+              {{ Form::label("cuentaBancoEmpresarial", "Cuenta de banco empresarial", ["class" => "checkbox-label"]) }}
+              {{ Form::checkbox("cuentaBancoEmpresarial", null, FALSE) }}
+            </label>
+          </div>
         </div> 
       </div> 
       <div class="form-group">     

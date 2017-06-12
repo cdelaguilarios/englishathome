@@ -44,6 +44,7 @@
               <thead>
                 <tr>
                   <th>Profesor/Postulante</th>
+                  <th>Estado</th>
                   <th class="all text-center">Elegir</th>
                 </tr>
               </thead>

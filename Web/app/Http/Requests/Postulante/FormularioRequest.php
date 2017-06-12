@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Postulante;
 
 use Auth;
+use App\Helpers\Util;
 use App\Models\Curso;
 use App\Models\Postulante;
 use App\Models\TipoDocumento;
@@ -34,9 +35,7 @@ class FormularioRequest extends Request {
     $datos["geoLatitud"] = ReglasValidacion::formatoDato($datos, "geoLatitud");
     $datos["geoLongitud"] = ReglasValidacion::formatoDato($datos, "geoLongitud");
 
-    $datos["nombresDocumentosPersonales"] = ReglasValidacion::formatoDato($datos, "nombresDocumentosPersonales");
-    $datos["nombresDocumentosPersonalesEliminados"] = ReglasValidacion::formatoDato($datos, "nombresDocumentosPersonalesEliminados");
-    $datos["nombresOriginalesDocumentosPersonales"] = ReglasValidacion::formatoDato($datos, "nombresOriginalesDocumentosPersonales");
+    Util::preProcesarDocumentosDocente($datos);
 
     $datos["idCursos"] = ReglasValidacion::formatoDato($datos, "idCursos");
     $datos["horario"] = ReglasValidacion::formatoDato($datos, "horario");

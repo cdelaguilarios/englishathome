@@ -9,7 +9,7 @@ class VariableSistema extends Model {
 
   public $timestamps = false;
   protected $table = "variableSistema";
-  protected $fillable = ["llave", "valor", "nombre", "tipo"];
+  protected $fillable = ["llave", "valor", "titulo", "recomendacionesAdicionales", "tipo"];
 
   public static function listar() {
     return VariableSistema::get();
