@@ -23,7 +23,7 @@
           <div class="col-sm-7">
             <a href="{{ route("interesados.crear")}}" class="btn btn-primary btn-clean">Nuevo interesado</a>
             <a href="{{ route("interesados.editar", ["id" => $interesado->idEntidad]) }}" type="button" class="btn btn-primary" ><i class="fa flaticon-questioning"></i> Ver datos del interesado</a>             
-            <button class="btn btn-primary" onclick="return copiarEnlaceFichaInscripcion('{{ route("alumnos.crear.externo", ["codigoVerificacion" => Crypt::encrypt($interesado->id)]) }}')">Copiar enlace ficha de inscripción</button>
+            <button class="btn btn-primary" onclick="return copiarEnlaceFichaInscripcion('{{ route("alumnos.crear.externo", ["codigoVerificacion" => Crypt::encrypt($interesado->id)]) }}')">Enlace ficha de inscripción</button>
           </div>         
           <div class="col-sm-2">
             @if(isset($interesado->idInteresadoSiguiente))

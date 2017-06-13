@@ -48,7 +48,8 @@ class FormularioRequest extends Request {
             }
             break;
           }
-        case TipoVariableConfiguracion::TextoArea: {
+        case TipoVariableConfiguracion::TextoArea:
+        case TipoVariableConfiguracion::TextoAreaEditor: {
             if ($datos[$variableSistema->llave] != NULL && $datos[$variableSistema->llave] != "") {
               $reglasValidacion[$variableSistema->llave] = "required|max:4000";
             }

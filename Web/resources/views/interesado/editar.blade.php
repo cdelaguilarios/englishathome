@@ -26,7 +26,7 @@
             <button id="btn-registrar-alumno"  type="button" class="btn btn-primary"><i class="fa fa-mortar-board"></i> Registrar como alumno</button>
             @endif
             <a href="{{ route("interesados.cotizar", ["id" => $interesado->idEntidad]) }}" type="button" class="btn btn-primary" ><i class="fa fa-dollar"></i> Enviar cotización</a>             
-            <button class="btn btn-primary" onclick="return copiarEnlaceFichaInscripcion('{{ route("alumnos.crear.externo", ["codigoVerificacion" => Crypt::encrypt($interesado->id)]) }}')">Copiar enlace ficha de inscripción</button>
+            <button class="btn btn-primary" onclick="return copiarEnlaceFichaInscripcion('{{ route("alumnos.crear.externo", ["codigoVerificacion" => Crypt::encrypt($interesado->id)]) }}')">Enlace ficha de inscripción</button>
           </div>    
           <div class="col-sm-2">
             @if(isset($interesado->idInteresadoSiguiente))

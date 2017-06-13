@@ -39,25 +39,25 @@
         </div>           
         <div class="form-group">
           {{ Form::label("tipo-entidad-correos", "Enviar a: ", ["class" => "col-sm-2 control-label"]) }}
-          <div class="col-sm-2">
+          <div class="col-sm-3">
             {{ Form::select("tipoEntidad", App\Helpers\Enum\TiposEntidad::listarSeccionCorreos(), null, ["id" => "tipo-entidad-correos", "class" => "form-control", "placeholder" => "Entidades seleccionadas"]) }}
           </div>
         </div>    
         <div id="sec-estados-entidades" class="form-group" style="display:none">
           {{ Form::label("estados-entidades", "Estados de las entidades: ", ["class" => "col-sm-2 control-label"]) }}
-          <div id="sec-estados-{{ App\Helpers\Enum\TiposEntidad::Alumno }}"  class="col-sm-2" style="display:none">
+          <div id="sec-estados-{{ App\Helpers\Enum\TiposEntidad::Alumno }}"  class="col-sm-3" style="display:none">
             {{ Form::select("estado" . App\Helpers\Enum\TiposEntidad::Alumno, App\Helpers\Enum\EstadosAlumno::listarBusqueda(), null, ["class" => "form-control", "placeholder" => "Todos"]) }}
           </div>    
-          <div id="sec-estados-{{ App\Helpers\Enum\TiposEntidad::Interesado }}"  class="col-sm-2" style="display:none">
+          <div id="sec-estados-{{ App\Helpers\Enum\TiposEntidad::Interesado }}"  class="col-sm-3" style="display:none">
             {{ Form::select("estado" . App\Helpers\Enum\TiposEntidad::Interesado, App\Helpers\Enum\EstadosInteresado::listarBusqueda(), null, ["class" => "form-control", "placeholder" => "Todos"]) }}
           </div> 
-          <div id="sec-estados-{{ App\Helpers\Enum\TiposEntidad::Profesor }}"  class="col-sm-2" style="display:none">
+          <div id="sec-estados-{{ App\Helpers\Enum\TiposEntidad::Profesor }}"  class="col-sm-3" style="display:none">
             {{ Form::select("estado" . App\Helpers\Enum\TiposEntidad::Profesor, App\Helpers\Enum\EstadosProfesor::listarBusqueda(), null, ["class" => "form-control", "placeholder" => "Todos"]) }}
           </div> 
-          <div id="sec-estados-{{ App\Helpers\Enum\TiposEntidad::Postulante }}"  class="col-sm-2" style="display:none">
+          <div id="sec-estados-{{ App\Helpers\Enum\TiposEntidad::Postulante }}"  class="col-sm-3" style="display:none">
             {{ Form::select("estado" . App\Helpers\Enum\TiposEntidad::Postulante, App\Helpers\Enum\EstadosPostulante::listarBusqueda(), null, ["class" => "form-control", "placeholder" => "Todos"]) }}
           </div> 
-          <div id="sec-estados-{{ App\Helpers\Enum\TiposEntidad::Usuario }}"  class="col-sm-2" style="display:none">
+          <div id="sec-estados-{{ App\Helpers\Enum\TiposEntidad::Usuario }}"  class="col-sm-3" style="display:none">
             {{ Form::select("estado" . App\Helpers\Enum\TiposEntidad::Usuario, App\Helpers\Enum\EstadosUsuario::listarBusqueda(), null, ["class" => "form-control", "placeholder" => "Todos"]) }}
           </div>       
         </div>       
@@ -69,7 +69,7 @@
         </div>          
         <div id="sec-interesados-cursos-interes-correos" class="form-group" style="display:none">
           {{ Form::label("interesados-cursos-interes-correos", "Curso interes: ", ["class" => "col-sm-2 control-label"]) }}
-          <div class="col-sm-2">
+          <div class="col-sm-3">
             {{ Form::select("cursoInteres", App\Models\Interesado::listarCursosInteres(), null, ["id" => "interesados-cursos-interes-correos", "class" => "form-control", "placeholder" => "Todos"]) }}
           </div>
         </div>      
