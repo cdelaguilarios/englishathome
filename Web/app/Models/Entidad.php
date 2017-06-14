@@ -38,7 +38,7 @@ class Entidad extends Model {
       $q->where("nombre", 'like', "%" . $texto . "%")
               ->orWhere("apellido", 'like', "%" . $texto . "%")
               ->orWhere("correoElectronico", 'like', "%" . $texto . "%");
-    })->groupBy("correoElectronico");
+    });
     $total = $entidades->count();
     return ["incomplete_results" => TRUE, "entidades" => $entidades->skip(($pagina - 1) * $entidadesXPorPagina)->take($entidadesXPorPagina)->get(), "total" => $total];
   }
