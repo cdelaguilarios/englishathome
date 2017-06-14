@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DB;
+use Config;
 use Carbon\Carbon;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\SexosEntidad;
@@ -35,7 +36,7 @@ class Docente extends Model {
         $fechaInicioCop = clone $fechaInicioOri;
         $fechaFinCop = clone $fechaFinOri;
 
-        $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicioOri->subHour(), $fechaFinOri->addHour(), TRUE);
+        $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicioOri->subMinutes((int) Config::get("eah.rangoMinutosBusquedaHorarioDocente")), $fechaFinOri->addMinutes((int) Config::get("eah.rangoMinutosBusquedaHorarioDocente")), TRUE);
         $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha(($fechaInicioCop->dayOfWeek != 0 ? $fechaInicioCop->dayOfWeek : 7), $fechaInicioCop->format("H:i:s"), $fechaFinCop->format("H:i:s"), $tipoDocente);
         $idsDisponiblesSel = ($auxCont == 1 ? array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray()) : array_intersect($idsDisponiblesSel, array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray())));
         $auxCont++;
@@ -67,7 +68,7 @@ class Docente extends Model {
 
         $auxFechaInicio = clone $fechaInicio;
         $auxFechaFin = clone $fechaFin;
-        $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicio->subHour(), $fechaFin->addHour(), TRUE);
+        $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicio->subMinutes((int) Config::get("eah.rangoMinutosBusquedaHorarioDocente")), $fechaFin->addMinutes((int) Config::get("eah.rangoMinutosBusquedaHorarioDocente")), TRUE);
         $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha(($auxFechaInicio->dayOfWeek != 0 ? $auxFechaInicio->dayOfWeek : 7), $auxFechaInicio->format("H:i:s"), $auxFechaFin->format("H:i:s"), $datos["tipoDocente"]);
         $idsDisponiblesSel = ($auxCont == 1 ? array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray()) : array_intersect($idsDisponiblesSel, array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray())));
         $auxCont++;
@@ -79,7 +80,7 @@ class Docente extends Model {
 
       $auxFechaInicio = clone $fechaInicio;
       $auxFechaFin = clone $fechaFin;
-      $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicio->subHour(), $fechaFin->addHour(), TRUE);
+      $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicio->subMinutes((int) Config::get("eah.rangoMinutosBusquedaHorarioDocente")), $fechaFin->addMinutes((int) Config::get("eah.rangoMinutosBusquedaHorarioDocente")), TRUE);
       $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha(($auxFechaInicio->dayOfWeek != 0 ? $auxFechaInicio->dayOfWeek : 7), $auxFechaInicio->format("H:i:s"), $auxFechaFin->format("H:i:s"), $datos["tipoDocente"]);
       $idsDisponiblesSel = array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray());
     }

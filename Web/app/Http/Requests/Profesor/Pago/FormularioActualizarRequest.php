@@ -47,7 +47,11 @@ class FormularioActualizarRequest extends Request {
     }
 
     if ($datos["motivo"] == MotivosPago::Clases) {
-      $reglasValidacion["nombresDocumentosVerificacion"] = "required|max:3950";
+      if (isset($datos["nombresDocumentosVerificacionEliminados"]) && $datos["nombresDocumentosVerificacionEliminados"] != "") {
+        $reglasValidacion["nombresDocumentosVerificacionEliminados"] = "required|max:3950";
+      } else {
+        $reglasValidacion["nombresDocumentosVerificacion"] = "required|max:3950";
+      }
     }
 
     switch ($this->method()) {

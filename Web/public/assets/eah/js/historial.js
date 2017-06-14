@@ -70,7 +70,7 @@ function cargarListaHistorial() {
                     }
                   });
                 }
-                if (datHistorial[i].adjuntos !== null) {
+                if (datHistorial[i].adjuntos !== null && datHistorial[i].adjuntos !== "") {
                   var adjuntos = datHistorial[i].adjuntos.split(",");
                   if (adjuntos.length > 0) {
                     htmlHistorial += "<br/><br/><b>Adjuntos</b><br/>";

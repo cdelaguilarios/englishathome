@@ -4,7 +4,14 @@
 @section("section_script")
 @if(isset($impresionDirecta) && $impresionDirecta)
 <script>
+  window.onafterprint = function (e) {
+    $(window).off('mousemove', window.onafterprint);
+    window.close();
+  };
   window.print();
+  setTimeout(function () {
+    $(window).one('mousemove', window.onafterprint);
+  }, 500);
 </script>
 @endif
 @endsection

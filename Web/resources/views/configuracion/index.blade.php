@@ -101,7 +101,7 @@
             @elseif($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::Texto)
               {{ Form::text($variableSistema->llave, Crypt::decrypt($variableSistema->valor), ["class" => "form-control", "maxlength" =>"255"]) }}
             @elseif($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::TextoArea || $variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::TextoAreaEditor)
-              {{ Form::textarea($variableSistema->llave, Crypt::decrypt($variableSistema->valor), ["class" => "form-control", "rows" => "2", "maxlength" =>"4000"]) }}
+              {{ Form::textarea($variableSistema->llave, Crypt::decrypt($variableSistema->valor), ["class" => "form-control", "rows" => "2", "maxlength" =>"8000"]) }}
             @endif
             @if(isset($variableSistema->recomendacionesAdicionales) && $variableSistema->recomendacionesAdicionales != "")
             <small><b>{{ $variableSistema->recomendacionesAdicionales }}</b></small>

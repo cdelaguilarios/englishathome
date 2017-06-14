@@ -35,7 +35,7 @@
           <div class="col-sm-3">
             {{ Form::select('tipoBusquedaFecha', App\Helpers\Enum\TiposBusquedaFecha::listar(), App\Helpers\Enum\TiposBusquedaFecha::Mes, ["id" => "bus-tipo-fecha", "class" => "form-control"]) }}
           </div>
-          <div id="sec-bus-fecha-{{ App\Helpers\Enum\TiposBusquedaFecha::Dia }}">
+          <div id="sec-bus-fecha-{{ App\Helpers\Enum\TiposBusquedaFecha::Dia }}" style="display: none">
             <div class="col-sm-3">            
               <div class="input-group date">
                 <div class="input-group-addon">
@@ -55,7 +55,7 @@
               </div>
             </div>
           </div>
-          <div id="sec-bus-fecha-{{ App\Helpers\Enum\TiposBusquedaFecha::Anho }}">
+          <div id="sec-bus-fecha-{{ App\Helpers\Enum\TiposBusquedaFecha::Anho }}" style="display: none">
             <div class="col-sm-3">            
               <div class="input-group date">
                 <div class="input-group-addon">

@@ -32,12 +32,12 @@ class HistorialController extends Controller {
   }
 
   public function registrar($idEntidad, FormularioRequest $req) {
+    try {
       $datos = $req->all();
       $datos["fechaNotificacion"] = (isset($datos["fechaNotificacion"]) ? Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNotificacion"] . " 00:00:00") : NULL);
       $datos["idEntidades"] = [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)];
       Historial::registrar($datos);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
-    try {
     } catch (\Exception $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");

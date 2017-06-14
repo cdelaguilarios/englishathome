@@ -29,7 +29,7 @@ class FormularioRequest extends Request {
     $datos = $this->all();
     $reglasValidacion = [
         "titulo" => "required|max:100",
-        "mensaje" => "max:4000",
+        "mensaje" => "max:8000",
         "fechaNotificacion" => "date_format:d/m/Y"
     ];
 

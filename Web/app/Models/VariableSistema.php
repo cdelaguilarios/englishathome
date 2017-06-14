@@ -18,7 +18,7 @@ class VariableSistema extends Model {
   public static function obtenerXId($id) {
     return VariableSistema::where("id", $id)->firstOrFail();
   }
-  
+
   public static function obtenerXLlave($llave) {
     $variable = VariableSistema::where("llave", $llave)->first();
     return (isset($variable) ? Crypt::decrypt($variable->valor) : "");
@@ -32,6 +32,10 @@ class VariableSistema extends Model {
         $variableSistema->update(["valor" => Crypt::encrypt($datos[$variableSistema->llave])]);
       }
     }
+    
+    Config::set("eah.correoNotificaciones", VariableSistema::obtenerXLlave("correo"));
+    Config::set("mail.username", VariableSistema::obtenerXLlave("correo"));
+    Config::set("mail.password", VariableSistema::obtenerXLlave("contrasenaCorreo"));
   }
 
 }

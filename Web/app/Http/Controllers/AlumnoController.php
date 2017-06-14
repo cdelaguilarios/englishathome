@@ -291,25 +291,25 @@ class AlumnoController extends Controller {
   public function registrarActualizarClase($id, ClaseRequest\FormularioRequest $req) {
     try {
       $datos = $req->all();
-      Clase::registrarActualizar($id, $datos);
+      $datosClase = Clase::registrarActualizar($id, $datos);
       Mensajes::agregarMensajeExitoso(isset($datos["idClase"]) ? "Actualización exitosa." : "Registro exitoso.");
     } catch (\Exception $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro/actualización de datos. Por favor inténtelo nuevamente.");
     }
-    return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "clase"]));
+    return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "clase", "nrp" => $datosClase["numeroPeriodo"]]));
   }
 
   public function actualizarClasesGrupo($id, ClaseRequest\FormularioGrupoRequest $req) {
     try {
       $datos = $req->all();
-      Clase::actualizarGrupo($id, $datos);
+      $nroPeriodo = Clase::actualizarGrupo($id, $datos);
       Mensajes::agregarMensajeExitoso("Actualización exitosa.");
     } catch (\Exception $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");
     }
-    return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "clase"]));
+    return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "clase", "nrp" => $nroPeriodo]));
   }
 
   public function cancelarClase($id, ClaseRequest\CancelarRequest $req) {

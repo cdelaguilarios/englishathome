@@ -36,14 +36,20 @@ function cargarNotificaciones() {
   }
 
   $("#btn-ver-nuevas-notificaciones").click(function () {
-    setTimeout(function () {
-      urlRevisarNuevasNotificaciones = (typeof (urlRevisarNuevasNotificaciones) === "undefined" ? "" : urlRevisarNuevasNotificaciones);
-      if (urlRevisarNuevasNotificaciones !== "" && idsNuevasNotificaciones.length > 0 && !revisionRealizada) {
-        llamadaAjax(urlRevisarNuevasNotificaciones, "POST", {idsNuevasNotificaciones: idsNuevasNotificaciones}, true, undefined, function () {
-          revisionRealizada = true;
-        });
-      }
-    }, 1500);
+    var totalNuevasNotificaciones = parseInt($("#sec-total-nuevas-notificaciones").text());
+    if (!isNaN(totalNuevasNotificaciones)) {
+      setTimeout(function () {
+        if ($(".notifications-menu.open").length > 0) {
+          urlRevisarNuevasNotificaciones = (typeof (urlRevisarNuevasNotificaciones) === "undefined" ? "" : urlRevisarNuevasNotificaciones);
+          if (urlRevisarNuevasNotificaciones !== "" && idsNuevasNotificaciones.length > 0 && !revisionRealizada) {
+            llamadaAjax(urlRevisarNuevasNotificaciones, "POST", {idsNuevasNotificaciones: idsNuevasNotificaciones}, true, undefined, function () {
+              revisionRealizada = true;
+              $("#sec-total-nuevas-notificaciones").remove();
+            });
+          }
+        }
+      }, totalNuevasNotificaciones * 500);
+    }
   });
 }
 

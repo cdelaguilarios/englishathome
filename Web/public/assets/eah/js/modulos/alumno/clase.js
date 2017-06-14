@@ -18,7 +18,8 @@ function  cargarSeccionClases() {
   mostrarSeccionClase();
 
   //Común   
-  if (obtenerParametroUrlXNombre("sec") === "clase") {
+  registroHistorial = (typeof (registroHistorial) === "undefined" ? false : registroHistorial);
+  if (obtenerParametroUrlXNombre("sec") === "clase" && !registroHistorial) {
     $("a[href='#clase']").tab("show");
   }
   $("#fecha-clase, #fecha-clase-reprogramada, #hora-inicio-clase, #hora-inicio-clase-reprogramada, #hora-inicio-clases, #duracion-clase, #duracion-clase-reprogramada, #duracion-clases").live("change", function () {
@@ -97,6 +98,8 @@ function cargarListaPeriodos() {
       },
       initComplete: function (s, j) {
         establecerBotonRecargaTabla("tab-lista-periodos-clases");
+        if (obtenerParametroUrlXNombre("nrp"))
+          $('a[data-periodo="' + obtenerParametroUrlXNombre("nrp") + '"]').trigger("click");
       }
     });
 
@@ -116,14 +119,15 @@ function cargarListaPeriodos() {
       var idClase = $(this).data("idclase");
       var idAlumno = $(this).data("idalumno");
       if (urlActualizarEstadoClase !== "" && $(this).data("estado") !== $(this).val()) {
-        llamadaAjax(urlActualizarEstadoClase, "POST", {"idClase": idClase, "idAlumno": idAlumno, "estado": $(this).val()}, true, undefined, undefined, function (de) {
+        llamadaAjax(urlActualizarEstadoClase, "POST", {"idClase": idClase, "idAlumno": idAlumno, "estado": $(this).val()}, true, undefined, function () {
+          recargarDatosTabla('tab-lista-pagos');
+        }, function (de) {
           var rj = de.responseJSON;
           if (rj !== undefined && rj.mensaje !== undefined) {
             agregarMensaje("errores", rj.mensaje, true);
           } else if (rj !== undefined && rj[Object.keys(rj)[0]] !== undefined) {
             agregarMensaje("errores", rj[Object.keys(rj)[0]][0], true);
           }
-          $("#tab-lista-pagos").DataTable().ajax.reload();
         });
       }
       $(this).closest(".sec-btn-editar-estado-clase").append('<a href="javascript:void(0);" class="btn-editar-estado-clase" data-idclase="' + idClase + '" data-idalumno="' + idAlumno + '" data-estado="' + $(this).val() + '"><span class="label ' + estadosClase[$(this).val()][1] + ' btn-estado">' + estadosClase[$(this).val()][0] + '</span></a>');
@@ -227,7 +231,7 @@ function htmlListaClases(d) {
             '</li>' :
             '') +
         "<li>" +
-        '<a href="javascript:void(0);" title="Eliminar clase" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de esta clase?\', null, true, function(){mostrarOcultarClases($(\'a[data-periodo=' + d[i].numeroPeriodo + ']\'), true);})" data-id="' + d[i].id + '" data-urleliminar="' + ((urlEliminarClase.replace('/0', '/' + d[i].id))) + '">' +
+        '<a href="javascript:void(0);" title="Eliminar clase" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de esta clase?\', null, true, function(){recargarDatosTabla(\'tab-lista-pagos\');mostrarOcultarClases($(\'a[data-periodo=' + d[i].numeroPeriodo + ']\'), true);})" data-id="' + d[i].id + '" data-urleliminar="' + ((urlEliminarClase.replace('/0', '/' + d[i].id))) + '">' +
         "<i class='fa fa-trash'></i>" +
         "</a>" +
         "</li>" +
@@ -569,6 +573,9 @@ function cargarFormularioClasesGrupo() {
   establecerCampoDuracion("duracion-clases");
   $("#editar-datos-generales-clases, #editar-datos-tiempo-clases, #editar-datos-pago-clases, #editar-datos-profesor-clases").live("click", function () {
     (($(this).is(':checked')) ? $("#" + $(this).data("seccion")).show() : $("#" + $(this).data("seccion")).hide());
+    if ($(this).data("idcbsecundario") && $(this).is(':checked') && !$("#" + $(this).data("idcbsecundario")).is(':checked')) {
+      $("#" + $(this).data("idcbsecundario")).trigger("click");
+    }
   });
 }
 function editarClasesGrupo(numeroPeriodo) {
@@ -580,7 +587,8 @@ function editarClasesGrupo(numeroPeriodo) {
     limpiarCamposClasesGrupo();
     $("#numero-periodo-clases").val(d.numeroPeriodo);
     $("#estado-clases").val(d.estado);
-    $("#hora-inicio-clases").val(tiempoSegundos(d.fechaInicio));
+    if (d.fechaInicio)
+      $("#hora-inicio-clases").val(tiempoSegundos(d.fechaInicio));
     $("#duracion-clases").val(d.duracion);
     $("#costo-hora-clases").val(redondear(d.costoHora, 2));
     $("#id-pago-clases").val(d.idPago);

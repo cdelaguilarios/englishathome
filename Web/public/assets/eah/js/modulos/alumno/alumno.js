@@ -194,11 +194,10 @@ function cargarFormulario() {
     }
 
     var fechaInicioClase = $("#fecha-inicio-clase").val();
-    establecerCalendario("fecha-inicio-clase", false, false, (fechaInicioClase === ""));
+    establecerCalendario("fecha-inicio-clase", false, false, false);
     if (fechaInicioClase !== "") {
       var datFechaInicioClase = fechaInicioClase.split("/");
       $("#fecha-inicio-clase").datepicker("setDate", (new Date(datFechaInicioClase[1] + "/" + datFechaInicioClase[0] + "/" + datFechaInicioClase[2])));
-
     }
 
     var numeroHorasClase = $("input[name='auxNumeroHorasClase']").val();

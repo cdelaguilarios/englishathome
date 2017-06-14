@@ -38,7 +38,8 @@ function cargarSeccionPagos() {
   });
 
   //Común   
-  if (obtenerParametroUrlXNombre("sec") === "pago") {
+  registroHistorial = (typeof (registroHistorial) === "undefined" ? false : registroHistorial);
+  if (obtenerParametroUrlXNombre("sec") === "pago" && !registroHistorial) {
     $("a[href='#pago']").trigger("click");
   }
   $("a[href='#pago']").click(function () {
@@ -97,6 +98,11 @@ function cargarListaPago() {
 
             var saldoFavorTotalPago = saldoFavor + (montoAFavor > 0 && costoHoraPromedio > 0 ? montoAFavor : 0);
             var saldoFavorUtilizado = (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1);
+            
+            if(duracionRealizada > duracionTotal){
+              duracionRealizada = duracionTotal;
+              montoRealizado = montoTotalClases;
+            }
 
             return '<b>S/. ' + redondear(montoTotal, 2) + '</b>' +
                 ('<div class="info-adicional">' + (duracionRealizada > 0 ? '<br/><span class="text-green" data-toggle="tooltip" title="Horas realizadas"><i class="fa fa-clock-o"></i> ' + formatoHora(duracionRealizada) + ' (S/. ' + redondear(montoRealizado, 2) + ')</span>' : '') +

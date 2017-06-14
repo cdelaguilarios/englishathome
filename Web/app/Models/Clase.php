@@ -414,10 +414,11 @@ class Clase extends Model {
           "tipo" => TiposHistorial::Correo
       ]);
     }
-    return $clase["id"];
+    return $clase;
   }
 
   public static function actualizarGrupo($idAlumno, $datos) {
+    $nroPeriodo = 1;
     $clases = Clase::listar()->whereIn(Clase::nombreTabla() . ".id", $datos["idsClases"])->orderBy(Clase::nombreTabla() . ".fechaInicio")->get();
     foreach ($clases as $clase) {
       $claseSel = Clase::obtenerXId($idAlumno, $clase->id);
@@ -449,11 +450,13 @@ class Clase extends Model {
         }
 
         $claseSel->update($datosActualizar);
+        $nroPeriodo = $claseSel->numeroPeriodo;
         if ($datos["editarDatosPago"] == 1 && isset($datos["idPago"])) {
           PagoClase::registrarActualizar($datos["idPago"], $clase->id, $idAlumno);
         }
       }
     }
+    return $nroPeriodo;
   }
 
   public static function actualizarEstado($idAlumno, $datos) {

@@ -33,7 +33,7 @@
       <div class="checkbox">
         <label class="checkbox-custom" data-initialize="checkbox">
           {{ Form::label("editar-datos-profesor-clases", "Editar datos de profesor", ["class" => "checkbox-label"]) }}
-          {{ Form::checkbox("editarDatosProfesor", null, FALSE, ["id" => "editar-datos-profesor-clases", "data-seccion" => "sec-clase-44"]) }} 
+          {{ Form::checkbox("editarDatosProfesor", null, FALSE, ["id" => "editar-datos-profesor-clases", "data-seccion" => "sec-clase-44", "data-idcbsecundario" => "editar-datos-tiempo-clases"]) }} 
         </label>
       </div>
     </div>

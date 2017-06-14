@@ -8,7 +8,8 @@ function  cargarSeccionClases() {
   mostrarSeccionClase();
 
   //Común   
-  if (obtenerParametroUrlXNombre("sec") === "clase") {
+  registroHistorial = (typeof (registroHistorial) === "undefined" ? false : registroHistorial);
+  if (obtenerParametroUrlXNombre("sec") === "clase" && !registroHistorial) {
     $("a[href='#clase']").trigger("click");
   }
   $("a[href='#clase']").click(function () {

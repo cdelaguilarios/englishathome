@@ -18,7 +18,8 @@ function cargarSeccionPagos() {
   });
 
   //Común   
-  if (obtenerParametroUrlXNombre("sec") === "pago") {
+  registroHistorial = (typeof (registroHistorial) === "undefined" ? false : registroHistorial);
+  if (obtenerParametroUrlXNombre("sec") === "pago" && !registroHistorial) {
     $("a[href='#pago']").trigger("click");
   }
   $("a[href='#pago']").click(function () {

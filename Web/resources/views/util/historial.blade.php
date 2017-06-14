@@ -37,7 +37,7 @@
     <div class="form-group">
       {{ Form::label("mensaje-evento-historial", "Mensaje: ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-10">
-        {{ Form::textarea("mensaje", null, ["id" => "fmensaje-evento-historial", "class" => "form-control", "rows" => "5", "maxlength" =>"4000"]) }}
+        {{ Form::textarea("mensaje", null, ["id" => "fmensaje-evento-historial", "class" => "form-control", "rows" => "5", "maxlength" =>"8000"]) }}
       </div>                                        
     </div> 
     <div class="form-group">

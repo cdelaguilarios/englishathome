@@ -7,5 +7,6 @@ return [
     "maxHorario" => "22",
     "correoNotificaciones" => "",
     "numeroNotificacionesXLlamada" => 15,
-    "maxTamanhoSubida" => 2097152
+    "maxTamanhoSubida" => 2097152,
+    "rangoMinutosBusquedaHorarioDocente" => 30
 ];

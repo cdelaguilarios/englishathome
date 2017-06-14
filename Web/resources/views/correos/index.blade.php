@@ -82,7 +82,7 @@
         <div class="form-group">
           {{ Form::label("correos-adicionales-correos", "Correos adicionales: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {{ Form::textarea("correosAdicionales", null, ["id" => "correos-adicionales-correos", "class" => "form-control", "rows" => "4", "maxlength" =>"4000"]) }}
+            {{ Form::textarea("correosAdicionales", null, ["id" => "correos-adicionales-correos", "class" => "form-control", "rows" => "4", "maxlength" =>"8000"]) }}
           </div>
         </div>        
         <div class="form-group">
