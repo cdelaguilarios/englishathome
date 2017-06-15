@@ -226,9 +226,9 @@ class AlumnoController extends Controller {
   }
 
   public function registrarPago($id, PagoRequest\FormularioRequest $req) {
+    try {
       PagoAlumno::registrar($id, $req);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
-    try {
     } catch (\Exception $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
@@ -315,13 +315,13 @@ class AlumnoController extends Controller {
   public function cancelarClase($id, ClaseRequest\CancelarRequest $req) {
     try {
       $datos = $req->all();
-      Clase::cancelar($id, $datos);
+      $nroPeriodo = Clase::cancelar($id, $datos);
       Mensajes::agregarMensajeExitoso("Cancelación exitosa.");
     } catch (\Exception $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("No se pudo cancelar la clase seleccionada.");
     }
-    return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "clase"]));
+    return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "clase", "nrp" => $nroPeriodo]));
   }
 
   public function datosClase($id, $idClase) {

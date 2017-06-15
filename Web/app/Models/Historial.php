@@ -172,6 +172,10 @@ class Historial extends Model {
     $historiales = $preHistoriales->get();
     Historial::whereIn("id", $preHistoriales->lists($nombreTabla . ".id")->toArray())->update(["envioCorreoProceso" => 1]);
 
+    Config::set("eah.correoNotificaciones", VariableSistema::obtenerXLlave("correo"));
+    Config::set("mail.username", VariableSistema::obtenerXLlave("correo"));
+    Config::set("mail.password", VariableSistema::obtenerXLlave("contrasenaCorreo"));
+    
     foreach ($historiales as $historial) {
       $historialEnv = Historial::obtenerXId($historial->id);
       try {

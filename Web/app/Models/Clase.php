@@ -483,9 +483,11 @@ class Clase extends Model {
         $datos["notificar"] = ((isset($claseCancelada["idHistorial"])) ? 1 : 0);
         $datos["idClaseCancelada"] = $claseCancelada["id"];
         $datos["estado"] = EstadosClase::Programada;
-        Clase::registrarActualizar($idAlumno, $datos);
+        $claseReprogramada = Clase::registrarActualizar($idAlumno, $datos);
+        return $claseReprogramada->numeroPeriodo;
       }
     }
+    return $claseCancelada->numeroPeriodo;
   }
 
   public static function verificarExistencia($idAlumno, $id) {

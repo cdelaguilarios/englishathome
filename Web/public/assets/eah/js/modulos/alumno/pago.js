@@ -98,8 +98,8 @@ function cargarListaPago() {
 
             var saldoFavorTotalPago = saldoFavor + (montoAFavor > 0 && costoHoraPromedio > 0 ? montoAFavor : 0);
             var saldoFavorUtilizado = (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1);
-            
-            if(duracionRealizada > duracionTotal){
+
+            if (duracionRealizada > duracionTotal) {
               duracionRealizada = duracionTotal;
               montoRealizado = montoTotalClases;
             }
@@ -489,9 +489,14 @@ function editarPago(idPago) {
       $("#estado-actualizar-pago").val(d.estado);
       $("#descripcion-actualizar-pago").val(d.descripcion);
       if (d.imagenesComprobante !== null && d.imagenesComprobante !== "") {
-        var rutaImagen = urlArchivos.replace("/0", "/" + d.imagenesComprobante);
-        $("#imagen-comprobante-actualizar-pago").attr("href", rutaImagen);
-        $("#imagen-comprobante-actualizar-pago").find("img").attr("src", rutaImagen);
+        var imagenes = d.imagenesComprobante.split(",");
+        if (imagenes.length > 0) {
+          if (imagenes[0] !== "") {
+            var rutaImagen = urlArchivos.replace("/0", "/" + imagenes[0]);
+            $("#imagen-comprobante-actualizar-pago").attr("href", rutaImagen);
+            $("#imagen-comprobante-actualizar-pago").find("img").attr("src", rutaImagen);
+          }
+        }
       }
       $("#monto-actualizar-pago").val(redondear(d.monto, 2));
       $("input[name='idPago']").val(d.id);
@@ -515,10 +520,14 @@ function verDatosPago(idPago) {
       $("#dat-estado-pago").html('<span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span>');
       $("#dat-fecha-pago").text(formatoFecha(d.fecha));
       $("#dat-fecha-registro-pago").text(formatoFecha(d.fechaRegistro, true));
-      if (d.imagenesComprobante !== null && d.imagenesComprobante !== "") {
-        var rutaImagen = urlArchivos.replace("/0", "/" + d.imagenesComprobante);
-        $("#dat-imagen-comprobante-pago").attr("href", rutaImagen);
-        $("#dat-imagen-comprobante-pago").find("img").attr("src", rutaImagen);
+      if (d.imagenesComprobante !== null && d.imagenesComprobante !== "") {var imagenes = d.imagenesComprobante.split(",");
+        if (imagenes.length > 0) {
+          if (imagenes[0] !== "") {
+            var rutaImagen = urlArchivos.replace("/0", "/" + imagenes[0]);
+            $("#dat-imagen-comprobante-pago").attr("href", rutaImagen);
+            $("#dat-imagen-comprobante-pago").find("img").attr("src", rutaImagen);
+          }
+        }
       }
       $("#mod-datos-pago").modal("show");
       $("body").unblock();

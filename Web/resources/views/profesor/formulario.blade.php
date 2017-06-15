@@ -16,7 +16,7 @@
             <span class="chevron"></span>
           </li>
           <li data-step="4">
-            <span class="badge">4</span>Datos de cursos asignados
+            <span class="badge">4</span>Datos adicionales
             <span class="chevron"></span>
           </li>
         </ul>
@@ -37,7 +37,7 @@
           </div>  
           <div class="form-group">
             {{ Form::label("telefono", "Teléfono: ", ["class" => "col-sm-2 control-label"]) }}
-            <div class="col-sm-10">
+            <div class="col-sm-3">
               {{ Form::text("telefono", null, ["class" => "form-control", "maxlength" =>"30"]) }}
             </div>
           </div>                 
@@ -117,7 +117,7 @@
             {{ Form::hidden("geoLongitud", null) }} 
           </div>
         </div>               
-        <div id="sec-wiz-postulante-3" class="step-pane sample-pane alert" data-step="3">  
+        <div id="sec-wiz-profesor-3" class="step-pane sample-pane alert" data-step="3">  
           <div class="form-group">
             {{ Form::label("ultimosTrabajos", "Últimos dos trabajos como profesor: ", ["class" => "col-sm-2 control-label"]) }}            
             <div class="col-sm-10">
@@ -165,7 +165,7 @@
             </div>                                        
           </div>
           <div class="form-group">
-            <h4>Audio:</h4>
+            <h4>Audio de presentación:</h4>
           </div>
           <div class="form-group">
             <div class="col-sm-offset-1 col-sm-10">

@@ -129,7 +129,7 @@ function cargarFormulario() {
       },
       audio: {
         validarAudio: true,
-        archivoTamanho: 2097152,
+        archivoTamanho: 2097152
       }
     },
     messages: {
@@ -187,7 +187,7 @@ function cargarFormulario() {
     $("#direccion").focusout(verificarDatosBusquedaMapa);
     $("input[name='codigoUbigeo']").change(verificarDatosBusquedaMapa);
 
-    if ($("input[name='cursos']").val() !== "") {
+    if ($("input[name='cursos']").val() !== undefined && $("input[name='cursos']").val() !== "") {
       var selCursosVal = [];
       $.each(JSON.parse($("input[name='cursos']").val()), function (i, v) {
         if (v.idCurso !== undefined) {

@@ -32,10 +32,6 @@ class VariableSistema extends Model {
         $variableSistema->update(["valor" => Crypt::encrypt($datos[$variableSistema->llave])]);
       }
     }
-    
-    Config::set("eah.correoNotificaciones", VariableSistema::obtenerXLlave("correo"));
-    Config::set("mail.username", VariableSistema::obtenerXLlave("correo"));
-    Config::set("mail.password", VariableSistema::obtenerXLlave("contrasenaCorreo"));
   }
 
 }

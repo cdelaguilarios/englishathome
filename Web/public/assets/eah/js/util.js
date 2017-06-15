@@ -399,7 +399,7 @@ function establecerWizard(tipoEntidad, modoEditar) {
   $("#wiz-registro-" + tipoEntidad).on("actionclicked.fu.wizard", function (e, d) {
     var campos = $("#formulario-" + tipoEntidad).find("#sec-wiz-" + tipoEntidad + "-" + d.step).find(":input, select");
     $("#formulario-" + tipoEntidad).find("#btn-guardar-secundario").show();
-    if (d.direction === "next" && !campos.valid()) {
+    if (d.direction === "next" && campos.length > 0 && !campos.valid()) {
       e.preventDefault();
     } else if (d.direction === "next" && $("#formulario-" + tipoEntidad).find(".step-pane:last").attr("id").replace("sec-wiz-" + tipoEntidad + "-", "") === ((parseInt(d.step) + 1) + "")) {
       $("#formulario-" + tipoEntidad).find("#btn-guardar-secundario").hide();

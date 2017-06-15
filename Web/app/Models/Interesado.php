@@ -101,6 +101,9 @@ class Interesado extends Model {
     $nombresOriginalesArchivosAdjuntos = $datos["nombresOriginalesArchivosAdjuntos"];
     $esPrueba = (isset($datos["correoCotizacionPrueba"]));
 
+    Config::set("eah.correoNotificaciones", VariableSistema::obtenerXLlave("correo"));
+    Config::set("mail.username", VariableSistema::obtenerXLlave("correo"));
+    Config::set("mail.password", VariableSistema::obtenerXLlave("contrasenaCorreo"));
     Mail::send("interesado.plantillaCorreo.cotizacion" . ($datos["cuentaBancoEmpresarial"] ? "Empresarial" : ""), $datos, function ($m) use ($correo, $nombreDestinatario, $nombresArchivosAdjuntos, $nombresOriginalesArchivosAdjuntos) {
       $m->to($correo, $nombreDestinatario)->bcc("cdelaguilarios@gmail.com")->subject("English at home - Cotización");
       if (!is_null($nombresArchivosAdjuntos) && !is_null($nombresOriginalesArchivosAdjuntos)) {

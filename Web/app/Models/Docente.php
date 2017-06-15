@@ -51,8 +51,8 @@ class Docente extends Model {
   }
 
   public static function listarDisponiblesXDatosClase($datos) {
+    $idsDisponiblesSel = [];
     if (count($datos["idsClases"]) > 0) {
-      $idsDisponiblesSel = [];
       $auxCont = 1;
       $clases = Clase::listar()->whereIn(Clase::nombreTabla() . ".id", $datos["idsClases"])->orderBy(Clase::nombreTabla() . ".fechaInicio")->get();
       foreach ($clases as $clase) {
@@ -82,7 +82,15 @@ class Docente extends Model {
       $auxFechaFin = clone $fechaFin;
       $idsNoDisponibles = Clase::listarIdsEntidadesXRangoFecha($fechaInicio->subMinutes((int) Config::get("eah.rangoMinutosBusquedaHorarioDocente")), $fechaFin->addMinutes((int) Config::get("eah.rangoMinutosBusquedaHorarioDocente")), TRUE);
       $idsDisponibles = Horario::listarIdsEntidadesXRangoFecha(($auxFechaInicio->dayOfWeek != 0 ? $auxFechaInicio->dayOfWeek : 7), $auxFechaInicio->format("H:i:s"), $auxFechaFin->format("H:i:s"), $datos["tipoDocente"]);
+
       $idsDisponiblesSel = array_diff($idsDisponibles->toArray(), $idsNoDisponibles->toArray());
+
+      if (isset($datos["idClase"])) {
+        $clase = Clase::where("id", $datos["idClase"])->where("eliminado", 0)->first();
+        if (isset($clase) && isset($clase->idProfesor) && in_array($clase->idProfesor, $idsDisponibles->toArray())) {
+          array_push($idsDisponiblesSel, $clase->idProfesor);
+        }
+      }
     }
     return Docente::listarXFiltrosBusqueda($datos)->whereIn("entidad.id", $idsDisponiblesSel);
   }
