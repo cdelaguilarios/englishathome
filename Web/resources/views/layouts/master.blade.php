@@ -9,7 +9,6 @@
     <link rel="icon" type="image/ico" href="{{ asset("assets/eah/img/favicon.ico") }}" />
     <link rel="stylesheet" href="{{ asset("assets/bootstrap/css/bootstrap.min.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/fuelux/3.13.0/css/fuelux.min.css") }}" />
-    @if (!(isset($vistaImpresion) && $vistaImpresion)) 
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css" />  
     <link rel="stylesheet" href="{{ asset("assets/eah/css/iconos-educacion/flaticon.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/datatables/dataTables.bootstrap.css") }}" />    
@@ -22,9 +21,6 @@
     <link rel="stylesheet" href="{{ asset("assets/plugins/datepicker/datepicker3.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/jQueryUploadFileMaster/css/uploadfile.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/datetimepicker/bootstrap-datetimepicker.min.css") }}" />
-    @else
-    <link rel="stylesheet" href="{{ asset("assets/dist/css/AdminLTE.min.css") }}" />
-    @endif
     <link rel="stylesheet" href="{{ asset("assets/eah/css/mystyles.css") }}" />
     @yield("section_style")   
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -220,6 +216,7 @@
     @endif      
     <script src="{{ asset("assets/plugins/jquery/jquery.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/jquery/jquery-ui.min.js") }}"></script>
+    <script src="{{ asset("assets/plugins/jquery_validate/jquery.validate.min.js") }}"></script>
     @if (!(isset($vistaImpresion) && $vistaImpresion)) 
     <script src="{{ asset("assets/plugins/jquery/jquery-migrate.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/jquery/globalize.js") }}"></script>
@@ -236,7 +233,6 @@
     <script src="{{ asset("assets/plugins/datatables/dataTables.bootstrap.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/datatables/extensions/Responsive/js/dataTables.responsive.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/blockui/jquery.blockUI.js") }}"></script>
-    <script src="{{ asset("assets/plugins/jquery_validate/jquery.validate.min.js") }}"></script>
     @if(!(isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()))
     <script src="{{ asset("assets/plugins/jquery_validate/jquery.validate.messages_es.js") }}"></script> 
     @endif

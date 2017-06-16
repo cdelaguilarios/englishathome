@@ -26,12 +26,12 @@ class RelacionEntidad extends Model {
     $relacionEntidad->save();
   }
 
-  public static function obtenerXIdEntidadA($idInteresado) {
-    return RelacionEntidad::where("idEntidadA", $idInteresado)->get();
+  public static function obtenerXIdEntidadA($id) {
+    return RelacionEntidad::where("idEntidadA", $id)->get();
   }
   
-  public static function obtenerXIdEntidadB($idInteresado) {
-    return RelacionEntidad::where("idEntidadB", $idInteresado)->get();
+  public static function obtenerXIdEntidadB($id) {
+    return RelacionEntidad::where("idEntidadB", $id)->get();
   }
 
 }

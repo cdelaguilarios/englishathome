@@ -39,7 +39,7 @@ class FormularioRequest extends Request {
         "correoElectronico" => (Auth::guest() ? "" : "required|email|") . "max:245",
         "consulta" => "max:255",
         "cursoInteres" => "max:255",
-        "comentarioAdicional" => "max:255"
+        "comentarioAdicional" => "max:8000"
     ];
 
     $listaCursos = Curso::listarSimple();

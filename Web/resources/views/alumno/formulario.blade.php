@@ -233,7 +233,7 @@
           </div>
           <div class="form-group">
             <div class="col-sm-offset-1 col-sm-10">
-              {{ Form::textarea("comentarioAdicional", null, ["class" => "form-control", "rows" => "2", "maxlength" =>"255"]) }}
+              {{ Form::textarea("comentarioAdicional", null, ["class" => "form-control", "rows" => "6", "maxlength" =>"8000"]) }}
             </div>                                        
           </div>
         </div>

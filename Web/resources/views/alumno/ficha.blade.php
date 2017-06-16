@@ -24,69 +24,71 @@
   .titulo{
     text-align: center;
   }
-  table{
-    width: 100%;
-    margin-top: 50px;
-  }
-  td {
-    padding: 6px 0;
-    vertical-align: top;
-  }
   .profile-user-img{
     padding: 0;
     border: 0;
-  }
-  .fa-calendar-check-o{
-    display: none;
-  }
-  #sec-info-horario ul {
-    margin-left: -40px
+    float: right;
   }
   .login-logo, .register-logo{
     font-size: 30px;
+  }
+  hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 0;
+    border-top: 1px solid #fff;
   }
 </style>
 @endsection
 
 @section("content")
-<table>
-  <tbody>    
-    <tr>
-      <td style="width: 28%"><strong><i class="fa fa-envelope"></i> Correo electrónico:</strong></td>
-      <td style="width: 57%">{{ $alumno->correoElectronico }}</td>  
-      <td colspan="2" rowspan="4">
-        <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($alumno->imagenPerfil) && $alumno->imagenPerfil != "" ? $alumno->imagenPerfil : "-"), "tip" => ($alumno->sexo == "F" ? "f" : "m")]) }}" alt="Alumn{{ $alumno->sexo == "F" ? "a" : "o" }} {{ $alumno->nombre . " " .  $alumno->apellido }}">
-      </td>
-    </tr>
-    <tr>
-      <td><strong><i class="fa fa-fw fa-calendar"></i> Horario:</strong></td>
-      <td>@include("util.horario", ["horario" => $alumno->horario, "modo" => "visualizar"])</td>
-    </tr> 
-    <tr>
-      <td><strong><i class="fa fa-fw flaticon-favorite-book"></i> Curso:</strong></td>
-      <td>{{ $cursos[$alumno->idCurso] }}</td> 
-    </tr>
-    <tr>
-      <td><strong><i class="fa fa-map-marker margin-r-5"></i> Dirección:</strong></td>
-      <td>{{ $alumno->direccion }}{!! ((isset($alumno->numeroDepartamento) && $alumno->numeroDepartamento != "") ? "<br/>Depto./Int " . $alumno->numeroDepartamento : "") !!}{!! ((isset($alumno->referenciaDireccion) && $alumno->referenciaDireccion != "") ? " - " . $alumno->referenciaDireccion : "") !!}<br/>{{ $alumno->direccionUbicacion }}</td>
-    </tr>
-    @if(isset($alumno->telefono) && trim($alumno->telefono) != "")
-    <tr>
-      <td><strong><i class="fa fa-phone margin-r-5"></i> Teléfono:</strong></td>
-      <td>{{ $alumno->telefono }}</td>
-    </tr>
-    @endif
-    <tr>
-      <td><strong><i class="fa fa-phone margin-r-5"></i> Nivel de ingles:</strong></td>
-      <td>{{ App\Models\NivelIngles::listarSimple()[$alumno->idNivelIngles] }}</td>
-    </tr>
-    @if(isset($alumno->comentarioAdicional) && trim($alumno->comentarioAdicional) != "")
-    <tr>
-      <td><strong><i class="fa fa-phone margin-r-5"></i> Comentarios adicionales:</strong></td>
-      <td>{{ $alumno->comentarioAdicional }}</td>
-    </tr> 
-    @endif  
-  </tbody>
-</table>
+<div class="row">
+  <div class="col-sm-offset-1 col-sm-10">
+    <div class="sec-datos">
+      <div class="box-body">
+        <strong><i class="fa fa-fw fa-envelope"></i> Correo electrónico</strong>
+        <p class="text-muted">
+          {{ $alumno->correoElectronico }}
+          @include("util.imagenPerfil", ["entidad" => $alumno])
+        </p>
+        <hr> 
+        <strong><i class="fa fa-fw fa-calendar"></i> Horario</strong>
+        <p class="text-muted">
+          @include("util.horario", ["horario" => $alumno->horario, "modo" => "visualizar"])
+        </p>
+        <hr>   
+        @if(isset($alumno->idCurso))
+        <strong><i class="fa fa-fw flaticon-favorite-book"></i> Curso</strong>
+        <p class="text-muted">{{ $cursos[$alumno->idCurso] }}</p>
+        <hr> 
+        @endif
+        <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
+        <p class="text-muted">{{ $alumno->direccion }}{!! ((isset($alumno->numeroDepartamento) && $alumno->numeroDepartamento != "") ? "<br/>Depto./Int " . $alumno->numeroDepartamento : "") !!}{!! ((isset($alumno->referenciaDireccion) && $alumno->referenciaDireccion != "") ? " - " . $alumno->referenciaDireccion : "") !!}<br/>{{ $alumno->direccionUbicacion }}</p>
+        <hr>   
+        @if(isset($alumno->telefono))
+        <strong><i class="fa fa-phone margin-r-5"></i> Teléfono</strong>
+        <p class="text-muted">
+          {{ $alumno->telefono }}
+        </p>
+        <hr>
+        @endif 
+        @if(isset($alumno->idNivelIngles) && $alumno->idNivelIngles !== "")
+        <strong><i class="fa fa-fw fa-list-ol"></i> Nivel de ingles</strong>
+        <p class="text-muted">
+          {{ App\Models\NivelIngles::listarSimple()[$alumno->idNivelIngles] }}
+        </p>
+        <hr> 
+        @endif
+        @if(isset($alumno->comentarioAdicional) && trim($alumno->comentarioAdicional) != "")
+        <strong><i class="fa fa-fw fa-file-text"></i> Comentarios adicionales</strong>
+        <p class="text-muted">
+          {{ $alumno->comentarioAdicional }}
+        </p>
+        <hr>  
+        @endif
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
 

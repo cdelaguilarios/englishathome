@@ -79,7 +79,7 @@ class FormularioRequest extends Request {
         "numeroHorasClase" => "required|numeric|between:" . ((int) Config::get("eah.minHorasClase") * 3600) . "," . ((int) Config::get("eah.maxHorasClase") * 3600),
         "fechaInicioClase" => "required|date_format:d/m/Y",
         "costoHoraClase" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
-        "comentarioAdicional" => "max:255"
+        "comentarioAdicional" => "max:8000"
     ];
 
     $listaSexos = SexosEntidad::listar();

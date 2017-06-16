@@ -24,70 +24,59 @@
   .titulo{
     text-align: center;
   }
-  table{
-    width: 100%;
-    margin-top: 50px;
-  }
-  td {
-    padding: 6px 0;
-    vertical-align: top;
-  }
   .profile-user-img{
     padding: 0;
     border: 0;
-  }
-  .fa-calendar-check-o{
-    display: none;
-  }
-  #sec-info-horario ul {
-    margin-left: -40px
-  }
-  ul{
-    margin-left: -25px;
+    float: right;
   }
   .login-logo, .register-logo{
     font-size: 30px;
+  }
+  hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 0;
+    border-top: 1px solid #fff;
   }
 </style>
 @endsection
 
 @section("content")
-<table>
-  <tbody>    
-    <tr>
-      <td style="width: 28%"><strong><i class="fa fa-envelope"></i> Correo electrónico:</strong></td>
-      <td style="width: 57%">{{ $profesor->correoElectronico }}</td>  
-      <td colspan="2" rowspan="4">
-        <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($profesor->imagenPerfil) && $profesor->imagenPerfil != "" ? $profesor->imagenPerfil : "-"), "tip" => ($profesor->sexo == "F" ? "f" : "m")]) }}" alt="Profesor{{ $profesor->sexo == "F" ? "a" : "" }} {{ $profesor->nombre . " " .  $profesor->apellido }}">
-      </td>
-    </tr>
-    <tr>
-      <td><strong><i class="fa fa-fw fa-calendar"></i> Horario:</strong></td>
-      <td>@include("util.horario", ["horario" => $profesor->horario, "modo" => "visualizar"])</td>
-    </tr> 
-    @if(isset($profesor->cursos) && count($profesor->cursos) > 0) 
-    <tr>
-      <td><strong><i class="fa fa-fw flaticon-favorite-book"></i> Cursos:</strong></td>
-      <td>
-        <ul>
-          @foreach($profesor->cursos as $curso)
-          <li>{{ $cursos[$curso->idCurso] }}</li>
-          @endforeach
-        </ul>
-      </td> 
-    </tr>
-    @endif
-    <tr>
-      <td><strong><i class="fa fa-map-marker margin-r-5"></i> Dirección:</strong></td>
-      <td>{{ $profesor->direccion }}{!! ((isset($profesor->numeroDepartamento) && $profesor->numeroDepartamento != "") ? "<br/>Depto./Int " . $profesor->numeroDepartamento : "") !!}{!! ((isset($profesor->referenciaDireccion) && $profesor->referenciaDireccion != "") ? " - " . $profesor->referenciaDireccion : "") !!}<br/>{{ $profesor->direccionUbicacion }}</td>
-    </tr>
-    @if(isset($profesor->telefono) && trim($profesor->telefono) != "")
-    <tr>
-      <td><strong><i class="fa fa-phone margin-r-5"></i> Teléfono:</strong></td>
-      <td>{{ $profesor->telefono }}</td>
-    </tr>
-    @endif
-  </tbody>
-</table>
+<div class="row">
+  <div class="col-sm-offset-1 col-sm-10">
+    <div class="sec-datos">
+      <div class="box-body">
+        <strong><i class="fa fa-fw fa-envelope"></i> Correo electrónico</strong>
+        <p class="text-muted">
+          {{ $profesor->correoElectronico }}
+          @include("util.imagenPerfil", ["entidad" => $profesor])
+        </p>
+        <hr> 
+        <strong><i class="fa fa-fw fa-calendar"></i> Horario</strong>
+        <p class="text-muted">
+          @include("util.horario", ["horario" => $profesor->horario, "modo" => "visualizar"])
+        </p>
+        <hr>   
+        @if(isset($profesor->cursos) && count($profesor->cursos) > 0)
+        <strong><i class="fa fa-fw flaticon-favorite-book"></i> Cursos</strong>
+        @foreach($profesor->cursos as $curso)
+        <p class="text-muted">- {{ $cursos[$curso->idCurso] }}</p>
+        @endforeach
+        <hr> 
+        @endif
+        <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
+        <p class="text-muted">{{ $profesor->direccion }}{!! ((isset($profesor->numeroDepartamento) && $profesor->numeroDepartamento != "") ? "<br/>Depto./Int " . $profesor->numeroDepartamento : "") !!}{!! ((isset($profesor->referenciaDireccion) && $profesor->referenciaDireccion != "") ? " - " . $profesor->referenciaDireccion : "") !!}<br/>{{ $profesor->direccionUbicacion }}</p>
+        <hr>   
+        @if(isset($profesor->telefono))
+        <strong><i class="fa fa-phone margin-r-5"></i> Teléfono</strong>
+        <p class="text-muted">
+          {{ $profesor->telefono }}
+        </p>
+        <hr>
+        @endif         
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
 

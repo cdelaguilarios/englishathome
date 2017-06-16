@@ -48,9 +48,16 @@ class Historial extends Model {
 
   public static function obtenerPerfil($numeroCarga, $idEntidad, $entidadObservadora = FALSE, $nuevasNotificaciones = FALSE, $seccionWidget = FALSE, $idNotificacion = NULL) {
     $nombreTabla = Historial::nombreTabla();
-    $historiales = Historial::listarBase()
-            ->where($nombreTabla . ".mostrarEnPerfil", 1)
-            ->where("entidadHistorial.idEntidad", $idEntidad);
+    $historiales = Historial::listarBase()->where($nombreTabla . ".mostrarEnPerfil", 1);
+
+    $datosEntidadRel = RelacionEntidad::obtenerXIdEntidadA($idEntidad);
+    if (count($datosEntidadRel) > 0) {
+      $historiales->where(function($q) use ($idEntidad, $datosEntidadRel) {
+        $q->where("entidadHistorial.idEntidad", $idEntidad)->orWhere("entidadHistorial.idEntidad", $datosEntidadRel[0]->idEntidadB);
+      });
+    } else {
+      $historiales->where("entidadHistorial.idEntidad", $idEntidad);
+    }
 
     if ($entidadObservadora) {
       $historiales->where("entidadHistorial.esObservador", 1);
@@ -175,7 +182,7 @@ class Historial extends Model {
     Config::set("eah.correoNotificaciones", VariableSistema::obtenerXLlave("correo"));
     Config::set("mail.username", VariableSistema::obtenerXLlave("correo"));
     Config::set("mail.password", VariableSistema::obtenerXLlave("contrasenaCorreo"));
-    
+
     foreach ($historiales as $historial) {
       $historialEnv = Historial::obtenerXId($historial->id);
       try {
@@ -201,12 +208,23 @@ class Historial extends Model {
 
   private static function formatearDatosHistorialPerfil($historiales, $seccionWidget = FALSE) {
     $historialesFormateados = [];
-
     foreach ($historiales as $historial) {
       $fechaNotificacion = date("Y-m-d 00:00:00", strtotime($historial->fechaNotificacion));
       Historial::formatearDatosHistorialBase($historial, $seccionWidget);
-      $historialesFormateados[$fechaNotificacion] = ((array_key_exists($fechaNotificacion, $historialesFormateados)) ? $historialesFormateados[$fechaNotificacion] : []);
-      array_push($historialesFormateados[$fechaNotificacion], $historial);
+
+      $eventoRepetido = false;
+      if (isset($historialesFormateados[$fechaNotificacion])) {
+        foreach ($historialesFormateados[$fechaNotificacion] as $historialFor) {
+          if (strip_tags($historialFor->titulo) == strip_tags($historial->titulo) && strip_tags($historialFor->mensaje) == strip_tags($historial->mensaje)) {
+            $eventoRepetido = true;
+            break;
+          }
+        }
+      }
+      if (!$eventoRepetido) {
+        $historialesFormateados[$fechaNotificacion] = ((array_key_exists($fechaNotificacion, $historialesFormateados)) ? $historialesFormateados[$fechaNotificacion] : []);
+        array_push($historialesFormateados[$fechaNotificacion], $historial);
+      }
     }
     return $historialesFormateados;
   }

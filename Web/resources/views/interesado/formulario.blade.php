@@ -77,7 +77,7 @@
         <div class="form-group">
           {{ Form::label("comentarioAdicional", "Comentarios adicionales: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {{ Form::textarea("comentarioAdicional", null, ["class" => "form-control", "rows" => "2", "maxlength" =>"255"]) }}
+            {{ Form::textarea("comentarioAdicional", null, ["class" => "form-control", "rows" => "6", "maxlength" =>"8000"]) }}
           </div>                                        
         </div>
         {{ Form::hidden("registrarComoAlumno", null) }}
