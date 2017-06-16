@@ -104,8 +104,11 @@ class Interesado extends Model {
     Config::set("eah.correoNotificaciones", VariableSistema::obtenerXLlave("correo"));
     Config::set("mail.username", VariableSistema::obtenerXLlave("correo"));
     Config::set("mail.password", VariableSistema::obtenerXLlave("contrasenaCorreo"));
-    Mail::send("interesado.plantillaCorreo.cotizacion" . ($datos["cuentaBancoEmpresarial"] ? "Empresarial" : ""), $datos, function ($m) use ($correo, $nombreDestinatario, $nombresArchivosAdjuntos, $nombresOriginalesArchivosAdjuntos) {
-      $m->to($correo, $nombreDestinatario)->bcc("cdelaguilarios@gmail.com")->subject("English at home - Cotización");
+    Mail::send("interesado.plantillaCorreo.cotizacion" . ($datos["cuentaBancoEmpresarial"] ? "Empresarial" : ""), $datos, function ($m) use ($correo, $nombreDestinatario, $nombresArchivosAdjuntos, $nombresOriginalesArchivosAdjuntos, $esPrueba) {
+      $m->to($correo, $nombreDestinatario)->subject("English at home - Cotización");
+      if (!$esPrueba) {
+        $m->bcc("cdelaguilarios@gmail.com");
+      }
       if (!is_null($nombresArchivosAdjuntos) && !is_null($nombresOriginalesArchivosAdjuntos)) {
         $rutaBaseAlmacenamiento = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix();
         $nombresArchivosAdjuntosSel = explode(",", $nombresArchivosAdjuntos);

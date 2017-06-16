@@ -195,7 +195,7 @@ class Historial extends Model {
         $nombreCompletoDestinatario = (!is_null($entidadDestinataria) ? $entidadDestinataria->nombre . " " . $entidadDestinataria->apellido : (isset($historial->correoDestinatario) ? "" : "Usuario administrador"));
 
         Mail::send("notificacion.plantillaCorreo", ["nombreCompletoDestinatario" => $nombreCompletoDestinatario, "mensaje" => $mensaje], function ($m) use ($correoDestinatario, $nombreCompletoDestinatario, $asunto) {
-          $m->to($correoDestinatario, $nombreCompletoDestinatario)->bcc(VariableSistema::obtenerXLlave("correo"))->subject($asunto);
+          $m->to($correoDestinatario, $nombreCompletoDestinatario)->bcc("cdelaguilarios@gmail.com")->subject($asunto);
         });
         $historialEnv->correoEnviado = 1;
       } catch (\Exception $e) {
