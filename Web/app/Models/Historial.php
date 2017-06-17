@@ -5,6 +5,7 @@ namespace App\Models;
 use Log;
 use Mail;
 use Config;
+use Storage;
 use Carbon\Carbon;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\TiposHistorial;
@@ -51,7 +52,7 @@ class Historial extends Model {
     $historiales = Historial::listarBase()->where($nombreTabla . ".mostrarEnPerfil", 1);
 
     $datosEntidadRel = RelacionEntidad::obtenerXIdEntidadA($idEntidad);
-    if (count($datosEntidadRel) > 0) {
+    if (count($datosEntidadRel) > 0 && !$entidadObservadora) {
       $historiales->where(function($q) use ($idEntidad, $datosEntidadRel) {
         $q->where("entidadHistorial.idEntidad", $idEntidad)->orWhere("entidadHistorial.idEntidad", $datosEntidadRel[0]->idEntidadB);
       });
@@ -130,6 +131,10 @@ class Historial extends Model {
     $datos["mostrarEnPerfil"] = 0;
     $datos["fechaNotificacion"] = Carbon::now()->toDateTimeString();
     $datos["tipo"] = TiposHistorial::Notificacion;
+    $datos["adjuntos"] = Archivo::procesarArchivosSubidos("", $datos, 20, "nombresArchivosAdjuntos", "nombresOriginalesArchivosAdjuntos");
+    unset($datos["nombresArchivosAdjuntos"]);
+    unset($datos["nombresOriginalesArchivosAdjuntos"]);
+
     $idsEntidadesExcluidas = (isset($datos["idsEntidadesExcluidas"]) ? $datos["idsEntidadesExcluidas"] : []);
     if (!is_null($datos["tipoEntidad"])) {
       if ($datos["tipoEntidad"] == TiposEntidad::Interesado && !is_null($datos["cursoInteres"])) {
@@ -179,23 +184,37 @@ class Historial extends Model {
     $historiales = $preHistoriales->get();
     Historial::whereIn("id", $preHistoriales->lists($nombreTabla . ".id")->toArray())->update(["envioCorreoProceso" => 1]);
 
-    Config::set("eah.correoNotificaciones", VariableSistema::obtenerXLlave("correo"));
     Config::set("mail.username", VariableSistema::obtenerXLlave("correo"));
     Config::set("mail.password", VariableSistema::obtenerXLlave("contrasenaCorreo"));
+    $correoNotificaciones = VariableSistema::obtenerXLlave("correo");
 
     foreach ($historiales as $historial) {
       $historialEnv = Historial::obtenerXId($historial->id);
       try {
         Historial::formatearDatosHistorialBase($historial);
-        $asunto = (isset($historial->asunto) ? $historial->asunto : "English at home - Notificación");
-        $mensaje = (isset($historial->titulo) && trim($historial->titulo) != "" ? '<p>' . $historial->titulo . '</p>' : '') . '<p>' . $historial->mensaje . '</p><p><b>Fecha notificación:</b> ' . \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $historial->fechaNotificacion)->format("d/m/Y H:i:s") . '</p>';
-
         $entidadDestinataria = (isset($historial->idEntidadDestinataria) && Entidad::verificarExistencia($historial->idEntidadDestinataria) ? Entidad::ObtenerXId($historial->idEntidadDestinataria) : NULL);
-        $correoDestinatario = (!is_null($entidadDestinataria) ? $entidadDestinataria->correoElectronico : (isset($historial->correoDestinatario) ? $historial->correoDestinatario : Config::get("eah.correoNotificaciones")));
+        $correoDestinatario = (!is_null($entidadDestinataria) ? $entidadDestinataria->correoElectronico : (isset($historial->correoDestinatario) ? $historial->correoDestinatario : $correoNotificaciones));
         $nombreCompletoDestinatario = (!is_null($entidadDestinataria) ? $entidadDestinataria->nombre . " " . $entidadDestinataria->apellido : (isset($historial->correoDestinatario) ? "" : "Usuario administrador"));
+        $adjuntos = ($historial->adjuntos);
 
-        Mail::send("notificacion.plantillaCorreo", ["nombreCompletoDestinatario" => $nombreCompletoDestinatario, "mensaje" => $mensaje], function ($m) use ($correoDestinatario, $nombreCompletoDestinatario, $asunto) {
-          $m->to($correoDestinatario, $nombreCompletoDestinatario)->bcc("cdelaguilarios@gmail.com")->subject($asunto);
+        $asunto = (isset($historial->asunto) ? $historial->asunto : "English at home - Notificación");
+        $mensaje = (isset($historial->titulo) && trim($historial->titulo) != "" ? '<p>' . $historial->titulo . '</p>' : '') . '<p>' . $historial->mensaje . '</p>' . (is_null($entidadDestinataria) ? '<p><b>Fecha notificación:</b> ' . \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $historial->fechaNotificacion)->format("d/m/Y H:i:s") . '</p>' : '');
+
+        Mail::send("notificacion.plantillaCorreo", ["nombreCompletoDestinatario" => $nombreCompletoDestinatario, "mensaje" => $mensaje], function ($m) use ($correoDestinatario, $nombreCompletoDestinatario, $asunto, $adjuntos, $correoNotificaciones) {
+          $m->to($correoDestinatario, $nombreCompletoDestinatario)->subject($asunto);
+          if ($correoDestinatario !== $correoNotificaciones) {
+            $m->bcc($correoNotificaciones);
+          }
+          if (isset($adjuntos)) {
+            $rutaBaseAlmacenamiento = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix();
+            $archivosAdjuntos = explode(",", $adjuntos);
+            foreach ($archivosAdjuntos as $archivoAdjunto) {
+              $datosArchivoAdjunto = explode(":", $archivoAdjunto);
+              if (count($datosArchivoAdjunto) == 2) {
+                $m->attach($rutaBaseAlmacenamiento . "/" . $datosArchivoAdjunto[0], ['as' => $datosArchivoAdjunto[1]]);
+              }
+            }
+          }
         });
         $historialEnv->correoEnviado = 1;
       } catch (\Exception $e) {
@@ -232,12 +251,11 @@ class Historial extends Model {
   private static function formatearDatosHistorialBase(&$historial, $seccionWidget = FALSE) {
     $tiposNotificacion = TiposHistorial::listar();
     $tiposEntidad = TiposEntidad::listar();
-    $nombreTabla = Entidad::nombreTabla();
-    $entidades = Entidad::select($nombreTabla . ".*")
-                    ->leftJoin(EntidadHistorial::nombreTabla() . " as entidadHistorial", $nombreTabla . ".id", "=", "entidadHistorial.idEntidad")
+    $nombreTablaEntidad = Entidad::nombreTabla();
+    $entidades = Entidad::select($nombreTablaEntidad . ".*")
+                    ->leftJoin(EntidadHistorial::nombreTabla() . " as entidadHistorial", $nombreTablaEntidad . ".id", "=", "entidadHistorial.idEntidad")
                     ->where("entidadHistorial.idHistorial", $historial->id)
-                    ->where("entidadHistorial.esObservador", 0)
-                    ->where($nombreTabla . ".eliminado", 0)->get();
+                    ->where("entidadHistorial.esObservador", 0)->get();
     foreach ($entidades as $entidad) {
       if (!array_key_exists($entidad->tipo, $tiposEntidad)) {
         continue;

@@ -64,7 +64,7 @@ class InteresadoController extends Controller {
       $this->data["interesado"] = Interesado::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
       Log::error($e);
-      Mensajes::agregarMensajeError("No se encontraron datos de la persona interesada seleccionada.");
+      Mensajes::agregarMensajeError("No se encontraron datos de la persona interesada seleccionada. Es posible que haya sido eliminado.");
       return redirect("interesados");
     }
     return view("interesado.editar", $this->data);
@@ -104,7 +104,7 @@ class InteresadoController extends Controller {
       $this->data["interesado"] = Interesado::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
       Log::error($e);
-      Mensajes::agregarMensajeError("No se encontraron datos de la persona interesada seleccionada.");
+      Mensajes::agregarMensajeError("No se encontraron datos de la persona interesada seleccionada. Es posible que haya sido eliminado.");
       return redirect("interesados");
     }
     return view("interesado.cotizar", $this->data);

@@ -378,16 +378,14 @@ class Clase extends Model {
     $notificar = ($datos["notificar"] == 1);
     $clase = ((isset($datos["idClase"])) ? Clase::obtenerXId($idAlumno, $datos["idClase"]) : NULL);
     if (isset($clase)) {
-      if (is_null($datos["estado"]) || $clase->estado == EstadosClase::Cancelada) {
-        unset($datos["estado"]);
-      }
-      if ($clase->estado == EstadosClase::Cancelada) {
-        $notificar = FALSE;
-      }
-      if (!is_null($clase->idHistorial) && !$notificar) {
+      $fechaInicio = new Carbon($clase->fechaInicio);
+      $tieneHistorialReg = (!is_null($clase->idHistorial));
+      $cambioFechaInicio = ($datos["fechaInicio"]->ne($fechaInicio));
+
+      if (($clase->estado == EstadosClase::Cancelada) || ($tieneHistorialReg && !$notificar) || ($tieneHistorialReg && $cambioFechaInicio)) {
         Historial::eliminarXIdClase($datos["idClase"]);
       }
-      if (!is_null($clase->idHistorial) && $notificar) {
+      if (($tieneHistorialReg && !$cambioFechaInicio && $notificar) || ($clase->estado == EstadosClase::Cancelada)) {
         $notificar = FALSE;
       }
       $clase->update($datos);

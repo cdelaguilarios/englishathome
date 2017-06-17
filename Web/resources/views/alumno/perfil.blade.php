@@ -118,7 +118,7 @@
       </ul>
       <div class="tab-content">
         <div id="historial" class="active tab-pane">
-          @include("util.historial", ["idEntidad" => $alumno->id]) 
+          @include("util.historial", ["idEntidad" => $alumno->id, "nombreEntidad" => "alumno"]) 
         </div>
         <div id="pago" class="tab-pane">
           @if($alumno->horario != "[]")

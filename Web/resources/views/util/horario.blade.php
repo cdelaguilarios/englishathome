@@ -2,7 +2,7 @@
 <div id="sec-perfil-horario">  
   <div id="sec-info-horario"></div>
   @if(!(isset($vistaImpresion) && $vistaImpresion))
-  <button id="btn-horario" type="button" class="btn btn-primary btn-xs">Editar horario</button>
+  <button id="btn-horario" type="button" class="btn btn-primary btn-xs">{{ (isset($textoBotonEdicion) ? $textoBotonEdicion : "Editar horario") }}</button>
   @endif
 </div>
 {{ Form::hidden("horario", $horario) }} 
@@ -10,7 +10,7 @@
 <div class="form-group">
   <div class="col-sm-3">
     <button id="btn-horario" type="button" class="btn btn-primary btn-sm">
-      <i class="fa fa-fw fa-calendar"></i> {{ ((isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()) ? "Set schedule available" : "Establecer horario disponible") }}
+      <i class="fa fa-fw fa-calendar"></i> {{ (isset($textoBoton) ? $textoBoton : "Establecer horario disponible") }}
     </button>
   </div>    
   <div id="sec-info-horario" class="col-sm-9"></div>
@@ -26,8 +26,8 @@
           <span aria-hidden="true">&times;</span>
         </button>
         <h4 class="modal-title">
-        @if(isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest())
-        Schedule available to work
+        @if(isset($tituloModal))
+        {{ $tituloModal }}
         @else
         Horario {{ ((isset($modo) && $modo == "visualizar") ? "" : "disponible ") }}para clases
         @endif

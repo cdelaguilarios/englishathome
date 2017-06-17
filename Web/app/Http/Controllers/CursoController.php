@@ -50,7 +50,7 @@ class CursoController extends Controller {
       $this->data["curso"] = Curso::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
       Log::error($e);
-      Mensajes::agregarMensajeError("No se encontraron datos del curso seleccionado.");
+      Mensajes::agregarMensajeError("No se encontraron datos del curso seleccionado. Es posible que haya sido eliminado.");
       return redirect(route("cursos"));
     }
     return view("curso.editar", $this->data);

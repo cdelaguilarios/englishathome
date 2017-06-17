@@ -23,6 +23,7 @@ class HistorialController extends Controller {
     
   }
 
+  // <editor-fold desc="Historial">
   public function obtener($idEntidad, ListaRequest $req) {
     $datos = $req->all();
     $observador = Input::get("observador");
@@ -36,6 +37,9 @@ class HistorialController extends Controller {
       $datos = $req->all();
       $datos["fechaNotificacion"] = (isset($datos["fechaNotificacion"]) ? Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNotificacion"] . " 00:00:00") : NULL);
       $datos["idEntidades"] = [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)];
+      $datos["idEntidadDestinataria"] = (((int) $datos["enviarCorreoEntidad"] == 1) ? $idEntidad : NULL);
+      Historial::registrar($datos);
+      $datos["enviarCorreo"] = (((int) $datos["enviarCorreoEntidad"] == 1) ? 1 : $datos["enviarCorreo"] );
       Historial::registrar($datos);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
     } catch (\Exception $e) {
@@ -44,6 +48,9 @@ class HistorialController extends Controller {
     }
     return back()->with("historial", "1");
   }
+
+  // </editor-fold>
+  // <editor-fold desc="Correos masivos">
 
   public function correos() {
     $this->data["seccion"] = "correos";
@@ -68,6 +75,9 @@ class HistorialController extends Controller {
     return redirect(route("correos"));
   }
 
+  // </editor-fold>
+  // <editor-fold desc="Notificaciones">
+
   public function listarNuevasNotificaciones() {
     $datosHistorial = Historial::obtenerPerfil(1, Auth::id(), TRUE, TRUE, TRUE);
     return response()->json($datosHistorial, 200);
@@ -85,4 +95,5 @@ class HistorialController extends Controller {
     return view("notificacion.lista", $this->data);
   }
 
+  // </editor-fold>
 }

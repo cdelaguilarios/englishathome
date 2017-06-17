@@ -19,6 +19,7 @@
           {{ Form::label("notificar-clase", "Notificar", ["class" => "checkbox-label"]) }}
           {{ Form::checkbox("notificar", null, FALSE, ["id" => "notificar-clase"]) }} 
         </label>
+        <span class="text-blue tooltip-checkbox" data-toggle="tooltip" title="Notificar un día antes de la clase"><i class="fa fa-question-circle"></i></span>
       </div>
     </div> 
   </div>

@@ -84,7 +84,8 @@ class Archivo {
         if (trim($nombresArchivos[$i]) == "") {
           continue;
         }
-        $archivosActualesSel .= $nombresArchivos[$i] . ":" . (array_key_exists($i, $nombresOriginalesArchivos) && $nombresOriginalesArchivos[$i] != "" ? $nombresOriginalesArchivos[$i] : $nombresArchivos[$i]) . ",";
+        $nombreOriginalArchivo = (array_key_exists($i, $nombresOriginalesArchivos) && $nombresOriginalesArchivos[$i] != "" ? str_replace(",", "", $nombresOriginalesArchivos[$i]) : NULL);
+        $archivosActualesSel .= $nombresArchivos[$i] . ":" . (isset($nombreOriginalArchivo) && $nombreOriginalArchivo != "" ? $nombreOriginalArchivo : $nombresArchivos[$i]) . ",";
       }
     }
     return $archivosActualesSel;

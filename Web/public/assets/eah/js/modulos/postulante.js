@@ -135,8 +135,7 @@ function cargarFormulario() {
       },
       audio: {
         validarAudio: true,
-        archivoTamanho: 2097152,
-        required: formularioExternoPostulante
+        archivoTamanho: 2097152
       }
     },
     messages: {

@@ -37,7 +37,7 @@
     <div class="form-group">
       {{ Form::label("mensaje-evento-historial", "Mensaje: ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-10">
-        {{ Form::textarea("mensaje", null, ["id" => "fmensaje-evento-historial", "class" => "form-control", "rows" => "5", "maxlength" =>"8000"]) }}
+        {{ Form::textarea("mensaje", null, ["id" => "mensaje-evento-historial", "class" => "form-control", "rows" => "5", "maxlength" =>"8000"]) }}
       </div>                                        
     </div> 
     <div class="form-group">
@@ -56,24 +56,35 @@
             {{ Form::label("enviar-correo-evento-historial", "Enviar correo: ", ["class" => "checkbox-label"]) }}
             {{ Form::checkbox("enviarCorreo", null, FALSE, ["id" => "enviar-correo-evento-historial"]) }}
           </label>
+          <span class="text-blue tooltip-checkbox" data-toggle="tooltip" title="Envio de correo al administrador ({{ App\Models\VariableSistema::obtenerXLlave("urlSitioWebEmpresa") }})"><i class="fa fa-question-circle"></i></span>
         </div>
-      </div>                        
+      </div>                   
       <div class="col-sm-3">
+        <div class="checkbox">
+          <label class="checkbox-custom" data-initialize="checkbox">
+            {{ Form::label("enviar-correo-entidad-evento-historial", "Enviar correo " . (isset($nombreEntidad) ? "al " . $nombreEntidad : "a la entidad") . ": ", ["class" => "checkbox-label"]) }}
+            {{ Form::checkbox("enviarCorreoEntidad", null, FALSE, ["id" => "enviar-correo-entidad-evento-historial"]) }}
+          </label>
+        </div>
+      </div>         
+    </div>   
+    <div class="form-group">                  
+      <div class="col-sm-3 col-sm-offset-2">
         <div class="checkbox">
           <label class="checkbox-custom" data-initialize="checkbox">
             {{ Form::label("mostrar-perfil-evento-historial", "Mostrar en perfil: ", ["class" => "checkbox-label"]) }}
             {{ Form::checkbox("mostrarEnPerfil", null, TRUE, ["id" => "mostrar-perfil-evento-historial"]) }}
           </label>
         </div>
-      </div>                        
-      <div class="col-sm-4">
+      </div>                 
+      <div class="col-sm-3">
         <div class="checkbox">
           <label class="checkbox-custom" data-initialize="checkbox">
             {{ Form::label("notificar-inmediatamente-evento-historial", "Notificar inmediatamente: ", ["class" => "checkbox-label"]) }}
             {{ Form::checkbox("notificarInmediatamente", null, TRUE, ["id" => "notificar-inmediatamente-evento-historial"]) }}
           </label>
         </div>
-      </div>
+      </div>    
     </div>
     <div id="sec-historial-21" style="display: none" class="form-group"> 
       {{ Form::label("fecha-notificacion-evento-historial", "Fecha notificación: ", ["class" => "col-sm-2 control-label"]) }}

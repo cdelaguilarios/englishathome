@@ -75,7 +75,7 @@ class PostulanteController extends Controller {
       $this->data["postulante"] = Postulante::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
       Log::error($e);
-      Mensajes::agregarMensajeError("No se encontraron datos del postulante seleccionado.");
+      Mensajes::agregarMensajeError("No se encontraron datos del postulante seleccionado. Es posible que haya sido eliminado.");
       return redirect(route("postulantes"));
     }
     return view("postulante.editar", $this->data);

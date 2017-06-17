@@ -63,7 +63,7 @@ class FormularioRequest extends Request {
         "referenciaDireccion" => "max:255",
         "geoLatitud" => ["regex:" . ReglasValidacion::RegexGeoLatitud],
         "geoLongitud" => ["regex:" . ReglasValidacion::RegexGeoLongitud],
-        "audio" => (Auth::guest() ? "required|" : "") . "mimes:mpga,wav,oga,ogv,ogx|max:2048"
+        "audio" => "mimes:mpga,wav,oga,ogv,ogx|max:2048"
     ];
 
     if (Auth::guest()) {

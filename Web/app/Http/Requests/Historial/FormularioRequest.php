@@ -18,6 +18,7 @@ class FormularioRequest extends Request {
     $datos["nombresArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresArchivosAdjuntos");
     $datos["nombresOriginalesArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresOriginalesArchivosAdjuntos");
     $datos["enviarCorreo"] = (isset($datos["enviarCorreo"]) ? 1 : 0);
+    $datos["enviarCorreoEntidad"] = (isset($datos["enviarCorreoEntidad"]) ? 1 : 0);
     $datos["mostrarEnPerfil"] = (isset($datos["mostrarEnPerfil"]) ? 1 : 0);
     $datos["notificarInmediatamente"] = (isset($datos["notificarInmediatamente"]) ? 1 : 0);
     $datos["fechaNotificacion"] = ReglasValidacion::formatoDato($datos, "fechaNotificacion");
@@ -33,7 +34,7 @@ class FormularioRequest extends Request {
         "fechaNotificacion" => "date_format:d/m/Y"
     ];
 
-    if ($datos["enviarCorreo"] == 0 && $datos["mostrarEnPerfil"] == 0) {
+    if ($datos["enviarCorreo"] == 0 && $datos["enviarCorreoEntidad"] == 0 && $datos["mostrarEnPerfil"] == 0) {
       $reglasValidacion["opcionEventoNoValido"] = "required";
     }
 
@@ -53,7 +54,7 @@ class FormularioRequest extends Request {
 
   public function messages() {
     return [
-        "opcionEventoNoValido.required" => "Por favor selecione por lo menos una de las siguientes opciones: \"Enviar correo\" o \"Mostrar en perfil\"."
+        "opcionEventoNoValido.required" => "Por favor selecione por lo menos una de las siguientes opciones: \"Enviar correo\" (administrador o entidad) o \"Mostrar en perfil\"."
     ];
   }
 

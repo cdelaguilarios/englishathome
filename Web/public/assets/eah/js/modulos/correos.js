@@ -101,6 +101,9 @@ $(document).ready(function () {
     onclick: false
   });
   CKEDITOR.replace("mensaje");
+  incluirSeccionSubidaArchivos("adjuntos", {onSubmit: function () {
+      return true;
+    }, acceptFiles: "*", uploadStr: "Subir archivo", maxFileCount: 20});
 });
 
 

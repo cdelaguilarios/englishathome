@@ -61,7 +61,7 @@ class UsuarioController extends Controller {
       $this->data["usuario"] = Usuario::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
       Log::error($e);
-      Mensajes::agregarMensajeError("No se encontraron datos del usuario seleccionado.");
+      Mensajes::agregarMensajeError("No se encontraron datos del usuario seleccionado. Es posible que haya sido eliminado.");
       return redirect(route("usuarios"));
     }
     return view("usuario.editar", $this->data);

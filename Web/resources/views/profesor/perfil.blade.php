@@ -111,7 +111,7 @@
       </ul>
       <div class="tab-content">
         <div id="historial" class="active tab-pane">
-          @include("util.historial", ["idEntidad" => $profesor->id]) 
+          @include("util.historial", ["idEntidad" => $profesor->id, "nombreEntidad" => "profesor"]) 
         </div>
         <div id="pago" class="tab-pane">
           @include("profesor.pago.principal", ["idProfesor" => $profesor->id])

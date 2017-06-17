@@ -20,7 +20,7 @@ class Entidad extends Model {
 
   public static function listar($tipo, $estado = NULL, $idsExcluir = []) {
     $entidades = Entidad::where("eliminado", 0)->whereNotIn("id", $idsExcluir)->where("tipo", $tipo);
-    if(isset($estado) && $estado != ""){
+    if (isset($estado) && $estado != "") {
       $entidades->where("estado", $estado);
     }
     return $entidades->get();
@@ -58,6 +58,7 @@ class Entidad extends Model {
       $entidad->estado = $estado;
     }
     $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+    unset($datos["imagenPerfil"]);
     $entidad->update($datos);
   }
 
@@ -71,11 +72,14 @@ class Entidad extends Model {
   public static function registrarActualizarImagenPerfil($id, $imagenPerfil) {
     if (isset($imagenPerfil) && !is_null($imagenPerfil)) {
       $entidad = Entidad::ObtenerXId($id);
-      if (isset($entidad->imagenPerfil) && $entidad->imagenPerfil != "") {
-        Archivo::eliminar($entidad->imagenPerfil);
+      $nuevaImagenEntidad = Archivo::registrar($entidad->id . "_ip_", $imagenPerfil, TRUE);
+      if (isset($nuevaImagenEntidad)) {
+        if (isset($entidad->imagenPerfil) && $entidad->imagenPerfil != "") {
+          Archivo::eliminar($entidad->imagenPerfil);
+        }
+        $entidad->imagenPerfil = $nuevaImagenEntidad;
+        $entidad->save();
       }
-      $entidad->imagenPerfil = Archivo::registrar($entidad->id . "_ip_", $imagenPerfil, TRUE);
-      $entidad->save();
     }
   }
 

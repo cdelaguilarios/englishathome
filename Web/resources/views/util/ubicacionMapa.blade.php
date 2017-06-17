@@ -17,12 +17,16 @@
 </div>
 {{ Form::hidden("geoLatitud", (isset($geoLatitud) ? $geoLatitud : 0)) }} 
 {{ Form::hidden("geoLongitud", (isset($geoLongitud) ? $geoLongitud : 0)) }} 
+@elseif (isset($modo) && $modo == "ficha")
+<div id="mapa"></div>
+{{ Form::hidden("geoLatitud", (isset($geoLatitud) ? $geoLatitud : 0)) }} 
+{{ Form::hidden("geoLongitud", (isset($geoLongitud) ? $geoLongitud : 0)) }} 
 @else
 <input id="mapa-bus" class="controls" type="text" placeholder="{{ ((isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()) ? "Search" : "Buscar") }}">
 <div id="mapa"></div>
 @endif
 <script type="text/javascript">
-  var modoVisualizarMapa = {{ (isset($modo) && $modo === "visualizar") ? "true" : "false" }};
+  var modoVisualizarMapa = {{ (isset($modo) && ($modo === "visualizar" || $modo === "ficha")) ? "true" : "false" }};
 </script>
 <script type="text/javascript" src="{{ asset("assets/eah/js/ubicacionMapa.js") }}"></script>
 <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyD3y8Vvx3X9BquN5iaZcLQdD-768cy0ADY&libraries=places&callback=verificarJqueryUbicacionMapa{{ ((isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()) ? "&language=en" : "") }}" async defer></script>

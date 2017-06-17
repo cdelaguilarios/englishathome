@@ -40,31 +40,34 @@
     <div class="register-box">
       <div class="register-box-body">
         <div class="register-logo">
-          <div class="row">
+          <div class="row">            
+            @if(isset($vistaImpresion) && $vistaImpresion) 
+            <div class="col-sm-12 vcenter">
+              <p class="sec-ficha-nombre-entidad">
+                @if(isset($alumno))
+                <b>Ficha {{ $alumno->sexo == "F" ? "de la alumna" : "del alumno" }}<br/>{{ $alumno->nombre . " " .  $alumno->apellido }}</b>
+                @elseif(isset($profesor))
+                <b>Ficha {{ $profesor->sexo == "F" ? "de la profesora" : "del profesor" }}<br/>{{ $profesor->nombre . " " .  $profesor->apellido }}</b>
+                @endif
+              </p>
+              <p class="sec-ficha-logo">
+                <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login"/>
+              </p>
+            </div>
+            @else
             <div class="col-sm-6 vcenter">
-              @if(isset($vistaImpresion) && $vistaImpresion)              
-              @if(isset($alumno))
-              <b>Ficha {{ $alumno->sexo == "F" ? "de la alumna" : "del alumno" }}<br/>{{ $alumno->nombre . " " .  $alumno->apellido }}</b>
-              @elseif(isset($profesor))
-              <b>Ficha {{ $profesor->sexo == "F" ? "de la profesora" : "del profesor" }}<br/>{{ $profesor->nombre . " " .  $profesor->apellido }}</b>
-              @endif
-              @else
               @if(isset($interesado))
               <b>Ficha del alumno</b>
               @else
               <b>English teacher application</b>
               @endif
-              @endif
             </div><!--
             --><div class="col-sm-6 vcenter">
-              @if(isset($vistaImpresion) && $vistaImpresion) 
-                <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login"/>
-              @else
               <a href="http://englishathomeperu.com/" target="_blank">
                 <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login"/>
               </a>
-              @endif
             </div>
+            @endif
           </div>        
         </div> 
         @yield("content")

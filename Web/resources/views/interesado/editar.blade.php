@@ -56,7 +56,7 @@
           {{ Form::close() }}
         </div>
         <div class="tab-pane" id="historial">
-          @include("util.historial", ["idEntidad" => $interesado->id]) 
+          @include("util.historial", ["idEntidad" => $interesado->id, "nombreEntidad" => "interesado"]) 
         </div>
       </div>
     </div>

@@ -34,9 +34,18 @@
         <div class="form-group">
           {{ Form::label("mensaje", "Mensaje (*): ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {{ Form::textarea("mensaje", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"8000"]) }}
+            {{ Form::textarea("mensaje", null, ["class" => "form-control", "rows" => "5", "maxlength" =>"8000"]) }}
           </div>
-        </div>           
+        </div>   
+        <div class="form-group">
+          {{ Form::label("adjuntos", "Adjuntos: ", ["class" => "col-sm-2 control-label"]) }}   
+          <div class="col-sm-10">
+            <div id="adjuntos">Subir</div>
+            {{ Form::hidden("nombresArchivosAdjuntos", "", ["id" => "nombres-archivos-adjuntos"]) }}
+            {{ Form::hidden("nombresOriginalesArchivosAdjuntos", "", ["id" => "nombres-originales-archivos-adjuntos"]) }}
+          </div>
+          <div class="clearfix"></div>
+        </div>         
         <div class="form-group">
           {{ Form::label("tipo-entidad-correos", "Enviar a: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-3">

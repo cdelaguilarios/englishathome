@@ -9,6 +9,7 @@ class CuentasBancoPago {
   const Scotiabank = "SCOTIABANK";
   const Bbva = "BBVA";
   const Empresarial = "EMPRESARIAL";
+  const Efectivo = "EFECTIVO";
 
   public static function listar() {
     return [
@@ -16,7 +17,8 @@ class CuentasBancoPago {
         CuentasBancoPago::Interbank => "Interbank",
         CuentasBancoPago::Scotiabank => "Scotiabank",
         CuentasBancoPago::Bbva => "BBVA",
-        CuentasBancoPago::Empresarial => "Empresarial"
+        CuentasBancoPago::Empresarial => "Empresarial",
+        CuentasBancoPago::Efectivo => "Efectivo"
     ];
   }
 

@@ -69,7 +69,7 @@ class ProfesorController extends Controller {
       $this->data["profesor"] = Profesor::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
       Log::error($e);
-      Mensajes::agregarMensajeError("No se encontraron datos del profesor seleccionado.");
+      Mensajes::agregarMensajeError("No se encontraron datos del profesor seleccionado. Es posible que haya sido eliminado.");
       return redirect(route("profesores"));
     }
     return view("profesor.perfil", $this->data);
@@ -82,7 +82,7 @@ class ProfesorController extends Controller {
       $this->data["profesor"] = Profesor::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
       Log::error($e);
-      Mensajes::agregarMensajeError("No se encontraron datos del profesor seleccionado.");
+      Mensajes::agregarMensajeError("No se encontraron datos del profesor seleccionado. Es posible que haya sido eliminado.");
       return redirect(route("profesores"));
     }
     return view("profesor.ficha", $this->data);
@@ -117,7 +117,7 @@ class ProfesorController extends Controller {
       $this->data["profesor"] = Profesor::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
       Log::error($e);
-      Mensajes::agregarMensajeError("No se encontraron datos del profesor seleccionado.");
+      Mensajes::agregarMensajeError("No se encontraron datos del profesor seleccionado. Es posible que haya sido eliminado.");
       return redirect(route("profesores"));
     }
     return view("profesor.editar", $this->data);

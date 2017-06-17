@@ -416,3 +416,15 @@ table.dataTable > tbody > tr.child span.dtr-title {
 .sec-filtro-busqueda-dias input[type=checkbox]{
   margin: 0 10px 0 0;
 }
+
+.tooltip-checkbox{
+  margin-left: 20px;
+}
+
+.sec-ficha-nombre-entidad{
+  float: left;
+  margin-top: 25px;
+}
+.sec-ficha-logo{
+  float: right;
+}

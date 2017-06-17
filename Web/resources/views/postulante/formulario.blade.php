@@ -168,11 +168,11 @@
           <div class="form-group">
             <div class="col-sm-offset-1 col-sm-10">
               <div id="sec-men-alerta-horario"></div>
-              @include("util.horario")  
+              @include("util.horario", ["textoBoton" => (Auth::guest() ? "Set schedule available" : null), "tituloModal" => (Auth::guest() ? "Schedule available to work" : null)])  
             </div>                                        
           </div>
           <div class="form-group">
-            <h4>{{ (Auth::guest() ? "Presentation Audio (*)" : "Audio de presentación") }}:</h4>
+            <h4>{{ (Auth::guest() ? "Presentation Audio" : "Audio de presentación") }}:</h4>
           </div>
           <div class="form-group">
             <div class="col-sm-offset-1 col-sm-10">

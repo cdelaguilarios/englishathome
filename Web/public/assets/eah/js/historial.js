@@ -18,6 +18,7 @@ function cargarListaHistorial() {
   urlArchivos = (typeof (urlArchivos) === "undefined" ? "" : urlArchivos);
   meses = (typeof (meses) === "undefined" ? "" : meses);
 
+  $("input[name='numeroCarga']").val(($("#sec-historial").html() !== "") ? $("input[name='numeroCarga']").val() : 0);
   var numeroCarga = $("input[name='numeroCarga']").val();
   if (urlCargarHistorial !== "" && urlArchivos !== "" && meses !== "" && !isNaN(parseInt(numeroCarga))) {
     $("#sec-historial").find("#sec-cierre-historial").hide("slow");
@@ -128,8 +129,8 @@ function cargarFormularioHistorial() {
       }
     },
     submitHandler: function (f) {
-      if (!($("#enviar-correo-evento-historial").is(":checked") || $("#mostrar-perfil-evento-historial").is(":checked"))) {
-        agregarMensaje("advertencias", 'Por favor selecione por lo menos una de las siguientes opciones: "Enviar correo" o "Mostrar en perfil"', true, "#sec-men-historial");
+      if (!($("#enviar-correo-evento-historial").is(":checked") || $("#enviar-correo-entidad-evento-historial").is(":checked") || $("#mostrar-perfil-evento-historial").is(":checked"))) {
+        agregarMensaje("advertencias", 'Por favor selecione por lo menos una de las siguientes opciones: "Enviar correo" (administrador o entidad) o "Mostrar en perfil"', true, "#sec-men-historial");
       } else if (confirm("¿Está seguro que desea registrar los datos de este evento?")) {
         $.blockUI({message: "<h4>Registrando datos...</h4>"});
         f.submit();
@@ -154,6 +155,7 @@ function cargarFormularioHistorial() {
     onkeyup: false,
     onclick: false
   });
+  CKEDITOR.replace("mensaje-evento-historial");
   establecerCalendario("fecha-notificacion-evento-historial", false, false);
   incluirSeccionSubidaArchivos("adjuntos", {onSubmit: function () {
       return true;

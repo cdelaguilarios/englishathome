@@ -4,14 +4,24 @@
 @section("section_script")
 @if(isset($impresionDirecta) && $impresionDirecta)
 <script>
-  window.onafterprint = function (e) {
-    $(window).off('mousemove', window.onafterprint);
-    window.close();
-  };
-  window.print();
-  setTimeout(function () {
-    $(window).one('mousemove', window.onafterprint);
-  }, 500);
+  var verificarMapa = setInterval(function () {
+    mapa = (typeof (mapa) === "undefined" ? false : mapa);
+    if (mapa) {
+      verificarPosicionSel();
+      setTimeout(function () {
+        $("div:contains('Map data'):last").html("");
+        window.onafterprint = function (e) {
+          $(window).off('mousemove', window.onafterprint);
+          window.close();
+        };
+        window.print();
+        setTimeout(function () {
+          $(window).one('mousemove', window.onafterprint);
+        }, 1000);
+      }, 500);
+      clearInterval(verificarMapa);
+    }
+  }, 100);
 </script>
 @endif
 @endsection
@@ -33,11 +43,20 @@
     font-size: 30px;
   }
   hr {
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 2px;
+    margin-bottom: 2px;
     border: 0;
     border-top: 1px solid #fff;
   }
+  .sec-mapa {
+    height: 200px;
+    margin-left: 20px;
+  }
+  a[href^="http://maps.google.com/maps"]{display:none !important}
+  a[href^="https://maps.google.com/maps"]{display:none !important}
+  .gmnoprint a, .gmnoprint span, .gm-style-cc {display:none;}
+  .gmnoprint div {display:none !important;}
+  .gm-style-cc {display:none;}
 </style>
 @endsection
 
@@ -66,6 +85,9 @@
         @endif
         <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
         <p class="text-muted">{{ $profesor->direccion }}{!! ((isset($profesor->numeroDepartamento) && $profesor->numeroDepartamento != "") ? "<br/>Depto./Int " . $profesor->numeroDepartamento : "") !!}{!! ((isset($profesor->referenciaDireccion) && $profesor->referenciaDireccion != "") ? " - " . $profesor->referenciaDireccion : "") !!}<br/>{{ $profesor->direccionUbicacion }}</p>
+        <div class="sec-mapa">
+          @include("util.ubicacionMapa", ["geoLatitud" => $profesor->geoLatitud, "geoLongitud" => $profesor->geoLongitud, "modo" => "ficha"])
+        </div>
         <hr>   
         @if(isset($profesor->telefono))
         <strong><i class="fa fa-phone margin-r-5"></i> Teléfono</strong>

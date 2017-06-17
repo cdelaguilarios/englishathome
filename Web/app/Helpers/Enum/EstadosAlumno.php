@@ -31,7 +31,7 @@ class EstadosAlumno {
 
   public static function listarCambio() {
     $estadosBusqueda = EstadosAlumno::listarBusqueda();
-    $estadosDisponibleCambio = [EstadosAlumno::StandBy, EstadosAlumno::Activo, EstadosAlumno::Inactivo];
+    $estadosDisponibleCambio = [EstadosAlumno::CuotaProgramada, EstadosAlumno::StandBy, EstadosAlumno::Activo, EstadosAlumno::Inactivo];
     $estadosCambio = [];
     foreach ($estadosBusqueda as $k => $v) {
       if (in_array($k, $estadosDisponibleCambio)) {
