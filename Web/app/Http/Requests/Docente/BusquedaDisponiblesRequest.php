@@ -46,7 +46,7 @@ class BusquedaDisponiblesRequest extends Request {
     if (!(!is_null($datos["idCursoDocente"]) && ($datos["idCursoDocente"] == "" || array_key_exists($datos["idCursoDocente"], $listaCursos)))) {
       $reglasValidacion["idCursoDocenteNoValido"] = "required";
     }
-    if (!is_null($datos["horarioDocente"]) && !ReglasValidacion::validarHorario($datos["horarioDocente"])) {
+    if (!is_null($datos["horarioDocente"]) && $datos["horarioDocente"] != "[]" && !ReglasValidacion::validarHorario($datos["horarioDocente"])) {
       $reglasValidacion["horarioDocenteNoValido"] = "required";
     }
 
