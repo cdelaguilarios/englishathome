@@ -4,6 +4,7 @@ namespace App\Models;
 
 use DB;
 use Auth;
+use Config;
 use Carbon\Carbon;
 use App\Helpers\Util;
 use App\Models\Horario;
@@ -204,6 +205,45 @@ class Clase extends Model {
       $clases->where("estado", '!=', EstadosClase::Cancelada);
     }
     return ($idsProfesores ? $clases->groupBy("idProfesor")->lists("idProfesor") : $clases->groupBy("idAlumno")->lists("idAlumno"));
+  }
+
+  public static function listarIdsEntidadesXHorario($datosJsonHorario, $idsProfesores = FALSE, $incluirClasesCanceladas = FALSE) {
+    $idsEntidades = [];
+    $datosHorario = json_decode($datosJsonHorario);
+    foreach ($datosHorario as $horario) {
+      $dias = explode(",", $horario->dias);
+      $horas = $horario->horas;
+      foreach ($dias as $dia) {
+        foreach ($horas as $rangoHora) {
+          $rangoHora = explode("-", $rangoHora);
+          
+          $diaSel = ((int) $dia != 7 ? ((int) $dia) + 1 : 1);
+          $fechaActual = Carbon::now();
+          $horaInicio = Carbon::createFromFormat("d/m/Y H:i:s", "01/01/1970 " . $rangoHora[0] . ":00")->subMinutes((int) Config::get("eah.rangoMinutosBusquedaHorarioDocente"))->toTimeString();
+          $horaFin = Carbon::createFromFormat("d/m/Y H:i:s", "01/01/1970 " . $rangoHora[1] . ":00")->addMinutes((int) Config::get("eah.rangoMinutosBusquedaHorarioDocente"))->toTimeString();
+
+          $clases = Clase::where("eliminado", 0)
+                  ->where(function ($q) use ($horaInicio, $horaFin) {
+                    $q->where(function ($q) use ($horaInicio) {
+                      $q->whereRaw("TIME(fechaInicio) <= '" . $horaInicio . "'")->whereRaw("TIME(fechaFin) >= '" . $horaInicio . "'");
+                    })->orWhere(function ($q) use ($horaFin) {
+                      $q->whereRaw("TIME(fechaInicio) <= '" . $horaFin . "'")->whereRaw("TIME(fechaFin) >= '" . $horaFin . "'");
+                    })->orWhere(function ($q) use ($horaInicio, $horaFin) {
+                      $q->whereRaw("TIME(fechaInicio) >= '" . $horaInicio . "'")->whereRaw("TIME(fechaFin) <= '" . $horaFin . "'");
+                    });
+                  })
+                  ->where("fechaInicio", ">=", $fechaActual)
+                  ->whereRaw("DAYOFWEEK(fechaInicio) = " . $diaSel)
+                  ->whereRaw("DAYOFWEEK(fechaFin) = " . $diaSel);
+          if (!$incluirClasesCanceladas) {
+            $clases->where("estado", '!=', EstadosClase::Cancelada);
+          }
+          $idsEntidadesHorario = ($idsProfesores ? $clases->groupBy("idProfesor")->lists("idProfesor") : $clases->groupBy("idAlumno")->lists("idAlumno"));
+          $idsEntidades = array_merge($idsEntidades, $idsEntidadesHorario->toArray());
+        }
+      }
+    }
+    return $idsEntidades;
   }
 
   public static function datosGrupo($idAlumno, $datos) {

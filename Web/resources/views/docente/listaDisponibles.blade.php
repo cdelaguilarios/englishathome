@@ -4,6 +4,7 @@
 @section("section_script")
 <script>
   var urlListar = "{{ route('docentes.disponibles.listar') }}";
+  var tipoDocenteProfesor = "{{ App\Helpers\Enum\TiposEntidad::Profesor }}";
   var estados = {!! json_encode(App\Helpers\Enum\EstadosDocente::listar()) !!};
 </script>
 <script src="{{ asset("assets/eah/js/modulos/docente.js") }}"></script>
@@ -19,6 +20,7 @@
     <div class="box box-info">
       <div class="box-header">
         <h3 class="box-title">Filtros de búsquedad</h3> 
+        <span class="text-blue" data-toggle="tooltip" title="Busca docentes disponibles a partir de la fecha actual utilizando estos filtros e ingresando un horario de búsqueda"><i class="fa fa-question-circle"></i></span>
       </div>         
       <div class="box-body">
         <div class="form-group">  
@@ -64,7 +66,6 @@
               <th>Correo electrónico</th>
               <th>Estado</th>
               <th>Fecha registro</th>
-              <th class="all">Opciones</th>
             </tr>
           </thead>
         </table>

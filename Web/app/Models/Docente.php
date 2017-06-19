@@ -13,16 +13,15 @@ use Illuminate\Database\Eloquent\Model;
 class Docente extends Model {
 
   public static function listarDisponibles($datos = NULL) {
-    $nombreTabla = Postulante::nombreTabla();
-    $postulantes = Postulante::select($nombreTabla . ".*", "entidad.*", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))
-                    ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
-                    ->leftJoin(EntidadCurso::nombreTabla() . " as entidadCurso", $nombreTabla . ".idEntidad", "=", "entidadCurso.idEntidad")
-                    ->where("entidad.eliminado", 0)->groupBy("entidad.id")->distinct();
-
-    if (isset($datos["estado"])) {
-      $postulantes->where("entidad.estado", $datos["estado"]);
+    $idsNoDisponibles = (isset($datos["horarioDocente"]) ? Clase::listarIdsEntidadesXHorario($datos["horarioDocente"], TRUE) : []);
+    $idsDisponibles = (isset($datos["horarioDocente"]) ? Horario::listarIdsEntidadesXHorario($datos["horarioDocente"], $datos["tipoDocente"]) : []);
+    $idsDisponiblesSel = array_diff($idsDisponibles, $idsNoDisponibles);
+    
+    $docentes = Docente::listarXFiltrosBusqueda($datos)->whereIn("entidad.id", $idsDisponiblesSel);
+    if (isset($datos["estadoDocente"])) {
+      $docentes->where("entidad.estado", $datos["estadoDocente"]);
     }
-    return $postulantes;
+    return $docentes;
   }
 
   public static function listarIdsDisponiblesXDatosClasesGeneradas($clasesGeneradas, $tipoDocente = NULL) {

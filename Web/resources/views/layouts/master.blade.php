@@ -259,6 +259,7 @@ var maxHorasClase = "{{ $maxHorasClase }}";
 var minHorario = "{{ $minHorario }}";
 var maxHorario = "{{ $maxHorario}}";
 var urlPerfilProfesor = "{{ route('profesores.perfil', ['id' => 0]) }}";
+var urlEditarPostulante = "{{ route('postulantes.editar', ['id' => 0]) }}";
 var urlPerfilAlumno = "{{ route('alumnos.perfil', ['id' => 0]) }}";
 var estadosPago = {!!  json_encode(App\Helpers\Enum\EstadosPago::listar()) !!};
 var urlDatosClase = "{{ route('alumnos.clases.datos', ['id' => '[ID_ALUMNO]', 'idClase' => 0]) }}";

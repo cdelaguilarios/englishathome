@@ -29,6 +29,26 @@ class Horario extends Model {
     return $idsEntidades->lists($nombreTabla . ".idEntidad");
   }
 
+  public static function listarIdsEntidadesXHorario($datosJsonHorario, $tipoEntidad = NULL) {
+    $idsEntidades = [];
+    $auxCont = 1;
+    $datosHorario = json_decode($datosJsonHorario);
+    foreach ($datosHorario as $horario) {
+      $dias = explode(",", $horario->dias);
+      $horas = $horario->horas;
+      foreach ($dias as $dia) {
+        foreach ($horas as $rangoHora) {
+          $rangoHora = explode("-", $rangoHora);
+          $idsEntidadesHorario = Horario::listarIdsEntidadesXRangoFecha($dia, $rangoHora[0] . ":00", $rangoHora[1] . ":00", $tipoEntidad);
+
+          $idsEntidades = ($auxCont == 1 ? $idsEntidadesHorario->toArray() : array_intersect($idsEntidades, $idsEntidadesHorario->toArray()));
+          $auxCont++;
+        }
+      }
+    }
+    return $idsEntidades;
+  }
+
   public static function obtener($idEntidad) {
     return Horario::where("idEntidad", $idEntidad)->orderBy("numeroDiaSemana", "asc")->get();
   }
