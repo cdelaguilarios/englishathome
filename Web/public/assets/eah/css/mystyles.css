@@ -66,7 +66,7 @@
 .table td{
   word-break: break-all;
 }
-.table td:not(.text-center){
+.table td:not(.text-center):not(.text-right){
   text-align: justify !important;
 }
 /*.table i{

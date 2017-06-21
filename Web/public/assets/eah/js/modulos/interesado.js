@@ -2,7 +2,7 @@ $(document).ready(function () {
   cargarLista();
   cargarFormulario();
   cargarFormularioCotizacion();
-  
+
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
   urlCotizar = (typeof (urlCotizar) === "undefined" ? "" : urlCotizar);
   $("#sel-interesado").select2();
@@ -259,6 +259,7 @@ function cargarFormularioCotizacion() {
             CKEDITOR.instances["inversion-cuotas"].setData(d.inversionCuotas);
             CKEDITOR.instances["notas-adicionales"].setData(d.notasAdicionales);
             $("body").unblock();
+            agregarCamposCalculoInversion();
           }
       );
     }
@@ -291,8 +292,80 @@ function cargarFormularioCotizacion() {
   incluirSeccionSubidaArchivos("adjuntos", {onSubmit: function () {
       return true;
     }, acceptFiles: "*", uploadStr: "Subir archivo"});
+
+  $(document).on('change', '[id*="inversion-numero-horas-cta-"]', function () {
+    var datosCuota = $(this).attr("id").replace("inversion-numero-horas-cta-", "").split("-");
+    if (datosCuota.length === 2) {
+      var nroHoras = $(this).val();
+      var materiales = $("#inversion-materiales-" + datosCuota[0] + "-" + datosCuota[1]).val();
+      var inversionHora = $("#inversion-hora-" + datosCuota[0]).val();
+      $("#inversion-total-cta-" + datosCuota[0] + "-" + datosCuota[1]).text(redondear((nroHoras * inversionHora) + (materiales !== "" ? materiales : 0), 2));
+    }
+  });
+
 }
-function copiarEnlaceFichaInscripcion(enlace){
+function copiarEnlaceFichaInscripcion(enlace) {
   window.prompt("Copiar enlace ficha de inscripción: Ctrl+C, Enter", enlace);
   return false;
+}
+
+
+function agregarCamposCalculoInversion() {
+  var datosInversion = $(CKEDITOR.instances["inversion"].getData()).find("tr:eq(1)");
+
+  if ($(datosInversion).find("td").length === 3) {
+    var inversionNroCuotas = $("#inversion-numero-cuotas").val();
+    var nroHoras = parseFloat($(datosInversion).find("td:eq(0)").text().reemplazarDatosTexto(["s/", ".", ","], ["", "", ""]));
+    var materiales = parseFloat($(datosInversion).find("td:eq(1)").text().reemplazarDatosTexto(["s/", ".", ","], ["", "", ""]));
+    var inversion = parseFloat($(datosInversion).find("td:eq(2)").text().reemplazarDatosTexto(["s/", ".", ","], ["", "", ""])) - materiales;
+    var moneda = ($(datosInversion).find("td:eq(1)").text().toLowerCase().includes("s/.") ? "s/." : ($(datosInversion).find("td:eq(1)").text().toLowerCase().includes("$") ? "$" : ""));
+
+    $("#sec-inversion-cuotas-calculo").html("");
+    for (var i = 2; i <= inversionNroCuotas; i++) {
+      var htmlCuota = '<div class="form-group">' +
+          '<div class="col-sm-10 col-sm-offset-2">' +
+          '<div class="box">' +
+          '<div class="box-header">' +
+          '<h3 class="box-title">Inversión en ' + i + ' cuotas</h3>' +
+          '</div>' +
+          '<div class="box-body no-padding">' +
+          '<table class="table table-condensed">' +
+          '<tr>' +
+          '<th class="text-center"><b>Nro. de horas</b></th>' +
+          '<th class="text-center"><b>Materiales ' + (moneda !== '' ? '(' + moneda + ')' : '') + '</b></th>' +
+          '<th class="text-center"><b>Inversión total ' + (moneda !== '' ? '(' + moneda + ')' : '') + '</b></th>' +
+          '</tr>';
+
+      var nroHorasCta = parseFloat(redondear((nroHoras / i), 2));
+      var inversionCta = parseFloat(redondear((inversion / i), 2));
+      var inversionHora = (inversion / nroHoras);
+      var auxTotalNroHoras = 0, auxTotalInversion = 0;
+
+      for (var j = 1; j <= i; j++) {
+        var th = ((auxTotalNroHoras + nroHorasCta >= nroHoras) || (j === i) ? (nroHoras - auxTotalNroHoras) : nroHorasCta);
+        var ti = ((auxTotalInversion + inversionCta >= inversion) || (j === i) ? (inversion - auxTotalInversion) : inversionCta);
+
+        htmlCuota += '<tr>' +
+            '<td class="text-center"><input id="inversion-numero-horas-cta-' + i + '-' + j + '" type="number" value="' + parseInt(th) + '" style="width: 40px; margin: 0 4px;" /></td>' +
+            '<td class="text-center"><input id="inversion-materiales-' + i + '-' + j + '" type="text" value="' + (j === 1 ? redondear(materiales, 2) : '') + '" /></td>' +
+            '<td class="text-center"><label id="inversion-total-cta-' + i + '-' + j + '">' + redondear(ti + (j === 1 ? materiales : 0), 2) + '</label></td>' +
+            '</tr>';
+        auxTotalNroHoras += nroHorasCta;
+        auxTotalInversion += inversionCta;
+      }
+      htmlCuota += '<tr>' +
+          '<td colspan="2"></td>' +
+          '<td class="text-center">' +
+          '<label id="inversion-total-' + i + '">Total: ' + redondear(inversion + materiales, 2) + '</label>' +
+          '<input id="inversion-hora-' + i + '" type="hidden" value="' + inversionHora + '" />' +
+          '</td>' +
+          '</tr>' +
+          '</table>' +
+          '</div>' +
+          '</div>' +
+          '</div>' +
+          '</div>';
+      $("#sec-inversion-cuotas-calculo").append(htmlCuota);
+    }
+  }
 }

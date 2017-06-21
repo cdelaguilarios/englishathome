@@ -24,7 +24,7 @@
             <a href="{{ route("cursos.crear")}}" class="btn btn-primary btn-clean">Nuevo curso</a>
           </div>           
           <div class="col-sm-4">
-            {{ Form::select("",App\Models\Curso::listarSimple(FALSE), $curso->id, ["id"=>"sel-curso", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%"]) }}
+            {{ Form::select("", App\Models\Curso::listarSimple(FALSE), $curso->id, ["id"=>"sel-curso", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%"]) }}
           </div>
         </div> 
       </div>

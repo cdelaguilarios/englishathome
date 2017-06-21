@@ -59,7 +59,7 @@
         @endif 
         @if(isset($alumno->idCurso))
         <strong><i class="fa fa-fw flaticon-favorite-book"></i> Curso</strong>
-        <p class="text-muted">{{ $cursos[$alumno->idCurso] }}</p>
+        <p class="text-muted">{{ App\Models\Curso::listarSimple(FALSE)[$alumno->idCurso] }}</p>
         <hr> 
         @endif
         <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>

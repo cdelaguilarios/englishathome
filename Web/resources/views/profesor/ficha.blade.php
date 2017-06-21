@@ -17,8 +17,8 @@
         window.print();
         setTimeout(function () {
           $(window).one('mousemove', window.onafterprint);
-        }, 1000);
-      }, 500);
+        }, 500);
+      }, 1500);
       clearInterval(verificarMapa);
     }
   }, 100);
@@ -79,7 +79,7 @@
         @if(isset($profesor->cursos) && count($profesor->cursos) > 0)
         <strong><i class="fa fa-fw flaticon-favorite-book"></i> Cursos</strong>
         @foreach($profesor->cursos as $curso)
-        <p class="text-muted">- {{ $cursos[$curso->idCurso] }}</p>
+        <p class="text-muted">- {{ App\Models\Curso::listarSimple(FALSE)[$curso->idCurso] }}</p>
         @endforeach
         <hr> 
         @endif

@@ -543,3 +543,11 @@ function rgb2hex(rgb) {
   }
   return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }
+
+String.prototype.reemplazarDatosTexto = function (datos, valores) {
+  var ele = this;
+  for (var i = 0; i < datos.length; i++) {
+    ele = ele.toLowerCase().split(datos[i]).join(valores[i]);
+  }
+  return ele;
+};

@@ -82,7 +82,7 @@
       <div class="form-group">
         {{ Form::label("id-curso", "Curso de interes: ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-4">
-          {{ Form::select("idCurso", $cursos, $interesado->idCurso, ["id" => "id-curso", "class" => "form-control"]) }}
+          {{ Form::select("idCurso", App\Models\Curso::listarSimple(FALSE), $interesado->idCurso, ["id" => "id-curso", "class" => "form-control"]) }}
         </div>  
         <div id="sec-imagen-curso" class="col-sm-6"></div>     
         {{ Form::hidden("imagenCurso") }}
@@ -124,11 +124,17 @@
         </div>                                        
       </div>
       <div class="form-group">
-        {{ Form::label("inversion-cuotas", "Inversión en cuotas (*): ", ["class" => "col-sm-2 control-label"]) }}
-        <div class="col-sm-10 sec-inversion">
+        {{ Form::label("inversion-cuotas", "Inversión en cuotas (*): ", ["class" => "col-sm-2 control-label"]) }}  
+        <div class="col-sm-10">
+          Establecer inversión en <input id="inversion-numero-cuotas" type="number" value="2" style="width: 40px; margin: 0 4px;"/> cuota(s).
+        </div>
+      </div>                                    
+      <div id="sec-inversion-cuotas-calculo"></div>
+      <div class="form-group">
+        <div class="col-sm-10 col-sm-offset-2 sec-inversion">
           {{ Form::textarea("inversionCuotas", null, ["id" => "inversion-cuotas", "class" => "form-control", "rows" => "10", "maxlength" =>"8000"]) }}
-        </div>                                        
-      </div> 
+        </div> 
+      </div>
       <div class="form-group">  
         {{ Form::label("notas-adicionales", "Notas adicionales (*): ", ["class" => "col-sm-2 control-label"]) }}   
         <div class="col-sm-10">

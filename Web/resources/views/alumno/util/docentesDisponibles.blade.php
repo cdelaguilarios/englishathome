@@ -29,7 +29,7 @@
           <div class="row">
             {{ Form::label("id-curso-docente-disponible-" . $seccion, "Curso: ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
-              {{ Form::select("idCursoDocenteDisponible" . $seccion, $cursos, $idCurso, ["id" => "id-curso-docente-disponible-" . $seccion, "placeholder" => "Todos", "class" => "form-control"]) }}
+              {{ Form::select("idCursoDocenteDisponible" . $seccion, App\Models\Curso::listarSimple(FALSE), $idCurso, ["id" => "id-curso-docente-disponible-" . $seccion, "placeholder" => "Todos", "class" => "form-control"]) }}
             </div> 
           </div>
         </div><br/>
