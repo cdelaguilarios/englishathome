@@ -293,26 +293,20 @@ function cargarFormularioCotizacion() {
       return true;
     }, acceptFiles: "*", uploadStr: "Subir archivo"});
 
-  $(document).on('change', '[id*="inversion-numero-horas-cta-"]', function () {
-    var datosCuota = $(this).attr("id").replace("inversion-numero-horas-cta-", "").split("-");
-    if (datosCuota.length === 2) {
-      var nroHoras = $(this).val();
-      var materiales = $("#inversion-materiales-" + datosCuota[0] + "-" + datosCuota[1]).val();
-      var inversionHora = $("#inversion-hora-" + datosCuota[0]).val();
-      $("#inversion-total-cta-" + datosCuota[0] + "-" + datosCuota[1]).text(redondear((nroHoras * inversionHora) + (materiales !== "" ? materiales : 0), 2));
-    }
+  $(document).on('change', '#inversion-numero-cuotas', function () {
+    agregarCamposCalculoInversion();
   });
-
+  $(document).on('change', '[id*="inversion-numero-horas-cta-"], [id*="inversion-materiales-cta-"]', function () {
+    recalcularInversion();
+  });
 }
 function copiarEnlaceFichaInscripcion(enlace) {
   window.prompt("Copiar enlace ficha de inscripción: Ctrl+C, Enter", enlace);
   return false;
 }
 
-
 function agregarCamposCalculoInversion() {
   var datosInversion = $(CKEDITOR.instances["inversion"].getData()).find("tr:eq(1)");
-
   if ($(datosInversion).find("td").length === 3) {
     var inversionNroCuotas = $("#inversion-numero-cuotas").val();
     var nroHoras = parseFloat($(datosInversion).find("td:eq(0)").text().reemplazarDatosTexto(["s/", ".", ","], ["", "", ""]));
@@ -320,7 +314,7 @@ function agregarCamposCalculoInversion() {
     var inversion = parseFloat($(datosInversion).find("td:eq(2)").text().reemplazarDatosTexto(["s/", ".", ","], ["", "", ""])) - materiales;
     var moneda = ($(datosInversion).find("td:eq(1)").text().toLowerCase().includes("s/.") ? "s/." : ($(datosInversion).find("td:eq(1)").text().toLowerCase().includes("$") ? "$" : ""));
 
-    $("#sec-inversion-cuotas-calculo").html("");
+    $("#sec-inversion-cuotas-calculo").html('<input id="inversion-numero-cuotas" type="hidden" value="' + inversionNroCuotas + '" /><input id="inversion-moneda" type="hidden" value="' + moneda + '" />');
     for (var i = 2; i <= inversionNroCuotas; i++) {
       var htmlCuota = '<div class="form-group">' +
           '<div class="col-sm-10 col-sm-offset-2">' +
@@ -335,20 +329,18 @@ function agregarCamposCalculoInversion() {
           '<th class="text-center"><b>Materiales ' + (moneda !== '' ? '(' + moneda + ')' : '') + '</b></th>' +
           '<th class="text-center"><b>Inversión total ' + (moneda !== '' ? '(' + moneda + ')' : '') + '</b></th>' +
           '</tr>';
-
       var nroHorasCta = parseFloat(redondear((nroHoras / i), 2));
       var inversionCta = parseFloat(redondear((inversion / i), 2));
       var inversionHora = (inversion / nroHoras);
       var auxTotalNroHoras = 0, auxTotalInversion = 0;
 
       for (var j = 1; j <= i; j++) {
-        var th = ((auxTotalNroHoras + nroHorasCta >= nroHoras) || (j === i) ? (nroHoras - auxTotalNroHoras) : nroHorasCta);
-        var ti = ((auxTotalInversion + inversionCta >= inversion) || (j === i) ? (inversion - auxTotalInversion) : inversionCta);
-
+        var th = parseInt((auxTotalNroHoras + nroHorasCta >= nroHoras) || (j === i) ? (nroHoras - auxTotalNroHoras) : nroHorasCta);
+        var tm = (j === 1 ? redondear(materiales, 2) : '');
         htmlCuota += '<tr>' +
-            '<td class="text-center"><input id="inversion-numero-horas-cta-' + i + '-' + j + '" type="number" value="' + parseInt(th) + '" style="width: 40px; margin: 0 4px;" /></td>' +
-            '<td class="text-center"><input id="inversion-materiales-' + i + '-' + j + '" type="text" value="' + (j === 1 ? redondear(materiales, 2) : '') + '" /></td>' +
-            '<td class="text-center"><label id="inversion-total-cta-' + i + '-' + j + '">' + redondear(ti + (j === 1 ? materiales : 0), 2) + '</label></td>' +
+            '<td class="text-center"><input id="inversion-numero-horas-cta-' + i + '-' + j + '" type="number" value="' + th + '" style="width: 40px; margin: 0 4px;" /></td>' +
+            '<td class="text-center"><input id="inversion-materiales-cta-' + i + '-' + j + '" type="text" value="' + tm + '" /></td>' +
+            '<td class="text-center"><label id="inversion-total-cta-' + i + '-' + j + '"></label></td>' +
             '</tr>';
         auxTotalNroHoras += nroHorasCta;
         auxTotalInversion += inversionCta;
@@ -356,16 +348,49 @@ function agregarCamposCalculoInversion() {
       htmlCuota += '<tr>' +
           '<td colspan="2"></td>' +
           '<td class="text-center">' +
-          '<label id="inversion-total-' + i + '">Total: ' + redondear(inversion + materiales, 2) + '</label>' +
+          '<label id="inversion-total-' + i + '"></label>' +
           '<input id="inversion-hora-' + i + '" type="hidden" value="' + inversionHora + '" />' +
-          '</td>' +
-          '</tr>' +
-          '</table>' +
-          '</div>' +
-          '</div>' +
-          '</div>' +
-          '</div>';
+          '</td></tr></table></div></div></div></div>';
       $("#sec-inversion-cuotas-calculo").append(htmlCuota);
     }
+    recalcularInversion();
   }
+}
+function recalcularInversion() {
+  var inversionNroCuotas = parseInt($("#inversion-numero-cuotas").val());
+  var moneda = $("#inversion-moneda").val();
+  var htmlInversionCuota = '';
+  for (var i = 2; i <= inversionNroCuotas; i++) {
+    htmlInversionCuota += '<p><span><strong>En ' + i + ' cuotas</strong></span></p>' +
+        '<table>' +
+        '<tbody>' +
+        '<tr class="fila-cabecera">' +
+        '<td>Nro De horas</td>' +
+        '<td>Materiales</td>' +
+        '<td>Inversión Total</td>' +
+        '</tr>';
+
+    var ti = 0;
+    for (var j = 1; j <= i; j++) {
+      var thc = parseFloat($("#inversion-numero-horas-cta-" + i + "-" + j).val());
+      var tmc = parseFloat($("#inversion-materiales-cta-" + i + "-" + j).val());
+      var ihc = parseFloat($("#inversion-hora-" + i).val());
+      var tic = (thc * ihc) + (isNaN(tmc) ? 0 : tmc);
+      ti += tic;
+      $("#inversion-total-cta-" + i + "-" + j).text(redondear(tic, 2));
+      htmlInversionCuota += '<tr class="' + (j % 2 === 0 ? 'fila-par' : 'fila-impar') + '">' +
+          '<td>' + thc + '</td>' +
+          '<td>' + (isNaN(tmc) ? '&nbsp;' : (moneda + tmc)) + '</td>' +
+          '<td>' + (moneda + tic) + '</td>' +
+          '</tr>';
+    }
+    htmlInversionCuota += '<tr class="fila-total">' +
+        '<td colspan="2">TOTAL</td>' +
+        '<td>' + (moneda + ti) + '</td>' +
+        '</tr>' +
+        '</tbody>' +
+        '</table>';
+    $("#inversion-total-" + i).text("Total " + redondear(ti, 2));
+  }
+  CKEDITOR.instances["inversion-cuotas"].setData(htmlInversionCuota);
 }
