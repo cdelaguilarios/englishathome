@@ -125,16 +125,11 @@
       </div>
       <div class="form-group">
         {{ Form::label("inversion-cuotas", "Inversión en cuotas (*): ", ["class" => "col-sm-2 control-label"]) }}  
-        <div class="col-sm-10">
-          Establecer inversión en <input id="inversion-numero-cuotas" type="number" value="2" style="width: 40px; margin: 0 4px;"/> cuota(s).
-        </div>
-      </div>                                    
-      <div id="sec-inversion-cuotas-calculo"></div>
-      <div class="form-group">
+        @include("util.calculadoraInversionCuotas") 
         <div class="col-sm-10 col-sm-offset-2 sec-inversion">
           {{ Form::textarea("inversionCuotas", null, ["id" => "inversion-cuotas", "class" => "form-control", "rows" => "10", "maxlength" =>"8000"]) }}
         </div> 
-      </div>
+      </div>   
       <div class="form-group">  
         {{ Form::label("notas-adicionales", "Notas adicionales (*): ", ["class" => "col-sm-2 control-label"]) }}   
         <div class="col-sm-10">

@@ -59,6 +59,7 @@ function cargarLista() {
   }
 }
 
+var editorCargado = false;
 function cargarFormulario() {
   if ($("#descripcion").length === 0) {
     return;
@@ -125,4 +126,10 @@ function cargarFormulario() {
   CKEDITOR.replace("inversion");
   CKEDITOR.replace("inversion-cuotas");
   CKEDITOR.replace("notas-adicionales");
+  CKEDITOR.on("instanceReady", function (e) {
+    if (!editorCargado) {
+      editorCargado = true;
+      agregarCamposCalculoInversionCuotas(true);
+    }
+  });
 }
