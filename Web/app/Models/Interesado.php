@@ -154,6 +154,7 @@ class Interesado extends Model {
       return ($idAlumnoRel != 0 ? $idAlumnoRel : NULL);
     }
     if (is_null($idAlumno)) {
+      $datos["comentarioAdministrador"] = $datos["comentarioAdicional"];
       $idEntidad = Entidad::registrar($datos, TiposEntidad::Alumno, EstadosAlumno::PorConfirmar);
       $datos += [
           "conComputadora" => 0,

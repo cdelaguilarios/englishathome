@@ -48,7 +48,7 @@ class ReporteController extends Controller {
     return Datatables::of(Pago::listar($req->all()))->filterColumn("nombreEntidad", function($q, $k) {
               $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
             })->filterColumn("fechaRegistro", function($q, $k) {
-              $q->whereRaw("DATE_FORMAT(" . Pago::nombreTabla() . ".fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
+              $q->whereRaw("DATE_FORMAT(" . Pago::nombreTabla() . ".fecha, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
             })->make(true);
   }
 

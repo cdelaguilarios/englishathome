@@ -49,7 +49,9 @@ class PagoAlumno extends Model {
 
   public static function registrar($idAlumno, $request) {
     $datos = $request->all();
+    $datos["saldoFavor"] = ((float) $datos["saldoFavor"]) + ((float) ($datos["considerarClasesIncompletas"] == 0 ? $datos["saldoFavorAdicional"] : 0));
     $datosPago = Pago::registrar($datos, $datos["estado"], $request);
+
     $pagoAlumno = new PagoAlumno([
         "idPago" => $datosPago["id"],
         "idAlumno" => $idAlumno
@@ -58,10 +60,11 @@ class PagoAlumno extends Model {
 
     if ($datos["usarSaldoFavor"] == 1) {
       Pago::whereIn("id", function($q) use ($idAlumno) {
-        $q->select("idPago")->from(PagoAlumno::nombreTabla())->where("idAlumno", $idAlumno);
-      })->where("eliminado", 0)->update(["saldoFavorUtilizado" => 1]);
+                $q->select("idPago")->from(PagoAlumno::nombreTabla())->where("idAlumno", $idAlumno);
+              })->where("eliminado", 0)
+              ->where("id", "!=", $datosPago["id"])
+              ->update(["saldoFavorUtilizado" => 1]);
     }
-
     if ($datos["motivo"] == MotivosPago::Clases) {
       Alumno::actualizarEstado($idAlumno, EstadosAlumno::Activo);
       Clase::registrarXDatosPago($idAlumno, $datosPago["id"], $datos);

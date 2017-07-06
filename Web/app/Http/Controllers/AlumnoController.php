@@ -199,8 +199,8 @@ class AlumnoController extends Controller {
   public function listarPagos($id) {
     return Datatables::of(PagoAlumno::listar($id))->filterColumn("pago.fecha", function($q, $k) {
               $q->whereRaw("DATE_FORMAT(pago.fecha, '%d/%m/%Y') like ?", ["%{$k}%"]);
-            })->filterColumn("pago.fechaRegistro", function($q, $k) {
-              $q->whereRaw("DATE_FORMAT(pago.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
+            })->filterColumn("pago.fecha", function($q, $k) {
+              $q->whereRaw("DATE_FORMAT(pago.fecha, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
             })->make(true);
   }
 
@@ -222,6 +222,8 @@ class AlumnoController extends Controller {
     return Datatables::of(Docente::listarDisponiblesXDatosPago($id, $req->all()))
                     ->filterColumn("nombreCompleto", function($q, $k) {
                       $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
+                    })->filterColumn('estado', function($q, $k) {
+                      $q->whereRaw('entidad.estado like ?', ["%{$k}%"]);
                     })->make(true);
   }
 
@@ -285,6 +287,8 @@ class AlumnoController extends Controller {
     return Datatables::of(Docente::listarDisponiblesXDatosClase($req->all()))
                     ->filterColumn('nombreCompleto', function($q, $k) {
                       $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
+                    })->filterColumn('estado', function($q, $k) {
+                      $q->whereRaw('entidad.estado like ?', ["%{$k}%"]);
                     })->make(true);
   }
 

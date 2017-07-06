@@ -31,6 +31,7 @@ class Curso extends Model {
   public static function registrar($req) {
     $datos = $req->all();
     $curso = new Curso($datos);
+    $curso->fechaRegistro = Carbon::now()->toDateTimeString();
     $curso->save();
     $imagen = $req->file("imagen");
     if (isset($imagen) && $imagen != "") {
@@ -44,6 +45,7 @@ class Curso extends Model {
   public static function actualizar($id, $req) {
     $datos = $req->all();
     $curso = Curso::obtenerXId($id);
+    $curso->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $curso->update($datos);
     $imagen = $req->file("imagen");
     if (isset($imagen) && $imagen != "") {

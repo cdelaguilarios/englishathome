@@ -39,15 +39,15 @@ class Pago extends Model {
               ->whereIn($nombreTabla . ".id", PagoAlumno::lists("idPago"));
     }
     $datos["estado"] = $datos["estadoPago"];
-    Util::filtrosBusqueda($nombreTabla, $pagos, "fechaRegistro", $datos);
+    Util::filtrosBusqueda($nombreTabla, $pagos, "fecha", $datos);
     return $pagos;
   }
 
   public static function reporte($datos) {
     $pagos = Pago::where("eliminado", 0)
-            ->select((($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoMeses) ? DB::raw("MONTH(fechaRegistro) AS mes") : (($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoAnhos) ? DB::raw("YEAR(fechaRegistro) AS anho") : "fechaRegistro")), "estado", DB::raw("SUM(monto) AS total"))
-            ->groupBy((($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoMeses) ? DB::raw("MONTH(fechaRegistro)") : (($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoAnhos) ? DB::raw("YEAR(fechaRegistro)") : "fechaRegistro")), "estado")
-            ->orderBy("fechaRegistro", "ASC");
+            ->select((($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoMeses) ? DB::raw("MONTH(fecha) AS mes") : (($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoAnhos) ? DB::raw("YEAR(fecha) AS anho") : "fecha")), "estado", DB::raw("SUM(monto) AS total"))
+            ->groupBy((($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoMeses) ? DB::raw("MONTH(fecha)") : (($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoAnhos) ? DB::raw("YEAR(fecha)") : "fecha")), "estado")
+            ->orderBy("fecha", "ASC");
     if (isset($datos["tipoPago"]) && $datos["tipoPago"] !== "0") {
       $pagos->whereIn("id", PagoProfesor::lists("idPago"));
     } else {
@@ -64,6 +64,7 @@ class Pago extends Model {
     $datos["fecha"] = (isset($datos["fecha"]) ? Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00") : Carbon::now());
     $pago = new Pago($datos);
     $pago->estado = $estado;
+    $pago->fechaRegistro = Carbon::now()->toDateTimeString();
     $pago->save();
     Pago::registrarActualizarImagenes($pago["id"], $request);
     return Pago::obtenerXId($pago["id"]);
@@ -74,6 +75,7 @@ class Pago extends Model {
       $datos["fecha"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fecha"] . " 00:00:00");
     }
     $pago = Pago::obtenerXId($id);
+    $pago->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $pago->update($datos);
     Pago::registrarActualizarImagenes($id, $request);
     return Pago::obtenerXId($id);
@@ -100,6 +102,7 @@ class Pago extends Model {
     $nombresImagenesDocumentosVerificacion = Archivo::procesarArchivosSubidos($imagenesComprobante, $request->all(), 20, "nombresDocumentosVerificacion", "nombresDocumentosVerificacion", "nombresDocumentosVerificacionEliminados");
     if ($nombreImagenComprobante != "" || $nombresImagenesDocumentosVerificacion != "") {
       $pago->imagenesComprobante = $nombreImagenComprobante . "," . $nombresImagenesDocumentosVerificacion;
+      $pago->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
       $pago->save();
     }
   }
@@ -107,6 +110,7 @@ class Pago extends Model {
   public static function actualizarEstado($id, $estado) {
     $pago = Pago::obtenerXId($id);
     $pago->estado = $estado;
+    $pago->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $pago->save();
   }
 

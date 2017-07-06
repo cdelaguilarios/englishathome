@@ -47,6 +47,7 @@ class Entidad extends Model {
     $entidad = new Entidad($datos);
     $entidad->tipo = $tipo;
     $entidad->estado = $estado;
+    $entidad->fechaRegistro = Carbon::now()->toDateTimeString();
     $entidad->save();
     return $entidad->id;
   }
@@ -78,6 +79,7 @@ class Entidad extends Model {
           Archivo::eliminar($entidad->imagenPerfil);
         }
         $entidad->imagenPerfil = $nuevaImagenEntidad;
+        $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
         $entidad->save();
       }
     }
@@ -86,6 +88,7 @@ class Entidad extends Model {
   public static function actualizarComentariosAdministrador($id, $datos) {
     $entidad = Entidad::ObtenerXId($id);
     $entidad->comentarioAdministrador = $datos["comentarioAdministrador"];
+    $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $entidad->save();
   }
 

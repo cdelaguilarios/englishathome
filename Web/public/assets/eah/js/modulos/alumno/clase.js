@@ -208,7 +208,7 @@ function htmlListaClases(d) {
     htmlListaClases +=
         '<tr>' +
         '<td class="text-center">' +
-        (d[i].estado !== estadoClaseCancelada ? '<input type="checkbox" data-id="' + d[i].id + '" />' : '') +
+        '<b>(' + (i + 1) + ')</b> ' + (d[i].estado !== estadoClaseCancelada ? '<input type="checkbox" data-id="' + d[i].id + '" />' : '') +
         '</td>' +
         '<td>' +
         '<b>Fecha:</b> ' + formatoFecha(d[i].fechaInicio) + ' - De ' + formatoFecha(d[i].fechaInicio, false, true) + ' a ' + formatoFecha(d[i].fechaFin, false, true) + '<br/>'
@@ -416,6 +416,7 @@ function editarClase(idClase) {
     } else {
       mostrarSeccionClase([2]);
     }
+    $(window).scrollTop($("#formulario-registrar-actualizar-clase").offset().top);
   });
 }
 
@@ -500,6 +501,7 @@ function cancelarClase(idClase) {
     $("#costo-hora-clase-reprogramada").val(redondear(d.costoHora, 2));
     $("#id-pago-clase-reprogramada").val(d.idPago);
     mostrarSeccionClase([3, 1, 1]);
+    $(window).scrollTop($("#formulario-cancelar-clase").offset().top);
   });
 }
 function verificarSeccionReprogramarClase() {
@@ -597,6 +599,7 @@ function editarClasesGrupo(numeroPeriodo) {
     $("#editar-datos-generales-clases").attr("checked", true);
     $("#editar-datos-generales-clases").closest("label").addClass("checked");
     mostrarSeccionClase([4, 1]);
+    $(window).scrollTop($("#formulario-actualizar-clases").offset().top);
   });
 }
 function obtenerDatosClasesGrupo(idsClases, funcionRetorno) {

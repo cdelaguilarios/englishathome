@@ -277,7 +277,8 @@ function tiempoSegundos(fecha) {
 $.extend(true, $.fn.dataTable.defaults, {
   "oLanguage": {
     "sUrl": urlBase + "/assets/plugins/datatables/languages/Spanish.json"
-  }
+  },
+  "pageLength": 50
 });
 function establecerBotonRecargaTabla(idTabla) {
   $("#" + idTabla + "_length").append('<a href="javascript:void(0)" onclick="recargarDatosTabla(\'' + idTabla + '\')" title="Recargar datos..." style="margin-left: 10px;"><i class="fa fa-refresh"></i></a>');

@@ -216,7 +216,7 @@ class Clase extends Model {
       foreach ($dias as $dia) {
         foreach ($horas as $rangoHora) {
           $rangoHora = explode("-", $rangoHora);
-          
+
           $diaSel = ((int) $dia != 7 ? ((int) $dia) + 1 : 1);
           $fechaActual = Carbon::now();
           $horaInicio = Carbon::createFromFormat("d/m/Y H:i:s", "01/01/1970 " . $rangoHora[0] . ":00")->subMinutes((int) Config::get("eah.rangoMinutosBusquedaHorarioDocente"))->toTimeString();
@@ -352,6 +352,7 @@ class Clase extends Model {
     $horasPagadas = ($preHorasPagadas - fmod($preHorasPagadas, 0.5));
     $fechaInicioClase = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaInicioClases"] . " 00:00:00");
     $horarioAlumno = Horario::obtener($idAlumno);
+    $montoRestanteOpcional = 0;
 
     while ($duracionTotalSeg < ($horasPagadas * 3600)) {
       foreach ($horarioAlumno as $datHorarioAlumno) {
@@ -363,12 +364,15 @@ class Clase extends Model {
           $fechaFin = (($tiempoAdicionalSeg > 0) ? $preFechaFin->subSeconds($tiempoAdicionalSeg) : $preFechaFin);
           $duracion = $fechaFin->diffInSeconds($fechaInicio);
           $clasesGeneradas[] = ["fechaInicio" => $fechaInicio, "fechaFin" => $fechaFin, "duracion" => $duracion, "tiempoAdicional" => ($tiempoAdicionalSeg > 0 ? $tiempoAdicionalSeg : 0)];
+
+          $montoRestanteOpcional += ($tiempoAdicionalSeg > 0 ? ((((float) $duracion) / 3600) * (float) $datos["costoHoraClase"]) : 0);
           $duracionTotalSeg += $duracion;
         }
       }
       $fechaInicioClase = $fechaInicioClase->addDay();
     }
     $clasesGeneradas["montoRestante"] = ($datos["monto"] - ($horasPagadas * (float) $datos["costoHoraClase"]));
+    $clasesGeneradas["montoRestanteOpcional"] = $montoRestanteOpcional;
 
     $datosUltimaClase = Clase::obtenerUltimaClase($idAlumno);
     if (!is_null($datosUltimaClase)) {
@@ -389,15 +393,17 @@ class Clase extends Model {
       if (!isset($datosClases[$i]["duracion"])) {
         continue;
       }
-      $datos["duracion"] = $datosClases[$i]["duracion"];
-      $datos["costoHora"] = $datos["costoHoraClase"];
-      $datos["fechaInicio"] = $datosClases[$i]["fechaInicio"];
-      $datos["fechaFin"] = $datosClases[$i]["fechaFin"];
-      $datos["numeroPeriodo"] = $datos["periodoClases"];
-      $datos["notificar"] = (($datosNotificacionClases[$i]->notificar != "" && $datosNotificacionClases[$i]->notificar) ? 1 : 0);
-      $datos["estado"] = EstadosClase::Programada;
-      $datos["idPago"] = $idPago;
-      Clase::registrarActualizar($idAlumno, $datos);
+      if ($datos["considerarClasesIncompletas"] == 1 || ((int) $datosClases[$i]["tiempoAdicional"]) == 0) {
+        $datos["duracion"] = $datosClases[$i]["duracion"];
+        $datos["costoHora"] = $datos["costoHoraClase"];
+        $datos["fechaInicio"] = $datosClases[$i]["fechaInicio"];
+        $datos["fechaFin"] = $datosClases[$i]["fechaFin"];
+        $datos["numeroPeriodo"] = $datos["periodoClases"];
+        $datos["notificar"] = (($datosNotificacionClases[$i]->notificar != "" && $datosNotificacionClases[$i]->notificar) ? 1 : 0);
+        $datos["estado"] = EstadosClase::Programada;
+        $datos["idPago"] = $idPago;
+        Clase::registrarActualizar($idAlumno, $datos);
+      }
     }
   }
 
@@ -428,9 +434,11 @@ class Clase extends Model {
       if (($tieneHistorialReg && !$cambioFechaInicio && $notificar) || ($clase->estado == EstadosClase::Cancelada)) {
         $notificar = FALSE;
       }
+      $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
       $clase->update($datos);
     } else {
       $clase = new Clase($datos);
+      $clase->fechaRegistro = Carbon::now()->toDateTimeString();
       $clase->save();
     }
 
@@ -487,6 +495,7 @@ class Clase extends Model {
           $datosActualizar["costoHoraProfesor"] = $datos["costoHoraDocente"];
         }
 
+        $claseSel->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
         $claseSel->update($datosActualizar);
         $nroPeriodo = $claseSel->numeroPeriodo;
         if ($datos["editarDatosPago"] == 1 && isset($datos["idPago"])) {
@@ -500,6 +509,7 @@ class Clase extends Model {
   public static function actualizarEstado($idAlumno, $datos) {
     $clase = Clase::obtenerXId($idAlumno, $datos["idClase"]);
     $clase->estado = $datos["estado"];
+    $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $clase->save();
   }
 
@@ -512,6 +522,7 @@ class Clase extends Model {
       if (isset($datos["idProfesor"]) && isset($datos["pagoProfesor"])) {
         $claseCancelada->pagoTotalProfesor = $datos["pagoProfesor"];
       }
+      $claseCancelada->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
       $claseCancelada->save();
       Historial::eliminarXIdClase($datos["idClase"]);
 
@@ -568,6 +579,7 @@ class Clase extends Model {
     $clasesProgramadas = Clase::listarXEstados(EstadosClase::Programada)->where("fechaFin", "<=", Carbon::now())->get();
     foreach ($clasesProgramadas as $claseProgramada) {
       $claseProgramada->estado = EstadosClase::PendienteConfirmar;
+      $claseProgramada->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
       $claseProgramada->save();
     }
   }

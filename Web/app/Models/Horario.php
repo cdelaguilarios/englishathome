@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Horario extends Model {
@@ -91,6 +92,7 @@ class Horario extends Model {
               "horaInicio" => $rangoHora[0] . ":00",
               "horaFin" => $rangoHora[1] . ":00"
           ]);
+          $horario->fechaRegistro = Carbon::now()->toDateTimeString();
           $horario->save();
         }
       }
@@ -107,6 +109,7 @@ class Horario extends Model {
           "horaInicio" => $datHorario->horaInicio,
           "horaFin" => $datHorario->horaFin
       ]);
+      $horario->fechaRegistro = Carbon::now()->toDateTimeString();
       $horario->save();
     }
   }

@@ -231,7 +231,7 @@
           <div class="form-group">
             <h4>Comentarios adicionales:</h4>
           </div>
-          <div class="form-group">
+          <div class="form-group" style="display:none">
             <div class="col-sm-offset-1 col-sm-10">
               {{ Form::textarea("comentarioAdicional", null, ["class" => "form-control", "rows" => "6", "maxlength" =>"8000"]) }}
             </div>                                        

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use DB;
 use Config;
 use Carbon\Carbon;
 use App\Helpers\Enum\TiposEntidad;

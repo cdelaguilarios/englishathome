@@ -132,29 +132,29 @@ function cargarListaPago() {
         var montoTotal = 0, montoTotalPagina = 0;
         saldoFavorTotal = 0;
         $('#tab-lista-pagos').DataTable().rows().data().each(function (i) {
-          var montoTotal = (i.monto !== null ? parseFloat(i.monto + "") : 0);
-          var saldoFavor = (i.saldoFavor !== null ? parseFloat(i.saldoFavor + "") : 0);
-          var montoTotalClases = (montoTotal - saldoFavor);
-          var costoHoraPromedio = (i.costoHoraPromedio !== null ? parseFloat(i.costoHoraPromedio + "") : 0);
-
-          var montoRealizado = (i.duracionMontoRealizado !== null ? parseFloat(i.duracionMontoRealizado.split("-")[1] + "") : 0);
-          var montoPendienteReal = (i.duracionMontoPendiente !== null ? parseFloat(i.duracionMontoPendiente.split("-")[1] + "") : 0);
-          var montoAFavor = (montoTotalClases - (montoRealizado + montoPendienteReal));
-
-          var saldoFavorTotalPago = saldoFavor + (montoAFavor > 0 && costoHoraPromedio > 0 ? montoAFavor : 0);
-          if (!(i.saldoFavorUtilizado !== null && i.saldoFavorUtilizado === 1)) {
+          var saldoFavorTotalPago = obtenerMontoTotalPago(i);
+          if (!(i.saldoFavorUtilizado !== null && i.saldoFavorUtilizado === 1))
             saldoFavorTotal += saldoFavorTotalPago;
-            $("#sec-saldo-favor").show();
-            $("#lbl-usar-saldo-favor").text("Utilizar saldo a favor total (S/. " + redondear(saldoFavorTotal, 2) + ")");
-          }
         });
+        if (saldoFavorTotal > 0) {
+          $("#sec-saldo-favor").show();
+          $("#lbl-usar-saldo-favor").text("Utilizar saldo a favor total (S/. " + redondear(saldoFavorTotal, 2) + ")");
+        }
+
+        var saldoFavorTotalUtilizadoTotal = 0, saldoFavorTotalUtilizadoPagina = 0;
         $('#tab-lista-pagos').DataTable().rows({filter: 'applied'}).data().each(function (i) {
+          var saldoFavorTotalPago = obtenerMontoTotalPago(i);
+          if (i.saldoFavorUtilizado !== null && i.saldoFavorUtilizado === 1)
+            saldoFavorTotalUtilizadoTotal += saldoFavorTotalPago;
           montoTotal += parseFloat(i.monto);
         });
         $('#tab-lista-pagos').DataTable().rows({page: 'current'}).data().each(function (i) {
+          var saldoFavorTotalPago = obtenerMontoTotalPago(i);
+          if (i.saldoFavorUtilizado !== null && i.saldoFavorUtilizado === 1)
+            saldoFavorTotalUtilizadoPagina += saldoFavorTotalPago;
           montoTotalPagina += parseFloat(i.monto);
         });
-        $(api.column(3).footer()).html("Total S/. " + redondear(montoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + redondear(montoTotalPagina, 2) : ""));
+        $(api.column(3).footer()).html("Total S/. " + redondear(montoTotal - saldoFavorTotalUtilizadoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + redondear(montoTotalPagina - saldoFavorTotalUtilizadoPagina, 2) : ""));
       }
     });
 
@@ -186,6 +186,18 @@ function cargarListaPago() {
       $(this).remove();
     });
   }
+}
+function obtenerMontoTotalPago(datosPago) {
+  var montoTotal = (datosPago.monto !== null ? parseFloat(datosPago.monto + "") : 0);
+  var saldoFavor = (datosPago.saldoFavor !== null ? parseFloat(datosPago.saldoFavor + "") : 0);
+  var montoTotalClases = (montoTotal - saldoFavor);
+  var costoHoraPromedio = (datosPago.costoHoraPromedio !== null ? parseFloat(datosPago.costoHoraPromedio + "") : 0);
+
+  var montoRealizado = (datosPago.duracionMontoRealizado !== null ? parseFloat(datosPago.duracionMontoRealizado.split("-")[1] + "") : 0);
+  var montoPendienteReal = (datosPago.duracionMontoPendiente !== null ? parseFloat(datosPago.duracionMontoPendiente.split("-")[1] + "") : 0);
+  var montoAFavor = (montoTotalClases - (montoRealizado + montoPendienteReal));
+
+  return (saldoFavor + (montoAFavor > 0 && costoHoraPromedio > 0 ? montoAFavor : 0));
 }
 
 //Formulario
@@ -329,24 +341,41 @@ function generarClases(e) {
 
           var idProfesor = "";
           var nombreCompletoProfesor = "";
-
+          var saldoFavorBase = 0;
+          var saldoFavorTotal = 0;
+          var existeClaseIncompleta = false;
+          
           $.each(d, function (i, v) {
-            if (i !== "montoRestante" && i !== "idProfesor" && i !== "nombreCompletoProfesor") {
+            if (i !== "montoRestante" && i !== "montoRestanteOpcional" && i !== "idProfesor" && i !== "nombreCompletoProfesor") {
               var tiempoAdicionalMinutos = (v.tiempoAdicional > 0 ? v.tiempoAdicional / 60 : 0);
               var tiempoAdicionalHoras = ((tiempoAdicionalMinutos > 0 && tiempoAdicionalMinutos >= 60) ? tiempoAdicionalMinutos / 60 : 0);
               var tiempoAdicional = (v.tiempoAdicional > 0 ? ' <small><b>(Se le descontó ' +
                   (tiempoAdicionalHoras > 0 ? (tiempoAdicionalHoras + (tiempoAdicionalHoras > 1 ? ' horas' : ' hora'))
                       : (tiempoAdicionalMinutos + (tiempoAdicionalMinutos > 1 ? ' minutos' : 'minuto'))) + ')</b></small>'
                   : '');
-              $("#sec-lista-clases-pago tbody").append('<tr>' +
+              existeClaseIncompleta = (tiempoAdicional !== "" ? true : existeClaseIncompleta);
+
+              $("#sec-lista-clases-pago tbody").append('<tr' + (tiempoAdicional !== "" ? ' class="sec-clase-incompleta"' : '') + '>' +
                   '<td>' + (parseInt(i) + 1) + '</td>' +
                   '<td><b>' + formatoFecha(v.fechaInicio.date) + '</b> - De ' + formatoFecha(v.fechaInicio.date, false, true) + ' a ' + formatoFecha(v.fechaFin.date, false, true) + '</td>' +
                   '<td>' + formatoHora(v.duracion) + tiempoAdicional + '</td>' +
                   '<td class="text-center"><input type="checkbox" name="notificarClasePago_' + (parseInt(i) + 1) + '"' + (v.idProfesor !== '' ? '' : ' checked="checked"') + '/></td>' +
                   '</tr>');
             } else if (i === "montoRestante" && v > 0) {
-              $("#sec-saldo-favor-pago").html('<span>El alumno tiene un saldo a favor de <b>S/. ' + redondear(v, 2) + '</b></span>');
+              $("#sec-saldo-favor-pago").html('<span>El alumno tiene un saldo a favor de <b id="saldo-favor-pago">S/. ' + redondear(v, 2) + '</b></span><br/>' + (existeClaseIncompleta ? '<label for="cb-considerar-clases-incompletas">Considerar clases incompletas</label> <input type="checkbox" checked="checked" id="cb-considerar-clases-incompletas" name="considerarClasesIncompletas" />' : ''));
+              if (existeClaseIncompleta) {
+                $("#cb-considerar-clases-incompletas").live("change", function () {
+                  $("#saldo-favor-pago").text('S/. ' + ($(this).is(':checked') ? redondear(saldoFavorBase, 2) : redondear(saldoFavorTotal, 2)));
+                  ($(this).is(':checked') ? $(".sec-clase-incompleta").show() : $(".sec-clase-incompleta").hide());
+                });
+              }
+
               $("input[name='saldoFavor']").val(redondear(v, 4));
+              saldoFavorBase = parseFloat(v);
+              saldoFavorTotal += saldoFavorBase;
+            } else if (i === "montoRestanteOpcional") {
+              $("input[name='saldoFavorAdicional']").val(redondear(v, 4));
+              saldoFavorTotal += parseFloat(v);
             } else if (i === "idProfesor") {
               idProfesor = v;
             } else if (i === "nombreCompletoProfesor") {
@@ -520,7 +549,8 @@ function verDatosPago(idPago) {
       $("#dat-estado-pago").html('<span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span>');
       $("#dat-fecha-pago").text(formatoFecha(d.fecha));
       $("#dat-fecha-registro-pago").text(formatoFecha(d.fechaRegistro, true));
-      if (d.imagenesComprobante !== null && d.imagenesComprobante !== "") {var imagenes = d.imagenesComprobante.split(",");
+      if (d.imagenesComprobante !== null && d.imagenesComprobante !== "") {
+        var imagenes = d.imagenesComprobante.split(",");
         if (imagenes.length > 0) {
           if (imagenes[0] !== "") {
             var rutaImagen = urlArchivos.replace("/0", "/" + imagenes[0]);

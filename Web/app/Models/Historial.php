@@ -99,6 +99,7 @@ class Historial extends Model {
       $datos["adjuntos"] = Archivo::procesarArchivosSubidos("", $datos, 20, "nombresArchivosAdjuntos", "nombresOriginalesArchivosAdjuntos");
 
       $historial = new Historial($datos);
+      $historial->fechaRegistro = Carbon::now()->toDateTimeString();
       $historial->save();
       Historial::registrarActualizarEntidadHistorial($historial["id"], $idEntidadesSel, (isset($historial["enviarCorreo"]) && ((int) $historial["enviarCorreo"] == 1)));
     }
@@ -112,6 +113,7 @@ class Historial extends Model {
       }
       $historial = Historial::obtenerXId($id);
       $datos["adjuntos"] = Archivo::procesarArchivosSubidos($historial->adjuntos, $datos, 20, "nombresArchivosAdjuntos", "nombresOriginalesArchivosAdjuntos", "nombresArchivosAdjuntosEliminados");
+      $historial->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
       $historial->update($datos);
       Historial::registrarActualizarEntidadHistorial($historial["id"], $idEntidadesSel, (isset($historial["enviarCorreo"]) && ((int) $historial["enviarCorreo"] == 1)));
     }
@@ -150,11 +152,13 @@ class Historial extends Model {
       }
       foreach ($entidades as $entidad) {
         $historial = new Historial($datos + ["idEntidadDestinataria" => $entidad->id]);
+        $historial->fechaRegistro = Carbon::now()->toDateTimeString();
         $historial->save();
       }
     } else if (!is_null($datos["idsEntidadesSeleccionadas"])) {
       foreach (array_diff($datos["idsEntidadesSeleccionadas"], $idsEntidadesExcluidas) as $idEntidadSeleccionada) {
         $historial = new Historial($datos + ["idEntidadDestinataria" => $idEntidadSeleccionada]);
+        $historial->fechaRegistro = Carbon::now()->toDateTimeString();
         $historial->save();
       }
     }
@@ -164,6 +168,7 @@ class Historial extends Model {
       foreach ($correosAdicionales as $correoAdicional) {
         if (trim($correoAdicional) != "" && filter_var(trim($correoAdicional), FILTER_VALIDATE_EMAIL)) {
           $historial = new Historial($datos + ["correoDestinatario" => trim($correoAdicional)]);
+          $historial->fechaRegistro = Carbon::now()->toDateTimeString();
           $historial->save();
         } else if (trim($correoAdicional) != "") {
           $correosAdicionalesExcluidos .= trim($correoAdicional) . ",";
@@ -221,6 +226,7 @@ class Historial extends Model {
         Log::error($e);
       }
       $historialEnv->envioCorreoProceso = 0;
+      $historialEnv->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
       $historialEnv->save();
     }
   }

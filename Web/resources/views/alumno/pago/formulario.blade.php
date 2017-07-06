@@ -144,6 +144,7 @@
     </div>
     {{ Form::hidden("idDocente") }} 
     {{ Form::hidden("saldoFavor") }} 
+    {{ Form::hidden("saldoFavorAdicional") }} 
     {{ Form::hidden("datosNotificacionClases") }} 
   </div>
 </div> 
