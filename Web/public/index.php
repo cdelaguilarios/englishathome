@@ -1,5 +1,8 @@
 <?php
 
+/*echo "<div style='text-align: center;'><img src='http://img0.joyreactor.com/pics/post/full/funny-pictures-auto-879086.jpeg'/></div>";
+die;*/
+
 /**
  * Laravel - A PHP Framework For Web Artisans
  *

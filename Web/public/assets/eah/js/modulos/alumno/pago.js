@@ -361,11 +361,14 @@ function generarClases(e) {
                   '<td>' + formatoHora(v.duracion) + tiempoAdicional + '</td>' +
                   '<td class="text-center"><input type="checkbox" name="notificarClasePago_' + (parseInt(i) + 1) + '"' + (v.idProfesor !== '' ? '' : ' checked="checked"') + '/></td>' +
                   '</tr>');
-            } else if (i === "montoRestante" && v > 0) {
-              $("#sec-saldo-favor-pago").html('<span>El alumno tiene un saldo a favor de <b id="saldo-favor-pago">S/. ' + redondear(v, 2) + '</b></span><br/>' + (existeClaseIncompleta ? '<label for="cb-considerar-clases-incompletas">Considerar clases incompletas</label> <input type="checkbox" checked="checked" id="cb-considerar-clases-incompletas" name="considerarClasesIncompletas" />' : ''));
+            } else if (i === "montoRestante" && (v > 0 || existeClaseIncompleta)) {
+              $("#sec-saldo-favor-pago").html('<span id="sub-sec-saldo-favor-pago">El alumno tiene un saldo a favor de <b id="saldo-favor-pago">S/. ' + redondear(v, 2) + '</b></span><br/>' + (existeClaseIncompleta ? '<label for="cb-considerar-clases-incompletas">Considerar clases incompletas</label> <input type="checkbox" checked="checked" id="cb-considerar-clases-incompletas" name="considerarClasesIncompletas" />' : ''));
+              ((v > 0) ? $("#sub-sec-saldo-favor-pago").show() : $("#sub-sec-saldo-favor-pago").hide());
               if (existeClaseIncompleta) {
                 $("#cb-considerar-clases-incompletas").live("change", function () {
-                  $("#saldo-favor-pago").text('S/. ' + ($(this).is(':checked') ? redondear(saldoFavorBase, 2) : redondear(saldoFavorTotal, 2)));
+                  var saldoFavorPago = redondear(($(this).is(':checked') ? saldoFavorBase : saldoFavorTotal), 2);
+                  $("#saldo-favor-pago").text('S/. ' + saldoFavorPago);
+                  ((saldoFavorPago > 0) ? $("#sub-sec-saldo-favor-pago").show() : $("#sub-sec-saldo-favor-pago").hide());
                   ($(this).is(':checked') ? $(".sec-clase-incompleta").show() : $(".sec-clase-incompleta").hide());
                 });
               }
