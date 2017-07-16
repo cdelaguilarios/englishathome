@@ -1,7 +1,7 @@
 <?php
 
 return [
-    "minHorasClase" => "1.5",
+    "minHorasClase" => "1",
     "maxHorasClase" => "5",
     "minHorario" => "7",
     "maxHorario" => "22",
