@@ -14,6 +14,9 @@ return [
     */
 
     'files' => [
+        'app\Models\Entidad.php',
+        'app\Models\Clase.php',
+        'app\Models\Pago.php'
         //
     ],
 
