@@ -17,7 +17,7 @@
   <div class="login-box">
     <div class="login-box-body">
       <div class="login-logo">
-        <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login"/>
+        <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login" width="150"/>
       </div>
       <div class="form-group has-feedback">
         <input type="email" name="email"  value="{{ old("email") }}" class="form-control" placeholder="@lang("validation.attributes.email")"/>

@@ -280,12 +280,13 @@ function cargarFormularioPago() {
     mostrarSeccionPago([2, 1, 1]);
   });
   $("#motivo-pago").change(function () {
-    $("#btn-registrar-pago, #btn-generar-clases-pago").hide();
+    $("#btn-registrar-pago, #btn-generar-clases-pago, #btn-registrar-sin-generar-clases-pago").hide();
     if ($(this)[0].selectedIndex !== 0) {
       $("#btn-registrar-pago").show();
       mostrarSeccionPago([2, 1]);
     } else {
       $("#btn-generar-clases-pago").show();
+      $("#btn-registrar-sin-generar-clases-pago").show();
       mostrarSeccionPago([2, 1, 1]);
     }
   });
@@ -294,6 +295,7 @@ function cargarFormularioPago() {
   });
   $("#btn-anterior-pago").click(function () {
     $(this).hide();
+    $("#btn-registrar-sin-generar-clases-pago").show();
     $("#motivo-pago").trigger("change");
   });
   $("#btn-generar-clases-pago").click(generarClases);
@@ -316,6 +318,11 @@ function cargarFormularioPago() {
       }
     }
     $("#mod-docentes-disponibles-pago").modal("hide");
+  });
+  
+  $("#btn-registrar-sin-generar-clases-pago").click(function () {
+    $("input[name='registrarSinGenerarClases']").val("1");
+    $("#formulario-pago").submit();
   });
 }
 function generarClases(e) {
@@ -399,6 +406,8 @@ function generarClases(e) {
               }
             }
           }
+          $("#btn-registrar-sin-generar-clases-pago").hide();
+          $("input[name='registrarSinGenerarClases']").val("0");
           $("body").unblock();
         },
         function (d) {

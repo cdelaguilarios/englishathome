@@ -52,6 +52,17 @@ class PostulanteController extends Controller {
     }
   }
 
+  public function perfil($id) {
+    try {
+      $this->data["postulante"] = Postulante::obtenerXId($id);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("No se encontraron datos del postulante seleccionado. Es posible que haya sido eliminado.");
+      return redirect(route("postulantes"));
+    }
+    return view("postulante.perfil", $this->data);
+  }
+
   public function crearExterno() {
     Auth::logout();
     $nuevoRegistro = Input::get("nr");
@@ -88,7 +99,7 @@ class PostulanteController extends Controller {
       if ($datos["registrarComoProfesor"] == 1) {
         Postulante::registrarProfesor($id);
         Mensajes::agregarMensajeExitoso("El postulante seleccionado ha sido registrado como nuevo profesor.");
-        return redirect(route("posultantes"));
+        return redirect(route("postulantes"));
       } else {
         Mensajes::agregarMensajeExitoso("Actualización exitosa.");
       }

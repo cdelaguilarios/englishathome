@@ -14,7 +14,7 @@
         <tr>
           <td align="center" style="text-align: center; border-bottom: 1px dashed #999 ">
             &nbsp;<br />&nbsp;
-            <img src="{{ asset("assets/eah/img/logo.png")}}" alt="English at home" />
+            <img src="{{ asset("assets/eah/img/logo.png")}}" alt="English at home" width="150"/>
             &nbsp;<br />&nbsp;
           </td>
         </tr>

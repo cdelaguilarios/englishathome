@@ -156,14 +156,14 @@ function cargarFormularioHistorial() {
     onclick: false
   });
   CKEDITOR.replace("mensaje-evento-historial");
-  establecerCalendario("fecha-notificacion-evento-historial", false, false);
+  establecerCalendario("fecha-notificacion-evento-historial", true, false);
   incluirSeccionSubidaArchivos("adjuntos", {onSubmit: function () {
       return true;
     }, acceptFiles: "*", uploadStr: "Subir archivo", maxFileCount: 20});
 
   $("#btn-nuevo-evento-historial").click(function () {
     limpiarCamposHistorial();
-    mostrarSeccionHistorial([2]);
+    mostrarSeccionHistorial([2, 1]);
   });
   $("#btn-cancelar-evento-historial").click(function () {
     mostrarSeccionHistorial();

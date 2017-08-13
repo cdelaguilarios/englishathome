@@ -182,7 +182,8 @@ function establecerCalendario(idElemento, incluirHora, soloFechasPasadas, soloFe
     $("#" + idElemento).datetimepicker({
       format: "dd/mm/yyyy hh:ii:ss",
       startDate: (soloFechasFuturas ? fechaIni : ""),
-      endDate: (soloFechasPasadas ? fechaFin : "")
+      endDate: (soloFechasPasadas ? fechaFin : ""),
+      language: 'es'
     });
     if (funcionCierre) {
       $("#" + idElemento).datetimepicker().on("changeDate", funcionCierre);

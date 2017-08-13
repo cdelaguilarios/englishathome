@@ -92,6 +92,8 @@ Route::group(["middleware" => "auth"], function() {
     Route::get("postulante/{id}/editar", ["uses" => "PostulanteController@editar", "as" => "postulantes.editar"]);
     Route::patch("postulante/{id}/actualizar", ["uses" => "PostulanteController@actualizar", "as" => "postulantes.actualizar"]);
     Route::post("postulante/{id}/actualizarEstado", ["uses" => "PostulanteController@actualizarEstado", "as" => "postulantes.actualizar.estado"]);
+    Route::post("postulante/{id}/actualizarHorario", ["uses" => "PostulanteController@actualizarHorario", "as" => "postulantes.actualizar.horario"]);
+    Route::get("postulante/{id}/perfil", ["uses" => "PostulanteController@perfil", "as" => "postulantes.perfil"]);
     Route::get("postulante/{id}/perfilProfesor", ["uses" => "PostulanteController@perfilProfesor", "as" => "postulantes.perfil.profesor"]);
     Route::delete("postulante/{id}/eliminar", ["uses" => "PostulanteController@eliminar", "as" => "postulantes.eliminar"]);
     // </editor-fold>

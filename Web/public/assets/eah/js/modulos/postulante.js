@@ -13,6 +13,7 @@ $(document).ready(function () {
 
 function cargarLista() {
   urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
+  urlPerfil = (typeof (urlPerfil) === "undefined" ? "" : urlPerfil);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
   urlPerfilProfesorPostulante = (typeof (urlPerfilProfesorPostulante) === "undefined" ? "" : urlPerfilProfesorPostulante);
   urlActualizarEstado = (typeof (urlActualizarEstado) === "undefined" ? "" : urlActualizarEstado);
@@ -21,7 +22,7 @@ function cargarLista() {
   estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
   estadoProfesorRegistrado = (typeof (estadoProfesorRegistrado) === "undefined" ? "" : estadoProfesorRegistrado);
 
-  if (urlListar !== "" && urlEditar !== "" && urlPerfilProfesorPostulante !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "" && estadoProfesorRegistrado !== "") {
+  if (urlListar !== "" && urlPerfil !== "" && urlEditar !== "" && urlPerfilProfesorPostulante !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "" && estadoProfesorRegistrado !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -38,7 +39,7 @@ function cargarLista() {
       order: [[3, "desc"]],
       columns: [
         {data: "nombre", name: "entidad.nombre", render: function (e, t, d, m) {
-            return '<a href="' + (urlEditar.replace("/0", "/" + d.id)) + '">' + (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "") + '</a>';
+            return '<a href="' + (urlPerfil.replace("/0", "/" + d.id)) + '">' + (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "") + '</a>';
           }},
         {data: "correoElectronico", name: "entidad.correoElectronico"},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
@@ -56,6 +57,9 @@ function cargarLista() {
         {data: "id", name: "entidad.id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
                 '<li>' +
+                '<a href="' + (urlPerfil.replace("/0", "/" + d.id)) + '" title="Ver perfil"><i class="fa fa-eye"></i></a>' +
+                '</li>' +
+                '<li>' +
                 '<a href="' + (urlEditar.replace("/0", "/" + d.id)) + '" title="Editar datos"><i class="fa fa-pencil"></i></a>' +
                 '</li>' +
                 '<li>' +
@@ -70,6 +74,8 @@ function cargarLista() {
         establecerBotonRecargaTabla("tab-lista");
       }
     });
+  }
+  if (urlActualizarEstado !== "" && estados !== "") {
     establecerCambiosBusquedaEstados("tab-lista", urlActualizarEstado, estados);
   }
 }

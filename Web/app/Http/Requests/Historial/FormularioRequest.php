@@ -31,7 +31,7 @@ class FormularioRequest extends Request {
     $reglasValidacion = [
         "titulo" => "required|max:100",
         "mensaje" => "max:8000",
-        "fechaNotificacion" => "date_format:d/m/Y"
+        "fechaNotificacion" => "date_format:d/m/Y H:i:s"
     ];
 
     if ($datos["enviarCorreo"] == 0 && $datos["enviarCorreoEntidad"] == 0 && $datos["mostrarEnPerfil"] == 0) {

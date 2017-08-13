@@ -51,7 +51,7 @@
                 @endif
               </p>
               <p class="sec-ficha-logo">
-                <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login"/>
+                <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login" width="150"/>
               </p>
             </div>
             @else
@@ -64,7 +64,7 @@
             </div><!--
             --><div class="col-sm-6 vcenter">
               <a href="http://englishathomeperu.com/" target="_blank">
-                <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login"/>
+                <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login" width="150"/>
               </a>
             </div>
             @endif

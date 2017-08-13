@@ -575,6 +575,10 @@ function cargarFormularioClasesGrupo() {
   establecerCampoDuracion("duracion-clases");
   $("#editar-datos-generales-clases, #editar-datos-tiempo-clases, #editar-datos-pago-clases, #editar-datos-profesor-clases").live("click", function () {
     (($(this).is(':checked')) ? $("#" + $(this).data("seccion")).show() : $("#" + $(this).data("seccion")).hide());
+    if ($(this).data("seccion") === "sec-clase-44" && $("#costo-hora-docente-clases").val() !== "") {
+      $("#sec-clase-441").show();
+    }
+
     if ($(this).data("idcbsecundario") && $(this).is(':checked') && !$("#" + $(this).data("idcbsecundario")).is(':checked')) {
       $("#" + $(this).data("idcbsecundario")).trigger("click");
     }
@@ -598,6 +602,11 @@ function editarClasesGrupo(numeroPeriodo) {
 
     $("#editar-datos-generales-clases").attr("checked", true);
     $("#editar-datos-generales-clases").closest("label").addClass("checked");
+    if (d.idProfesor !== null && d.nombreProfesor !== null && d.nombreProfesor !== '') {
+      $(".id-docente-clase").val(d.idProfesor);
+      $(".nombre-docente-clase").html('<i class="fa flaticon-teach"></i> <b>' + d.nombreProfesor + ' ' + d.apellidoProfesor + '</b> <a href=' + (urlPerfilProfesor.replace('/0', '/' + d.idProfesor)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>');
+      $("#costo-hora-docente-clases").val(redondear(d.costoHoraProfesor, 2));
+    }
     mostrarSeccionClase([4, 1]);
     $(window).scrollTop($("#formulario-actualizar-clases").offset().top);
   });

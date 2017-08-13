@@ -48,6 +48,11 @@
           @include("util.horario", ["horario" => $alumno->horario, "modo" => "visualizar"])
         </p>
         <hr>   
+        @if(isset($alumno->idCurso))
+        <strong><i class="fa fa-fw flaticon-favorite-book"></i> Curso</strong>
+        <p class="text-muted">{{ App\Models\Curso::listarSimple(FALSE)[$alumno->idCurso] }}</p>
+        <hr> 
+        @endif 
         @if(isset($alumno->profesorProximaClase)) 
         <strong><i class="fa flaticon-teach"></i> Profesor</strong>
         <p class="text-muted">
@@ -56,18 +61,27 @@
           </a>
         </p>
         <hr> 
-        @endif 
-        @if(isset($alumno->idCurso))
-        <strong><i class="fa fa-fw flaticon-favorite-book"></i> Curso</strong>
-        <p class="text-muted">{{ App\Models\Curso::listarSimple(FALSE)[$alumno->idCurso] }}</p>
-        <hr> 
+        @endif
+        @if(isset($alumno->fechaInicioClase))
+        <strong><i class="fa fa-calendar-check-o margin-r-5"></i> Fecha de inicio de clases</strong>
+        <p class="text-muted">
+          {{ \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaInicioClase)->format("d/m/Y") }}
+        </p>
+        <hr>    
         @endif
         <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
         <p class="text-muted">{{ $alumno->direccion }}{!! ((isset($alumno->numeroDepartamento) && $alumno->numeroDepartamento != "") ? "<br/>Depto./Int " . $alumno->numeroDepartamento : "") !!}{!! ((isset($alumno->referenciaDireccion) && $alumno->referenciaDireccion != "") ? " - " . $alumno->referenciaDireccion : "") !!}<br/>{{ $alumno->direccionUbicacion }}</p>
         <p class="text-muted">
           @include("util.ubicacionMapa", ["geoLatitud" => $alumno->geoLatitud, "geoLongitud" => $alumno->geoLongitud, "modo" => "visualizar"])
         </p>
-        <hr>        
+        <hr>   
+        @if(isset($alumno->interesadoRelacionado) && !empty($alumno->interesadoRelacionado["consulta"]))
+        <strong><i class="fa flaticon-questioning margin-r-5"></i> Consulta (interesado)</strong>
+        <p class="text-muted">
+          {{ $alumno->interesadoRelacionado["consulta"] }}
+        </p>
+        <hr>  
+        @endif      
         @if(isset($alumno->numeroDocumento))
         <strong><i class="fa fa-user margin-r-5"></i> {{ (isset($alumno->idTipoDocumento) ? App\Models\TipoDocumento::listarSimple()[$alumno->idTipoDocumento] : "") }}</strong>
         <p class="text-muted">

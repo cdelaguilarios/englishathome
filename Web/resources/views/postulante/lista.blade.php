@@ -4,6 +4,7 @@
 @section("section_script")
 <script>
   var urlListar = "{{ route('postulantes.listar') }}";
+  var urlPerfil = "{{ route('postulantes.perfil', ['id' => 0]) }}";
   var urlEditar = "{{ route('postulantes.editar', ['id' => 0]) }}";
   var urlPerfilProfesorPostulante = "{{ route('postulantes.perfil.profesor', ['id' => 0]) }}";
   var urlActualizarEstado = "{{ route('postulantes.actualizar.estado', ['id' => 0]) }}";

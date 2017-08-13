@@ -67,7 +67,9 @@ class PagoAlumno extends Model {
     }
     if ($datos["motivo"] == MotivosPago::Clases) {
       Alumno::actualizarEstado($idAlumno, EstadosAlumno::Activo);
-      Clase::registrarXDatosPago($idAlumno, $datosPago["id"], $datos);
+      if ((int) $datos["registrarSinGenerarClases"] == 0) {
+        Clase::registrarXDatosPago($idAlumno, $datosPago["id"], $datos);
+      }
     }
     PagoAlumno::registrarActualizarEventoPago($idAlumno, $datosPago);
   }

@@ -78,7 +78,7 @@
             <div class="input-group-addon">
               <i class="fa fa-calendar"></i>
             </div>                                
-            {{ Form::text("fechaInicioClases", ((((int) $numeroPeriodos) +1) == 1 ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $fechaInicioClase)->format("d/m/Y") : null), ["id" => "fecha-inicio-clases-pago", "class" => "form-control", "placeholder" => "dd/mm/aaaa"]) }}
+            {{ Form::text("fechaInicioClases", ((((int) $numeroPeriodos) +1) == 1 && !empty($fechaInicioClase) ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $fechaInicioClase)->format("d/m/Y") : null), ["id" => "fecha-inicio-clases-pago", "class" => "form-control", "placeholder" => "dd/mm/aaaa"]) }}
           </div>
         </div>
 
@@ -146,10 +146,12 @@
     {{ Form::hidden("saldoFavor") }} 
     {{ Form::hidden("saldoFavorAdicional") }} 
     {{ Form::hidden("datosNotificacionClases") }} 
+    {{ Form::hidden("registrarSinGenerarClases", null) }}
   </div>
 </div> 
 <div class="box-footer">    
   <button type="button" class="btn-cancelar-pago btn btn-default">Cancelar</button>
+  <button id="btn-registrar-sin-generar-clases-pago" type="button" class="btn btn-success pull-right">Registrar pago sin generar clases</button>
   <button id="btn-generar-clases-pago" type="button" class="btn btn-primary pull-right">Generar clases</button>
   <button id="btn-registrar-pago" type="submit" class="btn btn-success pull-right">Registrar pago</button>
   <button id="btn-anterior-pago"  type="button" class="btn btn-primary pull-right">Anterior</button>

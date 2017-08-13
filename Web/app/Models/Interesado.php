@@ -147,6 +147,19 @@ class Interesado extends Model {
     return ((count($relacionEntidad) > 0) ? $relacionEntidad[0]->idEntidadA : 0);
   }
 
+  public static function obtenerXIdAlumno($idAlumno) {
+    try {
+      $relacionEntidad = RelacionEntidad::obtenerXIdEntidadA($idAlumno);
+      if (count($relacionEntidad) > 0) {
+        return Interesado::obtenerXId($relacionEntidad[0]->idEntidadB, TRUE);
+      } else {
+        return NULL;
+      }
+    } catch (\Exception $ex) {
+      return NULL;
+    }
+  }
+
   public static function registrarAlumno($id, $idAlumno = NULL) {
     $datos = Interesado::obtenerXId($id, TRUE)->toArray();
     $idAlumnoRel = Interesado::obtenerIdAlumno($id);

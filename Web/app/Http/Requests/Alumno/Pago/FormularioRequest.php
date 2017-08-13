@@ -33,6 +33,7 @@ class FormularioRequest extends Request {
     $datos["considerarClasesIncompletas"] = (isset($datos["considerarClasesIncompletas"]) && $datos["considerarClasesIncompletas"] == "on" ? 1 : 0);
     $datos["costoHoraDocente"] = ReglasValidacion::formatoDato($datos, "costoHoraDocente");
     $datos["datosNotificacionClases"] = ReglasValidacion::formatoDato($datos, "datosNotificacionClases");
+    $datos["registrarSinGenerarClases"] = ReglasValidacion::formatoDato($datos, "registrarSinGenerarClases", 0);
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }

@@ -250,7 +250,7 @@ class Clase extends Model {
     if (isset($datos["ids"]) && is_array($datos["ids"])) {
       $nombreTabla = Clase::nombreTabla();
       $clases = Clase::listarBase()
-              ->select($nombreTabla . ".*", DB::raw("max(pago.id) AS idPago"))
+              ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(pago.id) AS idPago"))
               ->leftJoin(PagoAlumno::nombreTabla() . " as pagoAlumno", "pagoClase.idPago", "=", "pagoAlumno.idPago")
               ->leftJoin(Pago::nombreTabla() . " as pago", "pagoAlumno.idPago", "=", "pago.id")
               ->where($nombreTabla . ".idAlumno", $idAlumno)
@@ -266,7 +266,11 @@ class Clase extends Model {
           "fechaInicio" => NULL,
           "duracion" => NULL,
           "costoHora" => "",
-          "idPago" => NULL
+          "idPago" => NULL,
+          "idProfesor" => NULL,
+          "nombreProfesor" => NULL,
+          "apellidoProfesor" => NULL,
+          "costoHoraProfesor" => NULL
       ];
       for ($i = 0; $i < count($clases); $i++) {
         $clase = $clases[$i];
@@ -280,6 +284,10 @@ class Clase extends Model {
           $datosGrupo["duracion"] = ($datosGrupo["duracion"] != $clase->duracion ? NULL : $datosGrupo["duracion"]);
           $datosGrupo["costoHora"] = ($datosGrupo["costoHora"] != $clase->costoHora ? "" : $datosGrupo["costoHora"]);
           $datosGrupo["idPago"] = ($datosGrupo["idPago"] != $clase->idPago ? NULL : $datosGrupo["idPago"]);
+          $datosGrupo["idProfesor"] = ($datosGrupo["idProfesor"] != $clase->idProfesor ? NULL : $datosGrupo["idProfesor"]);
+          $datosGrupo["nombreProfesor"] = ($datosGrupo["nombreProfesor"] != $clase->nombreProfesor ? NULL : $datosGrupo["nombreProfesor"]);
+          $datosGrupo["apellidoProfesor"] = ($datosGrupo["apellidoProfesor"] != $clase->apellidoProfesor ? NULL : $datosGrupo["apellidoProfesor"]);
+          $datosGrupo["costoHoraProfesor"] = ($datosGrupo["costoHoraProfesor"] != $clase->costoHoraProfesor ? NULL : $datosGrupo["costoHoraProfesor"]);
         } else {
           $datosGrupo["numeroPeriodo"] = $clase->numeroPeriodo;
           $datosGrupo["estado"] = $clase->estado;
@@ -287,6 +295,10 @@ class Clase extends Model {
           $datosGrupo["duracion"] = $clase->duracion;
           $datosGrupo["costoHora"] = $clase->costoHora;
           $datosGrupo["idPago"] = $clase->idPago;
+          $datosGrupo["idProfesor"] = $clase->idProfesor;
+          $datosGrupo["nombreProfesor"] = $clase->nombreProfesor;
+          $datosGrupo["apellidoProfesor"] = $clase->apellidoProfesor;
+          $datosGrupo["costoHoraProfesor"] = $clase->costoHoraProfesor;
         }
       }
       return $datosGrupo;

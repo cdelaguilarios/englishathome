@@ -35,7 +35,7 @@ class HistorialController extends Controller {
   public function registrar($idEntidad, FormularioRequest $req) {
     try {
       $datos = $req->all();
-      $datos["fechaNotificacion"] = (isset($datos["fechaNotificacion"]) ? Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNotificacion"] . " 00:00:00") : NULL);
+      $datos["fechaNotificacion"] = (isset($datos["fechaNotificacion"]) ? Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNotificacion"]) : NULL);
       $datos["idEntidades"] = [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)];
       $datos["idEntidadDestinataria"] = (((int) $datos["enviarCorreoEntidad"] == 1) ? $idEntidad : NULL);
       Historial::registrar($datos);

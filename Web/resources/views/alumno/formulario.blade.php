@@ -202,12 +202,12 @@
                 <div class="input-group-addon">
                   <i class="fa fa-calendar"></i>
                 </div>                                    
-                {{ Form::text("fechaInicioClase", (isset($alumno->fechaInicioClase) ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaInicioClase)->format("d/m/Y") : null), ["id" => "fecha-inicio-clase", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
+                {{ Form::text("fechaInicioClase", (isset($alumno->fechaInicioClase) && !empty($alumno->fechaInicioClase) ? \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaInicioClase)->format("d/m/Y") : null), ["id" => "fecha-inicio-clase", "class" => "form-control  pull-right", "placeholder" => "dd/mm/aaaa"]) }}
               </div>
             </div>
             @if(isset($interesado))
             {{ Form::hidden("costoHoraClase", $interesado->costoHoraClase) }} 
-            @else
+            @elseif(!Auth::guest())
             {{ Form::label("costo-hora-clase", "Costo hora de clase (*): ", ["class" => "col-sm-3 control-label"]) }}
             <div class="col-sm-2">
               <div class="input-group">
@@ -228,14 +228,18 @@
               @include("util.horario")  
             </div>                                        
           </div>
-          <div class="form-group">
-            <h4>Comentarios adicionales:</h4>
+          @if(!Auth::guest())
+          <div style="display:none">
+            <div class="form-group">
+              <h4>Comentarios adicionales:</h4>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-1 col-sm-10">
+                {{ Form::textarea("comentarioAdicional", null, ["class" => "form-control", "rows" => "6", "maxlength" =>"8000"]) }}
+              </div>                                        
+            </div>
           </div>
-          <div class="form-group" style="display:none">
-            <div class="col-sm-offset-1 col-sm-10">
-              {{ Form::textarea("comentarioAdicional", null, ["class" => "form-control", "rows" => "6", "maxlength" =>"8000"]) }}
-            </div>                                        
-          </div>
+          @endif
         </div>
         <div class="box-footer">   
           <div class="form-group">

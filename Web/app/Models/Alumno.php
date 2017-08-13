@@ -41,6 +41,7 @@ class Alumno extends Model {
   public static function obtenerXId($id, $simple = FALSE) {
     $alumno = Alumno::listar()->where("entidad.id", $id)->firstOrFail();
     if (!$simple) {
+      $alumno->interesadoRelacionado = Interesado::obtenerXIdAlumno($id);
       $alumno->horario = Horario::obtenerFormatoJson($id);
       $alumno->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($alumno->codigoUbigeo);
       $alumno->numeroPeriodos = Clase::totalPeriodos($id);
@@ -131,7 +132,7 @@ class Alumno extends Model {
       Alumno::actualizarEstado($alumno->idEntidad, EstadosAlumno::CuotaProgramada);
     }
   }
-  
+
   public static function verificarExistencia($id) {
     try {
       Alumno::obtenerXId($id, TRUE);
