@@ -196,6 +196,9 @@ function establecerCalendario(idElemento, incluirHora, soloFechasPasadas, soloFe
       $("#" + idElemento).datetimepicker("update");
       $("#" + idElemento).val("");
     }
+    if(!soloFechasPasadas && !soloFechasFuturas){
+      $("#" + idElemento).datetimepicker("setDate", (new Date()));
+    }
   } else {
     $("#" + idElemento).datepicker({
       format: (soloMeses ? "mm/yyyy" : (soloAnhos ? "yyyy" : "dd/mm/yyyy")),

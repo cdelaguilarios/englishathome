@@ -96,7 +96,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
 
   public static function usuarioUnicoPrincipal($id) {
     $datosUsuario = Usuario::listar()->where(Usuario::nombreTabla() . ".rol", RolesUsuario::Principal)->count();
-    if ($datosUsuario > 1) {
+    if ($datosUsuario == 1) {
       return FALSE;
     }
     $usuario = Usuario::obtenerXId($id);

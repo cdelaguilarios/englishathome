@@ -7,6 +7,7 @@ use App\Models\Pago;
 use App\Models\Clase;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Util\BusquedaRequest;
+use App\Helpers\Enum\EntidadesReporte;
 
 class ReporteController extends Controller {
 
@@ -54,6 +55,16 @@ class ReporteController extends Controller {
 
   public function listarPagosGrafico(BusquedaRequest $req) {
     return response()->json(Pago::reporte($req->all()), 200);
+  }
+
+  public function motor() {
+    $this->data["subSeccion"] = "motor";
+    $this->data["entidades"] = EntidadesReporte::listar();
+    return view("reporte.motor", $this->data);
+  }
+
+  public function listarEntidadesRelacionadas($entidad) {
+    
   }
 
 }

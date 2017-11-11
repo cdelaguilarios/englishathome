@@ -77,7 +77,9 @@
     <div class="wrapper" style="display: none">
       <header class="main-header">
         <a href="{{ route("/")}}" class="logo">
-          <span class="logo-mini"><b>EAH</b></span>
+          <span class="logo-mini" style="background-color: #ecf0f5">
+            <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login" width="46" />
+          </span>
           <span class="logo-lg"><b>Administrador</b> EAH</span>
         </a>
         <nav class="navbar navbar-static-top">
@@ -175,6 +177,9 @@
                 </li>
                 <li class="{{ ((isset($subSeccion) && $subSeccion == "pagos") ? "active" : "") }}">
                   <a href="{{ route("reporte.pagos")}}"><i class="fa fa-line-chart"></i> Reporte de pagos</a>
+                </li>
+                <li class="{{ ((isset($subSeccion) && $subSeccion == "motor") ? "active" : "") }}">
+                  <a href="{{ route("reporte.motor")}}"><i class="fa fa-qrcode"></i> Motor de reportes</a>
                 </li>
               </ul>
             </li> 

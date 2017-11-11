@@ -168,6 +168,7 @@ Route::group(["middleware" => "auth"], function() {
     Route::get("reporte/pagos", ["uses" => "ReporteController@pagos", "as" => "reporte.pagos"]);
     Route::post("reporte/listar/pagos", ["uses" => "ReporteController@listarPagos", "as" => "reporte.listar.pagos"]);
     Route::post("reporte/listar/pagos/grafico", ["uses" => "ReporteController@listarPagosGrafico", "as" => "reporte.listar.pagos.grafico"]);
+    Route::get("reporte/motor", ["uses" => "ReporteController@motor", "as" => "reporte.motor"]);
     // </editor-fold> 
     // <editor-fold desc="Correos">
     Route::get("correos", ["uses" => "HistorialController@correos", "as" => "correos"]);

@@ -268,10 +268,13 @@ function cargarFormularioPago() {
 
   var fechaInicioClasesPago = $("#fecha-inicio-clases-pago").val();
   establecerCalendario("fecha-inicio-clases-pago", false, false, false);
-  if (fechaInicioClasesPago !== "") {
+  if (Date.parse(fechaInicioClasesPago)) {
     var datFechaInicioClasesPago = fechaInicioClasesPago.split("/");
     $("#fecha-inicio-clases-pago").datepicker("setDate", (new Date(datFechaInicioClasesPago[1] + "/" + datFechaInicioClasesPago[0] + "/" + datFechaInicioClasesPago[2])));
+  } else {
+    $("#fecha-inicio-clases-pago").datepicker("setDate", (new Date()));
   }
+  $("#fecha-inicio-clases-pago").datepicker("update");
 
   $("#btn-nuevo-pago").click(function () {
     limpiarCamposPago();
@@ -319,7 +322,7 @@ function cargarFormularioPago() {
     }
     $("#mod-docentes-disponibles-pago").modal("hide");
   });
-  
+
   $("#btn-registrar-sin-generar-clases-pago").click(function () {
     $("input[name='registrarSinGenerarClases']").val("1");
     $("#formulario-pago").submit();
@@ -351,7 +354,7 @@ function generarClases(e) {
           var saldoFavorBase = 0;
           var saldoFavorTotal = 0;
           var existeClaseIncompleta = false;
-          
+
           $.each(d, function (i, v) {
             if (i !== "montoRestante" && i !== "montoRestanteOpcional" && i !== "idProfesor" && i !== "nombreCompletoProfesor") {
               var tiempoAdicionalMinutos = (v.tiempoAdicional > 0 ? v.tiempoAdicional / 60 : 0);
