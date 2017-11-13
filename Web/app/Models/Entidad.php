@@ -108,4 +108,26 @@ class Entidad extends Model {
     return TRUE;
   }
 
+  //REPORTE
+  public static function listarCampos() {
+    return [
+        "nombre" => ["titulo" => "Nombres"],
+        "apellido" => ["titulo" => "Apellidos"],
+        "fechaNacimiento" => ["titulo" => "Fecha de nacimiento"],
+        "sexo" => ["titulo" => "Sexo", "tipo" => "sexo"],
+        "telefono" => ["titulo" => "Teléfono"],
+        "idTipoDocumento" => ["titulo" => "Tipo de documento", "tipo" => "tipoDocumento"],
+        "numeroDocumento" => ["titulo" => "Número de documento"],
+        "correoElectronico" => ["titulo" => "Correo electrónico"],
+        "imagenPerfil" => ["titulo" => "Imagen de perfil"],
+        "direccion" => ["titulo" => "Dirección"],
+        "numeroDepartamento" => ["titulo" => "Número de departamento"],
+        "referenciaDireccion" => ["titulo" => "Dirección-referencia"],
+        "codigoUbigeo" => ["titulo" => "Código ubigeo"],
+        "geoLatitud" => ["titulo" => "Geo - Latitud"],
+        "geoLongitud" => ["titulo" => "Geo - Longitud"],
+        "comentarioAdministrador" => ["titulo" => "Comentarios del administrador"]
+    ];
+  }
+
 }

@@ -3,7 +3,7 @@ var tMostrarNuevosMensajes = 2000;
 $(function () {
   establecerTiempoMensajeVisible();
 });
-function agregarMensaje(tipo, mensaje, mostrarTemporalmente, idSecContenedor) {
+function agregarMensaje(tipo, mensaje, mostrarTemporalmente, idSecContenedor, refrescar) {
   var plantillaMen =
       '<div class="alert alert-[TIPO] alert-dismissible" role="alert">' +
       '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
@@ -11,6 +11,8 @@ function agregarMensaje(tipo, mensaje, mostrarTemporalmente, idSecContenedor) {
       '</div>';
   plantillaMen = plantillaMen.replace("[TIPO]", (tipo === "exitosos" ? "success" : (tipo === "advertencias" ? "warning" : (tipo === "alertas" ? "info" : "danger"))));
   plantillaMen = plantillaMen.replace("[MENSAJE]", mensaje);
+  if (refrescar)
+    $("div" + (idSecContenedor !== undefined ? idSecContenedor : ".contenedor-alerta")).html("");
   $("div" + (idSecContenedor !== undefined ? idSecContenedor : ".contenedor-alerta")).append(plantillaMen);
   if (mostrarTemporalmente)
     establecerTiempoMensajeVisible(idSecContenedor);

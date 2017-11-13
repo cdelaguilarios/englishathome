@@ -256,7 +256,7 @@ class Historial extends Model {
 
   private static function formatearDatosHistorialBase(&$historial, $seccionWidget = FALSE) {
     $tiposNotificacion = TiposHistorial::listar();
-    $tiposEntidad = TiposEntidad::listar();
+    $tiposEntidad = TiposEntidad::listarTiposBase();
     $nombreTablaEntidad = Entidad::nombreTabla();
     $entidades = Entidad::select($nombreTablaEntidad . ".*")
                     ->leftJoin(EntidadHistorial::nombreTabla() . " as entidadHistorial", $nombreTablaEntidad . ".id", "=", "entidadHistorial.idEntidad")
@@ -266,8 +266,8 @@ class Historial extends Model {
       if (!array_key_exists($entidad->tipo, $tiposEntidad)) {
         continue;
       }
-      $historial->titulo = str_replace("[" . $entidad->tipo . "]", ($seccionWidget ? "" : "<a href='" . route($tiposEntidad[$entidad->tipo][2], ['id' => $entidad->id]) . "' target='_blank'>") . $entidad->nombre . " " . $entidad->apellido . ($seccionWidget ? "" : "</a>"), $historial->titulo);
-      $historial->mensaje = str_replace("[" . $entidad->tipo . "]", ($seccionWidget ? "" : "<a href='" . route($tiposEntidad[$entidad->tipo][2], ['id' => $entidad->id]) . "' target='_blank'>") . $entidad->nombre . " " . $entidad->apellido . ($seccionWidget ? "" : "</a>"), $historial->mensaje);
+      $historial->titulo = str_replace("[" . $entidad->tipo . "]", ($seccionWidget ? "" : "<a href='" . route($tiposEntidad[$entidad->tipo][3], ['id' => $entidad->id]) . "' target='_blank'>") . $entidad->nombre . " " . $entidad->apellido . ($seccionWidget ? "" : "</a>"), $historial->titulo);
+      $historial->mensaje = str_replace("[" . $entidad->tipo . "]", ($seccionWidget ? "" : "<a href='" . route($tiposEntidad[$entidad->tipo][3], ['id' => $entidad->id]) . "' target='_blank'>") . $entidad->nombre . " " . $entidad->apellido . ($seccionWidget ? "" : "</a>"), $historial->mensaje);
     }
     $historial->horaNotificacion = Carbon::createFromFormat("Y-m-d H:i:s", $historial->fechaNotificacion)->format("H:i:s");
     $historial->icono = (array_key_exists($historial->tipo, $tiposNotificacion) ? $tiposNotificacion[$historial->tipo][1] : TiposHistorial::IconoDefecto);

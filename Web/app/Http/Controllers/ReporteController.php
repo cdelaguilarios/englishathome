@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use Datatables;
 use App\Models\Pago;
 use App\Models\Clase;
+use App\Models\Reporte;
+use App\Helpers\Enum\TiposEntidad;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Util\BusquedaRequest;
-use App\Helpers\Enum\EntidadesReporte;
+use App\Http\Requests\Reporte\ListarCamposRequest;
+use App\Http\Requests\Reporte\ListarEntidadesRelacionadasRequest;
 
 class ReporteController extends Controller {
 
@@ -59,12 +62,28 @@ class ReporteController extends Controller {
 
   public function motor() {
     $this->data["subSeccion"] = "motor";
-    $this->data["entidades"] = EntidadesReporte::listar();
-    return view("reporte.motor", $this->data);
+    $this->data["entidades"] = TiposEntidad::listar();
+    return view("reporte.motor.crear", $this->data);
   }
 
-  public function listarEntidadesRelacionadas($entidad) {
+  public function motorCrear() {
+    $this->data["subSeccion"] = "motor";
+    $this->data["entidades"] = TiposEntidad::listar();
+    return view("reporte.motor.crear", $this->data);
+  }
+
+  public function motorRegistrar() {
     
+  }
+
+  public function motorListarCampos(ListarCamposRequest $req) {
+    $datos = $req->all();
+    return response()->json(Reporte::listarCampos($datos["entidad"]), 200);
+  }
+
+  public function motorListarEntidadesRelacionadas(ListarEntidadesRelacionadasRequest $req) {
+    $datos = $req->all();
+    return response()->json(Reporte::listarEntidadesRelacionadas($datos["entidad"]), 200);
   }
 
 }

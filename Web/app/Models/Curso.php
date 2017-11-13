@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use App\Helpers\Enum\TiposEntidad;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,6 +12,13 @@ class Curso extends Model {
   public $timestamps = false;
   protected $table = "curso";
   protected $fillable = ["nombre", "descripcion", "modulos", "metodologia", "incluye", "inversion", "inversionCuotas", "notasAdicionales", "activo"];
+
+  public static function nombreTabla() {
+    $modeloCurso = new Curso();
+    $nombreTabla = $modeloCurso->getTable();
+    unset($modeloCurso);
+    return $nombreTabla;
+  }
 
   public static function listar() {
     return Curso::where("eliminado", 0);
@@ -63,6 +71,55 @@ class Curso extends Model {
     $curso->eliminado = 1;
     $curso->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $curso->save();
+  }
+
+  //REPORTE
+  public static function listarCampos() {
+    return [
+        "nombre" => ["titulo" => "Nombre"],
+        "descripcion" => ["titulo" => "Descripción"],
+        "modulos" => ["titulo" => "Modulos"],
+        "metodologia" => ["titulo" => "Metodología"],
+        "incluye" => ["titulo" => "Incluye"],
+        "inversion" => ["titulo" => "Inversion"],
+        "inversionCuotas" => ["titulo" => "Inversion en cuotas"],
+        "notasAdicionales" => ["titulo" => "Notas adicionales"],
+        "activo" => ["titulo" => "Activo"]
+    ];
+  }
+
+  public static function listarEntidadesRelacionadas() {
+    return [TiposEntidad::Interesado, TiposEntidad::Alumno, TiposEntidad::Postulante, TiposEntidad::Profesor];
+  }
+
+  public static function obtenerConsultaBdReporte($campos, $filtros = NULL, $entidadRelacionada = NULL, $idEntidadRelacionada = NULL, $camposEntidadRelacionada = NULL) {
+    $camposConsultaBd = $campos;
+    $tablasConsultaBD = "FROM " . Curso::nombreTabla();
+    $filtrosConsultaBD = [];
+
+    if (!is_null($entidadRelacionada)) {
+      $tablasConsultaBD .= " LEFT JOIN " . EntidadCurso::nombreTabla() . " ON " . EntidadCurso::nombreTabla() . ".idCurso = " . Curso::nombreTabla() . ".id";
+      $tablasConsultaBD .= " LEFT JOIN " . Entidad::nombreTabla() . " ON " . Entidad::nombreTabla() . ".id = " . EntidadCurso::nombreTabla() . ".idEntidad";
+      $filtrosConsultaBD += [
+          "campo" => Entidad::nombreTabla() . ".tipo",
+          "operador" => "=",
+          "valor" => $entidadRelacionada
+      ];
+      if (!is_null($idEntidadRelacionada) && !is_null($camposEntidadRelacionada)) {
+        $camposConsultaBd += $camposEntidadRelacionada;
+        $filtrosConsultaBD += [
+            "campo" => Entidad::nombreTabla() . ".id",
+            "operador" => "=",
+            "valor" => $idEntidadRelacionada
+        ];
+      } else {
+        $camposConsultaBd += ["COUNT(" . Entidad::nombreTabla() . ".id) AS total" . ucfirst(strtolower($entidadRelacionada))];
+      }
+    }
+    if (!is_null($filtros)) {
+      $filtrosConsultaBD += $filtros;
+    }
+    return Reporte::generarConsultaBd($camposConsultaBd, $tablasConsultaBD, $filtrosConsultaBD);
   }
 
 }

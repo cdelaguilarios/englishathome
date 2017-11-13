@@ -207,4 +207,14 @@ class Interesado extends Model {
     Entidad::eliminar($id);
   }
 
+  //REPORTE
+  public static function listarCampos() {
+    return [
+        "consulta" => ["titulo" => "Consulta"],
+        "cursoInteres" => ["titulo" => "Curso de interes"],
+        "costoHoraClase" => ["titulo" => "Costo por hora de clase"],
+        "comentarioAdicional" => ["titulo" => "Comentario adicional"]
+    ];
+  }
+
 }

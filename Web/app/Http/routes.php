@@ -168,7 +168,12 @@ Route::group(["middleware" => "auth"], function() {
     Route::get("reporte/pagos", ["uses" => "ReporteController@pagos", "as" => "reporte.pagos"]);
     Route::post("reporte/listar/pagos", ["uses" => "ReporteController@listarPagos", "as" => "reporte.listar.pagos"]);
     Route::post("reporte/listar/pagos/grafico", ["uses" => "ReporteController@listarPagosGrafico", "as" => "reporte.listar.pagos.grafico"]);
+    
     Route::get("reporte/motor", ["uses" => "ReporteController@motor", "as" => "reporte.motor"]);
+    Route::get("reporte/motor/nuevo", ["uses" => "ReporteController@motorCrear", "as" => "reporte.motor.crear"]);
+    Route::post("reporte/motor/registrar", ["uses" => "ReporteController@motorRegistrar", "as" => "reporte.motor.registrar"]);
+    Route::post("reporte/motor/listarCampos", ["uses" => "ReporteController@motorListarCampos", "as" => "reporte.motor.litar.campos"]);
+    Route::post("reporte/motor/listarEntidadesRelacionadas", ["uses" => "ReporteController@motorListarEntidadesRelacionadas", "as" => "reporte.motor.litar.entidades.relacionadas"]);
     // </editor-fold> 
     // <editor-fold desc="Correos">
     Route::get("correos", ["uses" => "HistorialController@correos", "as" => "correos"]);

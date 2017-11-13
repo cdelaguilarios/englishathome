@@ -48,7 +48,7 @@ class Postulante extends Model {
     if (!$simple) {
       $postulante->horario = Horario::obtenerFormatoJson($id);
       $postulante->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($postulante->codigoUbigeo);
-      $postulante->cursos = EntidadCurso::obtenerXEntidad($id, FALSE);     
+      $postulante->cursos = EntidadCurso::obtenerXEntidad($id, FALSE);
       $idPostulanteAnterior = Postulante::listar()->select("entidad.id")->where("entidad.id", "<", $id)->where("entidad.estado", $postulante->estado)->orderBy("entidad.id", "DESC")->first();
       $idPostulanteSiguiente = Postulante::listar()->select("entidad.id")->where("entidad.id", ">", $id)->where("entidad.estado", $postulante->estado)->first();
       $postulante->idPostulanteAnterior = (isset($idPostulanteAnterior) ? $idPostulanteAnterior->id : NULL);
@@ -190,6 +190,20 @@ class Postulante extends Model {
       return FALSE;
     }
     return TRUE;
+  }
+
+  //REPORTE
+  public static function listarCampos() {
+    return [
+        "ultimosTrabajos" => ["titulo" => "Últimos trabajos"],
+        "experienciaOtrosIdiomas" => ["titulo" => "Experencia en otros idiomas"],
+        "descripcionPropia" => ["titulo" => "Descripción propia"],
+        "ensayo" => ["titulo" => "Ensayo"],
+        "cv" => ["titulo" => "CV"],
+        "certificadoInternacional" => ["titulo" => "Certificado internacional"],
+        "imagenDocumentoIdentidad" => ["titulo" => "Imagen documento de identidad"],
+        "audio" => ["titulo" => "Audio"]
+    ];
   }
 
 }

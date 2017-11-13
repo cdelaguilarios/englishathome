@@ -125,4 +125,18 @@ class Profesor extends Model {
     return TRUE;
   }
 
+  //REPORTE
+  public static function listarCampos() {
+    return [
+        "ultimosTrabajos" => ["titulo" => "Últimos trabajos"],
+        "experienciaOtrosIdiomas" => ["titulo" => "Experencia en otros idiomas"],
+        "descripcionPropia" => ["titulo" => "Descripción propia"],
+        "ensayo" => ["titulo" => "Ensayo"],
+        "cv" => ["titulo" => "CV"],
+        "certificadoInternacional" => ["titulo" => "Certificado internacional"],
+        "imagenDocumentoIdentidad" => ["titulo" => "Imagen documento de identidad"],
+        "audio" => ["titulo" => "Audio"]
+    ];
+  }
+
 }

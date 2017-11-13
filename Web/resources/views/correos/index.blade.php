@@ -3,7 +3,7 @@
 
 @section("section_script")
 <script>
-  var tiposEntidades = {!!  json_encode(App\Helpers\Enum\TiposEntidad::listar()) !!};
+  var tiposEntidades = {!!  json_encode(App\Helpers\Enum\TiposEntidad::listarTiposBase()) !!};
   var tipoEntidadInteresado = "{{ App\Helpers\Enum\TiposEntidad::Interesado }}";
   var urlBuscarEntidades = "{{ route('correos.entidades') }}";
 </script>

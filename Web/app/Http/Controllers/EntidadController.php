@@ -37,7 +37,7 @@ class EntidadController extends Controller {
       Log::error($e->getMessage());
       Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");
     }
-    return redirect(route(TiposEntidad::listar()[$datosEntidad->tipo][2], ["id" => $id]));
+    return redirect(route(TiposEntidad::listarTiposBase()[$datosEntidad->tipo][3], ["id" => $id]));
   }
 
 }

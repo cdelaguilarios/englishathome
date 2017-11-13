@@ -142,4 +142,25 @@ class Alumno extends Model {
     return TRUE;
   }
 
+  //REPORTE
+  public static function listarCampos() {
+    return [
+        "inglesLugarEstudio" => ["titulo" => "Ingles - Lugar de estudio"],
+        "inglesPracticaComo" => ["titulo" => "Ingles - Como practica"],
+        "inglesObjetivo" => ["titulo" => "Ingles - Objetivo"],
+        "conComputadora" => ["titulo" => "Con computadora"],
+        "conInternet" => ["titulo" => "Con internet"],
+        "conPlumonPizarra" => ["titulo" => "Con plumon y pizarra"],
+        "conAmbienteClase" => ["titulo" => "Con ambiente adecuado para clases"],
+        "numeroHorasClase" => ["titulo" => "Número de horas por clase"],
+        "fechaInicioClase" => ["titulo" => "Fecha de inicio de clases"],
+        "comentarioAdicional" => ["titulo" => "Comentario adicional"],
+        "costoHoraClase" => ["titulo" => "Costo por hora de clase"]
+    ];
+  }
+
+  public static function listarEntidadesRelacionadas() {
+    return [];
+  }
+
 }
