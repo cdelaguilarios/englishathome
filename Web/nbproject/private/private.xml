@@ -19,6 +19,16 @@
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/D:/Carlos/Proyectos/englishathome/Web/app/Models/Entidad.php</file>
+            <file>file:/D:/Carlos/Proyectos/englishathome/Web/app/Models/Alumno.php</file>
+            <file>file:/D:/Carlos/Proyectos/englishathome/Web/resources/views/reporte/motor/formulario.blade.php</file>
+            <file>file:/D:/Carlos/Proyectos/englishathome/Web/resources/views/reporte/motor/crear.blade.php</file>
+            <file>file:/D:/Carlos/Proyectos/englishathome/Web/app/Http/routes.php</file>
+            <file>file:/D:/Carlos/Proyectos/englishathome/Web/app/Models/Reporte.php</file>
+            <file>file:/D:/Carlos/Proyectos/englishathome/Web/app/Http/Controllers/ReporteController.php</file>
+            <file>file:/D:/Carlos/Proyectos/englishathome/Web/resources/views/alumno/perfil.blade.php</file>
+            <file>file:/D:/Carlos/Proyectos/englishathome/Web/public/assets/eah/js/modulos/reporte/motor.js</file>
+        </group>
     </open-files>
 </project-private>
