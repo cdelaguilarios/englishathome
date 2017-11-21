@@ -7,7 +7,11 @@
   var estados = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listar()) !!};
   var estadosProfesor = {!! json_encode(App\Helpers\Enum\EstadosProfesor::listar()) !!};
   var urlActualizarHorario = "{{ route('alumnos.actualizar.horario', ['id' => $alumno->idEntidad]) }}";
-  var urlPerfil = "{{ route('alumnos.perfil', ['id' => 0]) }}";</script>
+  var urlPerfil = "{{ route('alumnos.perfil', ['id' => 0]) }}";
+  var urlBuscar = "{{ route('alumnos.buscar') }}";
+  var idAlumno = "{{ $alumno->id}}";
+  var nombreCompletoAlumno = "{{ $alumno->nombre . " " .  $alumno->apellido }}";
+</script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/alumno.js") }}"></script>
 @endsection
 
@@ -117,7 +121,7 @@
             <a href="{{ route("alumnos.crear")}}" class="btn btn-primary btn-clean">Nuevo alumno</a> 
           </div>           
           <div class="col-sm-4">
-            {{ Form::select("",App\Models\Alumno::listarBusqueda(), $alumno->id, ["id"=>"sel-alumno", "class" => "form-control", "data-seccion" => "perfil", "style" => "width: 100%"]) }}
+            {{ Form::select("", [], null, ["id"=>"sel-alumno", "class" => "form-control", "data-seccion" => "perfil", "style" => "width: 100%"]) }}
           </div>
         </div> 
       </div>

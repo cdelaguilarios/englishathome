@@ -37,8 +37,12 @@ class Interesado extends Model {
     return $interesados;
   }
 
-  public static function listarBusqueda() {
-    return Interesado::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))->lists("nombreCompleto", "entidad.id");
+  public static function listarBusqueda($terminoBus = NULL) {
+    $alumnos = Interesado::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
+    if (isset($terminoBus)) {
+      $alumnos->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
+    }
+    return $alumnos->lists("nombreCompleto", "entidad.id");
   }
 
   public static function listarCursosInteres() {

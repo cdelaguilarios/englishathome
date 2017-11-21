@@ -4,6 +4,9 @@
 @section("section_script")
 <script>
   var urlEditar = "{{ route('interesados.editar', ['id' => 0]) }}";
+  var urlBuscar = "{{ route('interesados.buscar') }}";
+  var idInteresado = "{{ $interesado->id}}";
+  var nombreCompletoInteresado = "{{ $interesado->nombre . " " .  $interesado->apellido }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/interesado.js") }}"></script>
 @endsection
@@ -37,7 +40,7 @@
             @endif
           </div>
           <div class="col-sm-3">
-            {{ Form::select("", App\Models\Interesado::listarBusqueda(), $interesado->id, ["id"=>"sel-interesado", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%"]) }}
+            {{ Form::select("", [], null, ["id"=>"sel-interesado", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%"]) }}
           </div> 
         </div> 
       </div>

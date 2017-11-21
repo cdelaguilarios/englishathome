@@ -51,6 +51,16 @@ class AlumnoController extends Controller {
             })->make(true);
   }
 
+  public function buscar() {
+    $termino = Input::get("termino");
+    $alumnos = Alumno::listarBusqueda($termino["term"]);
+    $alumnosPro = [];
+    foreach ($alumnos as $id => $nombreCompleto) {
+      $alumnosPro[] = ['id' => $id, 'text' => $nombreCompleto];
+    }
+    return \Response::json(["results" => $alumnosPro]);
+  }
+
   public function crear() {
     return view("alumno.crear", $this->data);
   }
@@ -123,7 +133,7 @@ class AlumnoController extends Controller {
       $this->data["alumno"] = $alumno;
       $pdf = PDF::loadView("alumno.ficha", $this->data);
       $rutaBaseAlmacenamiento = Storage::disk("local")->getDriver()->getAdapter()->getPathPrefix();
-      $nombrePdf = str_replace(["á","é", "í","ó","ú"], ["a","e","i","o","u"], "Ficha " . ($alumno->sexo == "F" ? "de la alumna" : "del alumno" ) . " " . mb_strtolower($alumno->nombre . " " . $alumno->apellido) . ".pdf");
+      $nombrePdf = str_replace(["á", "é", "í", "ó", "ú"], ["a", "e", "i", "o", "u"], "Ficha " . ($alumno->sexo == "F" ? "de la alumna" : "del alumno" ) . " " . mb_strtolower($alumno->nombre . " " . $alumno->apellido) . ".pdf");
       $this->rutasArchivosEliminar[] = $rutaBaseAlmacenamiento . $nombrePdf;
       $datosPdf = $pdf->setOption("margin-top", "30mm")
               ->setOption("dpi", 108)->setOption("page-size", "A4")
@@ -223,8 +233,8 @@ class AlumnoController extends Controller {
                     ->filterColumn("nombreCompleto", function($q, $k) {
                       $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
                     })->filterColumn('estado', function($q, $k) {
-                      $q->whereRaw('entidad.estado like ?', ["%{$k}%"]);
-                    })->make(true);
+              $q->whereRaw('entidad.estado like ?', ["%{$k}%"]);
+            })->make(true);
   }
 
   public function registrarPago($id, PagoRequest\FormularioRequest $req) {
@@ -288,8 +298,8 @@ class AlumnoController extends Controller {
                     ->filterColumn('nombreCompleto', function($q, $k) {
                       $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
                     })->filterColumn('estado', function($q, $k) {
-                      $q->whereRaw('entidad.estado like ?', ["%{$k}%"]);
-                    })->make(true);
+              $q->whereRaw('entidad.estado like ?', ["%{$k}%"]);
+            })->make(true);
   }
 
   public function registrarActualizarClase($id, ClaseRequest\FormularioRequest $req) {

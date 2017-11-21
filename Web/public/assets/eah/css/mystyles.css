@@ -428,3 +428,23 @@ table.dataTable > tbody > tr.child span.dtr-title {
 .sec-ficha-logo{
   float: right;
 }
+
+/*Reporte motor*/
+#formulario-reporte .btn-entidad{
+  width: 250px;
+  height: 50px;
+  margin: 10px;    
+  border: 0px;
+  border-radius: 5px;
+  font-size: 18px;
+}
+#formulario-reporte .btn-entidad:hover, .btn-activo{
+  background-color: #3c8dbc;
+  color: #fff;
+}
+#formulario-reporte #sec-campos-entidad-relacionada{
+  margin-top: 80px;
+}
+#formulario-reporte .fuelux .checkbox-custom:before {
+  right: -25px;
+}

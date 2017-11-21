@@ -36,6 +36,16 @@ class PostulanteController extends Controller {
             })->make(true);
   }
 
+  public function buscar() {
+    $termino = Input::get("termino");
+    $postulantes = Postulante::listarBusqueda($termino["term"]);
+    $postulantesPro = [];
+    foreach ($postulantes as $id => $nombreCompleto) {
+      $postulantesPro[] = ['id' => $id, 'text' => $nombreCompleto];
+    }
+    return \Response::json(["results" => $postulantesPro]);
+  }
+
   public function crear() {
     return view("postulante.crear", $this->data);
   }

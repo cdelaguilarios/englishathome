@@ -172,14 +172,14 @@
                 </span>
               </a>
               <ul class="treeview-menu">
+                <li class="{{ ((isset($subSeccion) && $subSeccion == "motor") ? "active" : "") }}">
+                  <a href="{{ route("reportes")}}"><i class="fa fa-qrcode"></i> Motor de reportes</a>
+                </li>
                 <li class="{{ ((isset($subSeccion) && $subSeccion == "clases") ? "active" : "") }}">
                   <a href="{{ route("reporte.clases")}}"><i class="fa flaticon-student-in-front-of-a-stack-of-books"></i> Reporte de clases</a>
                 </li>
                 <li class="{{ ((isset($subSeccion) && $subSeccion == "pagos") ? "active" : "") }}">
                   <a href="{{ route("reporte.pagos")}}"><i class="fa fa-line-chart"></i> Reporte de pagos</a>
-                </li>
-                <li class="{{ ((isset($subSeccion) && $subSeccion == "motor") ? "active" : "") }}">
-                  <a href="{{ route("reporte.motor")}}"><i class="fa fa-qrcode"></i> Motor de reportes</a>
                 </li>
               </ul>
             </li> 

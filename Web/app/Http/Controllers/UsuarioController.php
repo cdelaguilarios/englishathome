@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Log;
 use Auth;
+use Input;
 use Mensajes;
 use Datatables;
 use App\Models\Usuario;
@@ -34,6 +35,16 @@ class UsuarioController extends Controller {
             })->filterColumn("entidad.fechaRegistro", function($q, $k) {
               $q->whereRaw("DATE_FORMAT(entidad.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
             })->make(true);
+  }
+
+  public function buscar() {
+    $termino = Input::get("termino");
+    $usuarios = Usuario::listarBusqueda($termino["term"]);
+    $usuariosPro = [];
+    foreach ($usuarios as $id => $nombreCompleto) {
+      $usuariosPro[] = ['id' => $id, 'text' => $nombreCompleto];
+    }
+    return \Response::json(["results" => $usuariosPro]);
   }
 
   public function crear() {

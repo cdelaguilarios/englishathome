@@ -3,11 +3,14 @@ $(document).ready(function () {
   cargarFormulario();
 
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
-  $("#sel-postulante").select2();
+  urlBuscar = (typeof (urlBuscar) === "undefined" ? "" : urlBuscar);
+  idPostulante = (typeof (idPostulante) === "undefined" ? "" : idPostulante);
+  nombreCompletoPostulante = (typeof (nombreCompletoPostulante) === "undefined" ? "" : nombreCompletoPostulante);
+  establecerListaBusqueda("#sel-postulante", urlBuscar);
+  $("#sel-postulante").empty().append('<option value="' + idPostulante + '">' + nombreCompletoPostulante + '</option>').val(idPostulante);
   $("#sel-postulante").change(function () {
-    if (urlEditar !== "") {
+    if (urlEditar !== "" && $(this).val() !== this.options[this.selectedIndex].innerHTML)
       window.location.href = urlEditar.replace("/0", "/" + $(this).val());
-    }
   });
 });
 

@@ -6,13 +6,16 @@ $(document).ready(function () {
 
   urlPerfil = (typeof (urlPerfil) === "undefined" ? "" : urlPerfil);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
-  $("#sel-profesor").select2();
+  urlBuscar = (typeof (urlBuscar) === "undefined" ? "" : urlBuscar);
+  idProfesor = (typeof (idProfesor) === "undefined" ? "" : idProfesor);
+  nombreCompletoProfesor = (typeof (nombreCompletoProfesor) === "undefined" ? "" : nombreCompletoProfesor);
+  establecerListaBusqueda("#sel-profesor", urlBuscar);
+  $("#sel-profesor").empty().append('<option value="' + idProfesor + '">' + nombreCompletoProfesor + '</option>').val(idProfesor);
   $("#sel-profesor").change(function () {
-    if ($(this).data("seccion") === "perfil" && urlPerfil !== "") {
+    if ($(this).data("seccion") === "perfil" && urlPerfil !== "" && $(this).val() !== this.options[this.selectedIndex].innerHTML)
       window.location.href = urlPerfil.replace("/0", "/" + $(this).val());
-    } else if (urlEditar !== "") {
+    else if (urlEditar !== "" && $(this).val() !== this.options[this.selectedIndex].innerHTML)
       window.location.href = urlEditar.replace("/0", "/" + $(this).val());
-    }
   });
 });
 

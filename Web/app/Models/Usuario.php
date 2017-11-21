@@ -42,8 +42,12 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     return $usuarios;
   }
 
-  public static function listarBusqueda() {
-    return Usuario::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))->lists("nombreCompleto", "entidad.id");
+  public static function listarBusqueda($terminoBus = NULL) {
+    $alumnos = Usuario::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
+    if (isset($terminoBus)) {
+      $alumnos->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
+    }
+    return $alumnos->lists("nombreCompleto", "entidad.id");
   }
 
   public static function obtenerXId($id) {

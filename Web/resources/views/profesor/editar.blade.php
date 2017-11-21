@@ -4,6 +4,9 @@
 @section("section_script")
 <script>
   var urlEditar = "{{ route('profesores.editar', ['id' => 0]) }}";
+  var urlBuscar = "{{ route('profesores.buscar') }}";
+  var idProfesor = "{{ $profesor->id}}";
+  var nombreCompletoProfesor = "{{ $profesor->nombre . " " .  $profesor->apellido }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/profesor/profesor.js") }}"></script>
 @endsection
@@ -25,7 +28,7 @@
             <a href="{{ route("profesores.perfil", ["id" => $profesor->id]) }}" type="button" class="btn btn-primary"><i class="fa fa-eye"></i> Ver perfil</a>
           </div>           
           <div class="col-sm-4">
-            {{ Form::select("",App\Models\Profesor::listarBusqueda(), $profesor->id, ["id"=>"sel-profesor", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%"]) }}
+            {{ Form::select("", [], null, ["id"=>"sel-profesor", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%"]) }}
           </div>
         </div> 
       </div>

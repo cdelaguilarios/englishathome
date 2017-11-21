@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use PDF;
 use Log;
+use Input;
 use Storage;
 use Mensajes;
 use Datatables;
@@ -46,6 +47,16 @@ class ProfesorController extends Controller {
             })->filterColumn("entidad.fechaRegistro", function($q, $k) {
               $q->whereRaw("DATE_FORMAT(entidad.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
             })->make(true);
+  }
+
+  public function buscar() {
+    $termino = Input::get("termino");
+    $profesores = Profesor::listarBusqueda($termino["term"]);
+    $profesoresPro = [];
+    foreach ($profesores as $id => $nombreCompleto) {
+      $profesoresPro[] = ['id' => $id, 'text' => $nombreCompleto];
+    }
+    return \Response::json(["results" => $profesoresPro]);
   }
 
   public function crear() {

@@ -4,6 +4,9 @@
 @section("section_script")
 <script>
   var urlEditar = "{{ route('usuarios.editar', ['id' => 0]) }}";
+  var urlBuscar = "{{ route('usuarios.buscar') }}";
+  var idUsuario = "{{ $usuario->id}}";
+  var nombreCompletoUsuario = "{{ $usuario->nombre . " " .  $usuario->apellido }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/usuario.js")}}"></script>
 @endsection
@@ -29,7 +32,7 @@
             <a href="{{ route("usuarios.crear")}}" class="btn btn-primary btn-clean">Nuevo usuario</a>
           </div>           
           <div class="col-sm-4">
-            {{ Form::select("",App\Models\Usuario::listarBusqueda(), $usuario->id, ["id"=>"sel-usuario", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%"]) }}
+            {{ Form::select("", [], null, ["id"=>"sel-usuario", "class" => "form-control", "data-seccion" => "editar", "style" => "width: 100%"]) }}
           </div>
         </div> 
       </div>

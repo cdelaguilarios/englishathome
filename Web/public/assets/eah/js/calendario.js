@@ -47,13 +47,17 @@ function  cargarSeccionCalendario() {
       }
     });
     if ($("#bus-tipo-entidad-calendario").attr("type") !== "hidden") {
-      $("#bus-sel-alumno-calendario").select2();
-      $("#bus-sel-profesor-calendario").select2();
+      urlBuscarAlumnos = (typeof (urlBuscarAlumnos) === "undefined" ? "" : urlBuscarAlumnos);
+      urlBuscarProfesores = (typeof (urlBuscarProfesores) === "undefined" ? "" : urlBuscarProfesores);
+      establecerListaBusqueda("#bus-sel-alumno-calendario", urlBuscarAlumnos);
+      establecerListaBusqueda("#bus-sel-profesor-calendario", urlBuscarProfesores);
     }
     $("#bus-tipo-filtro-calendario, #bus-tipo-entidad-calendario, #bus-sel-alumno-calendario, #bus-sel-profesor-calendario").change(function () {
-      var datosFuenteCalendario = obtenerDatosFuenteCalendario();
-      $('#sec-calendario').fullCalendar('removeEventSource', datosFuenteCalendario);
-      $('#sec-calendario').fullCalendar('addEventSource', datosFuenteCalendario);
+      if ($(this).val() !== this.options[this.selectedIndex].innerHTML) {
+        var datosFuenteCalendario = obtenerDatosFuenteCalendario();
+        $('#sec-calendario').fullCalendar('removeEventSource', datosFuenteCalendario);
+        $('#sec-calendario').fullCalendar('addEventSource', datosFuenteCalendario);
+      }
     });
   }
 }

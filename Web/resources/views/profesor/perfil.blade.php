@@ -7,6 +7,9 @@
   var estados = {!! json_encode(App\Helpers\Enum\EstadosProfesor::listar()) !!};
   var urlActualizarHorario = "{{ route('profesores.actualizar.horario', ['id' => $profesor->idEntidad]) }}";
   var urlPerfil = "{{ route('profesores.perfil', ['id' => 0]) }}";
+  var urlBuscar = "{{ route('profesores.buscar') }}";
+  var idProfesor = "{{ $profesor->id}}";
+  var nombreCompletoProfesor = "{{ $profesor->nombre . " " .  $profesor->apellido }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/profesor/profesor.js") }}"></script>
 @endsection
@@ -96,7 +99,7 @@
             <a href="{{ route("profesores.crear")}}" class="btn btn-primary btn-clean">Nuevo profesor</a> 
           </div>           
           <div class="col-sm-4">
-            {{ Form::select("",App\Models\Profesor::listarBusqueda(), $profesor->id, ["id"=>"sel-profesor", "class" => "form-control", "data-seccion" => "perfil", "style" => "width: 100%"]) }}
+            {{ Form::select("", [], null, ["id"=>"sel-profesor", "class" => "form-control", "data-seccion" => "perfil", "style" => "width: 100%"]) }}
           </div>
         </div> 
       </div>

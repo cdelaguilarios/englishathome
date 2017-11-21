@@ -38,9 +38,13 @@ class Postulante extends Model {
     }
     return $postulantes;
   }
-
-  public static function listarBusqueda() {
-    return Postulante::listar()->lists("nombreCompleto", "entidad.id");
+  
+  public static function listarBusqueda($terminoBus = NULL) {
+    $alumnos = Postulante::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
+    if (isset($terminoBus)) {
+      $alumnos->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
+    }
+    return $alumnos->lists("nombreCompleto", "entidad.id");
   }
 
   public static function obtenerXId($id, $simple = FALSE) {

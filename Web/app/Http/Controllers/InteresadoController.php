@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Log;
+use Input;
 use Mensajes;
 use Datatables;
 use App\Models\Interesado;
@@ -31,6 +32,16 @@ class InteresadoController extends Controller {
             })->filterColumn("entidad.fechaRegistro", function($q, $k) {
               $q->whereRaw("DATE_FORMAT(entidad.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
             })->make(true);
+  }
+
+  public function buscar() {
+    $termino = Input::get("termino");
+    $interesados = Interesado::listarBusqueda($termino["term"]);
+    $interesadosPro = [];
+    foreach ($interesados as $id => $nombreCompleto) {
+      $interesadosPro[] = ['id' => $id, 'text' => $nombreCompleto];
+    }
+    return \Response::json(["results" => $interesadosPro]);
   }
 
   public function crear() {

@@ -37,6 +37,7 @@ Route::group(["middleware" => "auth"], function() {
     // <editor-fold desc="Interesados">
     Route::get("interesados", ["uses" => "InteresadoController@index", "as" => "interesados"]);
     Route::post("interesados/listar", ["uses" => "InteresadoController@listar", "as" => "interesados.listar"]);
+    Route::get("interesados/buscar", ["uses" => "InteresadoController@buscar", "as" => "interesados.buscar"]);
     Route::get("interesado/nuevo", ["uses" => "InteresadoController@crear", "as" => "interesados.crear"]);
     Route::post("interesado/registrar", ["uses" => "InteresadoController@registrar", "as" => "interesados.registrar"]);
     Route::get("interesado/{id}/editar", ["uses" => "InteresadoController@editar", "as" => "interesados.editar"]);
@@ -50,6 +51,7 @@ Route::group(["middleware" => "auth"], function() {
     // <editor-fold desc="Alumnos">
     Route::get("alumnos", ["uses" => "AlumnoController@index", "as" => "alumnos"]);
     Route::post("alumnos/listar", ["uses" => "AlumnoController@listar", "as" => "alumnos.listar"]);
+    Route::get("alumnos/buscar", ["uses" => "AlumnoController@buscar", "as" => "alumnos.buscar"]);
     Route::get("alumno/nuevo", ["uses" => "AlumnoController@crear", "as" => "alumnos.crear"]);
     Route::post("alumno/registrar", ["uses" => "AlumnoController@registrar", "as" => "alumnos.registrar"]);
     Route::get("alumno/{id}/editar", ["uses" => "AlumnoController@editar", "as" => "alumnos.editar"]);
@@ -87,6 +89,7 @@ Route::group(["middleware" => "auth"], function() {
     // <editor-fold desc="Postulantes">
     Route::get("postulantes", ["uses" => "PostulanteController@index", "as" => "postulantes"]);
     Route::post("postulantes/listar", ["uses" => "PostulanteController@listar", "as" => "postulantes.listar"]);
+    Route::get("postulantes/buscar", ["uses" => "PostulanteController@buscar", "as" => "postulantes.buscar"]);
     Route::get("postulante/nuevo", ["uses" => "PostulanteController@crear", "as" => "postulantes.crear"]);
     Route::post("postulante/registrar", ["uses" => "PostulanteController@registrar", "as" => "postulantes.registrar"]);
     Route::get("postulante/{id}/editar", ["uses" => "PostulanteController@editar", "as" => "postulantes.editar"]);
@@ -100,6 +103,7 @@ Route::group(["middleware" => "auth"], function() {
     // <editor-fold desc="Profesores">
     Route::get("profesores", ["uses" => "ProfesorController@index", "as" => "profesores"]);
     Route::post("profesores/listar", ["uses" => "ProfesorController@listar", "as" => "profesores.listar"]);
+    Route::get("profesores/buscar", ["uses" => "ProfesorController@buscar", "as" => "profesores.buscar"]);
     Route::get("profesor/nuevo", ["uses" => "ProfesorController@crear", "as" => "profesores.crear"]);
     Route::post("profesor/registrar", ["uses" => "ProfesorController@registrar", "as" => "profesores.registrar"]);
     Route::get("profesor/{id}/editar", ["uses" => "ProfesorController@editar", "as" => "profesores.editar"]);
@@ -131,6 +135,7 @@ Route::group(["middleware" => "auth"], function() {
     Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Principal . "],true"], function() {
       Route::get("usuarios", ["uses" => "UsuarioController@index", "as" => "usuarios"]);
       Route::post("usuarios/listar", ["uses" => "UsuarioController@listar", "as" => "usuarios.listar"]);
+      Route::get("usuarios/buscar", ["uses" => "UsuarioController@buscar", "as" => "usuarios.buscar"]);
       Route::get("usuario/nuevo", ["uses" => "UsuarioController@crear", "as" => "usuarios.crear"]);
       Route::post("usuario/registrar", ["uses" => "UsuarioController@registrar", "as" => "usuarios.registrar"]);
       Route::post("usuario/{id}/actualizarEstado", ["uses" => "UsuarioController@actualizarEstado", "as" => "usuarios.actualizar.estado"]);
@@ -162,18 +167,22 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("curso/{id}/datos", ["uses" => "CursoController@datos", "as" => "cursos.datos"]);
     // </editor-fold>
     // <editor-fold desc="Reportes">
+    Route::get("reportes", ["uses" => "ReporteController@index", "as" => "reportes"]);
+    Route::post("reportes/listar", ["uses" => "ReporteController@lista", "as" => "reportes.listar"]);
+    Route::get("reportes/nuevo", ["uses" => "ReporteController@crear", "as" => "reportes.crear"]);
+    Route::post("reportes/registrar", ["uses" => "ReporteController@registrar", "as" => "reportes.registrar"]);
+    Route::get("reportes/{id}/editar", ["uses" => "ReporteController@editar", "as" => "reportes.editar"]);
+    Route::patch("reportes/{id}/actualizar", ["uses" => "ReporteController@actualizar", "as" => "reportes.actualizar"]);
+    Route::delete("reportes/{id}/eliminar", ["uses" => "ReporteController@eliminar", "as" => "reportes.eliminar"]);
+    Route::post("reportes/listarCampos", ["uses" => "ReporteController@listarCampos", "as" => "reportes.listar.campos"]);
+    Route::post("reportes/listarEntidadesRelacionadas", ["uses" => "ReporteController@listarEntidadesRelacionadas", "as" => "reportes.listar.entidades.relacionadas"]);
+    
     Route::get("reporte/clases", ["uses" => "ReporteController@clases", "as" => "reporte.clases"]);
     Route::post("reporte/listar/clases", ["uses" => "ReporteController@listarClases", "as" => "reporte.listar.clases"]);
     Route::post("reporte/listar/clases/grafico", ["uses" => "ReporteController@listarClasesGrafico", "as" => "reporte.listar.clases.grafico"]);
     Route::get("reporte/pagos", ["uses" => "ReporteController@pagos", "as" => "reporte.pagos"]);
     Route::post("reporte/listar/pagos", ["uses" => "ReporteController@listarPagos", "as" => "reporte.listar.pagos"]);
     Route::post("reporte/listar/pagos/grafico", ["uses" => "ReporteController@listarPagosGrafico", "as" => "reporte.listar.pagos.grafico"]);
-    
-    Route::get("reporte/motor", ["uses" => "ReporteController@motor", "as" => "reporte.motor"]);
-    Route::get("reporte/motor/nuevo", ["uses" => "ReporteController@motorCrear", "as" => "reporte.motor.crear"]);
-    Route::post("reporte/motor/registrar", ["uses" => "ReporteController@motorRegistrar", "as" => "reporte.motor.registrar"]);
-    Route::post("reporte/motor/listarCampos", ["uses" => "ReporteController@motorListarCampos", "as" => "reporte.motor.litar.campos"]);
-    Route::post("reporte/motor/listarEntidadesRelacionadas", ["uses" => "ReporteController@motorListarEntidadesRelacionadas", "as" => "reporte.motor.litar.entidades.relacionadas"]);
     // </editor-fold> 
     // <editor-fold desc="Correos">
     Route::get("correos", ["uses" => "HistorialController@correos", "as" => "correos"]);

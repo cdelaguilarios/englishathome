@@ -5,13 +5,16 @@ $(document).ready(function () {
 
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
   urlCotizar = (typeof (urlCotizar) === "undefined" ? "" : urlCotizar);
-  $("#sel-interesado").select2();
+  urlBuscar = (typeof (urlBuscar) === "undefined" ? "" : urlBuscar);
+  idInteresado = (typeof (idInteresado) === "undefined" ? "" : idInteresado);
+  nombreCompletoInteresado = (typeof (nombreCompletoInteresado) === "undefined" ? "" : nombreCompletoInteresado);
+  establecerListaBusqueda("#sel-interesado", urlBuscar);
+  $("#sel-interesado").empty().append('<option value="' + idInteresado + '">' + nombreCompletoInteresado + '</option>').val(idInteresado);
   $("#sel-interesado").change(function () {
-    if ($(this).data("seccion") === "cotizar" && urlCotizar !== "") {
+    if ($(this).data("seccion") === "cotizar" && urlCotizar !== "" && $(this).val() !== this.options[this.selectedIndex].innerHTML)
       window.location.href = urlCotizar.replace("/0", "/" + $(this).val());
-    } else if (urlEditar !== "") {
+    else if (urlEditar !== "" && $(this).val() !== this.options[this.selectedIndex].innerHTML)
       window.location.href = urlEditar.replace("/0", "/" + $(this).val());
-    }
   });
 });
 function cargarLista() {

@@ -196,7 +196,7 @@ function establecerCalendario(idElemento, incluirHora, soloFechasPasadas, soloFe
       $("#" + idElemento).datetimepicker("update");
       $("#" + idElemento).val("");
     }
-    if(!soloFechasPasadas && !soloFechasFuturas){
+    if (!soloFechasPasadas && !soloFechasFuturas) {
       $("#" + idElemento).datetimepicker("setDate", (new Date()));
     }
   } else {
@@ -547,6 +547,26 @@ function rgb2hex(rgb) {
     return ("0" + parseInt(x).toString(16)).slice(-2);
   }
   return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+}
+function establecerListaBusqueda(elemento, urlBuscar) {
+  $(elemento).select2({
+    minimumInputLength: 2,
+    tags: false,
+    ajax: {
+      url: urlBuscar,
+      dataType: 'json',
+      type: "GET",
+      quietMillis: 50,
+      data: function (term) {
+        return {
+          termino: term
+        };
+      },
+      results: function (data) {
+        return {results: data};
+      }
+    }
+  });
 }
 
 String.prototype.reemplazarDatosTexto = function (datos, valores) {

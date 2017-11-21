@@ -19,6 +19,40 @@ class Reporte extends Model {
     return $nombreTabla;
   }
 
+  public static function listar() {
+    return Reporte::where("eliminado", 0);
+  }
+
+  public static function obtenerXId($id) {
+    return Reporte::listar()->where("id", $id)->firstOrFail();
+  }
+
+  public static function registrar($entidad, $req) {
+    $clase = "\App\Models\\" . $entidad;
+
+    $datos = $req->all();
+    $reporte = new Reporte($datos);
+    $reporte->datos = Reporte::obtenerDatos($entidad, $req);
+    $reporte->consulta = $clase::obtenerConsultaBdReporte();
+    $reporte->fechaRegistro = Carbon::now()->toDateTimeString();
+    $reporte->save();
+    return $reporte->id;
+  }
+
+  public static function actualizar($id, $req) {
+    $datos = $req->all();
+    $reporte = Reporte::obtenerXId($id);
+    $reporte->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+    $reporte->update($datos);
+  }
+
+  public static function eliminar($id) {
+    $reporte = Reporte::obtenerXId($id);
+    $reporte->eliminado = 1;
+    $reporte->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+    $reporte->save();
+  }
+
   public static function listarCampos($entidad) {
     $clase = "\App\Models\\" . $entidad;
     $nombreTabla = $clase::nombreTabla();
@@ -27,14 +61,11 @@ class Reporte extends Model {
                     ->where('table_name', $nombreTabla)
                     ->whereIn('COLUMN_NAME', array_keys($campos))
                     ->select('COLUMN_NAME', 'DATA_TYPE')->get();
-
     $camposEntidad = [];
     $listaTiposBaseEntidad = TiposEntidad::listarTiposBase();
     if (array_key_exists($entidad, $listaTiposBaseEntidad)) {
       $camposEntidad = Reporte::listarCampos("Entidad");
     }
-
-
     foreach ($datosColumnas as $datosColumna) {
       if (!array_key_exists("tipo", $campos[$datosColumna->COLUMN_NAME])) {
         $campos[$datosColumna->COLUMN_NAME]["tipo"] = $datosColumna->DATA_TYPE;
@@ -55,18 +86,12 @@ class Reporte extends Model {
     return $tiposSel;
   }
 
-  public static function registrar($entidad, $req) {
+  public static function validarEntidadRelacionada($entidad, $id) {
     $clase = "\App\Models\\" . $entidad;
-
-    $datos = $req->all();
-    $reporte = new Curso($datos);
-    $reporte->datos = Reporte::obtenerDatos($entidad, $req);
-    $reporte->consulta = $clase::obtenerConsultaBdReporte();
-    $reporte->fechaRegistro = Carbon::now()->toDateTimeString();
-    $reporte->save();
-    return $reporte->id;
+    return $clase::verificarExistencia($id);
   }
 
+  //Util
   public static function generarConsultaBd($campos, $consultaTablas, $filtros) {
     $consultaBD = "SELECT ";
     foreach ($campos as $campo) {

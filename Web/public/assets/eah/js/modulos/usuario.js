@@ -8,11 +8,14 @@ $(document).ready(function () {
   cargarFormulario();
 
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
-  $("#sel-usuario").select2();
+  urlBuscar = (typeof (urlBuscar) === "undefined" ? "" : urlBuscar);
+  idUsuario = (typeof (idUsuario) === "undefined" ? "" : idUsuario);
+  nombreCompletoUsuario = (typeof (nombreCompletoUsuario) === "undefined" ? "" : nombreCompletoUsuario);
+  establecerListaBusqueda("#sel-usuario", urlBuscar);
+  $("#sel-usuario").empty().append('<option value="' + idUsuario + '">' + nombreCompletoUsuario + '</option>').val(idUsuario);
   $("#sel-usuario").change(function () {
-    if (urlEditar !== "") {
+    if (urlEditar !== "" && $(this).val() !== this.options[this.selectedIndex].innerHTML)
       window.location.href = urlEditar.replace("/0", "/" + $(this).val());
-    }
   });
 });
 function cargarLista() {

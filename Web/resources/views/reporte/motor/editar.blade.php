@@ -9,18 +9,32 @@
   var entidades = {!! json_encode($entidades) !!};
   var urlListarCampos = "{{ route('reportes.listar.campos') }}";
   var urlListarEntidadesRelacionadas = "{{ route('reportes.listar.entidades.relacionadas') }}";
+  var urlEditar = "{{ route('reportes.editar', ['id' => 0]) }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/reporte/motor/formulario.js") }}"></script>
 @endsection
 
 @section("breadcrumb")
 <li><a href="{{ route("reportes") }}">Motor de reportes</a></li>
-<li class="active">Nuevo</li>
+<li class="active">Editar</li>
 @endsection
 
 @section("content") 
 @include("partials/errors")
-{{ Form::open(["url" => route("reportes.registrar"), "id" => "formulario-reporte", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
-@include("reporte.motor.formulario", ["modo" => "registrar"])
+<div class="row">
+  <div class="col-sm-12">
+    <div class="box box-primary">        
+      <div class="box-body">
+        <div class="form-group">
+          <div class="col-sm-8">
+            <a href="{{ route("reportes.crear")}}" class="btn btn-primary btn-clean">Nuevo reporte</a>
+          </div>  
+        </div> 
+      </div>
+    </div>
+  </div>
+</div>
+{{ Form::model($reporte, ["method" => "PATCH", "action" => ["ReporteController@actualizar", $reporte->id], "id" => "formulario-reporte", "class" => "form-horizontal", "files" => true]) }}
+@include("reporte.motor.formulario")
 {{ Form::close() }}
 @endsection

@@ -30,10 +30,10 @@
             {{ Form::select("", ["0" => "Alumno", "1" => "Profesor"], null, ["id"=>"bus-tipo-entidad-calendario", "class" => "form-control"]) }}
           </div>        
           <div id="sec-bus-sel-alumno-calendario" class="col-sm-4">
-            {{ Form::select("",App\Models\Alumno::listarBusqueda(), null, ["id"=>"bus-sel-alumno-calendario", "class" => "form-control", "style" => "width: 100%"]) }}
+            {{ Form::select("", [], null, ["id"=>"bus-sel-alumno-calendario", "class" => "form-control", "style" => "width: 100%"]) }}
           </div>        
           <div id="sec-bus-sel-profesor-calendario" class="col-sm-4" style="display: none">
-            {{ Form::select("",App\Models\Profesor::listarBusqueda(), null, ["id"=>"bus-sel-profesor-calendario", "class" => "form-control", "style" => "width: 100%"]) }}
+            {{ Form::select("", [], null, ["id"=>"bus-sel-profesor-calendario", "class" => "form-control", "style" => "width: 100%"]) }}
           </div>
         </div>
         @else
@@ -59,5 +59,7 @@
 @include("util.datosClase") 
 <script>
   var urlCalendario = "{{ route('calendario.datos') }}";
+  var urlBuscarAlumnos = "{{ route('alumnos.buscar') }}";
+  var urlBuscarProfesores = "{{ route('profesores.buscar') }}";
 </script>
 <script src="{{ asset("assets/eah/js/calendario.js")}}"></script>

@@ -6,7 +6,11 @@
   var urlActualizarEstado = "{{ route('postulantes.actualizar.estado', ['id' => 0]) }}";
   var estados = {!! json_encode(App\Helpers\Enum\EstadosPostulante::listar()) !!};
   var urlActualizarHorario = "{{ route('postulantes.actualizar.horario', ['id' => $postulante->idEntidad]) }}";
-  var urlPerfil = "{{ route('postulantes.perfil', ['id' => 0]) }}";</script>
+  var urlPerfil = "{{ route('postulantes.perfil', ['id' => 0]) }}";
+  var urlBuscar = "{{ route('postulantes.buscar') }}";
+  var idPostulante = "{{ $postulante->id}}";
+  var nombreCompletoPostulante = "{{ $postulante->nombre . " " .  $postulante->apellido }}";
+</script>
 <script src="{{ asset("assets/eah/js/modulos/postulante.js") }}"></script>
 @endsection
 
@@ -119,7 +123,7 @@
             @endif
           </div>         
           <div class="col-sm-4">
-            {{ Form::select("",App\Models\Postulante::listarBusqueda(), $postulante->id, ["id"=>"sel-postulante", "class" => "form-control", "data-seccion" => "perfil", "style" => "width: 100%"]) }}
+            {{ Form::select("", [], null, ["id"=>"sel-postulante", "class" => "form-control", "data-seccion" => "perfil", "style" => "width: 100%"]) }}
           </div>
         </div> 
       </div>
