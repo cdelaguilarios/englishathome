@@ -168,7 +168,7 @@ Route::group(["middleware" => "auth"], function() {
     // </editor-fold>
     // <editor-fold desc="Reportes">
     Route::get("reportes", ["uses" => "ReporteController@index", "as" => "reportes"]);
-    Route::post("reportes/listar", ["uses" => "ReporteController@lista", "as" => "reportes.listar"]);
+    Route::post("reportes/listar", ["uses" => "ReporteController@listar", "as" => "reportes.listar"]);
     Route::get("reportes/nuevo", ["uses" => "ReporteController@crear", "as" => "reportes.crear"]);
     Route::post("reportes/registrar", ["uses" => "ReporteController@registrar", "as" => "reportes.registrar"]);
     Route::get("reportes/{id}/editar", ["uses" => "ReporteController@editar", "as" => "reportes.editar"]);

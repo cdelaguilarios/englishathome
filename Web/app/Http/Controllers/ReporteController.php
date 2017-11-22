@@ -29,7 +29,7 @@ class ReporteController extends Controller {
   }
 
   public function listar() {
-    return Datatables::of(Curso::listar())->make(true);
+    return Datatables::of(Reporte::listar())->make(true);
   }
 
   public function crear() {
@@ -40,7 +40,7 @@ class ReporteController extends Controller {
 
   public function registrar(FormularioRequest $req) {
     try {
-      //Reporte::registrar($req);
+      Reporte::registrar($req);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
       return redirect(route("reportes"));
     } catch (\Exception $e) {
@@ -52,6 +52,8 @@ class ReporteController extends Controller {
 
   public function editar($id) {
     try {
+      $this->data["subSeccion"] = "motor";
+      $this->data["entidades"] = TiposEntidad::listar();
       $this->data["reporte"] = Reporte::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
       Log::error($e);

@@ -264,12 +264,9 @@ var seccionPaso4 = new function () {
         '</select>' +
         '</div>' +
         '<div class="col-sm-8">' +
-        '<input type="text" id="' + idFiltro + '" name="' + idFiltro + '" class="form-control" />' +
+        '<input type="text" id="' + idFiltro + '" name="' + idFiltro + '" class="form-control" maxlength="255" />' +
         '</div>' +
         '</div>');
-    $("#" + idFiltro).rules("add", {
-      maxlength: 255
-    });
   };
   this.agregarFiltroNumero = function (contenedor, idSeccion, entidad, campos, idCampo) {
     var idContenedor = "sec-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
@@ -292,7 +289,7 @@ var seccionPaso4 = new function () {
         '</select>' +
         '</div>' +
         '<div class="col-sm-8">' +
-        '<input type="number" id="' + idFiltro + '" name="' + idFiltro + '" class="form-control" />' +
+        '<input type="number" id="' + idFiltro + '" name="' + idFiltro + '" class="form-control" maxlength="19" />' +
         '</div>' +
         '</div>');
     $("#" + idFiltro).rules("add", {
@@ -359,7 +356,7 @@ var seccionPaso4 = new function () {
   };
   this.agregarFiltroListaOpciones = function (contenedor, idSeccion, entidad, campos, idCampo, listaOpciones) {
     var idContenedor = "sec-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
-    var idFiltro = "sel-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
+    var idFiltro = "inp-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
 
     var contenidoOpciones = '';
     $.each(listaOpciones, function (id, val) {
@@ -377,8 +374,8 @@ var seccionPaso4 = new function () {
   };
   this.agregarFiltroBusqueda = function (contenedor, idSeccion, entidad) {
     if (motor.entidades[entidad][4] !== "") {
-      var idFiltro = "inp-filtro-" + entidad.toLowerCase() + "-busqueda";
       var idSelTipo = "sel-tipo-filtro-" + entidad.toLowerCase() + "-busqueda";
+      var idFiltro = "inp-filtro-" + entidad.toLowerCase() + "-busqueda";
 
       $(contenedor).find(idSeccion).append(
           '<div class="form-group">' +

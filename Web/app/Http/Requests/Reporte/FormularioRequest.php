@@ -3,8 +3,10 @@
 namespace App\Http\Requests\Reporte;
 
 use App\Models\Reporte;
+use App\Models\TipoDocumento;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
+use App\Helpers\Enum\SexosEntidad;
 use App\Helpers\Enum\TiposEntidad;
 
 class FormularioRequest extends Request {
@@ -51,7 +53,7 @@ class FormularioRequest extends Request {
             $reglasValidacion["campoEntidadNoValido"] = "required";
             $camposValidos = FALSE;
           } else {
-            $camposValidos = $this->validarCampo($datos, $reglasValidacion, $datosEntidad->nombre, $listaCamposEntidad[$campoSel]);
+            $camposValidos = $this->validarFiltro($datos, $reglasValidacion, $datosEntidad->nombre, $campoSel, $listaCamposEntidad[$campoSel]);
           }
           if (!$camposValidos) {
             $entidadValida = FALSE;
@@ -60,12 +62,10 @@ class FormularioRequest extends Request {
         }
       }
     }
-
     //Validaciones-Entidades Relacionadas
     if ($entidadValida && !is_null($datos["entidadesRelacionadas"])) {
       $entidadesRelacionadas = json_decode($datos["entidadesRelacionadas"], false, 512, JSON_UNESCAPED_UNICODE);
       if (!is_array($entidadesRelacionadas)) {
-        $reglasValidacion["EntidadesRelacionadasNoValidas"] = "required";
         $entidadesRelacionadas = [];
       }
       $listaTiposEntidadesRelacionadas = Reporte::listarEntidadesRelacionadas($datosEntidad->nombre);
@@ -84,20 +84,18 @@ class FormularioRequest extends Request {
               $reglasValidacion["campoEntidadRelacionadaNoValido"] = "required";
               $camposValidos = FALSE;
             } else {
-              $camposValidos = $this->validarCampo($datos, $reglasValidacion, $datosEntidadRelacionada->nombre, $listaCamposEntidadRelacionada[$campoSel]);
+              $camposValidos = $this->validarFiltro($datos, $reglasValidacion, $datosEntidadRelacionada->nombre, $campoSel, $listaCamposEntidadRelacionada[$campoSel]);
             }
             if (!$camposValidos) {
               break;
             }
           }
-          if (!($camposValidos && $this->validarCampo($datos, $reglasValidacion, $datosEntidadRelacionada->nombre, ["titulo" => "busqueda", "tipo" => "busqueda"]))) {
+          if (!($camposValidos && $this->validarFiltro($datos, $reglasValidacion, $datosEntidadRelacionada->nombre, "busqueda", ["tipo" => "busqueda"]))) {
             break;
           }
         }
       }
     }
-    print_r($reglasValidacion);
-    die;
 
     switch ($this->method()) {
       case "GET":
@@ -113,41 +111,59 @@ class FormularioRequest extends Request {
     }
   }
 
-  private function validarCampo(&$datos, &$reglasValidacion, $entidad, $campo) {
-    $nomTipoFiltro = strtolower("sel-tipo-filtro-" . $entidad . "-" . $campo["titulo"]);
-    $nomFiltro = strtolower("inp-filtro-" . $entidad . "-" . $campo["titulo"]);
-    $campoValido = TRUE;
+  public function messages() {
+    return [
+        "tipoEntidadNoValido.required" => "Tipo de entidad seleccionada no válida.",
+        "camposEntidadNoValidos.required" => "Se debe seleccionar por lo menos un campo para la entidad.",
+        "campoEntidadNoValido.required" => "Uno o más campos de la entidad no son válidos.",
+        "tipoEntidadRelacionadaNoValido.required" => "Uno o más tipos de entidades relacionadas no son válidos.",
+        "camposEntidadRelacionadaNoValidos.required" => "Se debe seleccionar por lo menos un campo por cada entidad relacionada.",
+        "campoEntidadRelacionadaNoValido.required" => "Uno o más campos de las entidades relacionadas no son válidos.",
+        "campoNoValido.required" => "Uno o más campos no son válidos."
+    ];
+  }
 
-    if (!(isset($datos[$nomTipoFiltro]) && isset($datos[$nomFiltro])) && $campo["tipo"] != "tinyint") {
-      return;
+  private function validarFiltro(&$datos, &$reglasValidacion, $entidad, $campo, $datosCampo) {
+    $nomTipoFiltro = strtolower("sel-tipo-filtro-" . $entidad . "-" . $campo);
+    $nomFiltro = strtolower("inp-filtro-" . $entidad . "-" . $campo);
+
+    $datTipoFiltroValido = (isset($datos[$nomTipoFiltro]) && !empty($datos[$nomTipoFiltro]));
+    $datFiltroValido = (isset($datos[$nomFiltro]) && !empty($datos[$nomFiltro]));
+    if ((!$datTipoFiltroValido && !in_array(strtolower($datosCampo["tipo"]), ["tinyint", "sexo", "tipodocumento"])) ||
+            (!$datFiltroValido && !in_array(strtolower($datosCampo["tipo"]), ["datetime", "timestamp", "tinyint"]))) {
+      return TRUE;
     }
-    switch ($campo["tipo"]) {
+
+    $campoValido = TRUE;
+    switch (strtolower($datosCampo["tipo"])) {
       case "varchar":
       case "text":
       case "char":
-        $campoValido = in_array($datos[$nomFiltro], ["=", "<>", "LIKE", "NOT LIKE"]);
+        $campoValido = in_array($datos[$nomTipoFiltro], ["=", "<>", "LIKE", "NOT LIKE"]);
         if ($campoValido) {
-          $reglasValidacion[$datos[$nomFiltro]] = "max:255";
+          $reglasValidacion[$nomFiltro] = "max:255";
         }
         break;
       case "int":
       case "float":
-        $campoValido = in_array($datos[$nomFiltro], ["=", "<>", "LIKE", "NOT LIKE", ">", ">=", "<", "<="]);
+        $campoValido = in_array($datos[$nomTipoFiltro], ["=", "<>", "LIKE", "NOT LIKE", ">", ">=", "<", "<="]);
         if ($campoValido) {
-          $reglasValidacion[$datos[$nomFiltro]] = ["regex:" . ReglasValidacion::RegexDecimalNegativo];
+          $reglasValidacion[$nomFiltro] = ["regex:" . ReglasValidacion::RegexDecimalNegativo];
         }
         break;
       case "datetime":
       case "timestamp":
-        $campoValido = in_array($datos[$nomFiltro], ["=", "<>", ">", ">=", "<", "<=", "BETWEEN"]);
-        $nomFechaIniFiltro = strtolower("inp-filtro-fecha-inicio-" . $entidad . "-" . $campo["titulo"]);
-        $nomFechaFinFiltro = strtolower("inp-filtro-fecha-fin-" . $entidad . "-" . $campo["titulo"]);
+        $campoValido = in_array($datos[$nomTipoFiltro], ["=", "<>", ">", ">=", "<", "<=", "BETWEEN"]);
+        $nomFechaIniFiltro = strtolower("inp-filtro-fecha-inicio-" . $entidad . "-" . $campo);
+        $nomFechaFinFiltro = strtolower("inp-filtro-fecha-fin-" . $entidad . "-" . $campo);
+        $datFiltroFechaIniValido = (isset($datos[$nomFechaIniFiltro]) && !empty($datos[$nomFechaIniFiltro]));
+        $datFiltroFechaFinValido = (isset($datos[$nomFechaFinFiltro]) && !empty($datos[$nomFechaFinFiltro]));
 
-        if ($campoValido && isset($datos[$nomFechaIniFiltro])) {
-          $reglasValidacion[$datos[$nomFechaIniFiltro]] = ["regex:" . ReglasValidacion::RegexFecha];
+        if ($campoValido && $datFiltroFechaIniValido) {
+          $reglasValidacion[$nomFechaIniFiltro] = ["regex:" . ReglasValidacion::RegexFecha];
         }
-        if ($campoValido && isset($datos[$nomFechaFinFiltro]) && $datos[$nomTipoFiltro] == "BETWEEN") {
-          $reglasValidacion[$datos[$nomFechaFinFiltro]] = ["regex:" . ReglasValidacion::RegexFecha];
+        if ($campoValido && $datFiltroFechaIniValido && $datFiltroFechaFinValido && $datos[$nomTipoFiltro] == "BETWEEN") {
+          $reglasValidacion[$nomFechaFinFiltro] = ["regex:" . ReglasValidacion::RegexFecha];
         }
         break;
       case "tinyint":

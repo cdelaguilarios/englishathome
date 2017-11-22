@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DB;
+use Carbon\Carbon;
 use App\Helpers\Enum\TiposEntidad;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,13 +28,10 @@ class Reporte extends Model {
     return Reporte::listar()->where("id", $id)->firstOrFail();
   }
 
-  public static function registrar($entidad, $req) {
-    $clase = "\App\Models\\" . $entidad;
-
+  public static function registrar($req) {
     $datos = $req->all();
     $reporte = new Reporte($datos);
-    $reporte->datos = Reporte::obtenerDatos($entidad, $req);
-    $reporte->consulta = $clase::obtenerConsultaBdReporte();
+    $reporte->datos = Reporte::obtenerDatos($req);
     $reporte->fechaRegistro = Carbon::now()->toDateTimeString();
     $reporte->save();
     return $reporte->id;
@@ -104,8 +102,114 @@ class Reporte extends Model {
     return $consultaBD;
   }
 
-  private static function obtenerDatos($entidad, $req) {
-    return "";
+  private static function obtenerDatos($req) {
+    $datos = $req->all();
+    $datosEntidad = json_decode($datos["entidad"], false, 512, JSON_UNESCAPED_UNICODE);
+
+    $datosProcesados = [
+        "entidad" => $datosEntidad->nombre
+    ];
+
+    $camposSeleccionadosPro = [];
+    $listaCamposEntidad = Reporte::listarCampos($datosEntidad->nombre);
+    foreach ($datosEntidad->camposSel as $campo) {
+      $campoSeleccionado = Reporte::obtenerDatosCampo($datos, $datosEntidad->nombre, $campo, $listaCamposEntidad[$campo]);
+      if (!is_null($campoSeleccionado)) {
+        $camposSeleccionadosPro[] = $campoSeleccionado;
+      }
+    }
+    $datosProcesados["camposSeleccionados"] = $camposSeleccionadosPro;
+
+    if (!is_null($datos["entidadesRelacionadas"])) {
+      $entidadesRelacionadasPro = [];
+      $entidadesRelacionadas = json_decode($datos["entidadesRelacionadas"], false, 512, JSON_UNESCAPED_UNICODE);
+      if (!is_array($entidadesRelacionadas)) {
+        $entidadesRelacionadas = [];
+      }
+      foreach ($entidadesRelacionadas as $datosEntidadRelacionada) {
+        $entidadRelacionadaPro = [
+            "entidad" => $datosEntidadRelacionada->nombre
+        ];
+
+        $camposSeleccionadosEntidadRelPro = [];
+        $listaCamposEntidadRelacionada = Reporte::listarCampos($datosEntidadRelacionada->nombre);
+        foreach ($datosEntidadRelacionada->camposSel as $campo) {
+          $campoSeleccionado = Reporte::obtenerDatosCampo($datos, $datosEntidadRelacionada->nombre, $campo, $listaCamposEntidadRelacionada[$campo]);
+          if (!is_null($campoSeleccionado)) {
+            $camposSeleccionadosEntidadRelPro[] = $campoSeleccionado;
+          }
+        }
+        $entidadRelacionadaPro["camposSeleccionados"] = $camposSeleccionadosEntidadRelPro;
+        $entidadesRelacionadasPro[] = $entidadRelacionadaPro;
+      }
+      if (count($entidadesRelacionadasPro) > 0) {
+        $datosProcesados["entiadesRelacionadas"] = $entidadesRelacionadasPro;
+      }
+    }
+    return json_encode($datosProcesados, JSON_UNESCAPED_UNICODE);
+  }
+
+  private static function obtenerDatosCampo($datos, $entidad, $campo, $datosCampo) {
+    $campoSeleccionado = [
+        "nombre" => $campo,
+        "titulo" => $datosCampo["titulo"],
+        "tipo" => $datosCampo["tipo"]
+    ];
+
+    $filtro = NULL;
+    $nomTipoFiltro = strtolower("sel-tipo-filtro-" . $entidad . "-" . $campo);
+    $nomFiltro = strtolower("inp-filtro-" . $entidad . "-" . $campo);
+    $datTipoFiltroValido = (isset($datos[$nomTipoFiltro]) && !empty($datos[$nomTipoFiltro]));
+    $datFiltroValido = (isset($datos[$nomFiltro]) && !empty($datos[$nomFiltro]));
+
+
+    if ((!$datTipoFiltroValido && !in_array(strtolower($datosCampo["tipo"]), ["tinyint", "sexo", "tipodocumento"])) ||
+            (!$datFiltroValido && !in_array(strtolower($datosCampo["tipo"]), ["datetime", "timestamp", "tinyint"]))) {
+      return $campoSeleccionado;
+    }
+
+    switch (strtolower($datosCampo["tipo"])) {
+      case "varchar":
+      case "text":
+      case "char":
+      case "int":
+      case "float":
+        $filtro = [
+            "tipo" => $datos[$nomTipoFiltro],
+            "valores" => [$datos[$nomFiltro]]
+        ];
+        break;
+      case "datetime":
+      case "timestamp":
+        $nomFechaIniFiltro = strtolower("inp-filtro-fecha-inicio-" . $entidad . "-" . $campo);
+        $nomFechaFinFiltro = strtolower("inp-filtro-fecha-fin-" . $entidad . "-" . $campo);
+        $datFiltroFechaIniValido = (isset($datos[$nomFechaIniFiltro]) && !empty($datos[$nomFechaIniFiltro]));
+        $datFiltroFechaFinValido = (isset($datos[$nomFechaFinFiltro]) && !empty($datos[$nomFechaFinFiltro]));
+
+        if ($datFiltroFechaIniValido) {
+          $filtro = [
+              "tipo" => $datos[$nomTipoFiltro],
+              "valores" => [$datos[$nomFechaIniFiltro]]
+          ];
+        }
+        if ($datFiltroFechaIniValido && $datFiltroFechaFinValido && $datos[$nomTipoFiltro] == "BETWEEN") {
+          $filtro["valores"][] = $datos[$nomFechaFinFiltro];
+        }
+        break;
+      case "tinyint":
+      case "sexo":
+      case "tipodocumento":
+      case "busqueda":
+        $filtro = [
+            "tipo" => "=",
+            "valores" => [$datos[$nomFiltro]]
+        ];
+        break;
+    }
+    if (!is_null($filtro)) {
+      $campoSeleccionado["filtro"] = $filtro;
+    }
+    return $campoSeleccionado;
   }
 
 }
