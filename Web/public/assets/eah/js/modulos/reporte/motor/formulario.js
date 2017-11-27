@@ -1,35 +1,44 @@
 var seccionPaso1 = new function () {
   this.titulo = "Seleccione una de las entidades";
   this.cargar = function (contenedor) {
+    var self = this;
     $(contenedor).on('click', ".btn-entidad", function () {
-      $(contenedor).find(".btn-entidad").removeClass("btn-activo");
-      $(this).addClass("btn-activo");
-      var entidad = $(this).attr("rel");
-      if (motor.entidadSel.nombre !== entidad) {
-        motor.cambioEntidad();
-        util.listarCampos(entidad, function (campos) {
-          motor.entidadSel = {
-            nombre: entidad,
-            campos: campos,
-            camposSel: []
-          };
-          motor.siguienteSeccion();
-        });
-        util.listarEntidadesRelacionadas(entidad, function (entidadesRelacionadas) {
-          motor.entidadesRelacionadas = entidadesRelacionadas;
-        });
-      } else {
-        motor.siguienteSeccion();
-      }
+      self.seleccionarEntidad(contenedor, $(this).attr("rel"));
     });
   };
   this.preMostrar = function () {
     $("#sec-titulo").text(this.titulo);
     $("#sec-mensaje-campos-obligatorios, #btn-anterior, #btn-siguiente, #btn-guardar").hide();
+    if (motor.entidadSel.nombre)
+      $("#btn-siguiente").show();
     return true;
   };
   this.preOcultar = function () {
     return true;
+  };
+  this.seleccionarEntidad = function (contenedor, nombreEntidad, retrollamada) {
+    $(contenedor).find(".btn-entidad").removeClass("btn-activo");
+    $(contenedor).find(".btn-entidad[rel='" + nombreEntidad + "']").addClass("btn-activo");
+    if (motor.entidadSel.nombre !== nombreEntidad) {
+      motor.cambioEntidad();
+      util.listarCampos(nombreEntidad, function (campos) {
+        motor.entidadSel = {
+          nombre: nombreEntidad,
+          campos: campos,
+          camposSel: []
+        };
+        $("#btn-siguiente").show();
+        if (retrollamada)
+          retrollamada();
+      });
+      util.listarEntidadesRelacionadas(nombreEntidad, function (entidadesRelacionadas) {
+        motor.entidadesRelacionadas = entidadesRelacionadas;
+      });
+    } else {
+      $("#btn-siguiente").show();
+      if (retrollamada)
+        retrollamada();
+    }
   };
 };
 var seccionPaso2 = new function () {
@@ -38,10 +47,7 @@ var seccionPaso2 = new function () {
   this.cargar = function (contenedor) {
     $(contenedor).on('click', "[id*='cb-campo-']", function () {
       var camposSel = motor.entidadSel.camposSel;
-      if ($(this).is(':checked'))
-        camposSel.push($(this).val());
-      else
-        camposSel.splice(camposSel.indexOf($(this).val()), 1);
+      (($(this).is(':checked')) ? camposSel.push($(this).val()) : camposSel.splice(camposSel.indexOf($(this).val()), 1));
     });
   };
   this.preMostrar = function (contenedor) {
@@ -49,18 +55,8 @@ var seccionPaso2 = new function () {
       $("#sec-titulo").text(this.titulo);
       $("#sec-mensaje-campos-obligatorios, #btn-guardar").hide();
       $("#btn-siguiente, #btn-anterior").show();
-
-      if (this.cambioEntidad) {
-        this.cambioEntidad = false;
-        $(contenedor).find("#sec-campos").html("");
-        $.each(motor.entidadSel.campos, function (id, ele) {
-          $(contenedor).find("#sec-campos").append(
-              '<div class="col-sm-3">' +
-              '<input id="cb-campo-' + id.toLowerCase() + '" type="checkbox" name="campos" value="' + id + '"> ' +
-              '<label for="cb-campo-' + id.toLowerCase() + '">' + ele.titulo + '</label>' +
-              '</div>');
-        });
-      }
+      if (this.cambioEntidad)
+        this.agregarCampos(contenedor);
       return true;
     } else {
       motor.anteriorSeccion();
@@ -68,11 +64,32 @@ var seccionPaso2 = new function () {
     }
   };
   this.preOcultar = function (contenedor, solicitudSiguiente) {
-    if (!$(contenedor).find("input[name='campos']:checked").length && solicitudSiguiente) {
+    if (solicitudSiguiente && !$(contenedor).find("input[name='campos']:checked").length) {
       agregarMensaje("advertencias", "Debe seleccionar por lo menos un campo.", true, "#sec-mensajes-alerta", true);
       return false;
     }
     return true;
+  };
+  this.agregarCampos = function (contenedor, camposSeleccionados) {
+    this.cambioEntidad = false;
+    $(contenedor).find("#sec-campos").html("");
+    $.each(motor.entidadSel.campos, function (nombreCampo, datosCampo) {
+      var txtCampoSeleccionado = '';
+      if (camposSeleccionados) {
+        var datCampoSel = $.grep(camposSeleccionados, function (campoSeleccionado) {
+          return campoSeleccionado.nombre.toLowerCase() === nombreCampo.toLowerCase();
+        });
+        if (datCampoSel.length) {
+          txtCampoSeleccionado = ' checked';
+          motor.entidadSel.camposSel.push(nombreCampo);
+        }
+      }
+      $(contenedor).find("#sec-campos").append(
+          '<div class="col-sm-3">' +
+          '<input id="cb-campo-' + nombreCampo.toLowerCase() + '" type="checkbox" name="campos" value="' + nombreCampo + '"' + txtCampoSeleccionado + '>' +
+          '<label for="cb-campo-' + nombreCampo.toLowerCase() + '">' + datosCampo.titulo + '</label>' +
+          '</div>');
+    });
   };
 };
 var seccionPaso3 = new function () {
@@ -81,43 +98,27 @@ var seccionPaso3 = new function () {
   this.cargar = function (contenedor) {
     var self = this;
     $(contenedor).on('click', ".btn-entidad", function () {
-      var entidadRelacionada = $(this).attr("rel");
+      var nombreEntidadRelacionada = $(this).attr("rel");
       if ($(this).hasClass("btn-activo")) {
         $(this).removeClass("btn-activo");
-        motor.entidadesRelacionadasSel = motor.entidadesRelacionadasSel.filter(function (ent) {
-          return ent.nombre !== entidadRelacionada;
+        motor.entidadesRelacionadasSel = motor.entidadesRelacionadasSel.filter(function (entidadRelacionadaSel) {
+          return entidadRelacionadaSel.nombre !== nombreEntidadRelacionada;
         });
-        $("#sec-contenedor-campos-" + entidadRelacionada.toLowerCase()).remove();
-        $("#sec-filtros-" + entidadRelacionada.toLowerCase()).remove();
+        $("#sec-contenedor-campos-" + nombreEntidadRelacionada.toLowerCase()).remove();
+        $("#sec-filtros-" + nombreEntidadRelacionada.toLowerCase()).remove();
       } else {
-        var boton = this;
-        util.listarCampos(entidadRelacionada, function (campos) {
-          $(boton).addClass("btn-activo");
-          motor.entidadesRelacionadasSel.push({
-            nombre: entidadRelacionada,
-            campos: campos,
-            camposSel: [],
-            tipoSel: "cantidad-total"
-          });
-          self.mostrarCamposEntidadRelacionada(contenedor, entidadRelacionada);
-        });
+        self.seleccionarEntidadRelacionada(contenedor, nombreEntidadRelacionada);
       }
     });
     $(contenedor).on('click', "[name*='cb-tipo-seleccion-']", function () {
       var entidadRelacionadaSel = motor.obtenerDatosEntidadRelacionada($(this).data("entidad"));
-      if ($(this).val() !== "campos")
-        $("#sec-campos-" + $(this).attr("name").replace("cb-tipo-seleccion-", "")).hide();
-      else
-        $("#sec-campos-" + $(this).attr("name").replace("cb-tipo-seleccion-", "")).show();
+      $("#sec-campos-" + $(this).data("entidad").toLowerCase()).css('display', ($(this).val() !== "campos" ? "none" : "inline-block"));
       entidadRelacionadaSel.tipoSel = $(this).val();
     });
     $(contenedor).on('click', "[id*='cb-campo-']", function () {
       var entidadRelacionadaSel = motor.obtenerDatosEntidadRelacionada($(this).data("entidad"));
       var camposSel = entidadRelacionadaSel.camposSel;
-      if ($(this).is(':checked'))
-        camposSel.push($(this).val());
-      else
-        camposSel.splice(camposSel.indexOf($(this).val()), 1);
+      (($(this).is(':checked')) ? camposSel.push($(this).val()) : camposSel.splice(camposSel.indexOf($(this).val()), 1));
     });
   };
   this.preMostrar = function (contenedor, solicitudSiguiente) {
@@ -125,18 +126,8 @@ var seccionPaso3 = new function () {
       $("#sec-titulo").text(this.titulo);
       $("#sec-mensaje-campos-obligatorios, #btn-guardar").hide();
       $("#btn-siguiente, #btn-anterior").show();
-
-      if (this.cambioEntidad) {
-        this.cambioEntidad = false;
-        $(contenedor).find("#sec-entidades-relacionadas").html("");
-        $(contenedor).find("#sec-campos-entidades-relacionadas").html("");
-        $.each(motor.entidadesRelacionadas, function (id, ele) {
-          $(contenedor).find("#sec-entidades-relacionadas").append(
-              '<div class="col-sm-3">' +
-              '<button type="button" class="btn-entidad" rel="' + id + '">' + ele[5] + ' ' + ele[0] + '</button>' +
-              '</div>');
-        });
-      }
+      if (this.cambioEntidad)
+        this.agregarEntidadesRelacionadas(contenedor);
       return true;
     } else {
       (solicitudSiguiente ? motor.siguienteSeccion() : motor.anteriorSeccion());
@@ -146,28 +137,70 @@ var seccionPaso3 = new function () {
   this.preOcultar = function () {
     return true;
   };
-  this.mostrarCamposEntidadRelacionada = function (contenedor, entidadRel) {
-    var entidadRelacionadaSel = motor.obtenerDatosEntidadRelacionada(entidadRel);
+  this.agregarEntidadesRelacionadas = function (contenedor) {
+    this.cambioEntidad = false;
+    $(contenedor).find("#sec-entidades-relacionadas").html("");
+    $(contenedor).find("#sec-campos-entidades-relacionadas").html("");
+    $.each(motor.entidadesRelacionadas, function (nombreEntidadRel, datosEntidadRel) {
+      $(contenedor).find("#sec-entidades-relacionadas").append(
+          '<div class="col-sm-3">' +
+          '<button type="button" class="btn-entidad" rel="' + nombreEntidadRel + '">' + datosEntidadRel[5] + ' ' + datosEntidadRel[0] + '</button>' +
+          '</div>');
+    });
+  };
+  this.seleccionarEntidadRelacionada = function (contenedor, nombreEntidadRelacionada, camposSeleccionados, retrollamada) {
+    var self = this;
+    util.listarCampos(nombreEntidadRelacionada, function (campos) {
+      motor.entidadesRelacionadasSel.push({
+        nombre: nombreEntidadRelacionada,
+        campos: campos,
+        camposSel: [],
+        tipoSel: (camposSeleccionados ? "campos" : "cantidad-total")
+      });
+      self.mostrarCamposEntidadRelacionada(contenedor, nombreEntidadRelacionada, camposSeleccionados);
+      $(contenedor).find(".btn-entidad[rel='" + nombreEntidadRelacionada + "']").addClass("btn-activo");
+      if (retrollamada)
+        retrollamada();
+    });
+  };
+  this.mostrarCamposEntidadRelacionada = function (contenedor, nombreEntidadRelacionada, camposSeleccionados) {
+    var entidadRelacionadaSel = motor.obtenerDatosEntidadRelacionada(nombreEntidadRelacionada);
     var campos = entidadRelacionadaSel.campos;
-    var tituloEntidad = motor.entidadesRelacionadas[entidadRel][0];
+    var tituloEntidad = motor.entidadesRelacionadas[nombreEntidadRelacionada][0];
     var titulo = '<h5>Campos - ' + tituloEntidad + '</h5>';
+
+    var idTipoSelBase = "cb-tipo-seleccion-" + nombreEntidadRelacionada.toLowerCase();
+    var idTipoSelCantidadTot = idTipoSelBase + "-cantidad-total";
+    var idTipoSelCampos = idTipoSelBase + "-campos";
+
     var contenidoCampos = '<div class="col-sm-12">' +
-        '<input type="radio" id="cb-tipo-seleccion-' + entidadRel.toLowerCase() + '-cantidad-total" name="cb-tipo-seleccion-' + entidadRel.toLowerCase() + '" data-entidad="' + entidadRel + '" value="cantidad-total" checked>' +
-        '<label for="cb-tipo-seleccion-' + entidadRel.toLowerCase() + '-cantidad-total">Selecionar cantidad total de ' + tituloEntidad.toLowerCase() + '</label><br>' +
-        '<input type="radio" id="cb-tipo-seleccion-' + entidadRel.toLowerCase() + '-campos" name="cb-tipo-seleccion-' + entidadRel.toLowerCase() + '" data-entidad="' + entidadRel + '" value="campos">' +
-        '<label for="cb-tipo-seleccion-' + entidadRel.toLowerCase() + '-campos">Seleccionar campos especificos</label>' +
+        '<input type="radio" id="' + idTipoSelCantidadTot + '" name="' + idTipoSelBase + '" data-entidad="' + nombreEntidadRelacionada + '" value="cantidad-total"' + (camposSeleccionados ? '' : ' checked') + '>' +
+        '<label for="' + idTipoSelCantidadTot + '">Selecionar cantidad total de ' + tituloEntidad.toLowerCase() + '</label><br>' +
+        '<input type="radio" id="' + idTipoSelCampos + '" name="' + idTipoSelBase + '" data-entidad="' + nombreEntidadRelacionada + '" value="campos"' + (camposSeleccionados ? ' checked' : '') + '>' +
+        '<label for="' + idTipoSelCampos + '">Seleccionar campos especificos</label>' +
         '</div>' +
-        '<div id="sec-campos-' + entidadRel.toLowerCase() + '" class="col-sm-12" style="margin-top: 10px; display: none">';
-    $.each(campos, function (id, ele) {
-      if (id !== "tipoSel" && id !== "camposSel") {
+        '<div id="sec-campos-' + nombreEntidadRelacionada.toLowerCase() + '" class="col-sm-12" style="margin-top: 10px;' + (camposSeleccionados ? '' : 'display: none;') + '">';
+    $.each(campos, function (nombreCampo, datosCampo) {
+      var txtCampoSeleccionado = "";
+      if (camposSeleccionados) {
+        var datCampoSel = $.grep(camposSeleccionados, function (e) {
+          return e.nombre.toLowerCase() === nombreCampo.toLowerCase();
+        });
+        if (datCampoSel.length) {
+          txtCampoSeleccionado = ' checked';
+          entidadRelacionadaSel.camposSel.push(nombreCampo);
+        }
+      }
+      if (nombreCampo !== "tipoSel" && nombreCampo !== "camposSel") {
+        var idCampo = "cb-campo-" + nombreEntidadRelacionada.toLowerCase() + "-" + nombreCampo.toLowerCase();
         contenidoCampos += '<div class="col-sm-3">' +
-            '<input id="cb-campo-' + entidadRel.toLowerCase() + '-' + id.toLowerCase() + '" type="checkbox" name="campos-' + entidadRel.toLowerCase() + '" data-entidad="' + entidadRel + '" value="' + id + '"> ' +
-            '<label for="cb-campo-' + entidadRel.toLowerCase() + '-' + id.toLowerCase() + '">' + ele.titulo + '</label>' +
+            '<input id="' + idCampo + '" type="checkbox" name="campos-' + nombreEntidadRelacionada.toLowerCase() + '" data-entidad="' + nombreEntidadRelacionada + '" value="' + nombreCampo + '"' + txtCampoSeleccionado + '> ' +
+            '<label for="' + idCampo + '">' + datosCampo.titulo + '</label>' +
             '</div>';
       }
     });
     contenidoCampos += '</div>';
-    $(contenedor).find("#sec-campos-entidades-relacionadas").append('<div id="sec-contenedor-campos-' + entidadRel.toLowerCase() + '" class="form-group"><div class="col-sm-12">' + titulo + contenidoCampos + '</div></div>');
+    $(contenedor).find("#sec-campos-entidades-relacionadas").append('<div id="sec-contenedor-campos-' + nombreEntidadRelacionada.toLowerCase() + '" class="form-group"><div class="col-sm-12">' + titulo + contenidoCampos + '</div></div>');
   };
 };
 var seccionPaso4 = new function () {
@@ -181,10 +214,16 @@ var seccionPaso4 = new function () {
     $("#sec-mensaje-campos-obligatorios, #btn-siguiente, #btn-anterior").show();
     if (!solicitudSiguiente)
       return true;
-
+    this.agregarFiltros(contenedor);
+    return true;
+  };
+  this.preOcultar = function (contenedor, solicitudSiguiente) {
+    return !(solicitudSiguiente && !$(contenedor).find(":input, select").valid());
+  };
+  this.agregarFiltros = function (contenedor, datos) {
     var self = this;
     var idSeccion = "#sec-filtros";
-    var entidad = motor.entidadSel.nombre;
+    var nombreEntidad = motor.entidadSel.nombre;
     var campos = motor.entidadSel.campos;
     var camposSel = motor.entidadSel.camposSel;
 
@@ -193,64 +232,78 @@ var seccionPaso4 = new function () {
       this.camposCargados = [];
       $(contenedor).find(idSeccion).html("");
     }
-    self.procesarFiltros(contenedor, idSeccion, entidad, campos, camposSel);
-    motor.entidadesRelacionadasSel.forEach(function (entidadRel)
+    self.procesarFiltros(contenedor, idSeccion, nombreEntidad, campos, camposSel, (datos ? datos.camposSeleccionados : null));
+    motor.entidadesRelacionadasSel.forEach(function (datosEntidadRel)
     {
-      if (entidadRel.tipoSel === "campos") {
-        var idSeccionEntidadRel = "#sec-filtros-" + entidadRel.nombre.toLowerCase();
-        var seccionAgregada = (self.camposCargados[entidadRel.nombre.toLowerCase()] !== undefined);
+      var idSeccionEntidadRel = "#sec-filtros-" + datosEntidadRel.nombre.toLowerCase();
+      if (datosEntidadRel.tipoSel === "campos") {
+        var datosCamposSel = null;
+        if (datos && datos.entiadesRelacionadas) {
+          var datEntidadRelacionada = $.grep(datos.entiadesRelacionadas, function (e) {
+            return e.entidad.toLowerCase() === datosEntidadRel.nombre.toLowerCase();
+          });
+          if (datEntidadRelacionada.length)
+            datosCamposSel = datEntidadRelacionada[0].camposSeleccionados;
+        }
+        var seccionAgregada = (self.camposCargados[datosEntidadRel.nombre.toLowerCase()] !== undefined);
         if (!seccionAgregada) {
-          var tituloEntidad = motor.entidadesRelacionadas[entidadRel.nombre][0];
+          var tituloEntidad = motor.entidadesRelacionadas[datosEntidadRel.nombre][0];
           $(contenedor).find(idSeccion).append('<div id="' + idSeccionEntidadRel.replace("#", "") + '" class="col-sm-12">' +
               '<h4>Filtros - ' + tituloEntidad + '</h4>');
         }
-        self.procesarFiltros(contenedor, idSeccionEntidadRel, entidadRel.nombre, entidadRel.campos, entidadRel.camposSel);
+        self.procesarFiltros(contenedor, idSeccionEntidadRel, datosEntidadRel.nombre, datosEntidadRel.campos, datosEntidadRel.camposSel, datosCamposSel);
         if (!seccionAgregada) {
-          self.agregarFiltroBusqueda(contenedor, idSeccionEntidadRel, entidadRel.nombre);
+          self.agregarFiltroBusqueda(contenedor, idSeccionEntidadRel, datosEntidadRel.nombre, datosCamposSel);
           $(contenedor).find(idSeccion).append('</div>');
         }
+      } else {
+        var reglasValidacion = $("#formulario-reporte").validate().settings.rules;
+        for (var campo in reglasValidacion)
+          if (campo.indexOf("-" + datosEntidadRel.nombre.toLowerCase() + "-") >= 0)
+            delete reglasValidacion[campo];
+
+        $(idSeccionEntidadRel).remove();
+        if (self.camposCargados[datosEntidadRel.nombre.toLowerCase()] !== undefined)
+          self.camposCargados[datosEntidadRel.nombre.toLowerCase()] = undefined;
       }
     });
-    return true;
   };
-  this.preOcultar = function (contenedor, solicitudSiguiente) {
-    return !(solicitudSiguiente && !$(contenedor).find(":input, select").valid());
-  };
-  this.procesarFiltros = function (contenedor, idSeccion, entidad, campos, camposSel) {
+  this.procesarFiltros = function (contenedor, idSeccion, nombreEntidad, campos, camposSel, datosCamposSel) {
     var self = this;
     tiposSexos = (typeof (tiposSexos) === "undefined" ? [] : tiposSexos);
     tiposDocumentos = (typeof (tiposDocumentos) === "undefined" ? [] : tiposDocumentos);
-    this.camposCargados[entidad.toLowerCase()] = (this.camposCargados[entidad.toLowerCase()] !== undefined ? this.camposCargados[entidad.toLowerCase()] : []);
+    this.camposCargados[nombreEntidad.toLowerCase()] = (this.camposCargados[nombreEntidad.toLowerCase()] !== undefined ? this.camposCargados[nombreEntidad.toLowerCase()] : []);
     $.each(camposSel, function (num, id) {
       if (!campos[id].tipo)
         return true;
-      if (self.camposCargados[entidad.toLowerCase()].indexOf(id) !== -1)
+      if (self.camposCargados[nombreEntidad.toLowerCase()].indexOf(id) !== -1)
         return true;
-      self.camposCargados[entidad.toLowerCase()].push(id);
+      self.camposCargados[nombreEntidad.toLowerCase()].push(id);
       if ((["varchar", "text", "char"]).indexOf(campos[id].tipo.toLowerCase()) !== -1)
-        self.agregarFiltroTexto(contenedor, idSeccion, entidad, campos, id);
+        self.agregarFiltroTexto(contenedor, idSeccion, nombreEntidad, campos, id, datosCamposSel);
       else if ((["int", "float"]).indexOf(campos[id].tipo.toLowerCase()) !== -1)
-        self.agregarFiltroNumero(contenedor, idSeccion, entidad, campos, id);
+        self.agregarFiltroNumero(contenedor, idSeccion, nombreEntidad, campos, id, datosCamposSel);
       else if ((["datetime", "timestamp"]).indexOf(campos[id].tipo.toLowerCase()) !== -1)
-        self.agregarFiltroFecha(contenedor, idSeccion, entidad, campos, id);
+        self.agregarFiltroFecha(contenedor, idSeccion, nombreEntidad, campos, id, datosCamposSel);
       else if ((["tinyint"]).indexOf(campos[id].tipo.toLowerCase()) !== -1)
-        self.agregarFiltroVerdaderoFalso(contenedor, idSeccion, entidad, campos, id);
+        self.agregarFiltroVerdaderoFalso(contenedor, idSeccion, nombreEntidad, campos, id, datosCamposSel);
       else if ((["sexo"]).indexOf(campos[id].tipo.toLowerCase()) !== -1)
-        self.agregarFiltroListaOpciones(contenedor, idSeccion, entidad, campos, id, tiposSexos);
+        self.agregarFiltroListaOpciones(contenedor, idSeccion, nombreEntidad, campos, id, tiposSexos, datosCamposSel);
       else if ((["tipodocumento"]).indexOf(campos[id].tipo.toLowerCase()) !== -1)
-        self.agregarFiltroListaOpciones(contenedor, idSeccion, entidad, campos, id, tiposDocumentos);
+        self.agregarFiltroListaOpciones(contenedor, idSeccion, nombreEntidad, campos, id, tiposDocumentos, datosCamposSel);
     });
 
-    var camposEli = $(this.camposCargados[entidad.toLowerCase()]).not(camposSel).get();
+    var camposEli = $(this.camposCargados[nombreEntidad.toLowerCase()]).not(camposSel).get();
     $.each(camposEli, function (num, id) {
-      $("#sec-filtro-" + entidad.toLowerCase() + "-" + id.toLowerCase()).remove();
-      self.camposCargados[entidad.toLowerCase()].splice(self.camposCargados[entidad.toLowerCase()].indexOf(id), 1);
+      $("#sec-filtro-" + nombreEntidad.toLowerCase() + "-" + id.toLowerCase()).remove();
+      self.camposCargados[nombreEntidad.toLowerCase()].splice(self.camposCargados[nombreEntidad.toLowerCase()].indexOf(id), 1);
     });
   };
-  this.agregarFiltroTexto = function (contenedor, idSeccion, entidad, campos, idCampo) {
+  this.agregarFiltroTexto = function (contenedor, idSeccion, entidad, campos, idCampo, datosCamposSel) {
     var idContenedor = "sec-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idSelTipo = "sel-tipo-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idFiltro = "inp-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
+
 
     $(contenedor).find(idSeccion).append(
         '<div id="' + idContenedor + '" class="form-group">' +
@@ -267,8 +320,19 @@ var seccionPaso4 = new function () {
         '<input type="text" id="' + idFiltro + '" name="' + idFiltro + '" class="form-control" maxlength="255" />' +
         '</div>' +
         '</div>');
+
+    if (datosCamposSel) {
+      var datCampo = $.grep(datosCamposSel, function (e) {
+        return e.nombre.toLowerCase() === idCampo.toLowerCase();
+      });
+      if (datCampo.length) {
+        var datFiltro = datCampo[0].filtro;
+        $("select[name='" + idSelTipo + "']").val(datFiltro.tipo);
+        $("#" + idFiltro).val(datFiltro.valores[0]);
+      }
+    }
   };
-  this.agregarFiltroNumero = function (contenedor, idSeccion, entidad, campos, idCampo) {
+  this.agregarFiltroNumero = function (contenedor, idSeccion, entidad, campos, idCampo, datosCamposSel) {
     var idContenedor = "sec-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idSelTipo = "sel-tipo-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idFiltro = "inp-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
@@ -295,8 +359,19 @@ var seccionPaso4 = new function () {
     $("#" + idFiltro).rules("add", {
       validarDecimal: true
     });
+
+    if (datosCamposSel) {
+      var datCampo = $.grep(datosCamposSel, function (e) {
+        return e.nombre.toLowerCase() === idCampo.toLowerCase();
+      });
+      if (datCampo.length) {
+        var datFiltro = datCampo[0].filtro;
+        $("select[name='" + idSelTipo + "']").val(datFiltro.tipo);
+        $("#" + idFiltro).val(datFiltro.valores[0]);
+      }
+    }
   };
-  this.agregarFiltroFecha = function (contenedor, idSeccion, entidad, campos, idCampo) {
+  this.agregarFiltroFecha = function (contenedor, idSeccion, entidad, campos, idCampo, datosCamposSel) {
     var idContenedor = "sec-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idSelTipo = "sel-tipo-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idFiltroFechaIni = "inp-filtro-fecha-inicio-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
@@ -336,25 +411,51 @@ var seccionPaso4 = new function () {
     $("#" + idFiltroFechaFin).rules("add", {
       validarFecha: true
     });
+
+    if (datosCamposSel) {
+      var datCampo = $.grep(datosCamposSel, function (e) {
+        return e.nombre.toLowerCase() === idCampo.toLowerCase();
+      });
+      if (datCampo.length) {
+        var datFiltro = datCampo[0].filtro;
+        $("select[name='" + idSelTipo + "']").val(datFiltro.tipo);
+
+        var datFechaInicio = datFiltro.valores[0].split("/");
+        $("#" + idFiltroFechaIni).datepicker("setDate", (new Date(datFechaInicio[1] + "/" + datFechaInicio[0] + "/" + datFechaInicio[2])));
+        if (datFiltro.valores.length > 1) {
+          var datFechaFin = datFiltro.valores[1].split("/");
+          $("#" + idFiltroFechaFin).datepicker("setDate", (new Date(datFechaFin[1] + "/" + datFechaFin[0] + "/" + datFechaFin[2])));
+        }
+      }
+    }
   };
-  this.agregarFiltroVerdaderoFalso = function (contenedor, idSeccion, entidad, campos, idCampo) {
+  this.agregarFiltroVerdaderoFalso = function (contenedor, idSeccion, entidad, campos, idCampo, datosCamposSel) {
     var idContenedor = "sec-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idFiltro = "inp-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
 
+    var txtSeleccionado = "";
+    if (datosCamposSel) {
+      var datCampo = $.grep(datosCamposSel, function (e) {
+        return e.nombre.toLowerCase() === idCampo.toLowerCase();
+      });
+      if (datCampo.length && datCampo[0].filtro.valores[0] === "on")
+        txtSeleccionado = " checked";
+    }
+
     $(contenedor).find(idSeccion).append(
-        '<div id="' + idContenedor + '" >' +
+        '<div id="' + idContenedor + '" class="form-group">' +
         '<div class="col-sm-1"></div>' +
         '<div class="col-sm-11">' +
         '<div class="checkbox">' +
-        '<label class="checkbox-custom" data-initialize="checkbox">' +
+        '<label class="checkbox-custom' + txtSeleccionado + '" data-initialize="checkbox">' +
         '<label for="' + idFiltro + '" class="checkbox-label">' + campos[idCampo].titulo + '</label>' +
-        '<input id="' + idFiltro + '" name="' + idFiltro + '" type="checkbox">' +
+        '<input id="' + idFiltro + '" name="' + idFiltro + '" type="checkbox"' + txtSeleccionado + '>' +
         '</label>' +
         '</div>' +
         '</div>' +
         '</div>');
   };
-  this.agregarFiltroListaOpciones = function (contenedor, idSeccion, entidad, campos, idCampo, listaOpciones) {
+  this.agregarFiltroListaOpciones = function (contenedor, idSeccion, entidad, campos, idCampo, listaOpciones, datosCamposSel) {
     var idContenedor = "sec-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idFiltro = "inp-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
 
@@ -371,8 +472,18 @@ var seccionPaso4 = new function () {
         '</select>' +
         '</div>' +
         '</div>');
+
+    if (datosCamposSel) {
+      var datCampo = $.grep(datosCamposSel, function (e) {
+        return e.nombre.toLowerCase() === idCampo.toLowerCase();
+      });
+      if (datCampo.length) {
+        var datFiltro = datCampo[0].filtro;
+        $("#" + idFiltro).val(datFiltro.valores[0]);
+      }
+    }
   };
-  this.agregarFiltroBusqueda = function (contenedor, idSeccion, entidad) {
+  this.agregarFiltroBusqueda = function (contenedor, idSeccion, entidad, datosCamposSel) {
     if (motor.entidades[entidad][4] !== "") {
       var idSelTipo = "sel-tipo-filtro-" + entidad.toLowerCase() + "-busqueda";
       var idFiltro = "inp-filtro-" + entidad.toLowerCase() + "-busqueda";
@@ -386,11 +497,33 @@ var seccionPaso4 = new function () {
           '</select>' +
           '</div>' +
           '<div class="col-sm-8">' +
-          '<select id="' + idFiltro + '" name="' + idFiltro + '" class="form-control" multiple="multiple" style="width: 100%"></select>' +
+          '<select id="' + idFiltro + '" name="' + idFiltro + '[]" class="form-control" multiple="multiple" style="width: 100%"></select>' +
           '</div>' +
           '</div>');
       establecerListaBusqueda("#" + idFiltro, motor.entidades[entidad][4]);
       $("#" + idFiltro).rules("add", "required");
+
+      if (datosCamposSel) {
+        var datCampo = $.grep(datosCamposSel, function (e) {
+          return e.nombre.toLowerCase() === "busqueda";
+        });
+        if (datCampo.length) {
+          var datFiltro = datCampo[0].filtro;
+          $("select[name='" + idSelTipo + "']").val(datFiltro.tipo);
+          var ids = datFiltro.valores[0].split(",");
+          var nombres = ((datFiltro.valores.length > 1) ? datFiltro.valores[1].split(",") : ids);
+          if (ids.length === nombres.length) {
+            for (var i = 0; i < ids.length; i++) {
+              $("#" + idFiltro).select2("trigger", "select", {
+                data: {
+                  id: ids[i],
+                  text: nombres[i]
+                }
+              });
+            }
+          }
+        }
+      }
     }
   };
 };
@@ -414,7 +547,6 @@ var seccionPaso5 = new function () {
 };
 
 var motor = new function () {
-  var self = this;
   this.seccionActual = 0;
 
   this.entidades = (typeof (entidades) === "undefined" ? "" : entidades);
@@ -471,17 +603,56 @@ var motor = new function () {
       if (window["seccionPaso" + $(this).attr("id").replace("sec-paso-", "")])
         window["seccionPaso" + $(this).attr("id").replace("sec-paso-", "")].cambioEntidad = true;
     });
-    self.entidadSel = {};
-    self.entidadesRelacionadas = [];
-    self.entidadesRelacionadasSel = [];
+    this.entidadSel = {};
+    this.entidadesRelacionadas = [];
+    this.entidadesRelacionadasSel = [];
   };
-  this.obtenerDatosEntidadRelacionada = function (entidadRel) {
+  this.obtenerDatosEntidadRelacionada = function (nombreEntidadRel) {
     return motor.entidadesRelacionadasSel.filter(function (ent) {
-      return ent.nombre === entidadRel;
+      return ent.nombre.toLowerCase() === nombreEntidadRel.toLowerCase();
     })[0];
   };
 
+  this.cargarDatos = function (datos, retrollamada) {
+    var self = this;
+    if (datos.entidad) {
+      seccionPaso1.seleccionarEntidad($("#sec-paso-1"), datos.entidad, function () {
+        seccionPaso2.agregarCampos($("#sec-paso-2"), datos.camposSeleccionados);
+        seccionPaso3.agregarEntidadesRelacionadas($("#sec-paso-3"));
+
+        if (datos.entiadesRelacionadas.length) {
+          var entidadesRelacionadasCargadas = 0;
+          $.each(datos.entiadesRelacionadas, function (i, datosEntidadRelacionada) {
+            self.cargarDatosEntidadRelacionada($("#sec-paso-3"), datosEntidadRelacionada, function () {
+              entidadesRelacionadasCargadas++;
+              if (entidadesRelacionadasCargadas >= datos.entiadesRelacionadas.length) {
+                seccionPaso4.agregarFiltros($("#sec-paso-4"), datos);
+                if (retrollamada)
+                  retrollamada();
+              }
+            });
+          });
+        } else if (retrollamada) {
+          retrollamada();
+        }
+      });
+    } else if (retrollamada) {
+      retrollamada();
+    }
+  };
+  this.cargarDatosEntidadRelacionada = function (contenedor, datosEntidadRelacionada, retrollamada) {
+    if (datosEntidadRelacionada.entidad) {
+      seccionPaso3.seleccionarEntidadRelacionada(contenedor, datosEntidadRelacionada.entidad, datosEntidadRelacionada.camposSeleccionados, function () {
+        if (retrollamada)
+          retrollamada();
+      });
+    } else if (retrollamada) {
+      retrollamada();
+    }
+  };
+
   this.Inicializar = function () {
+    var self = this;
     $("[id*='sec-paso-']").each(function () {
       if (window["seccionPaso" + $(this).attr("id").replace("sec-paso-", "")])
         window["seccionPaso" + $(this).attr("id").replace("sec-paso-", "")].cargar($(this));
@@ -526,10 +697,18 @@ var motor = new function () {
       onkeyup: false,
       onclick: false
     });
-    self.siguienteSeccion();
+
+    datos = (typeof (datos) === "undefined" ? false : datos);
+    if (datos) {
+      this.cargarDatos(datos, function () {
+        self.siguienteSeccion();
+      });
+    } else {
+      this.siguienteSeccion();
+    }
   };
   $(function () {
-    self.Inicializar();
+    motor.Inicializar();
   });
 };
 var util = new function () {

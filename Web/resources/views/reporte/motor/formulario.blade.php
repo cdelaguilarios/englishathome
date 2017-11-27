@@ -26,13 +26,13 @@
         <div class="form-group">
           {{ Form::label("titulo", "Título (*): ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {{ Form::text("titulo", null, ["class" => "form-control", "maxlength" =>"100"]) }}
+            {{ Form::text("titulo", (isset($reporte) ? $reporte->titulo : null), ["class" => "form-control", "maxlength" =>"100"]) }}
           </div>
         </div> 
         <div class="form-group">
           {{ Form::label("descripcion", "Descripción: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {{ Form::textarea("descripcion", null, ["class" => "form-control", "rows" => "6", "maxlength" =>"8000"]) }}
+            {{ Form::textarea("descripcion", (isset($reporte) ? $reporte->descripcion : null), ["class" => "form-control", "rows" => "6", "maxlength" =>"8000"]) }}
           </div>                                        
         </div>
         {{ Form::hidden("entidad") }} 

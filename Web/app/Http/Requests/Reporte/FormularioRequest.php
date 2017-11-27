@@ -178,7 +178,12 @@ class FormularioRequest extends Request {
         $campoValido = array_key_exists($datos[$nomFiltro], $listaTiposDocumentos->toArray());
         break;
       case "busqueda":
-        $campoValido = Reporte::validarEntidadRelacionada($entidad, $datos[$nomFiltro]);
+        foreach ($datos[$nomFiltro] as $idEntidad) {
+          $campoValido = Reporte::validarEntidadRelacionada($entidad, $idEntidad);
+          if (!$campoValido) {
+            break;
+          }
+        }
         break;
     }
     if (!$campoValido) {

@@ -31,7 +31,7 @@ class Reporte extends Model {
   public static function registrar($req) {
     $datos = $req->all();
     $reporte = new Reporte($datos);
-    $reporte->datos = Reporte::obtenerDatos($req);
+    $reporte->datos = Reporte::obtenerDatos($datos);
     $reporte->fechaRegistro = Carbon::now()->toDateTimeString();
     $reporte->save();
     return $reporte->id;
@@ -40,6 +40,7 @@ class Reporte extends Model {
   public static function actualizar($id, $req) {
     $datos = $req->all();
     $reporte = Reporte::obtenerXId($id);
+    $reporte->datos = Reporte::obtenerDatos($datos);
     $reporte->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $reporte->update($datos);
   }
@@ -102,8 +103,7 @@ class Reporte extends Model {
     return $consultaBD;
   }
 
-  private static function obtenerDatos($req) {
-    $datos = $req->all();
+  private static function obtenerDatos($datos) {
     $datosEntidad = json_decode($datos["entidad"], false, 512, JSON_UNESCAPED_UNICODE);
 
     $datosProcesados = [
@@ -139,6 +139,11 @@ class Reporte extends Model {
             $camposSeleccionadosEntidadRelPro[] = $campoSeleccionado;
           }
         }
+        $campoSeleccionado = Reporte::obtenerDatosCampo($datos, $datosEntidadRelacionada->nombre, "busqueda", ["titulo" => "Búsqueda", "tipo" => "busqueda"]);
+        if (!is_null($campoSeleccionado)) {
+          $camposSeleccionadosEntidadRelPro[] = $campoSeleccionado;
+        }
+
         $entidadRelacionadaPro["camposSeleccionados"] = $camposSeleccionadosEntidadRelPro;
         $entidadesRelacionadasPro[] = $entidadRelacionadaPro;
       }
@@ -199,11 +204,25 @@ class Reporte extends Model {
       case "tinyint":
       case "sexo":
       case "tipodocumento":
-      case "busqueda":
         $filtro = [
             "tipo" => "=",
             "valores" => [$datos[$nomFiltro]]
         ];
+        break;
+      case "busqueda":
+        $filtro = [
+            "tipo" => "=",
+        ];
+        $ids = "";
+        $nombres = "";
+        foreach ($datos[$nomFiltro] as $idEntidad) {
+          $clase = "\App\Models\\" . $entidad;
+          $datosEntidadRel = $clase::obtenerXId($idEntidad);
+
+          $ids .= ($ids !== "" ? "," : "") . $idEntidad;
+          $nombres .= ($nombres !== "" ? "," : "") . $datosEntidadRel["nombre"] . " " . $datosEntidadRel ["apellido"];
+        }
+        $filtro["valores"] = [$ids, $nombres];
         break;
     }
     if (!is_null($filtro)) {

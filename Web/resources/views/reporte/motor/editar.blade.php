@@ -10,6 +10,7 @@
   var urlListarCampos = "{{ route('reportes.listar.campos') }}";
   var urlListarEntidadesRelacionadas = "{{ route('reportes.listar.entidades.relacionadas') }}";
   var urlEditar = "{{ route('reportes.editar', ['id' => 0]) }}";
+  var datos = jQuery.parseJSON({!! json_encode($reporte->datos) !!});
 </script>
 <script src="{{ asset("assets/eah/js/modulos/reporte/motor/formulario.js") }}"></script>
 @endsection
