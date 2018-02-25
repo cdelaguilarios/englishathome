@@ -54,7 +54,11 @@ class Alumno extends Model {
       $entidadCurso = EntidadCurso::obtenerXEntidad($id);
       $alumno->idCurso = (isset($entidadCurso) ? $entidadCurso->idCurso : NULL);
       $datosProximaClase = Clase::obtenerProximaClase($id);
-      $alumno->profesorProximaClase = (isset($datosProximaClase) && Profesor::verificarExistencia($datosProximaClase->idProfesor) ? Profesor::obtenerXId($datosProximaClase->idProfesor) : NULL);
+      $alumno->profesorProximaClase = (isset($datosProximaClase) && Profesor::verificarExistencia($datosProximaClase->idProfesor) ? Profesor::obtenerXId($datosProximaClase->idProfesor) : NULL);      
+      $idAlumnoAnterior = Alumno::listar()->select("entidad.id")->where("entidad.id", "<", $id)->where("entidad.estado", $alumno->estado)->orderBy("entidad.id", "DESC")->first();
+      $idAlumnoSiguiente = Alumno::listar()->select("entidad.id")->where("entidad.id", ">", $id)->where("entidad.estado", $alumno->estado)->first();
+      $alumno->idAlumnoAnterior = (isset($idAlumnoAnterior) ? $idAlumnoAnterior->id : NULL);
+      $alumno->idAlumnoSiguiente = (isset($idAlumnoSiguiente) ? $idAlumnoSiguiente->id : NULL);
     }
     return $alumno;
   }

@@ -430,7 +430,7 @@ table.dataTable > tbody > tr.child span.dtr-title {
 }
 
 /*Reporte motor*/
-#formulario-reporte .btn-entidad{
+#formulario-reporte .btn-entidad, #formulario-reporte .btn-tipo-grafico{
   width: 250px;
   height: 50px;
   margin: 10px;    
@@ -438,7 +438,7 @@ table.dataTable > tbody > tr.child span.dtr-title {
   border-radius: 5px;
   font-size: 18px;
 }
-#formulario-reporte .btn-entidad:hover, .btn-activo{
+#formulario-reporte .btn-entidad:hover, #formulario-reporte .btn-tipo-grafico:hover, .btn-activo{
   background-color: #3c8dbc;
   color: #fff;
 }

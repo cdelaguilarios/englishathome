@@ -157,6 +157,8 @@ function validarCkEditor(v, e, p) {
     }
   });
 
+  CKEDITOR.config.removePlugins = 'save,newpage,print';
+
   setTimeout(function () {
     $("#secCargandoPrincipal").fadeOut("fast", function () {
       $(".wrapper").show();
@@ -290,16 +292,24 @@ function establecerBotonRecargaTabla(idTabla) {
 function recargarDatosTabla(idTabla) {
   $("#" + idTabla).DataTable().ajax.reload();
 }
-function establecerCambiosBusquedaEstados(idTabla, urlActualizarEstadoDis, estadosDis) {
+function establecerCambiosBusquedaEstados(idTabla, urlActualizarEstadoDis, estadosDis, tipoCambioEstadoOpc) {
   $(window).click(function (e) {
     if (!$(e.target).closest(".sec-btn-editar-estado").length) {
       $(".sec-btn-editar-estado select").trigger("change");
     }
   });
-  $(".btn-editar-estado").live("click", function () {
-    $("#sel-estados").clone().val($(this).data("estado")).data("id", $(this).data("id")).data("estado", $(this).data("estado")).appendTo($(this).closest(".sec-btn-editar-estado"));
-    $(this).remove();
-    event.stopPropagation();
+  $(".btn-editar-estado").live("click", function () {    
+    if(tipoCambioEstadoOpc){      
+      var sel = $("#sel-estados").clone();
+      $(sel).val($(this).data("estado")).data("id", $(this).data("id")).data("estado", $(this).data("estado")).appendTo($(this).closest(".sec-btn-editar-estado"));
+      $(this).remove();
+      $(sel).prop('selectedIndex', (($(sel)[0].length !== ($(sel)[0].selectedIndex + 1)) ? ($(sel)[0].selectedIndex + 1) : 0)).trigger("change");
+      event.stopPropagation();
+    }else{
+      $("#sel-estados").clone().val($(this).data("estado")).data("id", $(this).data("id")).data("estado", $(this).data("estado")).appendTo($(this).closest(".sec-btn-editar-estado"));
+      $(this).remove();
+      event.stopPropagation();      
+    }
   });
   $(".sec-btn-editar-estado select").live("change", function () {
     var id = $(this).data("id");

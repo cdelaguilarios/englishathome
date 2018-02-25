@@ -14,6 +14,14 @@
           $(window).off('mousemove', window.onafterprint);
           window.close();
         };
+        
+        const $patchedStyle = $('<style media="print">')
+        .text(`
+          img { max-width: none !important; }
+          a[href]:after { content: ""; }
+        `)
+        .appendTo('head');
+        
         window.print();
         setTimeout(function () {
           $(window).one('mousemove', window.onafterprint);
@@ -102,9 +110,23 @@
         <hr> 
         @endif
         @if(isset($alumno->comentarioAdicional) && trim($alumno->comentarioAdicional) != "")
-        <strong><i class="fa fa-fw fa-file-text"></i> Comentarios adicionales</strong>
+        <strong><i class="fa fa-fw fa-file-text"></i> Comentarios adicionales del alumno</strong>
         <p class="text-muted">
           {{ $alumno->comentarioAdicional }}
+        </p>
+        <hr>  
+        @endif
+        @if(isset($alumno->fechaInicioClase) && !empty($alumno->fechaInicioClase))
+        <strong><i class="fa fa-fw fa-calendar"></i> Fecha de inicio clases</strong>
+        <p class="text-muted">
+          {{ \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaInicioClase)->format("d/m/Y") }}
+        </p>
+        <hr>  
+        @endif
+        @if(isset($alumno->comentarioAdministrador) && trim($alumno->comentarioAdministrador) != "")
+        <strong><i class="fa fa-fw fa-file-text"></i> Comentarios del administrador</strong>
+        <p class="text-muted">
+          {!! $alumno->comentarioAdministrador !!}
         </p>
         <hr>  
         @endif

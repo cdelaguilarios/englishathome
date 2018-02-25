@@ -11,7 +11,7 @@ class Curso extends Model {
 
   public $timestamps = false;
   protected $table = "curso";
-  protected $fillable = ["nombre", "descripcion", "modulos", "metodologia", "incluye", "inversion", "inversionCuotas", "notasAdicionales", "activo"];
+  protected $fillable = ["nombre", "descripcion", "modulos", "metodologia", "incluye", "inversion", "incluirInversionCuotas", "inversionCuotas", "notasAdicionales", "activo"];
 
   public static function nombreTabla() {
     $modeloCurso = new Curso();
@@ -22,6 +22,14 @@ class Curso extends Model {
 
   public static function listar() {
     return Curso::where("eliminado", 0);
+  }
+
+  public static function listarBusqueda($terminoBus = NULL) {
+    $cursos = Curso::listar()->select("id", "nombre");
+    if (isset($terminoBus)) {
+      $cursos->whereRaw('nombre like ?', ["%{$terminoBus}%"]);
+    }    
+    return $cursos->lists("nombre", "id");
   }
 
   public static function listarSimple($soloActivos = TRUE) {

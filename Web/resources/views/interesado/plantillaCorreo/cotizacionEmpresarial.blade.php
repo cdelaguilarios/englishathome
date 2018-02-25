@@ -560,10 +560,12 @@
                       <span class="sub-title"><strong>Inversión</strong></span>
                     </p>	
                     {!! $inversion !!} 	     
-                  </div>                  
+                  </div>  
+                  @if($incluirInversionCuotas == 1)                
                   <div class="sec-inversion sec-inversion-cuotas">
                     {!! $inversionCuotas !!}      
                   </div>
+                  @endif
                   <div class="sec-proceso-inscripcion">
                     <p class="left">					
                       <span class="sub-title"><strong>Proceso de inscripción</strong></span>						

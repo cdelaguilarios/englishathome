@@ -236,7 +236,7 @@
     <script src="{{ asset("assets/plugins/fastclick/fastclick.js") }}"></script>          
     <script src="{{ asset("assets/plugins/basic-schedule/src/index.js") }}"></script> 
     <script src="{{ asset("assets/dist/js/app.min.js") }}"></script>
-    <script src="{{ asset("assets/plugins/ckeditor/ckeditor.js") }}"></script>
+    <script src="{{ asset("assets/plugins/ckeditor_4.8/ckeditor.js") }}"></script>
     <script src="{{ asset("assets/plugins/datatables/jquery.dataTables.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/datatables/dataTables.bootstrap.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/datatables/extensions/Responsive/js/dataTables.responsive.min.js") }}"></script>

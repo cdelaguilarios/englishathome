@@ -13,9 +13,9 @@ class EstadosAlumno {
   public static function listar() {
     return [
         EstadosAlumno::PorConfirmar => ["Por confirmar", "label-primary"],
-        EstadosAlumno::CuotaProgramada => ["Cuota programada", "label-warning"],
         EstadosAlumno::StandBy => ["Stand by", "label-warning"],
         EstadosAlumno::Activo => ["Activo", "label-success"],
+        EstadosAlumno::CuotaProgramada => ["Cuota programada", "label-warning"],
         EstadosAlumno::Inactivo => ["Inactivo", "label-danger"]
     ];
   }

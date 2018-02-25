@@ -1,9 +1,11 @@
 var seccionPaso1 = new function () {
+  this.contenedor = null;
   this.titulo = "Seleccione una de las entidades";
   this.cargar = function (contenedor) {
     var self = this;
-    $(contenedor).on('click', ".btn-entidad", function () {
-      self.seleccionarEntidad(contenedor, $(this).attr("rel"));
+    this.contenedor = contenedor;
+    $(this.contenedor).on('click', ".btn-entidad", function () {
+      self.seleccionarEntidad($(this).attr("rel"));
     });
   };
   this.preMostrar = function () {
@@ -16,16 +18,19 @@ var seccionPaso1 = new function () {
   this.preOcultar = function () {
     return true;
   };
-  this.seleccionarEntidad = function (contenedor, nombreEntidad, retrollamada) {
-    $(contenedor).find(".btn-entidad").removeClass("btn-activo");
-    $(contenedor).find(".btn-entidad[rel='" + nombreEntidad + "']").addClass("btn-activo");
+  this.seleccionarEntidad = function (nombreEntidad, retrollamada) {
+    $(this.contenedor).find(".btn-entidad").removeClass("btn-activo");
+    $(this.contenedor).find(".btn-entidad[rel='" + nombreEntidad + "']").addClass("btn-activo");
     if (motor.entidadSel.nombre !== nombreEntidad) {
       motor.cambioEntidad();
       util.listarCampos(nombreEntidad, function (campos) {
         motor.entidadSel = {
           nombre: nombreEntidad,
           campos: campos,
-          camposSel: []
+          camposSel: [],
+          graficoSel: null,
+          graficoCamposSel: [],
+          entidadesRelacionadasSel: []
         };
         $("#btn-siguiente").show();
         if (retrollamada)
@@ -42,92 +47,98 @@ var seccionPaso1 = new function () {
   };
 };
 var seccionPaso2 = new function () {
-  this.titulo = "Seleccione los campos";
+  this.contenedor = null;
   this.cambioEntidad = true;
+  this.titulo = "Seleccione los campos";
   this.cargar = function (contenedor) {
-    $(contenedor).on('click', "[id*='cb-campo-']", function () {
+    this.contenedor = contenedor;
+    $(this.contenedor).on('click', "[id*='cb-campo-']", function () {
       var camposSel = motor.entidadSel.camposSel;
       (($(this).is(':checked')) ? camposSel.push($(this).val()) : camposSel.splice(camposSel.indexOf($(this).val()), 1));
     });
   };
-  this.preMostrar = function (contenedor) {
+  this.preMostrar = function () {
     if (Object.keys(motor.entidadSel).length) {
       $("#sec-titulo").text(this.titulo);
       $("#sec-mensaje-campos-obligatorios, #btn-guardar").hide();
       $("#btn-siguiente, #btn-anterior").show();
       if (this.cambioEntidad)
-        this.agregarCampos(contenedor);
+        this.agregarCampos();
       return true;
     } else {
       motor.anteriorSeccion();
       return false;
     }
   };
-  this.preOcultar = function (contenedor, solicitudSiguiente) {
-    if (solicitudSiguiente && !$(contenedor).find("input[name='campos']:checked").length) {
+  this.preOcultar = function (solicitudSiguiente) {
+    if (solicitudSiguiente && !$(this.contenedor).find("input[name='campos']:checked").length) {
       agregarMensaje("advertencias", "Debe seleccionar por lo menos un campo.", true, "#sec-mensajes-alerta", true);
       return false;
     }
     return true;
   };
-  this.agregarCampos = function (contenedor, camposSeleccionados) {
+  this.agregarCampos = function (camposSeleccionados) {
+    var self = this;
     this.cambioEntidad = false;
-    $(contenedor).find("#sec-campos").html("");
+    $(this.contenedor).find("#sec-campos").html("");
     $.each(motor.entidadSel.campos, function (nombreCampo, datosCampo) {
-      var txtCampoSeleccionado = '';
+      //Modo edición
+      var chkCampoSeleccionado = '';
       if (camposSeleccionados) {
         var datCampoSel = $.grep(camposSeleccionados, function (campoSeleccionado) {
           return campoSeleccionado.nombre.toLowerCase() === nombreCampo.toLowerCase();
         });
         if (datCampoSel.length) {
-          txtCampoSeleccionado = ' checked';
+          chkCampoSeleccionado = ' checked';
           motor.entidadSel.camposSel.push(nombreCampo);
         }
       }
-      $(contenedor).find("#sec-campos").append(
+      $(self.contenedor).find("#sec-campos").append(
           '<div class="col-sm-3">' +
-          '<input id="cb-campo-' + nombreCampo.toLowerCase() + '" type="checkbox" name="campos" value="' + nombreCampo + '"' + txtCampoSeleccionado + '>' +
-          '<label for="cb-campo-' + nombreCampo.toLowerCase() + '">' + datosCampo.titulo + '</label>' +
+            '<input id="cb-campo-' + nombreCampo.toLowerCase() + '" type="checkbox" name="campos" value="' + nombreCampo + '"' + chkCampoSeleccionado + '>' +
+            '<label for="cb-campo-' + nombreCampo.toLowerCase() + '">' + datosCampo.titulo + '</label>' +
           '</div>');
     });
   };
 };
 var seccionPaso3 = new function () {
-  this.titulo = "Seleccione las entidad relacionadas (opcional)";
+  this.contenedor = null;
   this.cambioEntidad = true;
+  this.titulo = "Seleccione las entidad relacionadas (opcional)";
   this.cargar = function (contenedor) {
     var self = this;
-    $(contenedor).on('click', ".btn-entidad", function () {
+    this.contenedor = contenedor;
+    $(this.contenedor).on('click', ".btn-entidad", function () {
       var nombreEntidadRelacionada = $(this).attr("rel");
       if ($(this).hasClass("btn-activo")) {
         $(this).removeClass("btn-activo");
-        motor.entidadesRelacionadasSel = motor.entidadesRelacionadasSel.filter(function (entidadRelacionadaSel) {
-          return entidadRelacionadaSel.nombre !== nombreEntidadRelacionada;
-        });
         $("#sec-contenedor-campos-" + nombreEntidadRelacionada.toLowerCase()).remove();
         $("#sec-filtros-" + nombreEntidadRelacionada.toLowerCase()).remove();
+        motor.entidadSel.entidadesRelacionadasSel = motor.entidadSel.entidadesRelacionadasSel.filter(function (entidadRelacionadaSel) {
+          return entidadRelacionadaSel.nombre !== nombreEntidadRelacionada;
+        });
       } else {
-        self.seleccionarEntidadRelacionada(contenedor, nombreEntidadRelacionada);
+        self.seleccionarEntidadRelacionada(nombreEntidadRelacionada);
       }
     });
-    $(contenedor).on('click', "[name*='cb-tipo-seleccion-']", function () {
+    $(this.contenedor).on('click', "[name*='cb-tipo-seleccion-']", function () {
       var entidadRelacionadaSel = motor.obtenerDatosEntidadRelacionada($(this).data("entidad"));
-      $("#sec-campos-" + $(this).data("entidad").toLowerCase()).css('display', ($(this).val() !== "campos" ? "none" : "inline-block"));
       entidadRelacionadaSel.tipoSel = $(this).val();
+      $("#sec-campos-" + $(this).data("entidad").toLowerCase()).css('display', ($(this).val() !== "campos" ? "none" : "inline-block"));
     });
-    $(contenedor).on('click', "[id*='cb-campo-']", function () {
+    $(this.contenedor).on('click', "[id*='cb-campo-']", function () {
       var entidadRelacionadaSel = motor.obtenerDatosEntidadRelacionada($(this).data("entidad"));
       var camposSel = entidadRelacionadaSel.camposSel;
       (($(this).is(':checked')) ? camposSel.push($(this).val()) : camposSel.splice(camposSel.indexOf($(this).val()), 1));
     });
   };
-  this.preMostrar = function (contenedor, solicitudSiguiente) {
+  this.preMostrar = function (solicitudSiguiente) {
     if (Object.keys(motor.entidadesRelacionadas).length) {
       $("#sec-titulo").text(this.titulo);
       $("#sec-mensaje-campos-obligatorios, #btn-guardar").hide();
       $("#btn-siguiente, #btn-anterior").show();
       if (this.cambioEntidad)
-        this.agregarEntidadesRelacionadas(contenedor);
+        this.agregarEntidadesRelacionadas();
       return true;
     } else {
       (solicitudSiguiente ? motor.siguienteSeccion() : motor.anteriorSeccion());
@@ -137,33 +148,34 @@ var seccionPaso3 = new function () {
   this.preOcultar = function () {
     return true;
   };
-  this.agregarEntidadesRelacionadas = function (contenedor) {
+  this.agregarEntidadesRelacionadas = function () {
+    var self = this;
     this.cambioEntidad = false;
-    $(contenedor).find("#sec-entidades-relacionadas").html("");
-    $(contenedor).find("#sec-campos-entidades-relacionadas").html("");
+    $(this.contenedor).find("#sec-entidades-relacionadas").html("");
+    $(this.contenedor).find("#sec-campos-entidades-relacionadas").html("");
     $.each(motor.entidadesRelacionadas, function (nombreEntidadRel, datosEntidadRel) {
-      $(contenedor).find("#sec-entidades-relacionadas").append(
+      $(self.contenedor).find("#sec-entidades-relacionadas").append(
           '<div class="col-sm-3">' +
-          '<button type="button" class="btn-entidad" rel="' + nombreEntidadRel + '">' + datosEntidadRel[5] + ' ' + datosEntidadRel[0] + '</button>' +
+            '<button type="button" class="btn-entidad" rel="' + nombreEntidadRel + '">' + datosEntidadRel[5] + ' ' + datosEntidadRel[0] + '</button>' +
           '</div>');
     });
   };
-  this.seleccionarEntidadRelacionada = function (contenedor, nombreEntidadRelacionada, camposSeleccionados, retrollamada) {
+  this.seleccionarEntidadRelacionada = function (nombreEntidadRelacionada, tipoCamposSeleccionados, retrollamada) {
     var self = this;
     util.listarCampos(nombreEntidadRelacionada, function (campos) {
-      motor.entidadesRelacionadasSel.push({
+      motor.entidadSel.entidadesRelacionadasSel.push({
         nombre: nombreEntidadRelacionada,
         campos: campos,
         camposSel: [],
-        tipoSel: (camposSeleccionados ? "campos" : "cantidad-total")
+        tipoSel: (tipoCamposSeleccionados ? "campos" : "cantidad-total")
       });
-      self.mostrarCamposEntidadRelacionada(contenedor, nombreEntidadRelacionada, camposSeleccionados);
-      $(contenedor).find(".btn-entidad[rel='" + nombreEntidadRelacionada + "']").addClass("btn-activo");
+      self.mostrarCamposEntidadRelacionada(nombreEntidadRelacionada, tipoCamposSeleccionados);
+      $(self.contenedor).find(".btn-entidad[rel='" + nombreEntidadRelacionada + "']").addClass("btn-activo");
       if (retrollamada)
         retrollamada();
     });
   };
-  this.mostrarCamposEntidadRelacionada = function (contenedor, nombreEntidadRelacionada, camposSeleccionados) {
+  this.mostrarCamposEntidadRelacionada = function (nombreEntidadRelacionada, tipoCamposSeleccionados) {
     var entidadRelacionadaSel = motor.obtenerDatosEntidadRelacionada(nombreEntidadRelacionada);
     var campos = entidadRelacionadaSel.campos;
     var tituloEntidad = motor.entidadesRelacionadas[nombreEntidadRelacionada][0];
@@ -174,53 +186,56 @@ var seccionPaso3 = new function () {
     var idTipoSelCampos = idTipoSelBase + "-campos";
 
     var contenidoCampos = '<div class="col-sm-12">' +
-        '<input type="radio" id="' + idTipoSelCantidadTot + '" name="' + idTipoSelBase + '" data-entidad="' + nombreEntidadRelacionada + '" value="cantidad-total"' + (camposSeleccionados ? '' : ' checked') + '>' +
+        '<input type="radio" id="' + idTipoSelCantidadTot + '" name="' + idTipoSelBase + '" data-entidad="' + nombreEntidadRelacionada + '" value="cantidad-total"' + (tipoCamposSeleccionados ? '' : ' checked') + '>' +
         '<label for="' + idTipoSelCantidadTot + '">Selecionar cantidad total de ' + tituloEntidad.toLowerCase() + '</label><br>' +
-        '<input type="radio" id="' + idTipoSelCampos + '" name="' + idTipoSelBase + '" data-entidad="' + nombreEntidadRelacionada + '" value="campos"' + (camposSeleccionados ? ' checked' : '') + '>' +
+        '<input type="radio" id="' + idTipoSelCampos + '" name="' + idTipoSelBase + '" data-entidad="' + nombreEntidadRelacionada + '" value="campos"' + (tipoCamposSeleccionados ? ' checked' : '') + '>' +
         '<label for="' + idTipoSelCampos + '">Seleccionar campos especificos</label>' +
         '</div>' +
-        '<div id="sec-campos-' + nombreEntidadRelacionada.toLowerCase() + '" class="col-sm-12" style="margin-top: 10px;' + (camposSeleccionados ? '' : 'display: none;') + '">';
+        '<div id="sec-campos-' + nombreEntidadRelacionada.toLowerCase() + '" class="col-sm-12" style="margin-top: 10px;' + (tipoCamposSeleccionados ? '' : 'display: none;') + '">';
     $.each(campos, function (nombreCampo, datosCampo) {
-      var txtCampoSeleccionado = "";
-      if (camposSeleccionados) {
-        var datCampoSel = $.grep(camposSeleccionados, function (e) {
+      var chkCampoSeleccionado = "";
+      if (tipoCamposSeleccionados) {
+        var datCampoSel = $.grep(tipoCamposSeleccionados, function (e) {
           return e.nombre.toLowerCase() === nombreCampo.toLowerCase();
         });
         if (datCampoSel.length) {
-          txtCampoSeleccionado = ' checked';
+          chkCampoSeleccionado = ' checked';
           entidadRelacionadaSel.camposSel.push(nombreCampo);
         }
       }
       if (nombreCampo !== "tipoSel" && nombreCampo !== "camposSel") {
         var idCampo = "cb-campo-" + nombreEntidadRelacionada.toLowerCase() + "-" + nombreCampo.toLowerCase();
         contenidoCampos += '<div class="col-sm-3">' +
-            '<input id="' + idCampo + '" type="checkbox" name="campos-' + nombreEntidadRelacionada.toLowerCase() + '" data-entidad="' + nombreEntidadRelacionada + '" value="' + nombreCampo + '"' + txtCampoSeleccionado + '> ' +
+            '<input id="' + idCampo + '" type="checkbox" name="campos-' + nombreEntidadRelacionada.toLowerCase() + '" data-entidad="' + nombreEntidadRelacionada + '" value="' + nombreCampo + '"' + chkCampoSeleccionado + '> ' +
             '<label for="' + idCampo + '">' + datosCampo.titulo + '</label>' +
             '</div>';
       }
     });
     contenidoCampos += '</div>';
-    $(contenedor).find("#sec-campos-entidades-relacionadas").append('<div id="sec-contenedor-campos-' + nombreEntidadRelacionada.toLowerCase() + '" class="form-group"><div class="col-sm-12">' + titulo + contenidoCampos + '</div></div>');
+    $(this.contenedor).find("#sec-campos-entidades-relacionadas").append('<div id="sec-contenedor-campos-' + nombreEntidadRelacionada.toLowerCase() + '" class="form-group"><div class="col-sm-12">' + titulo + contenidoCampos + '</div></div>');
   };
 };
 var seccionPaso4 = new function () {
-  this.titulo = "Ingrese los filtros";
-  this.cambioEntidad = true;
+  this.contenedor = null;
   this.camposCargados = [];
-  this.cargar = function () {};
-  this.preMostrar = function (contenedor, solicitudSiguiente) {
+  this.cambioEntidad = true;
+  this.titulo = "Ingrese los filtros";
+  this.cargar = function (contenedor) {
+    this.contenedor = contenedor;
+  };
+  this.preMostrar = function (solicitudSiguiente) {
     $("#sec-titulo").text(this.titulo);
     $("#btn-guardar").hide();
     $("#sec-mensaje-campos-obligatorios, #btn-siguiente, #btn-anterior").show();
     if (!solicitudSiguiente)
       return true;
-    this.agregarFiltros(contenedor);
+    this.agregarFiltros();
     return true;
   };
-  this.preOcultar = function (contenedor, solicitudSiguiente) {
-    return !(solicitudSiguiente && !$(contenedor).find(":input, select").valid());
+  this.preOcultar = function (solicitudSiguiente) {
+    return !(solicitudSiguiente && !$(this.contenedor).find(":input, select").valid());
   };
-  this.agregarFiltros = function (contenedor, datos) {
+  this.agregarFiltros = function (datos) {
     var self = this;
     var idSeccion = "#sec-filtros";
     var nombreEntidad = motor.entidadSel.nombre;
@@ -230,13 +245,16 @@ var seccionPaso4 = new function () {
     if (this.cambioEntidad) {
       this.cambioEntidad = false;
       this.camposCargados = [];
-      $(contenedor).find(idSeccion).html("");
+      $(this.contenedor).find(idSeccion).html("");
     }
-    self.procesarFiltros(contenedor, idSeccion, nombreEntidad, campos, camposSel, (datos ? datos.camposSeleccionados : null));
-    motor.entidadesRelacionadasSel.forEach(function (datosEntidadRel)
+    self.procesarFiltros(idSeccion, nombreEntidad, campos, camposSel, (datos ? datos.camposSeleccionados : null));
+    
+    //Entidades relacionadas
+    motor.entidadSel.entidadesRelacionadasSel.forEach(function (datosEntidadRel)
     {
       var idSeccionEntidadRel = "#sec-filtros-" + datosEntidadRel.nombre.toLowerCase();
       if (datosEntidadRel.tipoSel === "campos") {
+        //Modo edición
         var datosCamposSel = null;
         if (datos && datos.entiadesRelacionadas) {
           var datEntidadRelacionada = $.grep(datos.entiadesRelacionadas, function (e) {
@@ -245,17 +263,15 @@ var seccionPaso4 = new function () {
           if (datEntidadRelacionada.length)
             datosCamposSel = datEntidadRelacionada[0].camposSeleccionados;
         }
+        
+        var tituloEntidadRel = motor.entidadesRelacionadas[datosEntidadRel.nombre][0];
         var seccionAgregada = (self.camposCargados[datosEntidadRel.nombre.toLowerCase()] !== undefined);
-        if (!seccionAgregada) {
-          var tituloEntidad = motor.entidadesRelacionadas[datosEntidadRel.nombre][0];
-          $(contenedor).find(idSeccion).append('<div id="' + idSeccionEntidadRel.replace("#", "") + '" class="col-sm-12">' +
-              '<h4>Filtros - ' + tituloEntidad + '</h4>');
-        }
-        self.procesarFiltros(contenedor, idSeccionEntidadRel, datosEntidadRel.nombre, datosEntidadRel.campos, datosEntidadRel.camposSel, datosCamposSel);
-        if (!seccionAgregada) {
-          self.agregarFiltroBusqueda(contenedor, idSeccionEntidadRel, datosEntidadRel.nombre, datosCamposSel);
-          $(contenedor).find(idSeccion).append('</div>');
-        }
+        if (!seccionAgregada)
+          $(self.contenedor).find(idSeccion).append('<div id="' + idSeccionEntidadRel.replace("#", "") + '" class="col-sm-12">' +
+              '<h4>Filtros - ' + tituloEntidadRel + '</h4>');        
+        self.procesarFiltros(idSeccionEntidadRel, datosEntidadRel.nombre, datosEntidadRel.campos, datosEntidadRel.camposSel, datosCamposSel);
+        if (!seccionAgregada)
+          $(self.contenedor).find(idSeccion).append('</div>');        
       } else {
         var reglasValidacion = $("#formulario-reporte").validate().settings.rules;
         for (var campo in reglasValidacion)
@@ -268,7 +284,7 @@ var seccionPaso4 = new function () {
       }
     });
   };
-  this.procesarFiltros = function (contenedor, idSeccion, nombreEntidad, campos, camposSel, datosCamposSel) {
+  this.procesarFiltros = function (idSeccion, nombreEntidad, campos, camposSel, datosCamposSel) {
     var self = this;
     tiposSexos = (typeof (tiposSexos) === "undefined" ? [] : tiposSexos);
     tiposDocumentos = (typeof (tiposDocumentos) === "undefined" ? [] : tiposDocumentos);
@@ -280,17 +296,17 @@ var seccionPaso4 = new function () {
         return true;
       self.camposCargados[nombreEntidad.toLowerCase()].push(id);
       if ((["varchar", "text", "char"]).indexOf(campos[id].tipo.toLowerCase()) !== -1)
-        self.agregarFiltroTexto(contenedor, idSeccion, nombreEntidad, campos, id, datosCamposSel);
+        self.agregarFiltroTexto(idSeccion, nombreEntidad, campos, id, datosCamposSel);
       else if ((["int", "float"]).indexOf(campos[id].tipo.toLowerCase()) !== -1)
-        self.agregarFiltroNumero(contenedor, idSeccion, nombreEntidad, campos, id, datosCamposSel);
+        self.agregarFiltroNumero(idSeccion, nombreEntidad, campos, id, datosCamposSel);
       else if ((["datetime", "timestamp"]).indexOf(campos[id].tipo.toLowerCase()) !== -1)
-        self.agregarFiltroFecha(contenedor, idSeccion, nombreEntidad, campos, id, datosCamposSel);
+        self.agregarFiltroFecha(idSeccion, nombreEntidad, campos, id, datosCamposSel);
       else if ((["tinyint"]).indexOf(campos[id].tipo.toLowerCase()) !== -1)
-        self.agregarFiltroVerdaderoFalso(contenedor, idSeccion, nombreEntidad, campos, id, datosCamposSel);
+        self.agregarFiltroVerdaderoFalso(idSeccion, nombreEntidad, campos, id, datosCamposSel);
       else if ((["sexo"]).indexOf(campos[id].tipo.toLowerCase()) !== -1)
-        self.agregarFiltroListaOpciones(contenedor, idSeccion, nombreEntidad, campos, id, tiposSexos, datosCamposSel);
+        self.agregarFiltroListaOpciones(idSeccion, nombreEntidad, campos, id, tiposSexos, datosCamposSel);
       else if ((["tipodocumento"]).indexOf(campos[id].tipo.toLowerCase()) !== -1)
-        self.agregarFiltroListaOpciones(contenedor, idSeccion, nombreEntidad, campos, id, tiposDocumentos, datosCamposSel);
+        self.agregarFiltroListaOpciones(idSeccion, nombreEntidad, campos, id, tiposDocumentos, datosCamposSel);
     });
 
     var camposEli = $(this.camposCargados[nombreEntidad.toLowerCase()]).not(camposSel).get();
@@ -299,26 +315,26 @@ var seccionPaso4 = new function () {
       self.camposCargados[nombreEntidad.toLowerCase()].splice(self.camposCargados[nombreEntidad.toLowerCase()].indexOf(id), 1);
     });
   };
-  this.agregarFiltroTexto = function (contenedor, idSeccion, entidad, campos, idCampo, datosCamposSel) {
+  //Util
+  this.agregarFiltroTexto = function (idSeccion, entidad, campos, idCampo, datosCamposSel) {
     var idContenedor = "sec-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idSelTipo = "sel-tipo-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idFiltro = "inp-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
 
-
-    $(contenedor).find(idSeccion).append(
+    $(this.contenedor).find(idSeccion).append(
         '<div id="' + idContenedor + '" class="form-group">' +
-        '<label for="' + idFiltro + '" class="col-sm-2 control-label">' + campos[idCampo].titulo + '</label>' +
-        '<div class="col-sm-2">' +
-        '<select name="' + idSelTipo + '" class="form-control">' +
-        '<option value="=">Igual a</option>' +
-        '<option value="<>">Diferente a</option>' +
-        '<option value="LIKE">Contiene</option>' +
-        '<option value="NOT LIKE">No contiene</option>' +
-        '</select>' +
-        '</div>' +
-        '<div class="col-sm-8">' +
-        '<input type="text" id="' + idFiltro + '" name="' + idFiltro + '" class="form-control" maxlength="255" />' +
-        '</div>' +
+          '<label for="' + idFiltro + '" class="col-sm-2 control-label">' + campos[idCampo].titulo + '</label>' +
+          '<div class="col-sm-2">' +
+            '<select name="' + idSelTipo + '" class="form-control">' +
+              '<option value="=">Igual a</option>' +
+              '<option value="<>">Diferente a</option>' +
+              '<option value="LIKE">Contiene</option>' +
+              '<option value="NOT LIKE">No contiene</option>' +
+            '</select>' +
+          '</div>' +
+          '<div class="col-sm-8">' +
+            '<input type="text" id="' + idFiltro + '" name="' + idFiltro + '" class="form-control" maxlength="255" />' +
+          '</div>' +
         '</div>');
 
     if (datosCamposSel) {
@@ -332,29 +348,29 @@ var seccionPaso4 = new function () {
       }
     }
   };
-  this.agregarFiltroNumero = function (contenedor, idSeccion, entidad, campos, idCampo, datosCamposSel) {
+  this.agregarFiltroNumero = function (idSeccion, entidad, campos, idCampo, datosCamposSel) {
     var idContenedor = "sec-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idSelTipo = "sel-tipo-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idFiltro = "inp-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
 
-    $(contenedor).find(idSeccion).append(
+    $(this.contenedor).find(idSeccion).append(
         '<div id="' + idContenedor + '" class="form-group">' +
-        '<label for="' + idFiltro + '" class="col-sm-2 control-label">' + campos[idCampo].titulo + '</label>' +
-        '<div class="col-sm-2">' +
-        '<select name="' + idSelTipo + '" class="form-control">' +
-        '<option value="=">Igual a</option>' +
-        '<option value="<>">Diferente a</option>' +
-        '<option value="LIKE">Contiene</option>' +
-        '<option value="NOT LIKE">No contiene</option>' +
-        '<option value=">">Mayor a</option>' +
-        '<option value=">=">Mayor o igual a</option>' +
-        '<option value="<">Menor a</option>' +
-        '<option value="<=">Menor o igual a</option>' +
-        '</select>' +
-        '</div>' +
-        '<div class="col-sm-8">' +
-        '<input type="number" id="' + idFiltro + '" name="' + idFiltro + '" class="form-control" maxlength="19" />' +
-        '</div>' +
+          '<label for="' + idFiltro + '" class="col-sm-2 control-label">' + campos[idCampo].titulo + '</label>' +
+          '<div class="col-sm-2">' +
+            '<select name="' + idSelTipo + '" class="form-control">' +
+              '<option value="=">Igual a</option>' +
+              '<option value="<>">Diferente a</option>' +
+              '<option value="LIKE">Contiene</option>' +
+              '<option value="NOT LIKE">No contiene</option>' +
+              '<option value=">">Mayor a</option>' +
+              '<option value=">=">Mayor o igual a</option>' +
+              '<option value="<">Menor a</option>' +
+              '<option value="<=">Menor o igual a</option>' +
+            '</select>' +
+          '</div>' +
+          '<div class="col-sm-8">' +
+            '<input type="number" id="' + idFiltro + '" name="' + idFiltro + '" class="form-control" maxlength="19" />' +
+          '</div>' +
         '</div>');
     $("#" + idFiltro).rules("add", {
       validarDecimal: true
@@ -371,35 +387,35 @@ var seccionPaso4 = new function () {
       }
     }
   };
-  this.agregarFiltroFecha = function (contenedor, idSeccion, entidad, campos, idCampo, datosCamposSel) {
+  this.agregarFiltroFecha = function (idSeccion, entidad, campos, idCampo, datosCamposSel) {
     var idContenedor = "sec-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idSelTipo = "sel-tipo-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idFiltroFechaIni = "inp-filtro-fecha-inicio-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idFiltroFechaFin = "inp-filtro-fecha-fin-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
 
-    $(contenedor).find(idSeccion).append(
+    $(this.contenedor).find(idSeccion).append(
         '<div id="' + idContenedor + '" class="form-group">' +
-        '<label for="' + idFiltroFechaIni + '" class="col-sm-2 control-label">' + campos[idCampo].titulo + '</label>' +
-        '<div class="col-sm-2">' +
-        '<select id="' + idSelTipo + '" name="' + idSelTipo + '" class="form-control">' +
-        '<option value="=">Igual a</option>' +
-        '<option value="<>">Diferente a</option>' +
-        '<option value=">">Mayor a</option>' +
-        '<option value=">=">Mayor o igual a</option>' +
-        '<option value="<">Menor a</option>' +
-        '<option value="<=">Menor o igual a</option>' +
-        '<option value="BETWEEN">Entre</option>' +
-        '</select>' +
-        '</div>' +
-        '<div class="col-sm-2">' +
-        '<input type="text" id="' + idFiltroFechaIni + '" name="' + idFiltroFechaIni + '" class="form-control" />' +
-        '</div>' +
-        '<div class="col-sm-2">' +
-        '<input type="text" id="' + idFiltroFechaFin + '" name="' + idFiltroFechaFin + '" class="form-control" style="display:none" />' +
-        '</div>' +
+          '<label for="' + idFiltroFechaIni + '" class="col-sm-2 control-label">' + campos[idCampo].titulo + '</label>' +
+          '<div class="col-sm-2">' +
+            '<select id="' + idSelTipo + '" name="' + idSelTipo + '" class="form-control">' +
+              '<option value="=">Igual a</option>' +
+              '<option value="<>">Diferente a</option>' +
+              '<option value=">">Mayor a</option>' +
+              '<option value=">=">Mayor o igual a</option>' +
+              '<option value="<">Menor a</option>' +
+              '<option value="<=">Menor o igual a</option>' +
+              '<option value="BETWEEN">Entre</option>' +
+            '</select>' +
+          '</div>' +
+          '<div class="col-sm-2">' +
+            '<input type="text" id="' + idFiltroFechaIni + '" name="' + idFiltroFechaIni + '" class="form-control" />' +
+          '</div>' +
+          '<div class="col-sm-2">' +
+            '<input type="text" id="' + idFiltroFechaFin + '" name="' + idFiltroFechaFin + '" class="form-control" style="display:none" />' +
+          '</div>' +
         '</div>');
 
-    $(contenedor).find(idSeccion).on('change', "#" + idSelTipo, function () {
+    $(this.contenedor).find(idSeccion).on('change', "#" + idSelTipo, function () {
       ($(this).val() !== "BETWEEN" ? $("#" + idFiltroFechaFin).hide() : $("#" + idFiltroFechaFin).show());
     });
     establecerCalendario(idFiltroFechaIni);
@@ -429,7 +445,7 @@ var seccionPaso4 = new function () {
       }
     }
   };
-  this.agregarFiltroVerdaderoFalso = function (contenedor, idSeccion, entidad, campos, idCampo, datosCamposSel) {
+  this.agregarFiltroVerdaderoFalso = function (idSeccion, entidad, campos, idCampo, datosCamposSel) {
     var idContenedor = "sec-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idFiltro = "inp-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
 
@@ -442,20 +458,20 @@ var seccionPaso4 = new function () {
         txtSeleccionado = " checked";
     }
 
-    $(contenedor).find(idSeccion).append(
+    $(this.contenedor).find(idSeccion).append(
         '<div id="' + idContenedor + '" class="form-group">' +
-        '<div class="col-sm-1"></div>' +
-        '<div class="col-sm-11">' +
-        '<div class="checkbox">' +
-        '<label class="checkbox-custom' + txtSeleccionado + '" data-initialize="checkbox">' +
-        '<label for="' + idFiltro + '" class="checkbox-label">' + campos[idCampo].titulo + '</label>' +
-        '<input id="' + idFiltro + '" name="' + idFiltro + '" type="checkbox"' + txtSeleccionado + '>' +
-        '</label>' +
-        '</div>' +
-        '</div>' +
+          '<div class="col-sm-1"></div>' +
+          '<div class="col-sm-11">' +
+            '<div class="checkbox">' +
+              '<label class="checkbox-custom' + txtSeleccionado + '" data-initialize="checkbox">' +
+              '<label for="' + idFiltro + '" class="checkbox-label">' + campos[idCampo].titulo + '</label>' +
+                '<input id="' + idFiltro + '" name="' + idFiltro + '" type="checkbox"' + txtSeleccionado + '>' +
+              '</label>' +
+            '</div>' +
+          '</div>' +
         '</div>');
   };
-  this.agregarFiltroListaOpciones = function (contenedor, idSeccion, entidad, campos, idCampo, listaOpciones, datosCamposSel) {
+  this.agregarFiltroListaOpciones = function (idSeccion, entidad, campos, idCampo, listaOpciones, datosCamposSel) {
     var idContenedor = "sec-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
     var idFiltro = "inp-filtro-" + entidad.toLowerCase() + "-" + idCampo.toLowerCase();
 
@@ -463,14 +479,14 @@ var seccionPaso4 = new function () {
     $.each(listaOpciones, function (id, val) {
       contenidoOpciones += '<option value="' + id + '">' + val + '</option>';
     });
-    $(contenedor).find(idSeccion).append(
+    $(this.contenedor).find(idSeccion).append(
         '<div id="' + idContenedor + '" class="form-group">' +
-        '<label for="' + idFiltro + '" class="col-sm-2 control-label">' + campos[idCampo].titulo + '</label>' +
-        '<div class="col-sm-2">' +
-        '<select id="' + idFiltro + '" name="' + idFiltro + '" class="form-control">' +
-        contenidoOpciones +
-        '</select>' +
-        '</div>' +
+          '<label for="' + idFiltro + '" class="col-sm-2 control-label">' + campos[idCampo].titulo + '</label>' +
+          '<div class="col-sm-2">' +
+            '<select id="' + idFiltro + '" name="' + idFiltro + '" class="form-control">' +
+            contenidoOpciones +
+            '</select>' +
+          '</div>' +
         '</div>');
 
     if (datosCamposSel) {
@@ -483,14 +499,14 @@ var seccionPaso4 = new function () {
       }
     }
   };
-  this.agregarFiltroBusqueda = function (contenedor, idSeccion, entidad, datosCamposSel) {
+  this.agregarFiltroBusqueda = function (idSeccion, entidad, datosCamposSel) {
     if (motor.entidades[entidad][4] !== "") {
       var idSelTipo = "sel-tipo-filtro-" + entidad.toLowerCase() + "-busqueda";
       var idFiltro = "inp-filtro-" + entidad.toLowerCase() + "-busqueda";
 
-      $(contenedor).find(idSeccion).append(
+      $(this.contenedor).find(idSeccion).append(
           '<div class="form-group">' +
-          '<label for="' + idFiltro + '" class="col-sm-2 control-label">Lista de ' + motor.entidades[entidad][0].toLowerCase() + ' (*)</label>' +
+          '<label for="' + idFiltro + '" class="col-sm-2 control-label">Lista de ' + motor.entidades[entidad][0].toLowerCase() + '</label>' +
           '<div class="col-sm-2">' +
           '<select name="' + idSelTipo + '" class="form-control">' +
           '<option value="=">Igual a</option>' +
@@ -501,7 +517,7 @@ var seccionPaso4 = new function () {
           '</div>' +
           '</div>');
       establecerListaBusqueda("#" + idFiltro, motor.entidades[entidad][4]);
-      $("#" + idFiltro).rules("add", "required");
+      //$("#" + idFiltro).rules("add", "required");
 
       if (datosCamposSel) {
         var datCampo = $.grep(datosCamposSel, function (e) {
@@ -528,14 +544,103 @@ var seccionPaso4 = new function () {
   };
 };
 var seccionPaso5 = new function () {
-  this.titulo = "Ingrese los datos finales";
+  this.contenedor = null;
   this.cambioEntidad = true;
-  this.cargar = function () {};
+  this.titulo = "Seleccione un gráfico (opcional)";
+  this.cargar = function (contenedor) {
+    var self = this;
+    this.contenedor = contenedor;
+    $(this.contenedor).on('click', ".btn-tipo-grafico", function () {
+      if ($(this).hasClass("btn-activo")) {
+        motor.entidadSel.tipoGrafico = null;
+        $(self.contenedor).find("#sec-campos-grafico").hide();
+        $(self.contenedor).find(".btn-tipo-grafico").removeClass("btn-activo");
+      } else {
+        self.seleccionarTipoGrafico($(this).attr("rel"));
+      }
+      motor.entidadSel.camposGraficoSel = [];
+    });    
+    $(this.contenedor).on('click', "[id*='cb-campo-grafico-']", function () {
+      var camposGraficoSel = motor.entidadSel.camposGraficoSel;
+      (($(this).is(':checked')) ? camposGraficoSel.push($(this).val()) : camposGraficoSel.splice(camposGraficoSel.indexOf($(this).val()), 1));
+    });
+  };
+  this.preMostrar = function (solicitudSiguiente) {
+    if (Object.keys(motor.entidadSel).length) {
+      var totalCamposNumericos = 0;
+      $.each(motor.entidadSel.campos, function (nombreCampo, datosCampo) {
+        if ((["int", "float"]).indexOf(datosCampo.tipo.toLowerCase()) !== -1)
+          totalCamposNumericos++;
+      });
+      
+      if(totalCamposNumericos >= 2){
+        $("#sec-titulo").text(this.titulo);
+        $("#sec-mensaje-campos-obligatorios, #btn-guardar").hide();
+        $("#btn-siguiente, #btn-anterior").show();
+        if (this.cambioEntidad)
+          this.agregarCamposGrafico();
+        return true;
+      }else{
+        (solicitudSiguiente ? motor.siguienteSeccion() : motor.anteriorSeccion());
+        return false;
+      }     
+    } else {
+      motor.anteriorSeccion();
+      return false;
+    }
+  };
+  this.preOcultar = function () {
+    return true;
+  };
+  this.seleccionarTipoGrafico = function (tipoGrafico) {    
+    motor.entidadSel.tipoGrafico = tipoGrafico;
+    this.agregarCamposGrafico();
+    $(this.contenedor).find("#sec-campos-grafico").show();
+    $(this.contenedor).find(".btn-tipo-grafico").removeClass("btn-activo");
+    $(this.contenedor).find(".btn-tipo-grafico[rel='" + tipoGrafico + "']").addClass("btn-activo");
+  };
+  this.agregarCamposGrafico = function (camposGraficoSeleccionados) {
+    var self = this;
+    this.cambioEntidad = false;
+    $(this.contenedor).find("#sec-campos-grafico").html("");
+    var totalCamposSel = 0;
+    $.each(motor.entidadSel.campos, function (nombreCampo, datosCampo) {
+      if ((["int", "float"]).indexOf(datosCampo.tipo.toLowerCase()) !== -1){
+        var chkCampoSeleccionado = '';
+        //Modo edición
+        if (camposGraficoSeleccionados) {
+          var datCampoSel = $.grep(camposGraficoSeleccionados, function (campoSeleccionado) {
+            return campoSeleccionado.nombre.toLowerCase() === nombreCampo.toLowerCase();
+          });
+          if (datCampoSel.length) {
+            totalCamposSel++;
+            $(self.contenedor).find("#sec-campos-grafico").show();
+            if(totalCamposSel <= 2){
+              chkCampoSeleccionado = ' checked';
+              motor.entidadSel.camposGraficoSel.push(nombreCampo);
+            }
+          }
+        }
+        $(self.contenedor).find("#sec-campos-grafico").append(
+            '<div class="col-sm-3">' +
+              '<input id="cb-campo-grafico-' + nombreCampo.toLowerCase() + '" type="checkbox" name="camposGrafico" value="' + nombreCampo + '"' + chkCampoSeleccionado + '>' +
+              '<label for="cb-campo-grafico-' + nombreCampo.toLowerCase() + '">' + datosCampo.titulo + '</label>' +
+            '</div>');
+      }
+    });
+  };
+};
+var seccionPaso6 = new function () {
+  this.contenedor = null;
+  this.cambioEntidad = true;
+  this.titulo = "Ingrese los datos finales";
+  this.cargar = function (contenedor) {
+    this.contenedor = contenedor;
+  };
   this.preMostrar = function () {
     $("#sec-titulo").text(this.titulo);
     $("#btn-siguiente").hide();
     $("#sec-mensaje-campos-obligatorios, #btn-guardar, #btn-anterior").show();
-
 
     $("input[name='entidad']").val(JSON.stringify(motor.entidadSel));
     $("input[name='entidadesRelacionadas']").val(JSON.stringify(motor.entidadesRelacionadasSel));
@@ -548,33 +653,18 @@ var seccionPaso5 = new function () {
 
 var motor = new function () {
   this.seccionActual = 0;
-
   this.entidades = (typeof (entidades) === "undefined" ? "" : entidades);
-  this.entidadSel = {};
   this.entidadesRelacionadas = [];
-  this.entidadesRelacionadasSel = [];
+  this.entidadSel = {};
 
-  this.mostrarSeccion = function (solicitudSiguiente) {
+  this.mostrarOcultarSeccion = function (ocultar, solicitudSiguiente) {
     var seccion = $("#sec-paso-" + this.seccionActual);
     if (seccion.length) {
       var permitido = true;
       if (window["seccionPaso" + this.seccionActual])
-        permitido = window["seccionPaso" + this.seccionActual].preMostrar(seccion, solicitudSiguiente);
+        permitido = (ocultar ? window["seccionPaso" + this.seccionActual].preOcultar(solicitudSiguiente) : window["seccionPaso" + this.seccionActual].preMostrar(solicitudSiguiente));
       if (permitido)
-        $("#sec-paso-" + this.seccionActual).show();
-      else
-        return false;
-    }
-    return true;
-  };
-  this.ocultarSeccion = function (solicitudSiguiente) {
-    var seccion = $("#sec-paso-" + this.seccionActual);
-    var permitido = true;
-    if (seccion.length) {
-      if (window["seccionPaso" + this.seccionActual])
-        permitido = window["seccionPaso" + this.seccionActual].preOcultar(seccion, solicitudSiguiente);
-      if (permitido)
-        $("#sec-paso-" + this.seccionActual).hide();
+        (ocultar ? $("#sec-paso-" + this.seccionActual).hide() : $("#sec-paso-" + this.seccionActual).show());
       else
         return false;
     }
@@ -584,20 +674,21 @@ var motor = new function () {
     if (this.seccionActual <= 1)
       return;
     $("#sec-mensajes-alerta").html("");
-    if (this.ocultarSeccion()) {
+    if (this.mostrarOcultarSeccion(true)) {
       this.seccionActual--;
-      this.mostrarSeccion();
+      this.mostrarOcultarSeccion();
     }
   };
   this.siguienteSeccion = function () {
     if (this.seccionActual >= $("[id*='sec-paso-']").length)
       return;
     $("#sec-mensajes-alerta").html("");
-    if (this.ocultarSeccion(true)) {
+    if (this.mostrarOcultarSeccion(true, true)) {
       this.seccionActual++;
-      this.mostrarSeccion(true);
+      this.mostrarOcultarSeccion(false, true);
     }
   };
+  
   this.cambioEntidad = function () {
     $("[id*='sec-paso-']").each(function () {
       if (window["seccionPaso" + $(this).attr("id").replace("sec-paso-", "")])
@@ -608,25 +699,28 @@ var motor = new function () {
     this.entidadesRelacionadasSel = [];
   };
   this.obtenerDatosEntidadRelacionada = function (nombreEntidadRel) {
-    return motor.entidadesRelacionadasSel.filter(function (ent) {
-      return ent.nombre.toLowerCase() === nombreEntidadRel.toLowerCase();
+    return motor.entidadSel.entidadesRelacionadasSel.filter(function (entidad) {
+      return entidad.nombre.toLowerCase() === nombreEntidadRel.toLowerCase();
     })[0];
   };
 
-  this.cargarDatos = function (datos, retrollamada) {
+  //Modo edición
+  this.cargarDatos = function (datosGuardados, retrollamada) {
     var self = this;
-    if (datos.entidad) {
-      seccionPaso1.seleccionarEntidad($("#sec-paso-1"), datos.entidad, function () {
-        seccionPaso2.agregarCampos($("#sec-paso-2"), datos.camposSeleccionados);
-        seccionPaso3.agregarEntidadesRelacionadas($("#sec-paso-3"));
+    if (datosGuardados.entidad) {
+      seccionPaso1.seleccionarEntidad(datosGuardados.entidad, function () {
+        seccionPaso2.agregarCampos(datosGuardados.camposSeleccionados);
+        seccionPaso3.agregarEntidadesRelacionadas();
+        seccionPaso5.seleccionarTipoGrafico(datosGuardados.tipoGrafico);
+        seccionPaso5.agregarCamposGrafico(datosGuardados.camposGraficoSeleccionados);
 
-        if (datos.entiadesRelacionadas.length) {
+        if (datosGuardados.entiadesRelacionadas.length) {
           var entidadesRelacionadasCargadas = 0;
-          $.each(datos.entiadesRelacionadas, function (i, datosEntidadRelacionada) {
-            self.cargarDatosEntidadRelacionada($("#sec-paso-3"), datosEntidadRelacionada, function () {
+          $.each(datosGuardados.entiadesRelacionadas, function (i, datosEntidadRelacionada) {
+            self.cargarDatosEntidadRelacionada(datosEntidadRelacionada, function () {
               entidadesRelacionadasCargadas++;
-              if (entidadesRelacionadasCargadas >= datos.entiadesRelacionadas.length) {
-                seccionPaso4.agregarFiltros($("#sec-paso-4"), datos);
+              if (entidadesRelacionadasCargadas >= datosGuardados.entiadesRelacionadas.length) {
+                seccionPaso4.agregarFiltros(datosGuardados);
                 if (retrollamada)
                   retrollamada();
               }
@@ -640,9 +734,9 @@ var motor = new function () {
       retrollamada();
     }
   };
-  this.cargarDatosEntidadRelacionada = function (contenedor, datosEntidadRelacionada, retrollamada) {
+  this.cargarDatosEntidadRelacionada = function (datosEntidadRelacionada, retrollamada) {
     if (datosEntidadRelacionada.entidad) {
-      seccionPaso3.seleccionarEntidadRelacionada(contenedor, datosEntidadRelacionada.entidad, datosEntidadRelacionada.camposSeleccionados, function () {
+      seccionPaso3.seleccionarEntidadRelacionada(datosEntidadRelacionada.entidad, datosEntidadRelacionada.camposSeleccionados, function () {
         if (retrollamada)
           retrollamada();
       });
@@ -698,6 +792,7 @@ var motor = new function () {
       onclick: false
     });
 
+    //Modo edición
     datos = (typeof (datos) === "undefined" ? false : datos);
     if (datos) {
       this.cargarDatos(datos, function () {
@@ -732,8 +827,6 @@ var util = new function () {
                 agregarMensaje("errores", "Ocurrió un problema durante la obtención de campos por favor intente nuevamente.", true, "#sec-mensajes-alerta", true);
               }
             });
-
-
           }
       );
     }

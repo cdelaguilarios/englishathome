@@ -259,6 +259,10 @@ function cargarFormularioCotizacion() {
             CKEDITOR.instances["metodologia"].setData(d.metodologia);
             CKEDITOR.instances["curso-incluye"].setData(d.incluye);
             CKEDITOR.instances["inversion"].setData(d.inversion);
+            if(d.incluirInversionCuotas === 1)
+              $("#sec-inversion-cuotas").show();
+            else
+              $("#sec-inversion-cuotas").hide();
             CKEDITOR.instances["inversion-cuotas"].setData(d.inversionCuotas);
             CKEDITOR.instances["notas-adicionales"].setData(d.notasAdicionales);
             setTimeout(function () {

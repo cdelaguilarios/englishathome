@@ -62,6 +62,22 @@ class FormularioRequest extends Request {
         }
       }
     }
+    //Validaciones gráfico
+    if ($entidadValida) {
+      if (isset($datosEntidad->tipoGrafico) && !(($datosEntidad->tipoGrafico == "BARRAS" || $datosEntidad->tipoGrafico == "PASTEL"))){   
+        $reglasValidacion["tipoGraficoNoValido"] = "required";
+        $entidadValida = FALSE;
+      }else if (isset($datosEntidad->tipoGrafico) && isset($datosEntidad->camposGraficoSel) && is_array($datosEntidad->camposGraficoSel)) { 
+        $listaCamposEntidad = Reporte::listarCampos($datosEntidad->nombre);
+        foreach ($datosEntidad->camposGraficoSel as $campoGraficoSel) {
+          if (!array_key_exists($campoGraficoSel, $listaCamposEntidad)) {
+            $reglasValidacion["campoGraficoNoValido"] = "required";
+            $entidadValida = FALSE;
+            break;
+          }
+        }       
+      }    
+    }
     //Validaciones-Entidades Relacionadas
     if ($entidadValida && !is_null($datos["entidadesRelacionadas"])) {
       $entidadesRelacionadas = json_decode($datos["entidadesRelacionadas"], false, 512, JSON_UNESCAPED_UNICODE);
@@ -115,7 +131,9 @@ class FormularioRequest extends Request {
     return [
         "tipoEntidadNoValido.required" => "Tipo de entidad seleccionada no válida.",
         "camposEntidadNoValidos.required" => "Se debe seleccionar por lo menos un campo para la entidad.",
-        "campoEntidadNoValido.required" => "Uno o más campos de la entidad no son válidos.",
+        "campoEntidadNoValido.required" => "Uno o más campos de la entidad no son válidos.",        
+        "tipoGraficoNoValido.required" => "El tipo de gráfico seleccionado no es válido.",
+        "campoGraficoNoValido.required" => "Uno o más campos del gráfico seleccionado no son válidos.",        
         "tipoEntidadRelacionadaNoValido.required" => "Uno o más tipos de entidades relacionadas no son válidos.",
         "camposEntidadRelacionadaNoValidos.required" => "Se debe seleccionar por lo menos un campo por cada entidad relacionada.",
         "campoEntidadRelacionadaNoValido.required" => "Uno o más campos de las entidades relacionadas no son válidos.",
@@ -123,6 +141,7 @@ class FormularioRequest extends Request {
     ];
   }
 
+  //Util
   private function validarFiltro(&$datos, &$reglasValidacion, $entidad, $campo, $datosCampo) {
     $nomTipoFiltro = strtolower("sel-tipo-filtro-" . $entidad . "-" . $campo);
     $nomFiltro = strtolower("inp-filtro-" . $entidad . "-" . $campo);

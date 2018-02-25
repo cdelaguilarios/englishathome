@@ -159,6 +159,7 @@ Route::group(["middleware" => "auth"], function() {
     // <editor-fold desc="Cursos">
     Route::get("cursos", ["uses" => "CursoController@index", "as" => "cursos"]);
     Route::post("cursos/listar", ["uses" => "CursoController@listar", "as" => "cursos.listar"]);
+    Route::get("cursos/buscar", ["uses" => "CursoController@buscar", "as" => "cursos.buscar"]);
     Route::get("curso/nuevo", ["uses" => "CursoController@crear", "as" => "cursos.crear"]);
     Route::post("curso/registrar", ["uses" => "CursoController@registrar", "as" => "cursos.registrar"]);
     Route::get("curso/{id}/editar", ["uses" => "CursoController@editar", "as" => "cursos.editar"]);

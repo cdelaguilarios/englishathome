@@ -20,6 +20,7 @@ class FormularioRequest extends Request {
     $datos["metodologia"] = ReglasValidacion::formatoDato($datos, "metodologia");
     $datos["incluye"] = ReglasValidacion::formatoDato($datos, "incluye");
     $datos["inversion"] = ReglasValidacion::formatoDato($datos, "inversion");
+    $datos["incluirInversionCuotas"] = (isset($datos["incluirInversionCuotas"]) ? 1 : 0);
     $datos["inversionCuotas"] = ReglasValidacion::formatoDato($datos, "inversionCuotas");
     $datos["activo"] = (isset($datos["activo"]) ? 1 : 0);
     $this->getInputSource()->replace($datos);

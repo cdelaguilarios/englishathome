@@ -8,7 +8,6 @@ use Datatables;
 use App\Models\Pago;
 use App\Models\Clase;
 use App\Models\Reporte;
-use App\Helpers\Enum\TiposEntidad;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Util\BusquedaRequest;
 use App\Http\Requests\Reporte\FormularioRequest;
@@ -34,7 +33,6 @@ class ReporteController extends Controller {
 
   public function crear() {
     $this->data["subSeccion"] = "motor";
-    $this->data["entidades"] = TiposEntidad::listar();
     return view("reporte.motor.crear", $this->data);
   }
 
@@ -53,7 +51,6 @@ class ReporteController extends Controller {
   public function editar($id) {
     try {
       $this->data["subSeccion"] = "motor";
-      $this->data["entidades"] = TiposEntidad::listar();
       $this->data["reporte"] = Reporte::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
       Log::error($e);

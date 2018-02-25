@@ -132,4 +132,13 @@ function cargarFormulario() {
       agregarCamposCalculoInversionCuotas(true);
     }
   });
+  
+  var verificarInversionCuotas = function(){
+    if ($("#incluir-inversion-cuotas").is(":checked"))
+      $("#sec-inversion-cuotas").show();
+    else
+      $("#sec-inversion-cuotas").hide();
+  };
+  $("#incluir-inversion-cuotas").click(verificarInversionCuotas);
+  verificarInversionCuotas();
 }

@@ -6,9 +6,9 @@
         <div id="sec-mensajes-alerta"></div>
       </div>
       <div id="sec-paso-1" class="box-body" style="display: none">      
-        @foreach ($entidades as $id => $datos)
-        <div id="sec-entidades" class="col-sm-3">
-          <button type="button" class="btn-entidad" rel="{{ $id }}">{!! $datos[5] !!} {{ $datos[0] }}</button>
+        @foreach (App\Helpers\Enum\TiposEntidad::listar() as $nombre => $datos)
+        <div class="col-sm-3">
+          <button type="button" class="btn-entidad" rel="{{ $nombre }}">{!! $datos[5] !!} {{ $datos[0] }}</button>
         </div>
         @endforeach
       </div>
@@ -23,6 +23,22 @@
         <div id="sec-filtros"></div>
       </div>
       <div id="sec-paso-5" class="box-body" style="display: none">
+        <div>
+          <div class="col-sm-3">
+            <button type="button" class="btn-tipo-grafico" rel="BARRAS">
+              <i class="fa fa-bar-chart"></i> Gráfico de barras
+            </button>
+          </div>
+          <div class="col-sm-3">
+            <button type="button" class="btn-tipo-grafico" rel="PASTEL">
+              <i class="fa fa-pie-chart"></i> Gráfico circular (pastel)
+            </button>
+          </div>          
+        </div>
+        <div id="sec-campos-grafico-categorias" style="display: none"></div>
+        <div id="sec-campos-grafico-totales" style="display: none"></div>
+      </div>
+      <div id="sec-paso-6" class="box-body" style="display: none">
         <div class="form-group">
           {{ Form::label("titulo", "Título (*): ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">

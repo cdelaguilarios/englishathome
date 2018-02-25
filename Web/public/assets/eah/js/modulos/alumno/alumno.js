@@ -82,7 +82,7 @@ function cargarLista() {
     });
   }
   if (urlActualizarEstado !== "" && estados !== "") {
-    establecerCambiosBusquedaEstados("tab-lista", urlActualizarEstado, estados);
+    establecerCambiosBusquedaEstados("tab-lista", urlActualizarEstado, estados, true);
   }
 }
 
@@ -191,16 +191,24 @@ function cargarFormulario() {
       var fechaNacimiento = $("#fecha-nacimiento").val();
       establecerCalendario("fecha-nacimiento", false, true, false);
       if (fechaNacimiento !== "") {
-        var datFechaNacimiento = fechaNacimiento.split("/");
-        $("#fecha-nacimiento").datepicker("setDate", (new Date(datFechaNacimiento[1] + "/" + datFechaNacimiento[0] + "/" + datFechaNacimiento[2])));
+        if (Date.parse(fechaNacimiento)) {
+          var datFechaNacimiento = fechaNacimiento.split("/");
+          $("#fecha-nacimiento").datepicker("setDate", (new Date(datFechaNacimiento[1] + "/" + datFechaNacimiento[0] + "/" + datFechaNacimiento[2])));
+        } else {
+          $("#fecha-nacimiento").datepicker("setDate", (new Date()));
+        }
       }
     }
 
     var fechaInicioClase = $("#fecha-inicio-clase").val();
     establecerCalendario("fecha-inicio-clase", false, false, false);
     if (fechaInicioClase !== "") {
-      var datFechaInicioClase = fechaInicioClase.split("/");
-      $("#fecha-inicio-clase").datepicker("setDate", (new Date(datFechaInicioClase[1] + "/" + datFechaInicioClase[0] + "/" + datFechaInicioClase[2])));
+      if (Date.parse(fechaInicioClase)) {
+        var datFechaInicioClase = fechaInicioClase.split("/");
+        $("#fecha-inicio-clase").datepicker("setDate", (new Date(datFechaInicioClase[1] + "/" + datFechaInicioClase[0] + "/" + datFechaInicioClase[2])));
+      } else {
+        $("#fecha-inicio-clase").datepicker("setDate", (new Date()));
+      }
     }
 
     var numeroHorasClase = $("input[name='auxNumeroHorasClase']").val();

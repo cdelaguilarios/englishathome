@@ -98,6 +98,7 @@ class Interesado extends Model {
     $curso = Curso::obtenerXId($datos["idCurso"]);
     $datos["titulo"] = $curso->nombre;
     $datos["curso"] = $curso->nombre;
+    $datos["incluirInversionCuotas"] = $curso->incluirInversionCuotas;
     $datos["urlInscripcion"] = route("alumnos.crear.externo", ["codigoVerificacion" => Crypt::encrypt($entidad->id)]);
     $correo = (isset($datos["correoCotizacionPrueba"]) ? $datos["correoCotizacionPrueba"] : $entidad->correoElectronico);
     $nombreDestinatario = (isset($datos["correoCotizacionPrueba"]) ? "" : $entidad->nombre . " " . $entidad->apellido);

@@ -6,7 +6,7 @@
   var tiposSexos = {!! json_encode(App\Helpers\Enum\SexosEntidad::listar()) !!};
   var tiposDocumentos = {!! json_encode(App\Models\TipoDocumento::listarSimple()) !!};
   var alumnos = {!! json_encode(App\Models\Alumno::listarBusqueda()) !!};
-  var entidades = {!! json_encode($entidades) !!};
+  var entidades = {!! json_encode(App\Helpers\Enum\TiposEntidad::listar()) !!};
   var urlListarCampos = "{{ route('reportes.listar.campos') }}";
   var urlListarEntidadesRelacionadas = "{{ route('reportes.listar.entidades.relacionadas') }}";
   var urlEditar = "{{ route('reportes.editar', ['id' => 0]) }}";

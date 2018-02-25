@@ -105,11 +105,11 @@ class Reporte extends Model {
 
   private static function obtenerDatos($datos) {
     $datosEntidad = json_decode($datos["entidad"], false, 512, JSON_UNESCAPED_UNICODE);
-
     $datosProcesados = [
         "entidad" => $datosEntidad->nombre
     ];
 
+    //Campos
     $camposSeleccionadosPro = [];
     $listaCamposEntidad = Reporte::listarCampos($datosEntidad->nombre);
     foreach ($datosEntidad->camposSel as $campo) {
@@ -119,7 +119,22 @@ class Reporte extends Model {
       }
     }
     $datosProcesados["camposSeleccionados"] = $camposSeleccionadosPro;
-
+    
+    //Gráfico
+    if (isset($datos["tipoGrafico"])){
+      $datosProcesados["tipoGrafico"] = $datos["tipoGrafico"];
+      $camposGraficoSeleccionadosPro = [];
+      $listaCamposEntidad = Reporte::listarCampos($datosEntidad->nombre);
+      foreach ($datosEntidad->camposGraficoSel as $campoGrafico) {
+        $campoGraficoSeleccionado = Reporte::obtenerDatosCampo($datos, $datosEntidad->nombre, $campoGrafico, $listaCamposEntidad[$campoGrafico]);
+        if (!is_null($campoGraficoSeleccionado)) {
+          $camposGraficoSeleccionadosPro[] = $campoGraficoSeleccionado;
+        }
+      }
+      $datosProcesados["camposGraficoSeleccionados"] = $camposGraficoSeleccionadosPro;
+    }
+    
+    //Entidades relacionadas
     if (!is_null($datos["entidadesRelacionadas"])) {
       $entidadesRelacionadasPro = [];
       $entidadesRelacionadas = json_decode($datos["entidadesRelacionadas"], false, 512, JSON_UNESCAPED_UNICODE);

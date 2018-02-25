@@ -55,6 +55,16 @@
           </div>                                        
         </div>
         <div class="form-group">
+          <div class="col-sm-7 col-sm-offset-2">
+            <div class="checkbox">
+              <label class="checkbox-custom" data-initialize="checkbox">
+                {{ Form::label("incluir-inversion-cuotas", "Incluir inversión en cuotas", ["class" => "checkbox-label"]) }}
+                {{ Form::checkbox("incluirInversionCuotas", null, (isset($curso) && $curso->incluirInversionCuotas == 1 ? TRUE : FALSE), ["id" => "incluir-inversion-cuotas"]) }}
+              </label>
+            </div>
+          </div>
+        </div>
+        <div id="sec-inversion-cuotas" class="form-group">
           {{ Form::label("inversion-cuotas", "Inversión en cuotas (*): ", ["class" => "col-sm-2 control-label"]) }}
           @include("util.calculadoraInversionCuotas") 
           <div class="col-sm-10 col-sm-offset-2 sec-inversion">

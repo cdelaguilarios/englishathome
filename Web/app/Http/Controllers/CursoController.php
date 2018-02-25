@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Log;
+use Input;
 use Mensajes;
 use Datatables;
 use App\Models\Curso;
@@ -23,6 +24,16 @@ class CursoController extends Controller {
 
   public function listar() {
     return Datatables::of(Curso::listar())->make(true);
+  }
+
+  public function buscar() {
+    $termino = Input::get("termino");
+    $cursos = Curso::listarBusqueda($termino["term"]);
+    $cursosPro = [];
+    foreach ($cursos as $id => $nombre) {
+      $cursosPro[] = ['id' => $id, 'text' => $nombre];
+    }
+    return \Response::json(["results" => $cursosPro]);
   }
 
   public function datos($id) {

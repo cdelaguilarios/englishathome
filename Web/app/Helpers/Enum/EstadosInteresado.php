@@ -6,6 +6,7 @@ class EstadosInteresado {
 
   const PendienteInformacion = "PENDIENTE-INFORMACION";
   const Contactado = "CONTACTADO";
+  const Favorito = "Favorito";
   const CotizacionEnviada = "COTIZACION-ENVIADA";
   const AlumnoRegistrado = "ALUMNO-REGISTRADO";
 
@@ -13,6 +14,7 @@ class EstadosInteresado {
     return [
         EstadosInteresado::PendienteInformacion => ["Pendiente de información", "label-warning"],
         EstadosInteresado::Contactado => ["Contactado", "label-info"],
+        EstadosInteresado::Favorito => ["Favorito", "label-info"],
         EstadosInteresado::CotizacionEnviada => ["Cotización enviada", "label-primary"],
         EstadosInteresado::AlumnoRegistrado => ["Alumno registrado", "label-success"]
     ];
@@ -29,7 +31,7 @@ class EstadosInteresado {
 
   public static function listarCambio() {
     $estadosBusqueda = EstadosInteresado::listarBusqueda();
-    $estadosDisponibleCambio = [EstadosInteresado::PendienteInformacion, EstadosInteresado::Contactado];
+    $estadosDisponibleCambio = [EstadosInteresado::PendienteInformacion, EstadosInteresado::Contactado, EstadosInteresado::Favorito];
     $estadosCambio = [];
     foreach ($estadosBusqueda as $k => $v) {
       if (in_array($k, $estadosDisponibleCambio)) {
