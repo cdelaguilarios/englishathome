@@ -3,13 +3,14 @@ function verificarJqueryUbicacionMapa() {
 }
 
 var posicionSel = null;
-var mapa, umto = null;
+var mapa, geocoder, umto = null;
 function inicializarMapa() {
   var cen = {lat: -12.069890396610955, lng: -77.10353526868857};
   mapa = new google.maps.Map(document.getElementById("mapa"), {
     zoom: 12,
     center: cen
   });
+  geocoder = new google.maps.Geocoder();
 
   modoVisualizarMapa = (typeof (modoVisualizarMapa) === "undefined" ? "" : modoVisualizarMapa);
   if (!(typeof modoVisualizarMapa !== "" && modoVisualizarMapa === true)) {
@@ -51,11 +52,12 @@ function verificarPosicionSel() {
 }
 function buscarDireccionMapa(direccion) {
   if (direccion !== undefined && direccion !== null && direccion !== "") {
-    var mapaBus = document.getElementById("mapa-bus");
-    mapaBus.value = direccion;
-    google.maps.event.trigger(mapaBus, "focus");
-    google.maps.event.trigger(mapaBus, "keydown", {
-      keyCode: 13
+    geocoder.geocode( { "address": direccion}, function(resultados, estado) {
+      if (estado === "OK") {
+        var mapaBus = document.getElementById("mapa-bus");
+        mapaBus.value = direccion;        
+        seleccionarPosicionMapa(resultados[0].geometry.location, true);
+      }
     });
   }
 }

@@ -20,11 +20,12 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Carlos/Proyectos/englishathome/Web/resources/views/reporte/motor/editar.blade.php</file>
-            <file>file:/D:/Carlos/Proyectos/englishathome/Web/resources/views/reporte/motor/crear.blade.php</file>
-            <file>file:/D:/Carlos/Proyectos/englishathome/Web/resources/views/reporte/motor/formulario.blade.php</file>
-            <file>file:/D:/Carlos/Proyectos/englishathome/Web/public/assets/eah/js/modulos/reporte/motor/formulario.js</file>
-            <file>file:/D:/Carlos/Proyectos/englishathome/Web/app/Http/Controllers/ReporteController.php</file>
+            <file>file:/D:/Carlos/Proyectos/englishathome/Web/app/Http/Controllers/CronController.php</file>
+            <file>file:/D:/Carlos/Proyectos/englishathome/Web/app/Models/Alumno.php</file>
+            <file>file:/D:/Carlos/Proyectos/englishathome/Web/app/Models/Historial.php</file>
+            <file>file:/D:/Carlos/Proyectos/englishathome/Web/app/Http/routes.php</file>
+            <file>file:/D:/Carlos/Proyectos/englishathome/Web/app/Helpers/Enum/EstadosAlumno.php</file>
+            <file>file:/D:/Carlos/Proyectos/englishathome/Web/app/Http/Controllers/HistorialController.php</file>
         </group>
     </open-files>
 </project-private>

@@ -28,8 +28,6 @@ var seccionPaso1 = new function () {
           nombre: nombreEntidad,
           campos: campos,
           camposSel: [],
-          graficoSel: null,
-          graficoCamposSel: [],
           entidadesRelacionadasSel: []
         };
         $("#btn-siguiente").show();
@@ -95,8 +93,8 @@ var seccionPaso2 = new function () {
       }
       $(self.contenedor).find("#sec-campos").append(
           '<div class="col-sm-3">' +
-            '<input id="cb-campo-' + nombreCampo.toLowerCase() + '" type="checkbox" name="campos" value="' + nombreCampo + '"' + chkCampoSeleccionado + '>' +
-            '<label for="cb-campo-' + nombreCampo.toLowerCase() + '">' + datosCampo.titulo + '</label>' +
+          '<input id="cb-campo-' + nombreCampo.toLowerCase() + '" type="checkbox" name="campos" value="' + nombreCampo + '"' + chkCampoSeleccionado + '>' +
+          '<label for="cb-campo-' + nombreCampo.toLowerCase() + '">' + datosCampo.titulo + '</label>' +
           '</div>');
     });
   };
@@ -156,7 +154,7 @@ var seccionPaso3 = new function () {
     $.each(motor.entidadesRelacionadas, function (nombreEntidadRel, datosEntidadRel) {
       $(self.contenedor).find("#sec-entidades-relacionadas").append(
           '<div class="col-sm-3">' +
-            '<button type="button" class="btn-entidad" rel="' + nombreEntidadRel + '">' + datosEntidadRel[5] + ' ' + datosEntidadRel[0] + '</button>' +
+          '<button type="button" class="btn-entidad" rel="' + nombreEntidadRel + '">' + datosEntidadRel[5] + ' ' + datosEntidadRel[0] + '</button>' +
           '</div>');
     });
   };
@@ -248,11 +246,18 @@ var seccionPaso4 = new function () {
       $(this.contenedor).find(idSeccion).html("");
     }
     self.procesarFiltros(idSeccion, nombreEntidad, campos, camposSel, (datos ? datos.camposSeleccionados : null));
-    
+
     //Entidades relacionadas
     motor.entidadSel.entidadesRelacionadasSel.forEach(function (datosEntidadRel)
     {
       var idSeccionEntidadRel = "#sec-filtros-" + datosEntidadRel.nombre.toLowerCase();
+
+      var tituloEntidadRel = motor.entidadesRelacionadas[datosEntidadRel.nombre][0];
+      var seccionAgregada = (self.camposCargados[datosEntidadRel.nombre.toLowerCase()] !== undefined);
+      if (!seccionAgregada)
+        $(self.contenedor).find(idSeccion).append('<div id="' + idSeccionEntidadRel.replace("#", "") + '" class="col-sm-12">' +
+            '<h4>Filtros - ' + tituloEntidadRel + '</h4>');
+
       if (datosEntidadRel.tipoSel === "campos") {
         //Modo edición
         var datosCamposSel = null;
@@ -263,25 +268,22 @@ var seccionPaso4 = new function () {
           if (datEntidadRelacionada.length)
             datosCamposSel = datEntidadRelacionada[0].camposSeleccionados;
         }
-        
-        var tituloEntidadRel = motor.entidadesRelacionadas[datosEntidadRel.nombre][0];
-        var seccionAgregada = (self.camposCargados[datosEntidadRel.nombre.toLowerCase()] !== undefined);
-        if (!seccionAgregada)
-          $(self.contenedor).find(idSeccion).append('<div id="' + idSeccionEntidadRel.replace("#", "") + '" class="col-sm-12">' +
-              '<h4>Filtros - ' + tituloEntidadRel + '</h4>');        
         self.procesarFiltros(idSeccionEntidadRel, datosEntidadRel.nombre, datosEntidadRel.campos, datosEntidadRel.camposSel, datosCamposSel);
-        if (!seccionAgregada)
-          $(self.contenedor).find(idSeccion).append('</div>');        
       } else {
         var reglasValidacion = $("#formulario-reporte").validate().settings.rules;
         for (var campo in reglasValidacion)
           if (campo.indexOf("-" + datosEntidadRel.nombre.toLowerCase() + "-") >= 0)
             delete reglasValidacion[campo];
 
-        $(idSeccionEntidadRel).remove();
+        self.procesarFiltros(idSeccionEntidadRel, datosEntidadRel.nombre, [], [], datosCamposSel);
+
+        /*$(idSeccionEntidadRel).remove();
         if (self.camposCargados[datosEntidadRel.nombre.toLowerCase()] !== undefined)
-          self.camposCargados[datosEntidadRel.nombre.toLowerCase()] = undefined;
+          self.camposCargados[datosEntidadRel.nombre.toLowerCase()] = undefined;*/
       }
+
+      if (!seccionAgregada)
+        $(self.contenedor).find(idSeccion).append('</div>');
     });
   };
   this.procesarFiltros = function (idSeccion, nombreEntidad, campos, camposSel, datosCamposSel) {
@@ -309,10 +311,19 @@ var seccionPaso4 = new function () {
         self.agregarFiltroListaOpciones(idSeccion, nombreEntidad, campos, id, tiposDocumentos, datosCamposSel);
     });
 
+    //Filtro de búsqueda
+    var idBusqueda = "busqueda";
+    if (self.camposCargados[nombreEntidad.toLowerCase()].indexOf(idBusqueda) === -1) {
+      self.camposCargados[nombreEntidad.toLowerCase()].push(idBusqueda);
+      self.agregarFiltroBusqueda(idSeccion, nombreEntidad, datosCamposSel);
+    }
+
     var camposEli = $(this.camposCargados[nombreEntidad.toLowerCase()]).not(camposSel).get();
     $.each(camposEli, function (num, id) {
-      $("#sec-filtro-" + nombreEntidad.toLowerCase() + "-" + id.toLowerCase()).remove();
-      self.camposCargados[nombreEntidad.toLowerCase()].splice(self.camposCargados[nombreEntidad.toLowerCase()].indexOf(id), 1);
+      if (id !== idBusqueda) {
+        $("#sec-filtro-" + nombreEntidad.toLowerCase() + "-" + id.toLowerCase()).remove();
+        self.camposCargados[nombreEntidad.toLowerCase()].splice(self.camposCargados[nombreEntidad.toLowerCase()].indexOf(id), 1);
+      }
     });
   };
   //Util
@@ -323,18 +334,18 @@ var seccionPaso4 = new function () {
 
     $(this.contenedor).find(idSeccion).append(
         '<div id="' + idContenedor + '" class="form-group">' +
-          '<label for="' + idFiltro + '" class="col-sm-2 control-label">' + campos[idCampo].titulo + '</label>' +
-          '<div class="col-sm-2">' +
-            '<select name="' + idSelTipo + '" class="form-control">' +
-              '<option value="=">Igual a</option>' +
-              '<option value="<>">Diferente a</option>' +
-              '<option value="LIKE">Contiene</option>' +
-              '<option value="NOT LIKE">No contiene</option>' +
-            '</select>' +
-          '</div>' +
-          '<div class="col-sm-8">' +
-            '<input type="text" id="' + idFiltro + '" name="' + idFiltro + '" class="form-control" maxlength="255" />' +
-          '</div>' +
+        '<label for="' + idFiltro + '" class="col-sm-2 control-label">' + campos[idCampo].titulo + '</label>' +
+        '<div class="col-sm-2">' +
+        '<select name="' + idSelTipo + '" class="form-control">' +
+        '<option value="=">Igual a</option>' +
+        '<option value="<>">Diferente a</option>' +
+        '<option value="LIKE">Contiene</option>' +
+        '<option value="NOT LIKE">No contiene</option>' +
+        '</select>' +
+        '</div>' +
+        '<div class="col-sm-8">' +
+        '<input type="text" id="' + idFiltro + '" name="' + idFiltro + '" class="form-control" maxlength="255" />' +
+        '</div>' +
         '</div>');
 
     if (datosCamposSel) {
@@ -355,22 +366,22 @@ var seccionPaso4 = new function () {
 
     $(this.contenedor).find(idSeccion).append(
         '<div id="' + idContenedor + '" class="form-group">' +
-          '<label for="' + idFiltro + '" class="col-sm-2 control-label">' + campos[idCampo].titulo + '</label>' +
-          '<div class="col-sm-2">' +
-            '<select name="' + idSelTipo + '" class="form-control">' +
-              '<option value="=">Igual a</option>' +
-              '<option value="<>">Diferente a</option>' +
-              '<option value="LIKE">Contiene</option>' +
-              '<option value="NOT LIKE">No contiene</option>' +
-              '<option value=">">Mayor a</option>' +
-              '<option value=">=">Mayor o igual a</option>' +
-              '<option value="<">Menor a</option>' +
-              '<option value="<=">Menor o igual a</option>' +
-            '</select>' +
-          '</div>' +
-          '<div class="col-sm-8">' +
-            '<input type="number" id="' + idFiltro + '" name="' + idFiltro + '" class="form-control" maxlength="19" />' +
-          '</div>' +
+        '<label for="' + idFiltro + '" class="col-sm-2 control-label">' + campos[idCampo].titulo + '</label>' +
+        '<div class="col-sm-2">' +
+        '<select name="' + idSelTipo + '" class="form-control">' +
+        '<option value="=">Igual a</option>' +
+        '<option value="<>">Diferente a</option>' +
+        '<option value="LIKE">Contiene</option>' +
+        '<option value="NOT LIKE">No contiene</option>' +
+        '<option value=">">Mayor a</option>' +
+        '<option value=">=">Mayor o igual a</option>' +
+        '<option value="<">Menor a</option>' +
+        '<option value="<=">Menor o igual a</option>' +
+        '</select>' +
+        '</div>' +
+        '<div class="col-sm-8">' +
+        '<input type="number" id="' + idFiltro + '" name="' + idFiltro + '" class="form-control" maxlength="19" />' +
+        '</div>' +
         '</div>');
     $("#" + idFiltro).rules("add", {
       validarDecimal: true
@@ -395,24 +406,24 @@ var seccionPaso4 = new function () {
 
     $(this.contenedor).find(idSeccion).append(
         '<div id="' + idContenedor + '" class="form-group">' +
-          '<label for="' + idFiltroFechaIni + '" class="col-sm-2 control-label">' + campos[idCampo].titulo + '</label>' +
-          '<div class="col-sm-2">' +
-            '<select id="' + idSelTipo + '" name="' + idSelTipo + '" class="form-control">' +
-              '<option value="=">Igual a</option>' +
-              '<option value="<>">Diferente a</option>' +
-              '<option value=">">Mayor a</option>' +
-              '<option value=">=">Mayor o igual a</option>' +
-              '<option value="<">Menor a</option>' +
-              '<option value="<=">Menor o igual a</option>' +
-              '<option value="BETWEEN">Entre</option>' +
-            '</select>' +
-          '</div>' +
-          '<div class="col-sm-2">' +
-            '<input type="text" id="' + idFiltroFechaIni + '" name="' + idFiltroFechaIni + '" class="form-control" />' +
-          '</div>' +
-          '<div class="col-sm-2">' +
-            '<input type="text" id="' + idFiltroFechaFin + '" name="' + idFiltroFechaFin + '" class="form-control" style="display:none" />' +
-          '</div>' +
+        '<label for="' + idFiltroFechaIni + '" class="col-sm-2 control-label">' + campos[idCampo].titulo + '</label>' +
+        '<div class="col-sm-2">' +
+        '<select id="' + idSelTipo + '" name="' + idSelTipo + '" class="form-control">' +
+        '<option value="=">Igual a</option>' +
+        '<option value="<>">Diferente a</option>' +
+        '<option value=">">Mayor a</option>' +
+        '<option value=">=">Mayor o igual a</option>' +
+        '<option value="<">Menor a</option>' +
+        '<option value="<=">Menor o igual a</option>' +
+        '<option value="BETWEEN">Entre</option>' +
+        '</select>' +
+        '</div>' +
+        '<div class="col-sm-2">' +
+        '<input type="text" id="' + idFiltroFechaIni + '" name="' + idFiltroFechaIni + '" class="form-control" />' +
+        '</div>' +
+        '<div class="col-sm-2">' +
+        '<input type="text" id="' + idFiltroFechaFin + '" name="' + idFiltroFechaFin + '" class="form-control" style="display:none" />' +
+        '</div>' +
         '</div>');
 
     $(this.contenedor).find(idSeccion).on('change', "#" + idSelTipo, function () {
@@ -460,15 +471,15 @@ var seccionPaso4 = new function () {
 
     $(this.contenedor).find(idSeccion).append(
         '<div id="' + idContenedor + '" class="form-group">' +
-          '<div class="col-sm-1"></div>' +
-          '<div class="col-sm-11">' +
-            '<div class="checkbox">' +
-              '<label class="checkbox-custom' + txtSeleccionado + '" data-initialize="checkbox">' +
-              '<label for="' + idFiltro + '" class="checkbox-label">' + campos[idCampo].titulo + '</label>' +
-                '<input id="' + idFiltro + '" name="' + idFiltro + '" type="checkbox"' + txtSeleccionado + '>' +
-              '</label>' +
-            '</div>' +
-          '</div>' +
+        '<div class="col-sm-1"></div>' +
+        '<div class="col-sm-11">' +
+        '<div class="checkbox">' +
+        '<label class="checkbox-custom' + txtSeleccionado + '" data-initialize="checkbox">' +
+        '<label for="' + idFiltro + '" class="checkbox-label">' + campos[idCampo].titulo + '</label>' +
+        '<input id="' + idFiltro + '" name="' + idFiltro + '" type="checkbox"' + txtSeleccionado + '>' +
+        '</label>' +
+        '</div>' +
+        '</div>' +
         '</div>');
   };
   this.agregarFiltroListaOpciones = function (idSeccion, entidad, campos, idCampo, listaOpciones, datosCamposSel) {
@@ -481,12 +492,12 @@ var seccionPaso4 = new function () {
     });
     $(this.contenedor).find(idSeccion).append(
         '<div id="' + idContenedor + '" class="form-group">' +
-          '<label for="' + idFiltro + '" class="col-sm-2 control-label">' + campos[idCampo].titulo + '</label>' +
-          '<div class="col-sm-2">' +
-            '<select id="' + idFiltro + '" name="' + idFiltro + '" class="form-control">' +
-            contenidoOpciones +
-            '</select>' +
-          '</div>' +
+        '<label for="' + idFiltro + '" class="col-sm-2 control-label">' + campos[idCampo].titulo + '</label>' +
+        '<div class="col-sm-2">' +
+        '<select id="' + idFiltro + '" name="' + idFiltro + '" class="form-control">' +
+        contenidoOpciones +
+        '</select>' +
+        '</div>' +
         '</div>');
 
     if (datosCamposSel) {
@@ -546,93 +557,6 @@ var seccionPaso4 = new function () {
 var seccionPaso5 = new function () {
   this.contenedor = null;
   this.cambioEntidad = true;
-  this.titulo = "Seleccione un gráfico (opcional)";
-  this.cargar = function (contenedor) {
-    var self = this;
-    this.contenedor = contenedor;
-    $(this.contenedor).on('click', ".btn-tipo-grafico", function () {
-      if ($(this).hasClass("btn-activo")) {
-        motor.entidadSel.tipoGrafico = null;
-        $(self.contenedor).find("#sec-campos-grafico").hide();
-        $(self.contenedor).find(".btn-tipo-grafico").removeClass("btn-activo");
-      } else {
-        self.seleccionarTipoGrafico($(this).attr("rel"));
-      }
-      motor.entidadSel.camposGraficoSel = [];
-    });    
-    $(this.contenedor).on('click', "[id*='cb-campo-grafico-']", function () {
-      var camposGraficoSel = motor.entidadSel.camposGraficoSel;
-      (($(this).is(':checked')) ? camposGraficoSel.push($(this).val()) : camposGraficoSel.splice(camposGraficoSel.indexOf($(this).val()), 1));
-    });
-  };
-  this.preMostrar = function (solicitudSiguiente) {
-    if (Object.keys(motor.entidadSel).length) {
-      var totalCamposNumericos = 0;
-      $.each(motor.entidadSel.campos, function (nombreCampo, datosCampo) {
-        if ((["int", "float"]).indexOf(datosCampo.tipo.toLowerCase()) !== -1)
-          totalCamposNumericos++;
-      });
-      
-      if(totalCamposNumericos >= 2){
-        $("#sec-titulo").text(this.titulo);
-        $("#sec-mensaje-campos-obligatorios, #btn-guardar").hide();
-        $("#btn-siguiente, #btn-anterior").show();
-        if (this.cambioEntidad)
-          this.agregarCamposGrafico();
-        return true;
-      }else{
-        (solicitudSiguiente ? motor.siguienteSeccion() : motor.anteriorSeccion());
-        return false;
-      }     
-    } else {
-      motor.anteriorSeccion();
-      return false;
-    }
-  };
-  this.preOcultar = function () {
-    return true;
-  };
-  this.seleccionarTipoGrafico = function (tipoGrafico) {    
-    motor.entidadSel.tipoGrafico = tipoGrafico;
-    this.agregarCamposGrafico();
-    $(this.contenedor).find("#sec-campos-grafico").show();
-    $(this.contenedor).find(".btn-tipo-grafico").removeClass("btn-activo");
-    $(this.contenedor).find(".btn-tipo-grafico[rel='" + tipoGrafico + "']").addClass("btn-activo");
-  };
-  this.agregarCamposGrafico = function (camposGraficoSeleccionados) {
-    var self = this;
-    this.cambioEntidad = false;
-    $(this.contenedor).find("#sec-campos-grafico").html("");
-    var totalCamposSel = 0;
-    $.each(motor.entidadSel.campos, function (nombreCampo, datosCampo) {
-      if ((["int", "float"]).indexOf(datosCampo.tipo.toLowerCase()) !== -1){
-        var chkCampoSeleccionado = '';
-        //Modo edición
-        if (camposGraficoSeleccionados) {
-          var datCampoSel = $.grep(camposGraficoSeleccionados, function (campoSeleccionado) {
-            return campoSeleccionado.nombre.toLowerCase() === nombreCampo.toLowerCase();
-          });
-          if (datCampoSel.length) {
-            totalCamposSel++;
-            $(self.contenedor).find("#sec-campos-grafico").show();
-            if(totalCamposSel <= 2){
-              chkCampoSeleccionado = ' checked';
-              motor.entidadSel.camposGraficoSel.push(nombreCampo);
-            }
-          }
-        }
-        $(self.contenedor).find("#sec-campos-grafico").append(
-            '<div class="col-sm-3">' +
-              '<input id="cb-campo-grafico-' + nombreCampo.toLowerCase() + '" type="checkbox" name="camposGrafico" value="' + nombreCampo + '"' + chkCampoSeleccionado + '>' +
-              '<label for="cb-campo-grafico-' + nombreCampo.toLowerCase() + '">' + datosCampo.titulo + '</label>' +
-            '</div>');
-      }
-    });
-  };
-};
-var seccionPaso6 = new function () {
-  this.contenedor = null;
-  this.cambioEntidad = true;
   this.titulo = "Ingrese los datos finales";
   this.cargar = function (contenedor) {
     this.contenedor = contenedor;
@@ -688,7 +612,7 @@ var motor = new function () {
       this.mostrarOcultarSeccion(false, true);
     }
   };
-  
+
   this.cambioEntidad = function () {
     $("[id*='sec-paso-']").each(function () {
       if (window["seccionPaso" + $(this).attr("id").replace("sec-paso-", "")])
@@ -711,8 +635,6 @@ var motor = new function () {
       seccionPaso1.seleccionarEntidad(datosGuardados.entidad, function () {
         seccionPaso2.agregarCampos(datosGuardados.camposSeleccionados);
         seccionPaso3.agregarEntidadesRelacionadas();
-        seccionPaso5.seleccionarTipoGrafico(datosGuardados.tipoGrafico);
-        seccionPaso5.agregarCamposGrafico(datosGuardados.camposGraficoSeleccionados);
 
         if (datosGuardados.entiadesRelacionadas.length) {
           var entidadesRelacionadasCargadas = 0;
