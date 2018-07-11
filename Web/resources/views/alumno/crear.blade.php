@@ -41,7 +41,7 @@
     @if(isset($nuevoRegistro) && $nuevoRegistro)
     Muchas gracias por registrar sus datos, pronto nos estaremos comunicando con usted.
     @else
-    Usted ya está registrado como alumno(a) en nuestro sistema, para cualquier información comuniquese con nosotros al {{ App\Models\VariableSistema::obtenerXLlave("telefonosCelulares") }}.
+    Usted ya está registrado como alumno(a) en nuestro sistema, para cualquier información comuniquese con nosotros al {{ App\Models\VariableSistema::obtenerXLlave("celularesEmpresa") }}.
     @endif
   </h4>
 </div>

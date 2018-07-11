@@ -196,6 +196,10 @@ class Interesado extends Model {
           "enviarCorreo" => (Auth::guest() ? 1 : 0),
           "mensaje" => ""
       ]);
+    } else {
+      $alumno = Entidad::obtenerXId($idAlumno);
+      $alumno->comentarioAdministrador = $datos["comentarioAdicional"];
+      $alumno->save();
     }
     RelacionEntidad::registrar($idAlumno, $id, TiposRelacionEntidad::AlumnoInteresado);
     Interesado::actualizarEstado($id, EstadosInteresado::AlumnoRegistrado);

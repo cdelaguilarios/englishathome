@@ -10,8 +10,7 @@
   var urlPerfil = "{{ route('alumnos.perfil', ['id' => 0]) }}";
   var urlBuscar = "{{ route('alumnos.buscar') }}";
   var idAlumno = "{{ $alumno->id}}";
-  var nombreCompletoAlumno = "{{ $alumno->nombre . " " .  $alumno->apellido }}";
-</script>
+  var nombreCompletoAlumno = "{{ $alumno->nombre . " " .  $alumno->apellido }}";</script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/alumno.js") }}"></script>
 @endsection
 
@@ -106,10 +105,7 @@
           {{ \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaNacimiento)->format("d/m/Y") }}
         </p>
         <hr>    
-        @endif                          
-        <a href="{{ route("alumnos.editar", $alumno->id)}}" class="btn btn-primary btn-block"><b>Editar datos</b></a>
-        <!--<a href="{{ route("alumnos.descargar.ficha", $alumno->id)}}" class="btn btn-primary btn-block"><b>Descargar ficha</b></a>-->
-        <a href="{{ route("alumnos.ficha", $alumno->id)}}" target="_blank" class="btn btn-primary btn-block"><b>Descargar ficha</b></a>
+        @endif                 
       </div>
     </div>
   </div>
@@ -118,7 +114,10 @@
       <div class="box-body">
         <div class="form-group">
           <div class="col-sm-6">
-            <a href="{{ route("alumnos.crear")}}" class="btn btn-primary btn-clean">Nuevo alumno</a> 
+            <a href="{{ route("alumnos.crear")}}" class="btn btn-primary btn-clean">Nuevo alumno</a>          
+            <a href="{{ route("alumnos.editar", $alumno->id)}}" class="btn btn-primary btn-clean">Editar datos</a>
+            <!--<a href="{{ route("alumnos.descargar.ficha", $alumno->id)}}" class="btn btn-primary btn-clean">Descargar ficha</a>-->
+            <a href="{{ route("alumnos.ficha", $alumno->id)}}" target="_blank" class="btn btn-primary btn-clean">Descargar ficha</a>
           </div>      
           <div class="col-sm-2">
             @if(isset($alumno->idAlumnoSiguiente))

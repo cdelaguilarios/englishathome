@@ -119,7 +119,7 @@
         </div>
         <div id="sec-wiz-alumno-3" class="step-pane sample-pane alert" data-step="3">
           <div class="form-group">
-            {{ Form::label("idNivelIngles", "Nivel de ingles logrado (*): ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("idNivelIngles", "Nivel de inglés logrado (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3">
               {{ Form::select("idNivelIngles", App\Models\NivelIngles::listarSimple(), (isset($alumno) ? $alumno->idNivelIngles : null), ["class" => "form-control"]) }}
             </div>                   
@@ -189,8 +189,8 @@
             <div class="col-sm-3">
               {{ Form::select("idCurso", $cursos, (isset($alumno) ? $alumno->idCurso : (isset($interesado) ? $interesado->idCurso : null)), ["class" => "form-control"]) }}
             </div>
-            {{ Form::label("numero-horas-clase", "Número de horas por clase (*): ", ["class" => "col-sm-3 control-label"]) }}
-            <div class="col-sm-2">
+            {{ Form::label("numero-horas-clase", "Número de horas por clase (*): ", ["class" => "col-sm-3 control-label hidden"]) }}
+            <div class="col-sm-2 hidden">
               {{ Form::select("numeroHorasClase", [], (isset($alumno->numeroHorasClase) ? $alumno->numeroHorasClase : null), ["id" => "numero-horas-clase", "class" => "form-control"]) }}     
               {{ Form::hidden("auxNumeroHorasClase", (isset($alumno->numeroHorasClase) ? $alumno->numeroHorasClase : null)) }}             
             </div>                    
