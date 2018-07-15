@@ -61,7 +61,7 @@
         <p class="text-muted">
           <a href="{{ route("profesores.perfil", ["id" => $alumno->profesorProximaClase->idEntidad]) }}" target="_blank">
             {{ $alumno->profesorProximaClase->nombre . " " .  $alumno->profesorProximaClase->apellido }}
-          </a>
+          </a><br>(Pago por hora de clase: <b>{{ number_format($alumno->datosProximaClase->costoHoraProfesor, 2, ".", ",") }}</b>)
         </p>
         <hr> 
         @endif
@@ -71,6 +71,20 @@
           {{ \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaInicioClase)->format("d/m/Y") }}
         </p>
         <hr>    
+        @endif
+        @if(isset($alumno->datosProximaClase) && isset($alumno->datosProximaClase->tiempos))
+        <strong><i class="fa fa-clock-o margin-r-5"></i> Total de horas pagadas</strong>
+        <p class="text-muted">
+          {{ App\Helpers\Util::formatoHora($alumno->datosProximaClase->tiempos->duracionTotal) }}
+        </p>
+        <hr>    
+        @endif
+        @if(isset($alumno->telefono))
+        <strong><i class="fa fa-phone margin-r-5"></i> Teléfono</strong>
+        <p class="text-muted">
+          {{ $alumno->telefono }}
+        </p>
+        <hr>
         @endif
         <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
         <p class="text-muted">{{ $alumno->direccion }}{!! ((isset($alumno->numeroDepartamento) && $alumno->numeroDepartamento != "") ? "<br/>Depto./Int " . $alumno->numeroDepartamento : "") !!}{!! ((isset($alumno->referenciaDireccion) && $alumno->referenciaDireccion != "") ? " - " . $alumno->referenciaDireccion : "") !!}<br/>{{ $alumno->direccionUbicacion }}</p>
@@ -84,18 +98,39 @@
           {{ $alumno->interesadoRelacionado["consulta"] }}
         </p>
         <hr>  
-        @endif      
+        @endif              
+        @if(isset($alumno->idNivelIngles) && !empty($alumno->idNivelIngles))
+        <strong><i class="fa fa-list-ol margin-r-5"></i> Nivel de inglés</strong>
+        <p class="text-muted">
+          {{ App\Models\NivelIngles::listarSimple()[$alumno->idNivelIngles] }}
+        </p>
+        <hr>
+        @endif              
+        @if(isset($alumno->inglesLugarEstudio) && !empty($alumno->inglesLugarEstudio))
+        <strong><i class="fa fa-institution margin-r-5"></i> Lugar donde estudio anteriormente</strong>
+        <p class="text-muted">
+          {{ $alumno->inglesLugarEstudio }}
+        </p>
+        <hr>
+        @endif           
+        @if(isset($alumno->inglesPracticaComo) && !empty($alumno->inglesPracticaComo))
+        <strong><i class="fa fa-commenting-o margin-r-5"></i> ¿Cómo practica?</strong>
+        <p class="text-muted">
+          {{ $alumno->inglesPracticaComo }}
+        </p>
+        <hr>
+        @endif       
+        @if(isset($alumno->inglesObjetivo) && !empty($alumno->inglesObjetivo))
+        <strong><i class="fa fa-check-square-o margin-r-5"></i> Objetivos específicos</strong>
+        <p class="text-muted">
+          {{ $alumno->inglesObjetivo }}
+        </p>
+        <hr>
+        @endif
         @if(isset($alumno->numeroDocumento))
         <strong><i class="fa fa-user margin-r-5"></i> {{ (isset($alumno->idTipoDocumento) ? App\Models\TipoDocumento::listarSimple()[$alumno->idTipoDocumento] : "") }}</strong>
         <p class="text-muted">
           {{ $alumno->numeroDocumento }}
-        </p>
-        <hr>
-        @endif
-        @if(isset($alumno->telefono))
-        <strong><i class="fa fa-phone margin-r-5"></i> Teléfono</strong>
-        <p class="text-muted">
-          {{ $alumno->telefono }}
         </p>
         <hr>
         @endif

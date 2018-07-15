@@ -45,7 +45,7 @@
             <div class="col-sm-12 vcenter">
               <p class="sec-ficha-nombre-entidad">
                 @if(isset($alumno))
-                <b>Ficha {{ $alumno->sexo == "F" ? "de la alumna" : "del alumno" }}<br/>{{ $alumno->nombre . " " .  $alumno->apellido }}</b>
+                <b>Ficha {{ $alumno->sexo == "F" ? "de la alumna" : "del alumno" }}<br/>{{ $alumno->nombre . " " .  $alumno->apellido }}<br/><small><i class="fa fa-fw fa-envelope"></i> {{ $alumno->correoElectronico }}<br/><i class="fa fa-fw fa-phone"></i> {{ $alumno->telefono }}</small></b>
                 @elseif(isset($profesor))
                 <b>Ficha {{ $profesor->sexo == "F" ? "de la profesora" : "del profesor" }}<br/>{{ $profesor->nombre . " " .  $profesor->apellido }}</b>
                 @endif

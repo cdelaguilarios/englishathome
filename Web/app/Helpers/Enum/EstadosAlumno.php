@@ -15,7 +15,7 @@ class EstadosAlumno {
         EstadosAlumno::PorConfirmar => ["Por confirmar", "label-primary"],
         EstadosAlumno::StandBy => ["Stand by", "label-warning"],
         EstadosAlumno::Activo => ["Activo", "label-success"],
-        EstadosAlumno::CuotaProgramada => ["Cuota programada", "label-warning"],
+        EstadosAlumno::CuotaProgramada => ["Período concluido", "label-warning"],
         EstadosAlumno::Inactivo => ["Inactivo", "label-danger"]
     ];
   }

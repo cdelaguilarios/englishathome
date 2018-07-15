@@ -266,7 +266,6 @@ function formatoHora(tiempoSegundos, incluirSegundos) {
   var m = Math.floor(tiempoSegundos % 3600 / 60);
   var s = Math.floor(tiempoSegundos % 3600 % 60);
   return ((h >= 0 ? h + ":" + (m < 10 ? "0" : "") : "") + m + (incluirSegundos ? ":" + (s < 10 ? "0" : "") + s : ""));
-
 }
 function tiempoSegundos(fecha) {
   if (!isNaN(Date.parse(fecha))) {

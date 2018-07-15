@@ -29,4 +29,4 @@
   var modoVisualizarMapa = {{ (isset($modo) && ($modo === "visualizar" || $modo === "ficha")) ? "true" : "false" }};
 </script>
 <script type="text/javascript" src="{{ asset("assets/eah/js/ubicacionMapa.js") }}"></script>
-<script src="//maps.googleapis.com/maps/api/js?key=AIzaSyD3y8Vvx3X9BquN5iaZcLQdD-768cy0ADY&libraries=places&callback=verificarJqueryUbicacionMapa{{ ((isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()) ? "&language=en" : "") }}" async defer></script>
+<script src="//maps.googleapis.com/maps/api/js?key={{ Config::get("eah.apiKeyGoogleMaps") }}&libraries=places&callback=verificarJqueryUbicacionMapa{{ ((isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()) ? "&language=en" : "") }}" async defer></script>

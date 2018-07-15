@@ -46,6 +46,31 @@ class PagoAlumno extends Model {
                     ->leftJoin(PagoClase::nombreTabla() . " as pagoClase", $nombreTabla . ".idPago", "=", "pagoClase.idPago")
                     ->where("pagoClase.idClase", $idClase)->first();
   }
+  
+  public static function obtenerTiemposClasesXId($idAlumno, $id){
+    $datosPago = PagoAlumno::obtenerXId($idAlumno, $id);
+    if(isset($datosPago) && $datosPago->motivo == MotivosPago::Clases){      
+      $montoTotal = (!is_null($datosPago->monto) ? (float) $datosPago->monto : 0);
+      $saldoFavor = (!is_null($datosPago->saldoFavor) ? (float) $datosPago->saldoFavor : 0);
+      $montoTotalClases = ($montoTotal - $saldoFavor);
+      $costoHoraPromedio = (!is_null($datosPago->costoHoraPromedio) ? (float) $datosPago->costoHoraPromedio : 0);
+      
+      $duracionTotal = ($costoHoraPromedio > 0 ? (($montoTotalClases / $costoHoraPromedio) * 3600) : 0);
+      $duracionRealizada = (!is_null($datosPago->duracionMontoRealizado) ? (float) explode("-", $datosPago->duracionMontoRealizado)[0] : 0);
+      $duracionPendiente = ($duracionTotal - $duracionRealizada);
+      $duracionPendienteReal = (!is_null($datosPago->duracionMontoPendiente) ? (float) explode("-", $datosPago->duracionMontoPendiente)[0] : 0);
+      $duracionNoPagada = ($costoHoraPromedio > 0 ? (($duracionRealizada + $duracionPendienteReal) - $duracionTotal) : 0);
+      
+      return (object) [
+        "duracionTotal" => $duracionTotal,
+        "duracionRealizada" => $duracionRealizada,
+        "duracionPendiente" => $duracionPendiente,
+        "duracionPendienteReal" => $duracionPendienteReal,
+        "duracionNoPagada" => $duracionNoPagada
+      ];
+    }
+    return null;
+  }
 
   public static function registrar($idAlumno, $request) {
     $datos = $request->all();

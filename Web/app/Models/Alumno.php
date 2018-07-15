@@ -29,7 +29,13 @@ class Alumno extends Model {
   public static function listar($datos = NULL) {
     $alumnos = Alumno::leftJoin(Entidad::nombreTabla() . " as entidad", Alumno::nombreTabla() . ".idEntidad", "=", "entidad.id")->where("entidad.eliminado", 0)->groupBy("entidad.id")->distinct();
     if (isset($datos["estado"])) {
-      $alumnos->where("entidad.estado", $datos["estado"]);
+      if ($datos["estado"] == EstadosAlumno::Activo) {
+        $alumnos->where(function ($q) use($datos) {
+          $q->where("entidad.estado", $datos["estado"])->orWhere('entidad.estado', EstadosAlumno::CuotaProgramada);
+        });
+      } else {
+        $alumnos->where("entidad.estado", $datos["estado"]);
+      }
     }
     return $alumnos;
   }
@@ -38,7 +44,7 @@ class Alumno extends Model {
     $alumnos = Alumno::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
     if (isset($terminoBus)) {
       $alumnos->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
-    }    
+    }
     return $alumnos->lists("nombreCompleto", "entidad.id");
   }
 
@@ -53,8 +59,12 @@ class Alumno extends Model {
       $alumno->idNivelIngles = (isset($entidadNivelIngles) ? $entidadNivelIngles->idNivelIngles : NULL);
       $entidadCurso = EntidadCurso::obtenerXEntidad($id);
       $alumno->idCurso = (isset($entidadCurso) ? $entidadCurso->idCurso : NULL);
-      $datosProximaClase = Clase::obtenerProximaClase($id);
-      $alumno->profesorProximaClase = (isset($datosProximaClase) && Profesor::verificarExistencia($datosProximaClase->idProfesor) ? Profesor::obtenerXId($datosProximaClase->idProfesor) : NULL);      
+      $alumno->datosProximaClase = Clase::obtenerProximaClase($id);
+      if (isset($alumno->datosProximaClase)) {
+        $datosPago = PagoAlumno::obtenerXClase($id, $alumno->datosProximaClase->id);
+        $alumno->datosProximaClase->tiempos = (isset($datosPago) ? PagoAlumno::obtenerTiemposClasesXId($id, $datosPago->id) : NULL);
+      }
+      $alumno->profesorProximaClase = (isset($alumno->datosProximaClase) && Profesor::verificarExistencia($alumno->datosProximaClase->idProfesor) ? Profesor::obtenerXId($alumno->datosProximaClase->idProfesor) : NULL);
       $idAlumnoAnterior = Alumno::listar()->select("entidad.id")->where("entidad.id", "<", $id)->where("entidad.estado", $alumno->estado)->orderBy("entidad.id", "DESC")->first();
       $idAlumnoSiguiente = Alumno::listar()->select("entidad.id")->where("entidad.id", ">", $id)->where("entidad.estado", $alumno->estado)->first();
       $alumno->idAlumnoAnterior = (isset($idAlumnoAnterior) ? $idAlumnoAnterior->id : NULL);
