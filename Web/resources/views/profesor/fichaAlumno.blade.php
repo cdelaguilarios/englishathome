@@ -46,9 +46,7 @@
   <div class="col-sm-offset-1 col-sm-10">
     <div class="sec-datos">
       <div class="box-body">
-        <strong><i class="fa fa-fw fa-envelope"></i> Correo electrónico</strong>
         <p class="text-muted">
-          {{ $profesor->correoElectronico }}
           @include("util.imagenPerfil", ["entidad" => $profesor])
         </p>
         <hr> 
@@ -64,4 +62,3 @@
   </div>
 </div>
 @endsection
-

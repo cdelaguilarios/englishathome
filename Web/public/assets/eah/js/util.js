@@ -104,6 +104,14 @@ $.validator.addMethod("validarFecha", validarFecha, (formularioExternoPostulante
 function validarFecha(value, element, param) {
   return this.optional(element) || /(^(((0[1-9]|1[0-9]|2[0-8])[\/](0[1-9]|1[012]))|((29|30|31)[\/](0[13578]|1[02]))|((29|30)[\/](0[4,6,9]|11)))[\/](19|[2-9][0-9])\d\d$)|(^29[\/]02[\/](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)/i.test(value);
 }
+$.validator.addMethod("validarFechaHora", validarFechaHora, (formularioExternoPostulante ? "Please enter a valid date (valid format: dd/mm/yyyy HH:mm:ss)." : "Por favor ingrese una fecha válida (formato válido: dd/mm/aaaa HH:mm:ss)"));
+function validarFechaHora(value, element, param) {
+  var validacionFecha =  this.optional(element) || /(^(((0[1-9]|1[0-9]|2[0-8])[\/](0[1-9]|1[012]))|((29|30|31)[\/](0[13578]|1[02]))|((29|30)[\/](0[4,6,9]|11)))[\/](19|[2-9][0-9])\d\d$)|(^29[\/]02[\/](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)/i.test(value.split(" ")[0]);
+  var validacionHora = false;
+  if(value.split(" ").length === 2)
+    validacionHora =  this.optional(element) || /^([01]?[0-9]|2[0-3])(:[0-5][0-9]){2}$/.test(value.split(" ")[1]);
+   return validacionFecha && validacionHora;
+}
 
 $.validator.addMethod("validarCkEditor", validarCkEditor, "Este campo es obligatorio.");
 function validarCkEditor(v, e, p) {
