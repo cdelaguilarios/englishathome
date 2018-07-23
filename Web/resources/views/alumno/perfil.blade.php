@@ -153,6 +153,7 @@
             <a href="{{ route("alumnos.editar", $alumno->id)}}" class="btn btn-primary btn-clean">Editar datos</a>
             <!--<a href="{{ route("alumnos.descargar.ficha", $alumno->id)}}" class="btn btn-primary btn-clean">Descargar ficha</a>-->
             <a href="{{ route("alumnos.ficha", $alumno->id)}}" target="_blank" class="btn btn-primary btn-clean">Descargar ficha</a>
+            <a href="{{ route("correos", ["id" => $alumno->id])}}" target="_blank" class="btn btn-primary btn-clean">Enviar correo</a>
           </div>      
           <div class="col-sm-2">
             @if(isset($alumno->idAlumnoSiguiente))

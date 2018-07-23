@@ -42,7 +42,7 @@ $(document).ready(function () {
             '<div>';
       },
       templateSelection: function (d) {
-        return (d.nombre + " " + d.apellido + " (" + d.correoElectronico + ")") || d.text;
+        return (d.nombre && d.apellido && d.correoElectronico ? (d.nombre + " " + d.apellido + " (" + d.correoElectronico + ")") : d.text);
       }
     });
     $("#tipo-entidad-correos").change(function () {
@@ -61,6 +61,11 @@ $(document).ready(function () {
       }
     });
     $("#tipo-entidad-correos").trigger("change");
+
+    datosEntidadSel = (typeof (datosEntidadSel) === "undefined" ? false : datosEntidadSel);
+    if (datosEntidadSel) {
+      $("#entidades-seleccionadas-correos").select2("trigger", "select", {data: datosEntidadSel});
+    }
   }
 
   $("#formulario-correos").validate({

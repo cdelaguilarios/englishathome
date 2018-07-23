@@ -27,8 +27,9 @@ function cargarLista() {
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   estados = (typeof (estados) === "undefined" ? "" : estados);
   estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
+  estadoCuotaProgramada = (typeof (estadoCuotaProgramada) === "undefined" ? "" : estadoCuotaProgramada);
 
-  if (urlListar !== "" && urlPerfil !== "" && urlEditar !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "") {
+  if (urlListar !== "" && urlPerfil !== "" && urlEditar !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "" && estadoCuotaProgramada !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -50,9 +51,9 @@ function cargarLista() {
         {data: "correoElectronico", name: "entidad.correoElectronico"},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
             if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined) {
-              return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
+              return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>' + (d.estado === estadoCuotaProgramada && d.fechaUltimaClase ? '<small class="text-red">(Fecha última clase: ' + formatoFecha(d.fechaUltimaClase) + ')</small>' : '');
             } else if (estados[d.estado] !== undefined) {
-              return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>';
+              return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>' + (d.estado === estadoCuotaProgramada && d.fechaUltimaClase ? '<small class="text-red">(Fecha última clase: ' + formatoFecha(d.fechaUltimaClase)+ ')</small>' : '');
             } else {
               return "";
             }

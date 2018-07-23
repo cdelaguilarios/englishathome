@@ -6,6 +6,9 @@
   var tiposEntidades = {!!  json_encode(App\Helpers\Enum\TiposEntidad::listarTiposBase()) !!};
   var tipoEntidadInteresado = "{{ App\Helpers\Enum\TiposEntidad::Interesado }}";
   var urlBuscarEntidades = "{{ route('correos.entidades') }}";
+  @if(isset($entidad))
+  var datosEntidadSel = { id: "{{ $entidad->id }}", text: "{{ $entidad->nombre . ' ' . $entidad->apellido . ' (' . $entidad->correoElectronico . ')' }}" };
+  @endif
 </script>
 <script src="{{ asset("assets/eah/js/modulos/correos.js") }}"></script>
 @endsection

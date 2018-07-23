@@ -53,6 +53,14 @@ class HistorialController extends Controller {
   // <editor-fold desc="Correos masivos">
 
   public function correos() {
+    try {
+      $idEntidad = Input::get("id");
+      if (isset($idEntidad)) {
+        $this->data["entidad"] = Entidad::ObtenerXId($idEntidad);
+      }
+    } catch (\Exception $e) {
+      Log::error($e->getMessage());
+    }
     $this->data["seccion"] = "correos";
     return view("correos.index", $this->data);
   }

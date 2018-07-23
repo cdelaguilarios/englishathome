@@ -156,10 +156,16 @@
           </div>
           <div class="form-group">
             {{ Form::label("curso-interes", "Cursos (*): ", ["class" => "col-sm-2 control-label"]) }}
-            <div class="col-sm-5">
-              {{ Form::select("idCursos[]", $cursos, null, ["id" => "curso-interes", "class" => "form-control", "multiple" => "multiple", "style" => "width: 100%"]) }}
-            </div>    
-            {{ Form::hidden("cursos", (isset($postulante) ? $postulante->cursos : null)) }}                
+            <div class="col-sm-10">
+              @foreach($cursos as $id => $nombre)                  
+                <div class="checkbox">
+                  <label class="checkbox-custom" data-initialize="checkbox">
+                    {{ Form::label("curso-" . $id, $nombre, ["class" => "checkbox-label"]) }}
+                    {{ Form::checkbox("idCursos[]", $id, $postulante->cursos->contains('idCurso', $id), ["id" => "curso-" . $id]) }}
+                  </label>
+                </div>
+              @endforeach
+            </div>               
           </div>
           @endif
           <div class="form-group">

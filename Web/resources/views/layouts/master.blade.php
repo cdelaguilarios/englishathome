@@ -47,7 +47,7 @@
                 @if(isset($alumno))
                 <b>Ficha {{ $alumno->sexo == "F" ? "de la alumna" : "del alumno" }}<br/>{{ $alumno->nombre . " " .  $alumno->apellido }}<br/><small><i class="fa fa-fw fa-envelope"></i> {{ $alumno->correoElectronico }}<br/><i class="fa fa-fw fa-phone"></i> {{ $alumno->telefono }}</small></b>
                 @elseif(isset($profesor))
-                <b>Ficha {{ $profesor->sexo == "F" ? "de la profesora" : "del profesor" }}<br/>{{ $profesor->nombre . " " .  $profesor->apellido }}</b>
+                <b>Ficha {{ $profesor->sexo == "F" ? "de la profesora" : "del profesor" }}<br/>{{ $profesor->nombre . " " .  $profesor->apellido }}<br/><small><i class="fa fa-fw fa-envelope"></i> {{ $profesor->correoElectronico }}<br/><i class="fa fa-fw fa-phone"></i> {{ $profesor->telefono }}</small></b>
                 @endif
               </p>
               <p class="sec-ficha-logo">

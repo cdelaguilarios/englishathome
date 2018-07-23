@@ -19,6 +19,7 @@ use App\Http\Requests\Profesor\FormularioRequest;
 use App\Http\Requests\Profesor\Pago as PagoRequest;
 use App\Http\Requests\Profesor\ActualizarEstadoRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Http\Requests\Profesor\ActualizarComentariosPerfilRequest;
 
 class ProfesorController extends Controller {
 
@@ -99,6 +100,19 @@ class ProfesorController extends Controller {
     return view("profesor.ficha", $this->data);
   }
 
+  public function fichaAlumno($id) {
+    try {
+      $this->data["vistaImpresion"] = TRUE;
+      $this->data["impresionDirecta"] = TRUE;
+      $this->data["profesor"] = Profesor::obtenerXId($id);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("No se encontraron datos del profesor seleccionado. Es posible que haya sido eliminado.");
+      return redirect(route("profesores"));
+    }
+    return view("profesor.fichaAlumno", $this->data);
+  }
+
   public function descargarFicha($id) {
     try {
       $profesor = Profesor::obtenerXId($id);
@@ -160,6 +174,16 @@ class ProfesorController extends Controller {
     try {
       $datos = $req->all();
       Profesor::actualizarHorario($id, $datos["horario"]);
+    } catch (\Exception $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
+    }
+    return response()->json(["mensaje" => "Actualización exitosa."], 200);
+  }
+
+  public function actualizarComentariosPerfil($id, ActualizarComentariosPerfilRequest $req) {
+    try {
+      Profesor::actualizarComentariosPerfil($id, $req->all());
     } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);

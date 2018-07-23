@@ -37,7 +37,13 @@ class Alumno extends Model {
         $alumnos->where("entidad.estado", $datos["estado"]);
       }
     }
-    return $alumnos;
+    $alumnos->leftJoin(Clase::nombreTabla() . " as clase", function ($q) {
+      $q->on("clase.idAlumno", "=", "entidad.id")
+        ->on("clase.id", "=", DB::raw("(SELECT id FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id ORDER BY fechaFin DESC LIMIT 1)"))
+        ->where("clase.eliminado", "=", 0);
+    });
+
+    return $alumnos->select(Alumno::nombreTabla(). ".*", "entidad.*", "clase.fechaFin as fechaUltimaClase");
   }
 
   public static function listarBusqueda($terminoBus = NULL) {

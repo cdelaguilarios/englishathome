@@ -93,6 +93,18 @@ class Docente extends Model {
     return Docente::listarXFiltrosBusqueda($datos)->whereIn("entidad.id", $idsDisponiblesSel);
   }
 
+  public static function actualizarExperienciaLaboral($id, $req) {
+    $datos = $req->all();
+    Docente::registrarActualizarAudio($id, $req->file("audio"));
+    unset($datos["audio"]);
+
+    $docente = (Profesor::verificarExistencia($id) ? Profesor::obtenerXId($id, TRUE) : Postulante::obtenerXId($id, TRUE));
+    $datos["cv"] = Archivo::procesarArchivosSubidos($docente->cv, $datos, 1, "nombreDocumentoCv", "nombreOriginalDocumentoCv", "nombreDocumentoCvEliminado");
+    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidos($docente->certificadoInternacional, $datos, 1, "nombreDocumentoCertificadoInternacional", "nombreOriginalDocumentoCertificadoInternacional", "nombreDocumentoCertificadoInternacionalEliminado");
+    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidos($docente->imagenDocumentoIdentidad, $datos, 1, "nombreImagenDocumentoIdentidad", "nombreOriginalImagenDocumentoIdentidad", "nombreImagenDocumentoIdentidadEliminado");
+    $docente->update($datos);
+  }
+
   public static function verificarExistencia($idEntidad) {
     if (!(isset($idEntidad) && $idEntidad != "" && is_numeric($idEntidad))) {
       return FALSE;

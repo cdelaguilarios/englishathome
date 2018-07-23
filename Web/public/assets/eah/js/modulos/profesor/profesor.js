@@ -3,6 +3,7 @@ var mapa;
 $(document).ready(function () {
   cargarLista();
   cargarFormulario();
+  cargarSeccionComentariosPerfil();
 
   urlPerfil = (typeof (urlPerfil) === "undefined" ? "" : urlPerfil);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
@@ -186,19 +187,8 @@ function cargarFormulario() {
       $("#fecha-nacimiento").datepicker("setDate", (new Date(datFechaNacimiento[1] + "/" + datFechaNacimiento[0] + "/" + datFechaNacimiento[2])));
     }
 
-    $("#curso-interes").select2();
     $("#direccion").focusout(verificarDatosBusquedaMapa);
     $("input[name='codigoUbigeo']").change(verificarDatosBusquedaMapa);
-
-    if ($("input[name='cursos']").val() !== undefined && $("input[name='cursos']").val() !== "") {
-      var selCursosVal = [];
-      $.each(JSON.parse($("input[name='cursos']").val()), function (i, v) {
-        if (v.idCurso !== undefined) {
-          selCursosVal.push(v.idCurso);
-        }
-      });
-      $("#curso-interes").val(selCursosVal).trigger("change");
-    }
   } else {
     $("input[name='horario']").change(function () {
       if (urlActualizarHorario !== "" && $(this).val() !== "") {
@@ -223,5 +213,56 @@ function cargarFormulario() {
         );
       }
     });
+  }
+}
+
+function  cargarSeccionComentariosPerfil() {
+  if($("#formulario-comentarios-perfil").length){
+    $("#formulario-comentarios-perfil").validate({
+      submitHandler: function (f) {
+        if (confirm("¿Está seguro que desea guardar los cambios de estos datos?")) {
+          $.blockUI({message: "<h4>Guardando...</h4>"});
+          CKEDITOR.instances["comentarios-perfil"].updateElement();
+          var datos = procesarDatosFormulario(f);
+          llamadaAjax($(f).attr("action"), "POST", datos, true,
+              function (d) {
+                $("body").unblock({
+                  onUnblock: function () {
+                    agregarMensaje("exitosos", d["mensaje"], true);
+                  }
+                });
+              },
+              function (d) {
+              },
+              function (de) {
+                $("body").unblock({
+                  onUnblock: function () {
+                    agregarMensaje("errores", de["responseJSON"]["mensaje"], true);
+                  }
+                });
+              }
+          );
+        }
+      },
+      highlight: function () {
+      },
+      unhighlight: function () {
+      },
+      errorElement: "div",
+      errorClass: "help-block-error",
+      errorPlacement: function (error, element) {
+        if (element.closest("div[class*=col-sm-]").length > 0) {
+          element.closest("div[class*=col-sm-]").append(error);
+        } else if (element.parent(".input-group").length) {
+          error.insertAfter(element.parent());
+        } else {
+          error.insertAfter(element);
+        }
+      },
+      onfocusout: false,
+      onkeyup: false,
+      onclick: false
+    });
+    CKEDITOR.replace("comentarios-perfil");
   }
 }

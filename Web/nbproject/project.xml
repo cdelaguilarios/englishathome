@@ -10,6 +10,7 @@
             <word>Código</word>
             <word>endforeach</word>
             <word>endsection</word>
+            <word>idProfesorSiguiente</word>
         </spellchecker-wordlist>
     </configuration>
 </project>

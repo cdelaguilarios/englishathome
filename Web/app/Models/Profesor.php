@@ -15,7 +15,7 @@ class Profesor extends Model {
   public $timestamps = false;
   protected $primaryKey = "idEntidad";
   protected $table = "profesor";
-  protected $fillable = ["ultimosTrabajos", "experienciaOtrosIdiomas", "descripcionPropia", "ensayo", "cv", "certificadoInternacional", "imagenDocumentoIdentidad", "audio"];
+  protected $fillable = ["ultimosTrabajos", "experienciaOtrosIdiomas", "descripcionPropia", "ensayo", "cv", "certificadoInternacional", "imagenDocumentoIdentidad", "audio", "comentarioPerfil"];
 
   public static function nombreTabla() {
     $modeloProfesor = new Profesor();
@@ -54,6 +54,10 @@ class Profesor extends Model {
       $profesor->horario = Horario::obtenerFormatoJson($id);
       $profesor->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($profesor->codigoUbigeo);
       $profesor->cursos = EntidadCurso::obtenerXEntidad($id, FALSE);
+      $idProfesorAnterior = Profesor::listar()->select("entidad.id")->where("entidad.id", "<", $id)->where("entidad.estado", $profesor->estado)->orderBy("entidad.id", "DESC")->first();
+      $idProfesorSiguiente = Profesor::listar()->select("entidad.id")->where("entidad.id", ">", $id)->where("entidad.estado", $profesor->estado)->first();
+      $profesor->idProfesorAnterior = (isset($idProfesorAnterior) ? $idProfesorAnterior->id : NULL);
+      $profesor->idProfesorSiguiente = (isset($idProfesorSiguiente) ? $idProfesorSiguiente->id : NULL);
     }
     return $profesor;
   }
@@ -113,6 +117,12 @@ class Profesor extends Model {
   public static function actualizarHorario($id, $horario) {
     Profesor::obtenerXId($id, TRUE);
     Horario::registrarActualizar($id, $horario);
+  }
+
+  public static function actualizarComentariosPerfil($id, $datos) {
+    $profesor = Profesor::ObtenerXId($id, TRUE);
+    $profesor->comentarioPerfil = $datos["comentarioPerfil"];
+    $profesor->save();
   }
 
   public static function eliminar($id) {

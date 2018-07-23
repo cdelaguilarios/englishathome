@@ -110,8 +110,10 @@ Route::group(["middleware" => "auth"], function() {
     Route::patch("profesor/{id}/actualizar", ["uses" => "ProfesorController@actualizar", "as" => "profesores.actualizar"]);
     Route::post("profesor/{id}/actualizarEstado", ["uses" => "ProfesorController@actualizarEstado", "as" => "profesores.actualizar.estado"]);
     Route::post("profesor/{id}/actualizarHorario", ["uses" => "ProfesorController@actualizarHorario", "as" => "profesores.actualizar.horario"]);
+    Route::post("profesor/{id}/actualizarComentariosPerfil", ["uses" => "ProfesorController@actualizarComentariosPerfil", "as" => "profesores.actualizar.comentarios.perfil"]);
     Route::get("profesor/{id}/perfil", ["uses" => "ProfesorController@perfil", "as" => "profesores.perfil"]);
     Route::get("profesor/{id}/ficha", ["uses" => "ProfesorController@ficha", "as" => "profesores.ficha"]);
+    Route::get("profesor/{id}/fichaAlumno", ["uses" => "ProfesorController@fichaAlumno", "as" => "profesores.ficha.alumno"]);
     Route::get("profesor/{id}/descargarFicha", ["uses" => "ProfesorController@descargarFicha", "as" => "profesores.descargar.ficha"]);
     Route::delete("profesor/{id}/eliminar", ["uses" => "ProfesorController@eliminar", "as" => "profesores.eliminar"]);
     // </editor-fold>
@@ -130,6 +132,7 @@ Route::group(["middleware" => "auth"], function() {
     // <editor-fold desc="Docentes">
     Route::get("docentes/disponibles", ["uses" => "DocenteController@disponibles", "as" => "docentes.disponibles"]);
     Route::post("docentes/disponibles/listar", ["uses" => "DocenteController@listarDisponibles", "as" => "docentes.disponibles.listar"]);
+    Route::patch("docentes/{id}/actualizarExperienciaLaboral", ["uses" => "DocenteController@actualizarExperienciaLaboral", "as" => "docentes.actualizar.experiencia.laboral"]);
     // </editor-fold>
     // <editor-fold desc="Usuarios">
     Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Principal . "],true"], function() {

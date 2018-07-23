@@ -67,7 +67,7 @@ function cargarListaHistorial() {
                   $.each(imagenes, function (e, v) {
                     if (v !== null && v !== "") {
                       var rutaImagen = urlArchivos.replace("/0", "/" + v);
-                      htmlHistorial += '<a href="' + rutaImagen + '" target="_blank"><img src="' + rutaImagen + '" class="margin" width="100"></a>';
+                      htmlHistorial += '<a href="' + rutaImagen + '" target="_blank"><img src="' + rutaImagen + '" class="margin" width="200"></a>';
                     }
                   });
                 }

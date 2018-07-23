@@ -102,8 +102,7 @@
           {{ \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $postulante->fechaNacimiento)->format("d/m/Y") }}
         </p>
         <hr>    
-        @endif                        
-        <a href="{{ route("postulantes.editar", $postulante->id)}}" class="btn btn-primary btn-block"><b>Editar datos</b></a>
+        @endif   
       </div>
     </div>
   </div>
@@ -112,7 +111,9 @@
       <div class="box-body">
         <div class="form-group">
           <div class="col-sm-6">
-            <a href="{{ route("postulantes.crear")}}" class="btn btn-primary btn-clean">Nuevo postulante</a> 
+            <a href="{{ route("postulantes.crear")}}" class="btn btn-primary btn-clean">Nuevo postulante</a>                     
+            <a href="{{ route("postulantes.editar", $postulante->id)}}" class="btn btn-primary btn-clean">Editar datos</a>
+            <a href="{{ route("correos", ["id" => $postulante->id])}}" target="_blank" class="btn btn-primary btn-clean">Enviar correo</a> 
           </div>     
           <div class="col-sm-2">
             @if(isset($postulante->idPostulanteSiguiente))
@@ -131,11 +132,15 @@
     <div class="nav-tabs-custom">
       <ul class="nav nav-tabs">
         <li class="active"><a href="#historial" data-toggle="tab">Historial</a></li>
+        <li><a href="#experiencia-laboral" data-toggle="tab">Experiencia laboral</a></li>
         <li><a href="#sec-comentarios-administrador" data-toggle="tab">Comentarios</a></li>
       </ul>
       <div class="tab-content">
         <div id="historial" class="active tab-pane">
           @include("util.historial", ["idEntidad" => $postulante->id, "nombreEntidad" => "postulante"]) 
+        </div>
+        <div id="experiencia-laboral" class="tab-pane">
+          @include("docente.experienciaLaboral", ["docente" => $postulante]) 
         </div>
         <div id="sec-comentarios-administrador" class="tab-pane">
           @include("util.comentariosAdministrador", ["idEntidad" => $postulante->id, "comentarioAdministrador" => $postulante->comentarioAdministrador]) 

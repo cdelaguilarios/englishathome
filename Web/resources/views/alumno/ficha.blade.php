@@ -78,6 +78,7 @@
           <strong><i class="fa fa-fw fa-calendar"></i> Horario</strong>
           <p class="text-muted">
             @include("util.horario", ["horario" => $alumno->horario, "modo" => "visualizar"])
+            @include("util.imagenPerfil", ["entidad" => $alumno])
           </p>
           <hr>   
           @if(isset($alumno->idCurso))

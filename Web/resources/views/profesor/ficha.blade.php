@@ -4,24 +4,22 @@
 @section("section_script")
 @if(isset($impresionDirecta) && $impresionDirecta)
 <script>
-  var verificarMapa = setInterval(function () {
-    mapa = (typeof (mapa) === "undefined" ? false : mapa);
-    if (mapa) {
-      verificarPosicionSel();
-      setTimeout(function () {
-        $("div:contains('Map data'):last").html("");
-        window.onafterprint = function (e) {
-          $(window).off('mousemove', window.onafterprint);
-          window.close();
-        };
-        window.print();
-        setTimeout(function () {
-          $(window).one('mousemove', window.onafterprint);
-        }, 500);
-      }, 1500);
-      clearInterval(verificarMapa);
-    }
-  }, 100);
+  window.onafterprint = function (e) {
+    $(window).off('mousemove', window.onafterprint);
+    window.close();
+  };
+
+  const $patchedStyle = $('<style media="print">')
+  .text(`
+    img { max-width: none !important; }
+    a[href]:after { content: ""; }
+  `)
+  .appendTo('head');
+  window.print();
+  
+  setTimeout(function () {
+    $(window).one('mousemove', window.onafterprint);
+  }, 500);
 </script>
 @endif
 @endsection
@@ -42,6 +40,12 @@
   .login-logo, .register-logo{
     font-size: 30px;
   }
+  .sec-ficha-nombre-entidad small{
+    font-size: 70%;
+    line-height: 1.2;
+    display: block;
+    padding-top: 10px;
+  }
   hr {
     margin-top: 2px;
     margin-bottom: 2px;
@@ -49,14 +53,19 @@
     border-top: 1px solid #fff;
   }
   .sec-mapa {
-    height: 200px;
+    height: 100%;
     margin-left: 20px;
   }
-  a[href^="http://maps.google.com/maps"]{display:none !important}
-  a[href^="https://maps.google.com/maps"]{display:none !important}
-  .gmnoprint a, .gmnoprint span, .gm-style-cc {display:none;}
-  .gmnoprint div {display:none !important;}
-  .gm-style-cc {display:none;}
+  @media print {
+    html, body {
+      width: 210mm;
+      height: 297mm;        
+    }
+    .pagina-impresion {
+      margin: 0;
+      page-break-after: always;
+    }
+  }
 </style>
 @endsection
 
@@ -64,38 +73,44 @@
 <div class="row">
   <div class="col-sm-offset-1 col-sm-10">
     <div class="sec-datos">
-      <div class="box-body">
-        <strong><i class="fa fa-fw fa-envelope"></i> Correo electrónico</strong>
-        <p class="text-muted">
-          {{ $profesor->correoElectronico }}
-          @include("util.imagenPerfil", ["entidad" => $profesor])
-        </p>
-        <hr> 
-        <strong><i class="fa fa-fw fa-calendar"></i> Horario</strong>
-        <p class="text-muted">
-          @include("util.horario", ["horario" => $profesor->horario, "modo" => "visualizar"])
-        </p>
-        <hr>   
-        @if(isset($profesor->cursos) && count($profesor->cursos) > 0)
-        <strong><i class="fa fa-fw flaticon-favorite-book"></i> Cursos</strong>
-        @foreach($profesor->cursos as $curso)
-        <p class="text-muted">- {{ App\Models\Curso::listarSimple(FALSE)[$curso->idCurso] }}</p>
-        @endforeach
-        <hr> 
-        @endif
-        <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
-        <p class="text-muted">{{ $profesor->direccion }}{!! ((isset($profesor->numeroDepartamento) && $profesor->numeroDepartamento != "") ? "<br/>Depto./Int " . $profesor->numeroDepartamento : "") !!}{!! ((isset($profesor->referenciaDireccion) && $profesor->referenciaDireccion != "") ? " - " . $profesor->referenciaDireccion : "") !!}<br/>{{ $profesor->direccionUbicacion }}</p>
-        <div class="sec-mapa">
-          @include("util.ubicacionMapa", ["geoLatitud" => $profesor->geoLatitud, "geoLongitud" => $profesor->geoLongitud, "modo" => "ficha"])
-        </div>
-        <hr>   
-        @if(isset($profesor->telefono))
-        <strong><i class="fa fa-phone margin-r-5"></i> Teléfono</strong>
-        <p class="text-muted">
-          {{ $profesor->telefono }}
-        </p>
-        <hr>
-        @endif         
+      <div class="box-body"> 
+        <div class="pagina-impresion">
+          <strong><i class="fa fa-fw fa-calendar"></i> Horario</strong>
+          <p class="text-muted">
+            @include("util.horario", ["horario" => $profesor->horario, "modo" => "visualizar"])
+            @include("util.imagenPerfil", ["entidad" => $profesor])
+          </p>
+          <hr>   
+          @if(isset($profesor->cursos) && count($profesor->cursos) > 0)
+          <strong><i class="fa fa-fw flaticon-favorite-book"></i> Cursos</strong>
+          @foreach($profesor->cursos as $curso)
+          <p class="text-muted">- {{ App\Models\Curso::listarSimple(FALSE)[$curso->idCurso] }}</p>
+          @endforeach
+          <hr> 
+          @endif
+          <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
+          <p class="text-muted">{{ $profesor->direccion }}{!! ((isset($profesor->numeroDepartamento) && $profesor->numeroDepartamento != "") ? "<br/>Depto./Int " . $profesor->numeroDepartamento : "") !!}{!! ((isset($profesor->referenciaDireccion) && $profesor->referenciaDireccion != "") ? " - " . $profesor->referenciaDireccion : "") !!}<br/>{{ $profesor->direccionUbicacion }}</p>
+          <div class="sec-mapa">
+            <img id="img-mapa" src="http://maps.google.com/maps/api/staticmap?sensor=false&center={{ $profesor->geoLatitud }},{{ $profesor->geoLongitud }}&zoom=17&size=800x550&markers=color:0x3C8DBC|{{ $profesor->geoLatitud }},{{ $profesor->geoLongitud }}&key={{ Config::get("eah.apiKeyGoogleMaps") }}" />
+          </div>
+          <hr>  
+        </div> 
+        <div>  
+          @if(isset($profesor->comentarioAdministrador) && trim($profesor->comentarioAdministrador) != "")
+          <strong><i class="fa fa-fw fa-file-text"></i> Comentarios del administrador</strong>
+          <p class="text-muted">
+            {!! $profesor->comentarioAdministrador !!}
+          </p>
+          <hr>  
+          @endif 
+          @if(isset($profesor->comentarioPerfil) && trim($profesor->comentarioPerfil) != "")
+          <strong><i class="fa fa-fw fa-file-text"></i> Perfil</strong>
+          <p class="text-muted">
+            {!! $profesor->comentarioPerfil !!}
+          </p>
+          <hr>  
+          @endif 
+        </div>       
       </div>
     </div>
   </div>

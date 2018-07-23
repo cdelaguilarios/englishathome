@@ -8,15 +8,19 @@ use Intervention\Image\ImageManager;
 
 class Archivo {
 
-  public static function obtener($nombre, $esAudio = FALSE, $tipoImagenPerfil = FALSE) {
+  public static function obtener($nombre, $esAudio = FALSE, $tipoImagenPerfil = FALSE, $esDocumentoPersonal = FALSE) {
     try {
       $archivo = Storage::get($nombre);
       $tipo = Storage::mimeType($nombre);
       $tamanho = Storage::size($nombre);
     } catch (\Exception $e) {
-      $nombreImgAux = public_path() . "/assets/eah/img/" . (isset($tipoImagenPerfil) ? "perfil-imagen-" . $tipoImagenPerfil . ".png" : "no-disponible.png");
-      $archivo = File::get($nombreImgAux);
-      $tipo = File::mimeType($nombreImgAux);
+      if (preg_match("#\.(jpg|jpeg|gif|png)$# i", explode("?", $nombre)[0]) || !$esDocumentoPersonal) {
+        $nombreImgAux = public_path() . "/assets/eah/img/" . (isset($tipoImagenPerfil) ? "perfil-imagen-" . $tipoImagenPerfil . ".png" : "no-disponible.png");
+        $archivo = File::get($nombreImgAux);
+        $tipo = File::mimeType($nombreImgAux);
+      } else {
+        return response("", 404);
+      }
     }
 
     if ($esAudio) {
@@ -38,7 +42,7 @@ class Archivo {
       if ($reajustar) {
         $manager = new ImageManager();
         $imagenMod = $manager->make($archivo->getRealPath());
-        $archivoSel = $imagenMod->fit(100, 100)->encode("png", 100);
+        $archivoSel = $imagenMod->fit(600, 600)->encode("png", 100);
       }
       Storage::put($nombre, (string) $archivoSel);
       return $nombre;

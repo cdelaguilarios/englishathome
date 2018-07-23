@@ -205,20 +205,8 @@ function cargarFormulario() {
       }
     }
 
-    $("#curso-interes").select2();
     $("#direccion").focusout(verificarDatosBusquedaMapa);
     $("input[name='codigoUbigeo']").change(verificarDatosBusquedaMapa);
-
-    if ($("input[name='cursos']").val() !== undefined && $("input[name='cursos']").val() !== "") {
-      var selCursosVal = [];
-      $.each(JSON.parse($("input[name='cursos']").val()), function (i, v) {
-        if (v.idCurso !== undefined) {
-          selCursosVal.push(v.idCurso);
-        }
-      });
-      $("#curso-interes").val(selCursosVal).trigger("change");
-    }
-
     $("#btn-registrar-profesor").click(function () {
       $("input[name='registrarComoProfesor']").val("1");
       $("#formulario-postulante").submit();
