@@ -48,6 +48,8 @@ class AlumnoController extends Controller {
               $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
             })->filterColumn("entidad.fechaRegistro", function($q, $k) {
               $q->whereRaw("DATE_FORMAT(entidad.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
+            })->filterColumn("curso", function($q, $k) {
+              $q->whereRaw("curso.nombre like ?", ["%{$k}%"]);
             })->make(true);
   }
 

@@ -31,7 +31,7 @@ class EstadosInteresado {
 
   public static function listarCambio() {
     $estadosBusqueda = EstadosInteresado::listarBusqueda();
-    $estadosDisponibleCambio = [EstadosInteresado::PendienteInformacion, EstadosInteresado::Contactado, EstadosInteresado::Favorito];
+    $estadosDisponibleCambio = [EstadosInteresado::PendienteInformacion, EstadosInteresado::Contactado, EstadosInteresado::Favorito, EstadosInteresado::CotizacionEnviada];
     $estadosCambio = [];
     foreach ($estadosBusqueda as $k => $v) {
       if (in_array($k, $estadosDisponibleCambio)) {

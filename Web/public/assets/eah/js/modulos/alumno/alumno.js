@@ -43,17 +43,22 @@ function cargarLista() {
       },
       autoWidth: false,
       responsive: true,
-      order: [[3, "desc"]],
+      order: [[5, "desc"]],
       columns: [
+        {data: "", name: "", orderable: false, "searchable": false, "className": "text-center not-mobile",
+          render: function (data, type, row, meta) {
+            return meta.row + meta.settings._iDisplayStart + 1;
+          }},
         {data: "nombre", name: "entidad.nombre", render: function (e, t, d, m) {
             return '<a href="' + (urlPerfil.replace("/0", "/" + d.id)) + '">' + (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "") + '</a>';
           }},
+        {data: "curso", name: "curso"},
         {data: "correoElectronico", name: "entidad.correoElectronico"},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
             if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined) {
               return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>' + (d.estado === estadoCuotaProgramada && d.fechaUltimaClase ? '<small class="text-red">(Fecha última clase: ' + formatoFecha(d.fechaUltimaClase) + ')</small>' : '');
             } else if (estados[d.estado] !== undefined) {
-              return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>' + (d.estado === estadoCuotaProgramada && d.fechaUltimaClase ? '<small class="text-red">(Fecha última clase: ' + formatoFecha(d.fechaUltimaClase)+ ')</small>' : '');
+              return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>' + (d.estado === estadoCuotaProgramada && d.fechaUltimaClase ? '<small class="text-red">(Fecha última clase: ' + formatoFecha(d.fechaUltimaClase) + ')</small>' : '');
             } else {
               return "";
             }

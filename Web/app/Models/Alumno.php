@@ -42,8 +42,13 @@ class Alumno extends Model {
         ->on("clase.id", "=", DB::raw("(SELECT id FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id ORDER BY fechaFin DESC LIMIT 1)"))
         ->where("clase.eliminado", "=", 0);
     });
-
-    return $alumnos->select(Alumno::nombreTabla(). ".*", "entidad.*", "clase.fechaFin as fechaUltimaClase");
+    $alumnos->join(EntidadCurso::nombreTabla() . " as entidadCurso", function ($q) {
+      $q->on("entidadCurso.idEntidad", "=", "entidad.id");
+    });
+    $alumnos->join(Curso::nombreTabla() . " as curso", function ($q) {
+      $q->on("curso.id", "=", "entidadCurso.idCurso");
+    });    
+    return $alumnos->select(Alumno::nombreTabla(). ".*", "entidad.*", "clase.fechaFin as fechaUltimaClase", DB::raw("GROUP_CONCAT(curso.nombre SEPARATOR ', ') as curso"));
   }
 
   public static function listarBusqueda($terminoBus = NULL) {

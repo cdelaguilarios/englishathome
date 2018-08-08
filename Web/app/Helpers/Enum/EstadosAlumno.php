@@ -7,6 +7,7 @@ class EstadosAlumno {
   const PorConfirmar = "POR-CONFIRMAR";
   const CuotaProgramada = "CUOTA-PROGRAMADA";
   const StandBy = "STAND-BY";
+  const PeriodoTrunco = "PERIODO-TRUNCO";
   const Activo = "ACTIVO";
   const Inactivo = "INACTIVO";
 
@@ -14,6 +15,7 @@ class EstadosAlumno {
     return [
         EstadosAlumno::PorConfirmar => ["Por confirmar", "label-primary"],
         EstadosAlumno::StandBy => ["Stand by", "label-warning"],
+        EstadosAlumno::PeriodoTrunco => ["Período trunco", "label-warning"],
         EstadosAlumno::Activo => ["Activo", "label-success"],
         EstadosAlumno::CuotaProgramada => ["Período concluido", "label-warning"],
         EstadosAlumno::Inactivo => ["Inactivo", "label-danger"]
@@ -31,7 +33,7 @@ class EstadosAlumno {
 
   public static function listarCambio() {
     $estadosBusqueda = EstadosAlumno::listarBusqueda();
-    $estadosDisponibleCambio = [EstadosAlumno::CuotaProgramada, EstadosAlumno::StandBy, EstadosAlumno::Activo, EstadosAlumno::Inactivo];
+    $estadosDisponibleCambio = [EstadosAlumno::CuotaProgramada, EstadosAlumno::StandBy, EstadosAlumno::PeriodoTrunco, EstadosAlumno::Activo, EstadosAlumno::Inactivo];
     $estadosCambio = [];
     foreach ($estadosBusqueda as $k => $v) {
       if (in_array($k, $estadosDisponibleCambio)) {
