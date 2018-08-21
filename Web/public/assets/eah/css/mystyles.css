@@ -329,6 +329,19 @@ table.dataTable > tbody > tr.child span.dtr-title {
   margin-right: 2px;
 }
 
+table.dataTable thead input {
+  width: 100%;
+  font-size: 11px;
+}
+
+table.dataTable thead .tabla-sec-busqueda .sorting:after{
+  opacity: 0 !important;
+}
+
+table.dataTable thead .tabla-sec-busqueda .sorting_desc:after{
+  content: "";
+}
+
 .datepicker .table>thead>tr>th, .datepicker .table>tbody>tr>th, .datepicker .table>tfoot>tr>th, .datepicker .table>thead>tr>td, .datepicker .table>tbody>tr>td, .datepicker .table>tfoot>tr>td {
   border-top: initial;
 }

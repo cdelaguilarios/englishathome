@@ -64,6 +64,6 @@ class Util {
     $h = floor($tiempoSegundos / 3600);
     $m = floor($tiempoSegundos % 3600 / 60);
     $s = floor($tiempoSegundos % 3600 % 60);
-    return (($h >= 0 ? $h + ":" + ($m < 10 ? "0" : "") : "") + $m + ($incluirSegundos ? ":" + ($s < 10 ? "0" : "") + $s : ""));
+    return (($h >= 0 ? $h . ":" . ($m < 10 ? "0" : "") : "") . $m . ($incluirSegundos ? ":" . ($s < 10 ? "0" : "") . $s : ""));
   }
 }

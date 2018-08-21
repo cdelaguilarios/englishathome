@@ -43,6 +43,8 @@ function cargarLista() {
       },
       autoWidth: false,
       responsive: true,
+      orderCellsTop: true,
+      fixedHeader: true,
       order: [[5, "desc"]],
       columns: [
         {data: "", name: "", orderable: false, "searchable": false, "className": "text-center not-mobile",
@@ -84,6 +86,7 @@ function cargarLista() {
       ],
       initComplete: function (s, j) {
         establecerBotonRecargaTabla("tab-lista");
+        establecerCabecerasBusquedaTabla("tab-lista");
       }
     });
   }

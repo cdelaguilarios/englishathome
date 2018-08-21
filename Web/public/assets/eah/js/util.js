@@ -296,6 +296,26 @@ $.extend(true, $.fn.dataTable.defaults, {
 function establecerBotonRecargaTabla(idTabla) {
   $("#" + idTabla + "_length").append('<a href="javascript:void(0)" onclick="recargarDatosTabla(\'' + idTabla + '\')" title="Recargar datos..." style="margin-left: 10px;"><i class="fa fa-refresh"></i></a>');
 }
+function establecerCabecerasBusquedaTabla(idTabla) {
+  $("#" + idTabla + " thead tr").clone(true).appendTo("#" + idTabla + " thead").addClass("tabla-sec-busqueda");
+  $("#" + idTabla + " thead tr:eq(1) th").each(function (numEle) {
+    var permiteBus = $("#" + idTabla + "").DataTable().settings().init().columns[numEle].searchable;
+    if (permiteBus || permiteBus === undefined){
+      $(this).html('<input type="text" placeholder="Buscar por ' + $(this).text() + '" />');
+      $("input", this).on("click", function (e) {
+        e.preventDefault();
+        return false;
+      });
+      $("input", this).on("keyup change", function () {
+        if ($("#" + idTabla + "").DataTable().column(numEle).search() !== this.value) {
+          $("#" + idTabla + "").DataTable().column(numEle).search(this.value).draw();
+        }
+      });
+    }else{
+      $(this).html("");
+    }
+  });
+}
 function recargarDatosTabla(idTabla) {
   $("#" + idTabla).DataTable().ajax.reload();
 }

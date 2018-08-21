@@ -48,7 +48,7 @@
         <table id="tab-lista" class="table table-bordered table-hover">
           <thead>
             <tr>
-              <th></th> 
+              <th>N°</th> 
               <th>Nombre completo</th>   
               <th>Curso</th>    
               <th>Correo electrónico</th>
