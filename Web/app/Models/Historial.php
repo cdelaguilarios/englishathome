@@ -70,7 +70,7 @@ class Historial extends Model {
       $historiales->where($nombreTabla . ".id", $idNotificacion);
     }
 
-    $historialesTotal = $historiales->count();
+    $historialesTotal = $historiales->paginate(1)->total();
     if ($nuevasNotificaciones) {
       $historialesSel = $historiales->orderBy($nombreTabla . ".fechaNotificacion", "DESC")->get();
     } else {
@@ -240,7 +240,7 @@ class Historial extends Model {
       $eventoRepetido = false;
       if (isset($historialesFormateados[$fechaNotificacion])) {
         foreach ($historialesFormateados[$fechaNotificacion] as $historialFor) {
-          if (strip_tags($historialFor->titulo) == strip_tags($historial->titulo) && strip_tags($historialFor->mensaje) == strip_tags($historial->mensaje)) {
+          if (strip_tags($historialFor->titulo) == strip_tags($historial->titulo) && strip_tags($historialFor->mensaje) == strip_tags($historial->mensaje) && $historialFor->fechaRegistro == $historial->fechaRegistro) {
             $eventoRepetido = true;
             break;
           }

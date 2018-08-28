@@ -82,7 +82,7 @@ function cargarListaPeriodos() {
       columns: [
         {data: "numeroPeriodo", name: "numeroPeriodo", searchable: false},
         {data: "numeroPeriodo", name: "numeroPeriodo", orderable: false, searchable: false, render: function (e, t, d, m) {
-            return '<a href="javascript:void(0);" onclick="mostrarOcultarClases(this);" class="btn btn-primary btn-xs" data-periodo="' + d.numeroPeriodo + '"><i class="fa fa-eye"></i> Ver clases</button>';
+            return '<a href="javascript:void(0);" onclick="mostrarOcultarClases(this);" class="btn btn-primary btn-xs" data-periodo="' + d.numeroPeriodo + '"><i class="fa fa-eye"></i> Ver clases</a>';
           }}
       ],
       "createdRow": function (r, d, i) {

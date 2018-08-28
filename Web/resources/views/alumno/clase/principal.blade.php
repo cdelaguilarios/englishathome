@@ -2,8 +2,9 @@
   <div class="col-sm-12">
     <div id="sec-mensajes-clase"></div>
     <div id="sec-clase-1">
-      <div class="box-header">
-        <a id="btn-nuevo-clase" type="button" class="btn btn-primary btn-sm pull-right">Nueva clase</a>   
+      <div class="box-header">  
+        <a href="{{ route("alumnos.clases.descargar.lista", $alumno->id)}}" target="_blank" class="btn btn-primary btn-sm pull-right">Descargar lista de clases</a>
+        <a id="btn-nuevo-clase" type="button" class="btn btn-primary btn-sm pull-right">Nueva clase</a>
       </div>         
       <div class="box-body">
         <table id="tab-lista-periodos-clases" class="table table-bordered table-hover">

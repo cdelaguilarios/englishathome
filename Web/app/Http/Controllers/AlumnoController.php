@@ -146,7 +146,7 @@ class AlumnoController extends Controller {
               ->save($rutaBaseAlmacenamiento . $nombrePdf, true);
     } catch (\Exception $e) {
       Log::error($e);
-      Mensajes::agregarMensajeError("Ocurrió un problema durante la descarga de la ficha del alumno.");
+      Mensajes::agregarMensajeError("Ocurrió un problema durante la descarga de la ficha del alumno(a).");
       return redirect(route("alumnos"));
     }
     return $datosPdf->download($nombrePdf);
@@ -350,6 +350,21 @@ class AlumnoController extends Controller {
 
   public function totalClasesXHorario($id, ClaseRequest\TotalHorarioRequest $req) {
     return response()->json(Clase::totalXHorario($id, $req->all()), 200);
+  }
+  
+  public function descargarLista($id) {
+    
+    try {
+      $this->data["vistaImpresion"] = TRUE;
+      $this->data["impresionDirecta"] = TRUE;
+      $this->data["alumno"] = Alumno::obtenerXId($id);
+      $this->data["clases"] = Clase::listarXAlumno($id);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("No se encontraron datos del alumno seleccionado. Es posible que haya sido eliminado.");
+      return redirect(route("alumnos"));
+    }
+    return view("alumno.clase.descargarLista", $this->data);
   }
 
   public function eliminarClase($id, $idClase) {

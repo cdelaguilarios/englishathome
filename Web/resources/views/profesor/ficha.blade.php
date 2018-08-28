@@ -1,6 +1,10 @@
 @extends("layouts.master")
 @section("titulo", "Ficha " . ($profesor->sexo == "F" ? "de la profesora" : "del profesor") . " " . $profesor->nombre . " " .  $profesor->apellido)
 
+@section("tituloImpresion")
+<b>Ficha {{ $profesor->sexo == "F" ? "de la profesora" : "del profesor" }}<br/>{{ $profesor->nombre . " " .  $profesor->apellido }}<br/><small><i class="fa fa-fw fa-envelope"></i> {{ $profesor->correoElectronico }}<br/><i class="fa fa-fw fa-phone"></i> {{ $profesor->telefono }}</small></b>
+@endsection
+
 @section("section_script")
 @if(isset($impresionDirecta) && $impresionDirecta)
 <script>

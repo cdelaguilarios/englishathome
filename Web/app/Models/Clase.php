@@ -110,13 +110,19 @@ class Clase extends Model {
     return $clases;
   }
 
-  public static function listarXAlumno($idAlumno, $numeroPeriodo) {
+  public static function listarXAlumno($idAlumno, $numeroPeriodo = NULL) {
     $nombreTabla = Clase::nombreTabla();
-    $clases = Clase::listarBase()
+    $preClases = Clase::listarBase()
                     ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"))
-                    ->where($nombreTabla . ".numeroPeriodo", $numeroPeriodo)
-                    ->where($nombreTabla . ".idAlumno", $idAlumno)
-                    ->orderBy($nombreTabla . ".fechaInicio", "ASC")->get();
+                    ->where($nombreTabla . ".idAlumno", $idAlumno);
+    if(!is_null($numeroPeriodo)){
+      $preClases->where($nombreTabla . ".numeroPeriodo", $numeroPeriodo)
+                ->orderBy($nombreTabla . ".fechaInicio", "ASC");
+    }else{
+      $preClases->orderBy($nombreTabla . ".numeroPeriodo", "ASC")
+                ->orderBy($nombreTabla . ".fechaInicio", "ASC");
+    }
+    $clases = $preClases->get();
     foreach ($clases as $clase) {
       $pagoProfesor = PagoProfesor::ObtenerXClase($clase["id"]);
       $pagoAlumno = PagoAlumno::ObtenerXClase($idAlumno, $clase["id"]);

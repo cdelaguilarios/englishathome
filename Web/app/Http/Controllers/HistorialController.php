@@ -38,7 +38,6 @@ class HistorialController extends Controller {
       $datos["fechaNotificacion"] = (isset($datos["fechaNotificacion"]) ? Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNotificacion"]) : NULL);
       $datos["idEntidades"] = [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)];
       $datos["idEntidadDestinataria"] = (((int) $datos["enviarCorreoEntidad"] == 1) ? $idEntidad : NULL);
-      Historial::registrar($datos);
       $datos["enviarCorreo"] = (((int) $datos["enviarCorreoEntidad"] == 1) ? 1 : $datos["enviarCorreo"] );
       Historial::registrar($datos);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
