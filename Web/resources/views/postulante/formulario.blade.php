@@ -161,7 +161,7 @@
                 <div class="checkbox">
                   <label class="checkbox-custom" data-initialize="checkbox">
                     {{ Form::label("curso-" . $id, $nombre, ["class" => "checkbox-label"]) }}
-                    {{ Form::checkbox("idCursos[]", $id, (!is_null($postulante->cursos) && $postulante->cursos->contains('idCurso', $id)), ["id" => "curso-" . $id]) }}
+                    {{ Form::checkbox("idCursos[]", $id, (isset($postulante) && !is_null($postulante->cursos) && $postulante->cursos->contains('idCurso', $id)), ["id" => "curso-" . $id]) }}
                   </label>
                 </div>
               @endforeach
