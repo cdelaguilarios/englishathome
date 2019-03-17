@@ -24,6 +24,7 @@
   <div class="col-sm-3">
     <div class="box box-primary">
       <div class="box-body box-profile">
+        @include("util.credencialesAcceso", ["entidad" => $profesor])
         @include("util.imagenPerfil", ["entidad" => $profesor])
         <h3 class="profile-username">Profesor{{ $profesor->sexo == "F" ? "a" : "" }} {{ $profesor->nombre . " " .  $profesor->apellido }}</h3>
         <p class="text-muted">{{ $profesor->correoElectronico }}</p>

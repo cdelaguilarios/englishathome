@@ -10,7 +10,7 @@
         </button>
         <h4 class="modal-title">Editar imagen de perfil</h4>
       </div>
-      {{ Form::open(["url" => route("entidad.actualizar.imagen.perfil", ["id" => $entidad->id]), "id" => "formulario-editar-imagen-perfil", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
+      {{ Form::open(["url" => route("entidades.actualizar.imagen.perfil", ["id" => $entidad->id]), "id" => "formulario-editar-imagen-perfil", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
       <div class="modal-body">
         <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($entidad->imagenPerfil) && $entidad->imagenPerfil != "" ? $entidad->imagenPerfil : "-"), "tip" => ($entidad->sexo == "F" ? "f" : "m")]) }}" alt="Alumn{{ $entidad->sexo == "F" ? "a" : "o" }} {{ $entidad->nombre . " " .  $entidad->apellido }}">
         <div class="row">

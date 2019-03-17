@@ -45,6 +45,7 @@ class ProfileComposer {
           "minHorario" => Config::get("eah.minHorario"),
           "maxHorario" => Config::get("eah.maxHorario"),
           "rolesUsuarios" => RolesUsuario::listar(),
+          "rolesUsuariosSistema" => RolesUsuario::listarDelSistema(),
       ];
       Cache::put("datosExtrasVistas", $datosExtrasVistas, 120);
     }

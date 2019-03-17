@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use App\Helpers\Enum\TiposEntidad;
+use App\Helpers\Enum\RolesUsuario;
 use Illuminate\Database\Eloquent\Model;
 
 class Entidad extends Model {
@@ -92,6 +94,25 @@ class Entidad extends Model {
     $entidad->save();
   }
 
+  public static function actualizarCredencialesAcceso($id, $datos) {
+    $entidad = Entidad::ObtenerXId($id);
+    $entidad->correoElectronico = $datos["email"];
+    $entidad->update();
+    
+    $usuarioRegistrado = Usuario::verificarExistencia($id);
+    $datosUsuario = ["email" => $datos["email"], "rol" => ($entidad->tipo == TiposEntidad::Alumno ? RolesUsuario::Alumno : RolesUsuario::Profesor)];
+    if ($usuarioRegistrado) {
+      $usuario = Usuario::obtenerXId($id, FALSE);
+      $usuario->password = bcrypt($datos["password"]);
+      $usuario->update($datosUsuario);
+    } else {
+      $usuario = new Usuario($datosUsuario);
+      $usuario->idEntidad = $id;
+      $usuario->password = bcrypt($datos["password"]);
+      $usuario->save();
+    }
+  }
+
   public static function eliminar($id) {
     $entidad = Entidad::ObtenerXId($id);
     $entidad->eliminado = 1;
@@ -101,7 +122,7 @@ class Entidad extends Model {
 
   public static function verificarExistencia($id) {
     try {
-      Entidad::obtenerXId($id, TRUE);
+      Entidad::obtenerXId($id);
     } catch (\Exception $ex) {
       return FALSE;
     }

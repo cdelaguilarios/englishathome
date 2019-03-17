@@ -40,7 +40,7 @@ class FormularioRequest extends Request {
         "imagenPerfil" => "image"
     ];
 
-    $roles = RolesUsuario::listar();
+    $roles = RolesUsuario::listarDelSistema();
     if (!array_key_exists($datos["rol"], $roles)) {
       $reglasValidacion["rolNoValido"] = "required";
     }

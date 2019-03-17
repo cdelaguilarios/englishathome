@@ -54,7 +54,7 @@
         <div class="form-group">
           {{ Form::label("rol", "Rol de usuario: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-10">
-            {{ Form::select("rol", App\Helpers\Enum\RolesUsuario::listar(), (isset($usuario) ? $usuario->rol : App\Helpers\Enum\RolesUsuario::Principal), ["class" => "form-control"]) }}
+            {{ Form::select("rol", App\Helpers\Enum\RolesUsuario::listarDelSistema(), (isset($usuario) ? $usuario->rol : App\Helpers\Enum\RolesUsuario::Principal), ["class" => "form-control"]) }}
           </div>
         </div>
         <div class="form-group">

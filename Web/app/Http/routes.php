@@ -29,10 +29,11 @@ Route::delete("archivos/eliminar", ["uses" => "ArchivoController@eliminar", "as"
 Route::group(["middleware" => "auth"], function() {
   Route::get("/", ["uses" => "InicioController@inicio", "as" => "/"]);
 
-  Route::group(["middleware" => "verificacion.usuario:,"], function() {
+  Route::group(["middleware" => "verificacion.usuario:" . RolesUsuario::Principal . "," . RolesUsuario::Secundario], function() {
     // <editor-fold desc="Entidades">
     Route::post("entidades/{id}/actualizarComentariosAdministrador", ["uses" => "EntidadController@actualizarComentariosAdministrador", "as" => "entidades.actualizar.comentarios.administrador"]);
-    Route::post("entidad/{id}/actualizarImagenPerfil", ["uses" => "EntidadController@actualizarImagenPerfil", "as" => "entidad.actualizar.imagen.perfil"]);
+    Route::post("entidades/{id}/actualizarCredencialesAcceso", ["uses" => "EntidadController@actualizarCredencialesAcceso", "as" => "entidades.actualizar.credenciales.acceso"]);
+    Route::post("entidades/{id}/actualizarImagenPerfil", ["uses" => "EntidadController@actualizarImagenPerfil", "as" => "entidades.actualizar.imagen.perfil"]);
     // </editor-fold>
     // <editor-fold desc="Interesados">
     Route::get("interesados", ["uses" => "InteresadoController@index", "as" => "interesados"]);

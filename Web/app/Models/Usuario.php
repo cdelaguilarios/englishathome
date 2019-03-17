@@ -34,10 +34,13 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     return $nombreTabla;
   }
 
-  public static function listar($datos = NULL) {
+  public static function listar($datos = NULL, $soloUsuariosDelSistema = TRUE) {
     $usuarios = Usuario::leftJoin(Entidad::nombreTabla() . " as entidad", Usuario::nombreTabla() . ".idEntidad", "=", "entidad.id")->where("entidad.eliminado", 0)->groupBy("entidad.id")->distinct();
     if (isset($datos["estado"])) {
       $usuarios->where("entidad.estado", $datos["estado"]);
+    }
+    if($soloUsuariosDelSistema){
+      $usuarios->whereIn("rol", array_keys(RolesUsuario::listarDelSistema()));
     }
     return $usuarios;
   }
@@ -50,13 +53,13 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     return $alumnos->lists("nombreCompleto", "entidad.id");
   }
 
-  public static function obtenerXId($id) {
-    return Usuario::listar()->where("entidad.id", $id)->firstOrFail();
+  public static function obtenerXId($id, $soloUsuariosDelSistema = TRUE) {
+    return Usuario::listar(NULL, $soloUsuariosDelSistema)->where("entidad.id", $id)->firstOrFail();
   }
 
   public static function obtenerActual() {
     if (is_null(session("usuarioActual"))) {
-      session(["usuarioActual" => Usuario::obtenerXId(Auth::user()->idEntidad)]);
+      session(["usuarioActual" => Usuario::obtenerXId(Auth::user()->idEntidad, FALSE)]);
     }
     return session("usuarioActual");
   }
@@ -69,8 +72,8 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     Entidad::registrarActualizarImagenPerfil($idEntidad, $req->file("imagenPerfil"));
 
     $usuario = new Usuario($datos);
-    $usuario->password = bcrypt($datos["password"]);
     $usuario->idEntidad = $idEntidad;
+    $usuario->password = bcrypt($datos["password"]);
     $usuario->save();
     return $idEntidad;
   }
@@ -127,6 +130,15 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     }
     $usuario->email = $correoElectronicoEliminacion;
     $usuario->save();
+  }
+
+  public static function verificarExistencia($id) {
+    try {
+      Usuario::obtenerXId($id, FALSE);
+    } catch (\Exception $ex) {
+      return FALSE;
+    }
+    return TRUE;
   }
 
 }
