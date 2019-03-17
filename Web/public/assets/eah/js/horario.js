@@ -72,9 +72,13 @@ function cargarHorario() {
   }
 }
 function mostrarTextoHorario() {
+  var textoHorario = obtenerTextoHorario(horarioFin);
+  $("#sec-info-horario").html(textoHorario);
+}
+function obtenerTextoHorario(horario){  
   var textoHorario = '<ul>';
-  for (var i = 0; i < horarioFin.length; i++) {
-    var dias = horarioFin[i].dias.split(","), horas = horarioFin[i].horas;
+  for (var i = 0; i < horario.length; i++) {
+    var dias = horario[i].dias.split(","), horas = horario[i].horas;
     textoHorario += '<li><i class="fa fa-fw fa-calendar-check-o"></i> <b>';
     for (var j = 0; j < dias.length; j++)
       textoHorario += (j > 0 ? (j === (dias.length - 1) ? (" y ") : " , ") : "") + diasLet[dias[j] - 1];
@@ -84,7 +88,7 @@ function mostrarTextoHorario() {
     textoHorario += '</li>';
   }
   textoHorario += '</ul>';
-  $("#sec-info-horario").html(textoHorario);
+  return textoHorario;
 }
 function simplificarHorario() {
   var horarioSim = [];

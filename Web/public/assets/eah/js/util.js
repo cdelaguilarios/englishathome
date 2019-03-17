@@ -489,6 +489,8 @@ function habilitarTodosPasosWizard(tipoEntidad) {
 
 //Util
 function letraCapital(texto) {
+  if(!texto)
+    return "";
   return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
 }
 function pad(num, size) {

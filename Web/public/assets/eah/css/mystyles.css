@@ -241,7 +241,7 @@ textarea{
 #sec-perfil-horario .btn{
   margin-left: 20px;
 }
-#sec-info-horario ul{
+[id*='sec-info-horario'] ul{
   list-style-type: none;
   margin-top: 5px;
   margin-left: -20px;
@@ -292,6 +292,9 @@ textarea{
   white-space: inherit;
   width: 160%;
 }
+#tab-lista .progress{
+  background-color: #c7c7c7 !important;
+}
 
 /*Alumno - registro externo*/
 .register-box {
@@ -334,8 +337,18 @@ table.dataTable thead input {
   font-size: 11px;
 }
 
+@media (max-width: 768px){
+  table.dataTable thead .tabla-sec-busqueda{
+    display: none !important;
+  }
+}
+
 table.dataTable thead .tabla-sec-busqueda .sorting:after{
   opacity: 0 !important;
+}
+
+table.dataTable thead .tabla-sec-busqueda .sorting_asc:after{
+  content: "";
 }
 
 table.dataTable thead .tabla-sec-busqueda .sorting_desc:after{
@@ -461,3 +474,4 @@ table.dataTable thead .tabla-sec-busqueda .sorting_desc:after{
 #formulario-reporte .fuelux .checkbox-custom:before {
   right: -25px;
 }
+

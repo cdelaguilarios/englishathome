@@ -8,11 +8,14 @@
   var urlEditar = "{{ route('alumnos.editar', ['id' => 0]) }}";
   var urlActualizarEstado = "{{ route('alumnos.actualizar.estado', ['id' => 0]) }}";
   var urlEliminar = "{{ route('alumnos.eliminar', ['id' => 0]) }}";
+  var urlPerfilProfesor = "{{ route('profesores.perfil', ['id' => 0]) }}";  
+  var urlHorario = "{{ route('horario', ['id' => 0]) }}";
   var estados = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listar()) !!};
   var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listarCambio()) !!};
   var estadoCuotaProgramada = "{{ App\Helpers\Enum\EstadosAlumno::CuotaProgramada }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/alumno.js") }}"></script>
+<script src="{{ asset("assets/eah/js/horario.js") }}"></script>
 @endsection
 
 @section("breadcrumb")
@@ -49,11 +52,11 @@
           <thead>
             <tr>
               <th>N°</th> 
-              <th>Nombre completo</th>   
+              <th>Nombre completo/Distrito</th>   
+              <th>Avance de clases</th>  
               <th>Curso</th>    
-              <th>Correo electrónico</th>
-              <th>Estado</th>
-              <th>Fecha registro</th>
+              <th>Estado/Nivel</th>
+              <th>Pago acumulado</th>
               <th class="all">Opciones</th>
             </tr>
           </thead>

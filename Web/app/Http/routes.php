@@ -156,6 +156,9 @@ Route::group(["middleware" => "auth"], function() {
     Route::get("notificaciones", ["uses" => "HistorialController@listarNotificaciones", "as" => "historial.notificaciones"]);
     Route::post("notificaciones", ["uses" => "HistorialController@listarNotificaciones", "as" => "historial.notificaciones"]);
     // </editor-fold>
+    // <editor-fold desc="Horario">
+    Route::post("horario/{idEntidad}", ["uses" => "HorarioController@obtener", "as" => "horario"]);
+    // </editor-fold>
     // <editor-fold desc="Calendario">
     Route::get("calendario", ["uses" => "CalendarioController@index", "as" => "calendario"]);
     Route::post("calendario/datos", ["uses" => "CalendarioController@datos", "as" => "calendario.datos"]);

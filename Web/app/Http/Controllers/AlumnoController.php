@@ -9,11 +9,13 @@ use Input;
 use Storage;
 use Mensajes;
 use Datatables;
+use App\Models\Pago;
 use App\Models\Clase;
 use App\Models\Alumno;
 use App\Models\Docente;
 use App\Models\PagoAlumno;
 use App\Models\Interesado;
+use App\Helpers\Enum\EstadosClase;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Alumno\BusquedaRequest;
 use App\Http\Requests\ActualizarHorarioRequest;
@@ -45,11 +47,23 @@ class AlumnoController extends Controller {
 
   public function listar(BusquedaRequest $req) {
     return Datatables::of(Alumno::listar($req->all()))->filterColumn("entidad.nombre", function($q, $k) {
-              $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
-            })->filterColumn("entidad.fechaRegistro", function($q, $k) {
-              $q->whereRaw("DATE_FORMAT(entidad.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
+              $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"])
+                      ->orWhereRaw('distritoAlumno.distrito like ?', ["%{$k}%"])
+                      ->orWhereRaw('CONCAT(profesorProximaClase.nombre, " ", profesorProximaClase.apellido) like ?', ["%{$k}%"])
+                      ->orWhereRaw('distritoProfesor.distrito like ?', ["%{$k}%"]);
+            })->filterColumn("porcentajeAvanceClases", function($q, $k) {
+              $q->whereRaw("(SELECT COUNT(*) FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')) like ?", ["%{$k}%"])
+                      ->orWhereRaw("(SELECT SUM(duracion) FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "'))/ 3600 like ?", ["%{$k}%"])
+                      ->orWhereRaw("(SELECT SUM(duracion) FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')AND estado IN('" . EstadosClase::Realizada . "'))/ 3600 like ?", ["%{$k}%"])
+                      ->orWhereRaw("(SELECT SUM(duracion)*100/((SELECT SUM(duracion) FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "'))) FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')AND estado IN('" . EstadosClase::Realizada . "')) like ?", ["%{$k}%"]);
             })->filterColumn("curso", function($q, $k) {
               $q->whereRaw("curso.nombre like ?", ["%{$k}%"]);
+            })->filterColumn("entidad.estado", function($q, $k) {
+              $q->whereRaw("entidad.estado like ?", ["%{$k}%"])
+                      ->orWhereRaw('nivelIngles.nombre like ?', ["%{$k}%"]);
+            })->filterColumn("totalPagos", function($q, $k) {
+              $q->whereRaw("(SELECT COUNT(*) FROM " . PagoAlumno::nombreTabla() . " WHERE idAlumno = entidad.id) like ?", ["%{$k}%"])
+                      ->orWhereRaw("(SELECT SUM(monto) FROM " . Pago::nombreTabla() . " WHERE id IN (SELECT idPago FROM " . PagoAlumno::nombreTabla() . " WHERE idAlumno = entidad.id) AND eliminado = 0) like ?", ["%{$k}%"]);
             })->make(true);
   }
 
@@ -351,9 +365,9 @@ class AlumnoController extends Controller {
   public function totalClasesXHorario($id, ClaseRequest\TotalHorarioRequest $req) {
     return response()->json(Clase::totalXHorario($id, $req->all()), 200);
   }
-  
+
   public function descargarLista($id) {
-    
+
     try {
       $this->data["vistaImpresion"] = TRUE;
       $this->data["impresionDirecta"] = TRUE;

@@ -36,19 +36,53 @@ class Alumno extends Model {
       } else {
         $alumnos->where("entidad.estado", $datos["estado"]);
       }
-    }
-    $alumnos->leftJoin(Clase::nombreTabla() . " as clase", function ($q) {
-      $q->on("clase.idAlumno", "=", "entidad.id")
-        ->on("clase.id", "=", DB::raw("(SELECT id FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id ORDER BY fechaFin DESC LIMIT 1)"))
-        ->where("clase.eliminado", "=", 0);
-    });
+    }    
+    //Datos de última clase
+    $alumnos->leftJoin(Clase::nombreTabla() . " as ultimaClase", function ($q) {
+      $q->on("ultimaClase.idAlumno", "=", "entidad.id")
+        ->on("ultimaClase.id", "=", DB::raw("(SELECT id FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id ORDER BY fechaFin DESC LIMIT 1)"))
+        ->where("ultimaClase.eliminado", "=", 0);
+    });    
+    //Datos del profesor de la próxima clase
+    $alumnos->leftJoin(Entidad::nombreTabla() . " as profesorProximaClase", function ($q) {
+      $q->on("profesorProximaClase.id", "=", DB::raw("(SELECT idProfesor FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id AND fechaInicio >= '" . Carbon::now() . "' AND eliminado=0 ORDER BY fechaFin ASC LIMIT 1)"))
+        ->where("profesorProximaClase.eliminado", "=", 0);
+    });     
+    $alumnos->leftJoin("distrito as distritoProfesor", function ($q) {
+      $q->on("distritoProfesor.codigo", "=", "profesorProximaClase.codigoUbigeo");
+    });  
+    //Nivel de Inglés
+    $alumnos->leftJoin(NivelIngles::nombreTabla() . " as nivelIngles", function ($q) {
+      $q->on("nivelIngles.id", "=", DB::raw("(SELECT idNivelIngles FROM " . EntidadNivelIngles::nombreTabla() . " WHERE idEntidad = entidad.id)"))
+        ->where("nivelIngles.activo", "=", 1)
+        ->where("nivelIngles.eliminado", "=", 0);
+    }); 
+    //Otros datos
     $alumnos->join(EntidadCurso::nombreTabla() . " as entidadCurso", function ($q) {
       $q->on("entidadCurso.idEntidad", "=", "entidad.id");
     });
     $alumnos->join(Curso::nombreTabla() . " as curso", function ($q) {
       $q->on("curso.id", "=", "entidadCurso.idCurso");
-    });    
-    return $alumnos->select(Alumno::nombreTabla(). ".*", "entidad.*", "clase.fechaFin as fechaUltimaClase", DB::raw("GROUP_CONCAT(curso.nombre SEPARATOR ', ') as curso"));
+    });       
+    $alumnos->join("distrito as distritoAlumno", function ($q) {
+      $q->on("distritoAlumno.codigo", "=", "entidad.codigoUbigeo");
+    });  
+    return $alumnos->select(Alumno::nombreTabla(). ".*", 
+            "entidad.*", 
+            "ultimaClase.fechaFin as fechaUltimaClase", 
+            DB::raw("(SELECT COUNT(*) FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')) AS totalClases"), 
+            DB::raw("(SELECT SUM(duracion) FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')) AS duracionTotalClases"), 
+            DB::raw("(SELECT SUM(duracion) FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')AND estado IN('" . EstadosClase::Realizada . "')) AS duracionTotalClasesRealizadas"), 
+            DB::raw("(SELECT SUM(duracion)*100/((SELECT SUM(duracion) FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "'))) FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')AND estado IN('" . EstadosClase::Realizada . "')) AS porcentajeAvanceClases"), 
+            DB::raw("GROUP_CONCAT(curso.nombre SEPARATOR ', ') as curso"), 
+            "distritoAlumno.distrito as distritoAlumno", 
+            "profesorProximaClase.id as idProfesor", 
+            "profesorProximaClase.nombre as nombreProfesor", 
+            "profesorProximaClase.apellido as apellidoProfesor", 
+            "distritoProfesor.distrito as distritoProfesor", 
+            "nivelIngles.nombre as nivelIngles", 
+            DB::raw("(SELECT COUNT(*) FROM " . PagoAlumno::nombreTabla() . " WHERE idAlumno = entidad.id) AS totalPagos"), 
+            DB::raw("(SELECT SUM(monto) FROM " . Pago::nombreTabla() . " WHERE id IN (SELECT idPago FROM " . PagoAlumno::nombreTabla() . " WHERE idAlumno = entidad.id) AND eliminado = 0) AS pagoAcumulado"));
   }
 
   public static function listarBusqueda($terminoBus = NULL) {
