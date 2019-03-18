@@ -7,6 +7,12 @@
       {!! $mensaje !!}
     </div>        
     @endforeach
+    @if (session('status'))
+    <div class="alert alert-success alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+      {{ session('status') }}
+    </div>
+    @endif
     @foreach($mensajes["advertencias"] as $mensaje)   
     <div class="alert alert-warning alert-dismissible" role="alert">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>

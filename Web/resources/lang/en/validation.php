@@ -106,7 +106,8 @@ return [
 
     'attributes' => array(
         'email' => 'E-mail',
-        'password' => 'Password'
+        'password' => 'Password',
+        'password_confirmation' => 'Password confirmation'
     ),
 
 ];

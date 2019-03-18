@@ -19,6 +19,6 @@ return [
     'remember_me' => 'Recordarme',
     'register' => 'Registrarse',
     'login' => 'Ingresar',
-    'restart_password' => '¿Olvido su contraseña?',
+    'restart_password' => '¿Olvidó su contraseña?',
     'errors_title' => 'Por favor corregir los siguientes errores'
 ];

@@ -103,7 +103,8 @@ return array(
 
     'attributes' => array(
         'email' => 'Correo electrónico',
-        'password' => 'Contraseña'
+        'password' => 'Contraseña',
+        'password_confirmation' => 'Confirmación de contraseña'
     ),
 
 );

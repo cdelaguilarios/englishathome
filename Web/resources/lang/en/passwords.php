@@ -12,6 +12,10 @@ return [
     | has failed, such as for an invalid token or invalid new password.
     |
     */
+    
+    'send_password_reset_link' => 'Send Password Reset Link',
+    'reset_password' => 'Reset Password',
+    'email_reset_password' => 'Click here to reset your password:',
 
     'password' => 'Passwords must be at least six characters and match the confirmation.',
     'reset' => 'Your password has been reset!',

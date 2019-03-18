@@ -6,6 +6,10 @@ Route::get("iniciar_sesion", ["uses" => "Auth\AuthController@getLogin", "as" => 
 Route::post("iniciar_sesion", ["uses" => "Auth\AuthController@postLogin", "as" => "auth.login"]);
 Route::get("cerrar_sesion", ["uses" => "Auth\AuthController@getLogout", "as" => "auth.logout"]);
 
+Route::get("restablecimientoContrasenia/{token?}", ["uses" => "Auth\PasswordController@showResetForm", "as" => "auth.password.reset"]);
+Route::post("restablecimientoContrasenia/correoElectronico", ["uses" => "Auth\PasswordController@sendResetLinkEmail", "as" => "auth.password.email"]);
+Route::post("restablecimientoContrasenia", ["uses" => "Auth\PasswordController@reset", "as" => "auth.password.reset"]);
+
 Route::post("interesado/registrar/externo", ["uses" => "InteresadoController@registrarExterno", "as" => "interesados.registrar.externo"]);
 Route::get("alumno/nuevo/{codigoVerificacion}", ["uses" => "AlumnoController@crearExterno", "as" => "alumnos.crear.externo"]);
 Route::post("alumno/registrar/externo", ["uses" => "AlumnoController@registrarExterno", "as" => "alumnos.registrar.externo"]);
