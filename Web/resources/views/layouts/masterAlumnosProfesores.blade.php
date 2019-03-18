@@ -30,46 +30,7 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->    
   </head>  
-  <body class="hold-transition fuelux {{ (Auth::guest() || (isset($vistaExterna) && $vistaExterna)) ? "login-page" : "skin-blue sidebar-collapse sidebar-mini" }}">
-    @if (Auth::guest() && !(isset($vistaExterna) && $vistaExterna))
-    @yield("content")
-    <script src="{{ asset("assets/plugins/jquery/jquery.min.js") }}"></script>
-    <script src="{{ asset("assets/bootstrap/js/bootstrap.min.js") }}"></script>      
-    @else
-    @if ((isset($vistaExterna) && $vistaExterna) || (isset($vistaImpresion) && $vistaImpresion))  
-    <div class="register-box">
-      <div class="register-box-body">
-        <div class="register-logo">
-          <div class="row">            
-            @if(isset($vistaImpresion) && $vistaImpresion) 
-            <div class="col-sm-12 vcenter">
-              <p class="sec-ficha-nombre-entidad">
-                @yield("tituloImpresion")
-              </p>
-              <p class="sec-ficha-logo">
-                <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login" width="150"/>
-              </p>
-            </div>
-            @else
-            <div class="col-sm-6 vcenter">
-              @if(isset($interesado))
-              <b>Ficha del alumno</b>
-              @else
-              <b>English teacher application</b>
-              @endif
-            </div><!--
-            --><div class="col-sm-6 vcenter">
-              <a href="http://englishathomeperu.com/" target="_blank">
-                <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login" width="150"/>
-              </a>
-            </div>
-            @endif
-          </div>        
-        </div> 
-        @yield("content")
-      </div>
-    </div> 
-    @elseif(!(Auth::guest())) 
+  <body class="hold-transition fuelux skin-blue sidebar-collapse sidebar-mini">
     <div class="wrapper" style="display: none">
       <header class="main-header">
         <a href="{{ route("/")}}" class="logo">
@@ -94,7 +55,7 @@
                   @if ($usuarioActual->imagenPerfil == "null" || empty($usuarioActual->imagenPerfil))
                   <img src="{{ asset("assets/eah/img/perfil-imagen.png")}}" class="user-image" />
                   @else
-                  <img src="{{ route("archivos", ["nombre" => (isset($usuarioActual->imagenPerfil) && $usuarioActual->imagenPerfil != "" ? $usuarioActual->imagenPerfil : "-"), "tip" => ($usuarioActual->sexo == "F" ? "f" : "m")]) }}" class="user-image"/>  
+                  <img src="{{ route("archivos", ["nombre" => (isset($usuarioActual->imagenPerfil) && $usuarioActual->imagenPerfil != "" ? $usuarioActual->imagenPerfil : "-"), "tip" => ($usuarioActual->sexo == "F" ? "f" : "m")]) }}" class="user-image"/> 
                   @endif
                   <span class="hidden-xs">{!! ucwords(mb_strtolower($usuarioActual->nombre)) !!} {!! ucwords(mb_strtolower($usuarioActual->apellido)) !!}</span>
                 </a>
@@ -104,7 +65,7 @@
                     @if ($usuarioActual->imagenPerfil == "null" || empty($usuarioActual->imagenPerfil))
                     <img src="{{ asset("assets/eah/img/perfil-imagen.png") }}" class="img-circle" />
                     @else
-                    <img src="{{ route("archivos", ["nombre" => (isset($usuarioActual->imagenPerfil) && $usuarioActual->imagenPerfil != "" ? $usuarioActual->imagenPerfil : "-"), "tip" => ($usuarioActual->sexo == "F" ? "f" : "m")]) }}" class="img-circle"/>                    
+                    <img src="{{ route("archivos", ["nombre" => (isset($usuarioActual->imagenPerfil) && $usuarioActual->imagenPerfil != "" ? $usuarioActual->imagenPerfil : "-"), "tip" => ($usuarioActual->sexo == "F" ? "f" : "m")]) }}" class="img-circle"/>  
                     @endif
                     <p>
                       {!! ucwords(mb_strtolower($usuarioActual->nombre)) !!} {!! ucwords(mb_strtolower($usuarioActual->apellido)) !!}
@@ -129,67 +90,9 @@
         <section class="sidebar">
           <ul class="sidebar-menu">
             <li class="header">Menú</li>
-            <li class="{{ ((isset($seccion) && $seccion == "interesados") ? "active" : "") }}">
-              <a href="{{ route("interesados")}}"><i class="fa flaticon-questioning"></i> <span>Interesados</span></a>
+            <li class="{{ ((isset($seccion) && $seccion == "clases") ? "active" : "") }}">
+              <a href="{{ route("clases.propias")}}"><i class="fa flaticon-teach"></i> <span>Clases</span></a>
             </li>
-            <li class="{{ ((isset($seccion) && $seccion == "alumnos") ? "active" : "") }}">
-              <a href="{{ route("alumnos")}}"><i class="fa fa-mortar-board"></i> <span>Alumnos</span></a>
-            </li> 
-            <li class="{{ ((isset($seccion) && $seccion == "docentes") ? "active" : "") }}">         
-              <a href="javascript:void(0);">
-                <i class="fa flaticon-teach"></i> <span>Docentes</span>
-                <span class="pull-right-container">
-                  <i class="fa fa-angle-left pull-right"></i>
-                </span>
-              </a>
-              <ul class="treeview-menu">
-                <li class="{{ ((isset($subSeccion) && $subSeccion == "postulantes") ? "active" : "") }}">
-                  <a href="{{ route("postulantes")}}">CV&nbsp;&nbsp;&nbsp;<span>Postulantes</span></a>
-                </li>
-                <li class="{{ ((isset($subSeccion) && $subSeccion == "profesores") ? "active" : "") }}">
-                  <a href="{{ route("profesores")}}"><i class="fa flaticon-teacher-with-stick"></i> <span>Profesores</span></a>
-                </li>
-                <li class="{{ ((isset($subSeccion) && $subSeccion == "disponibles") ? "active" : "") }}">
-                  <a href="{{ route("docentes.disponibles")}}"><i class="fa fa-search"></i> <span>Buscar disponibles</span></a>
-                </li>
-              </ul>
-            </li> 
-            <li class="{{ ((isset($seccion) && $seccion == "cursos") ? "active" : "") }}">
-              <a href="{{ route("cursos")}}"><i class="fa fa-book"></i> <span>Cursos</span></a>
-            </li>
-            <li class="{{ ((isset($seccion) && $seccion == "calendario") ? "active" : "") }}">
-              <a href="{{ route("calendario")}}"><i class="fa fa-calendar"></i> <span>Calendario</span></a>
-            </li>
-            <li class="{{ ((isset($seccion) && $seccion == "reportes") ? "active" : "") }} treeview">
-              <a href="javascript:void(0);">
-                <i class="fa fa-bar-chart"></i> <span>Reportes</span>
-                <span class="pull-right-container">
-                  <i class="fa fa-angle-left pull-right"></i>
-                </span>
-              </a>
-              <ul class="treeview-menu">
-                <li class="{{ ((isset($subSeccion) && $subSeccion == "motor") ? "active" : "") }}">
-                  <a href="{{ route("reportes")}}"><i class="fa fa-qrcode"></i> Motor de reportes</a>
-                </li>
-                <li class="{{ ((isset($subSeccion) && $subSeccion == "clases") ? "active" : "") }}">
-                  <a href="{{ route("reporte.clases")}}"><i class="fa flaticon-student-in-front-of-a-stack-of-books"></i> Reporte de clases</a>
-                </li>
-                <li class="{{ ((isset($subSeccion) && $subSeccion == "pagos") ? "active" : "") }}">
-                  <a href="{{ route("reporte.pagos")}}"><i class="fa fa-line-chart"></i> Reporte de pagos</a>
-                </li>
-              </ul>
-            </li> 
-            <li class="{{ ((isset($seccion) && $seccion == "correos") ? "active" : "") }}">
-              <a href="{{ route("correos")}}"><i class="fa fa-envelope"></i> <span>Correos masivos</span></a>
-            </li>           
-            @if($usuarioActual->rol == App\Helpers\Enum\RolesUsuario::Principal)
-            <li class="{{ ((isset($seccion) && $seccion == "usuarios") ? "active" : "") }}">
-              <a href="{{ route("usuarios")}}"><i class="fa fa-users"></i> <span>Usuarios del sistema</span></a>
-            </li>
-            <li class="{{ ((isset($seccion) && $seccion == "configuracion") ? "active" : "") }}">
-              <a href="{{ route("configuracion")}}"><i class="fa fa-gears"></i> <span>Configuración</span></a>
-            </li>
-            @endif
           </ul>
         </section>
       </aside>
@@ -217,11 +120,9 @@
       </div>
     </div>  
     <div id="sec-not-mobile"></div>
-    @endif      
     <script src="{{ asset("assets/plugins/jquery/jquery.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/jquery/jquery-ui.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/jquery_validate/jquery.validate.min.js") }}"></script>
-    @if (!(isset($vistaImpresion) && $vistaImpresion)) 
     <script src="{{ asset("assets/plugins/jquery/jquery-migrate.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/jquery/globalize.js") }}"></script>
     <script src="{{ asset("assets/bootstrap/js/bootstrap.min.js") }}"></script>      
@@ -237,9 +138,7 @@
     <script src="{{ asset("assets/plugins/datatables/dataTables.bootstrap.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/datatables/extensions/Responsive/js/dataTables.responsive.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/blockui/jquery.blockUI.js") }}"></script>
-    @if(!(isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()))
     <script src="{{ asset("assets/plugins/jquery_validate/jquery.validate.messages_es.js") }}"></script> 
-    @endif
     <script src="{{ asset("assets/plugins/datepicker/bootstrap-datepicker.js") }}"></script>   
     <script src="{{ asset("assets/plugins/datepicker/locales/bootstrap-datepicker.es.js") }}"></script>         
     <script src="{{ asset("assets/plugins/datetimepicker/bootstrap-datetimepicker.min.js") }}"></script>   
@@ -251,32 +150,9 @@
     <script src="//www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
 var urlBase = "{{ url('/') }}";
-var urlBaseImagen = "{{ route('archivos', ['nombre' => '[RUTA_IMAGEN]']) }}";
-var urlArchivos = "{{ route('archivos', ['nombre' => '0']) }}";
-var urlRegistrarArchivo = "{{ route('archivos.reqistrar') }}";
-var urlEliminarArchivo = "{{ route('archivos.eliminar') }}";
-var minHorasClase = "{{ $minHorasClase }}";
-var maxHorasClase = "{{ $maxHorasClase }}";
-var minHorario = "{{ $minHorario }}";
-var maxHorario = "{{ $maxHorario}}";
-var urlPerfilProfesor = "{{ route('profesores.perfil', ['id' => 0]) }}";
-var urlEditarPostulante = "{{ route('postulantes.editar', ['id' => 0]) }}";
-var urlPerfilAlumno = "{{ route('alumnos.perfil', ['id' => 0]) }}";
-var estadosPago = {!!  json_encode(App\Helpers\Enum\EstadosPago::listar()) !!};
-var urlDatosClase = "{{ route('alumnos.clases.datos', ['id' => '[ID_ALUMNO]', 'idClase' => 0]) }}";
-var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
-var formularioExternoPostulante = {{ ((isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()) ? "true" : "false") }};
-var maxTamanhoSubida = {{ Config::get("eah.maxTamanhoSubida") }};
     </script>
     <script src="{{ asset("assets/eah/js/util.js") }}"></script>
-    <script src="{{ asset("assets/eah/js/mensajes.js") }}"></script>   
-    @else
-    <script type="text/javascript">
-var minHorario = "{{ $minHorario }}";
-var maxHorario = "{{ $maxHorario}}";
-    </script>
-    @endif
+    <script src="{{ asset("assets/eah/js/mensajes.js") }}"></script>      
     @yield("section_script") 
-    @endif
   </body> 
 </html>

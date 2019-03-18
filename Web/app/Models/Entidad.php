@@ -102,7 +102,7 @@ class Entidad extends Model {
     $usuarioRegistrado = Usuario::verificarExistencia($id);
     $datosUsuario = ["email" => $datos["email"], "rol" => ($entidad->tipo == TiposEntidad::Alumno ? RolesUsuario::Alumno : RolesUsuario::Profesor)];
     if ($usuarioRegistrado) {
-      $usuario = Usuario::obtenerXId($id, FALSE);
+      $usuario = Usuario::obtenerXId($id);
       $usuario->password = bcrypt($datos["password"]);
       $usuario->update($datosUsuario);
     } else {

@@ -34,7 +34,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     return $nombreTabla;
   }
 
-  public static function listar($datos = NULL, $soloUsuariosDelSistema = TRUE) {
+  public static function listar($datos = NULL, $soloUsuariosDelSistema = FALSE) {
     $usuarios = Usuario::leftJoin(Entidad::nombreTabla() . " as entidad", Usuario::nombreTabla() . ".idEntidad", "=", "entidad.id")->where("entidad.eliminado", 0)->groupBy("entidad.id")->distinct();
     if (isset($datos["estado"])) {
       $usuarios->where("entidad.estado", $datos["estado"]);
@@ -53,13 +53,13 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     return $alumnos->lists("nombreCompleto", "entidad.id");
   }
 
-  public static function obtenerXId($id, $soloUsuariosDelSistema = TRUE) {
-    return Usuario::listar(NULL, $soloUsuariosDelSistema)->where("entidad.id", $id)->firstOrFail();
+  public static function obtenerXId($id) {
+    return Usuario::listar()->where("entidad.id", $id)->firstOrFail();
   }
 
   public static function obtenerActual() {
     if (is_null(session("usuarioActual"))) {
-      session(["usuarioActual" => Usuario::obtenerXId(Auth::user()->idEntidad, FALSE)]);
+      session(["usuarioActual" => Usuario::obtenerXId(Auth::user()->idEntidad)]);
     }
     return session("usuarioActual");
   }
@@ -134,7 +134,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
 
   public static function verificarExistencia($id) {
     try {
-      Usuario::obtenerXId($id, FALSE);
+      Usuario::obtenerXId($id);
     } catch (\Exception $ex) {
       return FALSE;
     }

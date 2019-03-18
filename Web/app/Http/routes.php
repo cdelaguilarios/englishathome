@@ -5,7 +5,6 @@ use App\Helpers\Enum\RolesUsuario;
 Route::get("iniciar_sesion", ["uses" => "Auth\AuthController@getLogin", "as" => "auth.login"]);
 Route::post("iniciar_sesion", ["uses" => "Auth\AuthController@postLogin", "as" => "auth.login"]);
 Route::get("cerrar_sesion", ["uses" => "Auth\AuthController@getLogout", "as" => "auth.logout"]);
-
 Route::get("restablecimientoContrasenia/{token?}", ["uses" => "Auth\PasswordController@showResetForm", "as" => "auth.password.reset"]);
 Route::post("restablecimientoContrasenia/correoElectronico", ["uses" => "Auth\PasswordController@sendResetLinkEmail", "as" => "auth.password.email"]);
 Route::post("restablecimientoContrasenia", ["uses" => "Auth\PasswordController@reset", "as" => "auth.password.reset"]);
@@ -31,8 +30,19 @@ Route::delete("archivos/eliminar", ["uses" => "ArchivoController@eliminar", "as"
 // </editor-fold>  
 
 Route::group(["middleware" => "auth"], function() {
-  Route::get("/", ["uses" => "InicioController@inicio", "as" => "/"]);
-
+  Route::group(["middleware" => "verificacion.usuario:*"], function() {
+    Route::get("/", ["uses" => "InicioController@inicio", "as" => "/"]);
+    // <editor-fold desc="Usuarios">
+    Route::get("usuario/{id}/editar", ["uses" => "UsuarioController@editar", "as" => "usuarios.editar"]);
+    Route::patch("usuario/{id}/actualizar", ["uses" => "UsuarioController@actualizar", "as" => "usuarios.actualizar"]);
+    // </editor-fold>
+  });
+  Route::group(["middleware" => "verificacion.usuario:" . RolesUsuario::Alumno . "," . RolesUsuario::Profesor], function() {
+    // <editor-fold desc="Clases">
+    Route::get("clasesPropias", ["uses" => "ClaseController@propias", "as" => "clases.propias"]);
+    Route::post("clasesPropias/listar", ["uses" => "ClaseController@listaPropias", "as" => "clases.propias.listar"]);
+    // </editor-fold>
+  });
   Route::group(["middleware" => "verificacion.usuario:" . RolesUsuario::Principal . "," . RolesUsuario::Secundario], function() {
     // <editor-fold desc="Entidades">
     Route::post("entidades/{id}/actualizarComentariosAdministrador", ["uses" => "EntidadController@actualizarComentariosAdministrador", "as" => "entidades.actualizar.comentarios.administrador"]);
@@ -150,8 +160,6 @@ Route::group(["middleware" => "auth"], function() {
       Route::post("usuario/{id}/actualizarEstado", ["uses" => "UsuarioController@actualizarEstado", "as" => "usuarios.actualizar.estado"]);
       Route::delete("usuario/{id}/eliminar", ["uses" => "UsuarioController@eliminar", "as" => "usuarios.eliminar"]);
     });
-    Route::get("usuario/{id}/editar", ["uses" => "UsuarioController@editar", "as" => "usuarios.editar"]);
-    Route::patch("usuario/{id}/actualizar", ["uses" => "UsuarioController@actualizar", "as" => "usuarios.actualizar"]);
     // </editor-fold>
     // <editor-fold desc="Historial">
     Route::post("historial/{idEntidad}/perfil", ["uses" => "HistorialController@obtener", "as" => "historial.perfil"]);
@@ -189,7 +197,7 @@ Route::group(["middleware" => "auth"], function() {
     Route::delete("reportes/{id}/eliminar", ["uses" => "ReporteController@eliminar", "as" => "reportes.eliminar"]);
     Route::post("reportes/listarCampos", ["uses" => "ReporteController@listarCampos", "as" => "reportes.listar.campos"]);
     Route::post("reportes/listarEntidadesRelacionadas", ["uses" => "ReporteController@listarEntidadesRelacionadas", "as" => "reportes.listar.entidades.relacionadas"]);
-    
+
     Route::get("reporte/clases", ["uses" => "ReporteController@clases", "as" => "reporte.clases"]);
     Route::post("reporte/listar/clases", ["uses" => "ReporteController@listarClases", "as" => "reporte.listar.clases"]);
     Route::post("reporte/listar/clases/grafico", ["uses" => "ReporteController@listarClasesGrafico", "as" => "reporte.listar.clases.grafico"]);

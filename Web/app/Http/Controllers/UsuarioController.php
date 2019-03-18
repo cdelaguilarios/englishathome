@@ -30,7 +30,7 @@ class UsuarioController extends Controller {
 
   public function listar(BusquedaRequest $req) {
     $datos = $req->all();
-    return Datatables::of(Usuario::listar($datos))->filterColumn("entidad.nombre", function($q, $k) {
+    return Datatables::of(Usuario::listar($datos, TRUE))->filterColumn("entidad.nombre", function($q, $k) {
               $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
             })->filterColumn("entidad.fechaRegistro", function($q, $k) {
               $q->whereRaw("DATE_FORMAT(entidad.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);

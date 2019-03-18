@@ -30,7 +30,7 @@ class Clase extends Model {
 
   private static function listarBase() {
     $nombreTabla = Clase::nombreTabla();
-    return Clase::leftJoin(Entidad::nombreTabla() . " as entidadAlumno", $nombreTabla . ".idAlumno", "=", "entidadAlumno.id")
+    $clases = Clase::leftJoin(Entidad::nombreTabla() . " as entidadAlumno", $nombreTabla . ".idAlumno", "=", "entidadAlumno.id")
                     ->leftJoin(Entidad::nombreTabla() . " as entidadProfesor", function ($q) use($nombreTabla) {
                       $q->on($nombreTabla . ".idProfesor", '=', "entidadProfesor.id");
                       $q->on('entidadProfesor.eliminado', '=', DB::raw("0"));
@@ -44,6 +44,17 @@ class Clase extends Model {
                     ->where($nombreTabla . ".eliminado", 0)
                     ->groupBy($nombreTabla . ".id")
                     ->distinct();
+    if (Auth::user()->rol == RolesUsuario::Alumno) {
+      $clases->where($nombreTabla . ".idAlumno", Auth::user()->idEntidad);
+    }else if (Auth::user()->rol == RolesUsuario::Profesor) {
+      $clases->where($nombreTabla . ".idProfesor", Auth::user()->idEntidad);      
+    }
+    return $clases;
+  }
+  
+  public static function listarPropias($datos = NULL) {
+    $clases = Clase::listar(); 
+    return $clases;
   }
 
   public static function obtenerXId($idAlumno, $id, $incluirFechaProximaClase = FALSE) {

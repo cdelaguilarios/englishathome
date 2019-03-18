@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use File;
 use Storage;
 use Response;
+use App\Helpers\Enum\RolesUsuario;
 
 class InicioController extends Controller {
 
   public function inicio() {
-    return redirect(route("interesados"));
+    if (in_array(Auth::user()->rol, [RolesUsuario::Alumno, RolesUsuario::Profesor])) {
+      return redirect(route("clases.propias"));
+    } else {
+      return redirect(route("interesados"));
+    }
   }
 
   public function obtenerImagen($imagen) {
