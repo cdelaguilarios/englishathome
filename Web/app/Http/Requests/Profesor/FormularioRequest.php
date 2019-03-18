@@ -4,6 +4,7 @@ namespace App\Http\Requests\Profesor;
 
 use App\Models\Curso;
 use App\Helpers\Util;
+use App\Models\Usuario;
 use App\Models\TipoDocumento;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
@@ -17,6 +18,7 @@ class FormularioRequest extends Request {
 
   protected function getValidatorInstance() {
     $datos = $this->all();
+    
     $datos["telefono"] = ReglasValidacion::formatoDato($datos, "telefono");
     $datos["fechaNacimiento"] = ReglasValidacion::formatoDato($datos, "fechaNacimiento");
     $datos["sexo"] = ReglasValidacion::formatoDato($datos, "sexo", "");
@@ -46,6 +48,8 @@ class FormularioRequest extends Request {
 
   public function rules() {
     $datos = $this->all();
+    $modoEdicion = ($this->method() == "PATCH");
+    $idEntidad = $this->route('id');
 
     $reglasValidacion = [
         "nombre" => ["required", "max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
@@ -53,7 +57,8 @@ class FormularioRequest extends Request {
         "telefono" => "max:30",
         "fechaNacimiento" => "date_format:d/m/Y",
         "numeroDocumento" => "numeric|digits_between:8,20",
-        "correoElectronico" => "required|email|max:245",
+        "correoElectronico" => "required|email|max:245|unique:" . Usuario::nombreTabla() . ",email" .
+        ($modoEdicion && !is_null($idEntidad) && is_numeric($idEntidad) ? "," . $idEntidad . ",idEntidad" : ""),
         "imagenPerfil" => "image",
         "direccion" => "required|max:255",
         "numeroDepartamento" => "max:255",
@@ -111,6 +116,7 @@ class FormularioRequest extends Request {
 
   public function messages() {
     return [
+        "correoElectronico.unique" => "El correo electrónico ingresado ya está siendo utilizado. Tomar en cuenta que el profesor utiliza su correo electrónico para acceder al sistema y este dato no puede ser igual al que utiliza un alumno o un usuario del sistema.",
         "sexoNoValido.required" => "El sexo seleccionado no es válido.",
         "tipoDocumenoNoValido.required" => "El tipo de documento seleccionado no es válido.",
         "ubigeoNoValido.required" => "Los datos de dirección ingresados no son válidos.",

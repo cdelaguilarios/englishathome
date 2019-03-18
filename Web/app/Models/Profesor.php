@@ -107,6 +107,12 @@ class Profesor extends Model {
     $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidos($profesor->certificadoInternacional, $datos, 1, "nombreDocumentoCertificadoInternacional", "nombreOriginalDocumentoCertificadoInternacional", "nombreDocumentoCertificadoInternacionalEliminado");
     $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidos($profesor->imagenDocumentoIdentidad, $datos, 1, "nombreImagenDocumentoIdentidad", "nombreOriginalImagenDocumentoIdentidad", "nombreImagenDocumentoIdentidadEliminado");
     $profesor->update($datos);
+
+    if (Usuario::verificarExistencia($id)) {
+      $usuario = Usuario::obtenerXId($id);
+      $usuario->email = $datos["correoElectronico"];
+      $usuario->update();
+    }
   }
 
   public static function actualizarEstado($id, $estado) {

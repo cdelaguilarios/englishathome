@@ -5,6 +5,7 @@ namespace App\Http\Requests\Alumno;
 use Auth;
 use Config;
 use App\Models\Curso;
+use App\Models\Usuario;
 use App\Models\NivelIngles;
 use App\Models\TipoDocumento;
 use App\Http\Requests\Request;
@@ -59,14 +60,17 @@ class FormularioRequest extends Request {
 
   public function rules() {
     $datos = $this->all();
-
+    $modoEdicion = ($this->method() == "PATCH");
+    $idEntidad = $this->route('id');
+    
     $reglasValidacion = [
         "nombre" => ["required", "max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
         "apellido" => ["required", "max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
         "telefono" => (Auth::guest() ? "required|" : "") . "max:30",
         "fechaNacimiento" => (Auth::guest() ? "required|" : "") . "date_format:d/m/Y",
         "numeroDocumento" => (Auth::guest() ? "required|" : "") . "numeric|digits_between:8,20",
-        "correoElectronico" => "required|email|max:245",
+        "correoElectronico" => "required|email|max:245|unique:" . Usuario::nombreTabla() . ",email" .
+        ($modoEdicion && !is_null($idEntidad) && is_numeric($idEntidad) ? "," . $idEntidad . ",idEntidad" : ""),
         "imagenPerfil" => "image",
         "direccion" => "required|max:255",
         "numeroDepartamento" => "max:255",
@@ -132,6 +136,7 @@ class FormularioRequest extends Request {
 
   public function messages() {
     return [
+        "correoElectronico.unique" => "El correo electrónico ingresado ya está siendo utilizado. Tomar en cuenta que el alumno utiliza su correo electrónico para acceder al sistema y este dato no puede ser igual al que utiliza un profesor o un usuario del sistema.",
         "sexoNoValido.required" => "El sexo seleccionado no es válido.",
         "tipoDocumenoNoValido.required" => "El tipo de documento seleccionado no es válido.",
         "ubigeoNoValido.required" => "Los datos de dirección ingresados no son válidos.",

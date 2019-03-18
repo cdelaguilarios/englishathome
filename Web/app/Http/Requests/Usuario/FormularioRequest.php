@@ -40,7 +40,7 @@ class FormularioRequest extends Request {
         "imagenPerfil" => "image"
     ];
 
-    $roles = RolesUsuario::listarDelSistema();
+    $roles = RolesUsuario::listar();
     if (!array_key_exists($datos["rol"], $roles)) {
       $reglasValidacion["rolNoValido"] = "required";
     }
@@ -70,7 +70,7 @@ class FormularioRequest extends Request {
 
   public function messages() {
     return [
-        "email.unique" => "El correo electrónico ingresado ya esta siendo utilizado.",
+        "email.unique" => "El correo electrónico ingresado ya está siendo utilizado.",
         "rolNoValido.required" => "El rol seleccionado no es válido.",
         "estadoNoValido.required" => "El estado seleccionado no es válido."
     ];

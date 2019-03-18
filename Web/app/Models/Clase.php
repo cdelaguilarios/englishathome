@@ -159,15 +159,9 @@ class Clase extends Model {
 
     if (isset($datos["estado"])) {
       $clases->where(Clase::nombreTabla() . ".estado", $datos["estado"]);
-    }    
+    }
     return $clases->where($nombreTabla . ((Auth::user()->rol == RolesUsuario::Alumno) ? ".idAlumno" : ".idProfesor"), Auth::user()->idEntidad)
-              ->select($nombreTabla . ".id", $nombreTabla . ".idAlumno", $nombreTabla . ".idProfesor", 
-                       $nombreTabla . ".numeroPeriodo", $nombreTabla . ".duracion", $nombreTabla . ".estado",
-                       $nombreTabla . ".fechaInicio", $nombreTabla . ".fechaFin", $nombreTabla . ".fechaCancelacion",                        
-                       $nombreTabla . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAlumno" : ".comentarioProfesor") . " AS comentarioEntidad", 
-                       $nombreTabla . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAdministradorParaAlumno" : ".comentarioAdministradorParaProfesor") . " AS comentarioAdministrador", 
-                       "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", 
-                       "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor");
+                    ->select($nombreTabla . ".id", $nombreTabla . ".idAlumno", $nombreTabla . ".idProfesor", $nombreTabla . ".numeroPeriodo", $nombreTabla . ".duracion", $nombreTabla . ".estado", $nombreTabla . ".fechaInicio", $nombreTabla . ".fechaFin", $nombreTabla . ".fechaCancelacion", $nombreTabla . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAlumno" : ".comentarioProfesor") . " AS comentarioEntidad", $nombreTabla . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAdministradorParaAlumno" : ".comentarioAdministradorParaProfesor") . " AS comentarioAdministrador", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor");
   }
 
   public static function listarXEstados($estados) {
@@ -546,6 +540,20 @@ class Clase extends Model {
     $clase = Clase::obtenerXId($idAlumno, $datos["idClase"]);
     $clase->estado = $datos["estado"];
     $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+    $clase->save();
+  }
+
+  public static function actualizarComentariosEntidad($datos) {
+    $idClase = $datos["idClase"];
+    $idAlumno = $datos["idAlumno"];
+    $clase = Clase::ObtenerXId($idAlumno, $idClase);
+    if (Auth::user()->rol == RolesUsuario::Alumno) {
+      $clase->comentarioAlumno = $datos["comentario"];
+      $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+    } else if (Auth::user()->rol == RolesUsuario::Profesor) {
+      $clase->comentarioProfesor = $datos["comentario"];
+      $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+    }
     $clase->save();
   }
 

@@ -37,13 +37,14 @@ Route::group(["middleware" => "auth"], function() {
     Route::patch("usuario/{id}/actualizar", ["uses" => "UsuarioController@actualizar", "as" => "usuarios.actualizar"]);
     // </editor-fold>
   });
-  Route::group(["middleware" => "verificacion.usuario:" . RolesUsuario::Alumno . "," . RolesUsuario::Profesor], function() {
+  Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Alumno . "|" . RolesUsuario::Profesor . "]"], function() {
     // <editor-fold desc="Clases">
     Route::get("clasesPropias", ["uses" => "ClaseController@propias", "as" => "clases.propias"]);
     Route::post("clasesPropias/listar", ["uses" => "ClaseController@listarPropias", "as" => "clases.propias.listar"]);
+    Route::post("clasesPropias/actualizarComentarios", ["uses" => "ClaseController@actualizarComentarios", "as" => "clases.propias.actualizar.comentarios"]);
     // </editor-fold>
   });
-  Route::group(["middleware" => "verificacion.usuario:" . RolesUsuario::Principal . "," . RolesUsuario::Secundario], function() {
+  Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Principal . "|" . RolesUsuario::Secundario . "]"], function() {
     // <editor-fold desc="Entidades">
     Route::post("entidades/{id}/actualizarComentariosAdministrador", ["uses" => "EntidadController@actualizarComentariosAdministrador", "as" => "entidades.actualizar.comentarios.administrador"]);
     Route::post("entidades/{id}/actualizarCredencialesAcceso", ["uses" => "EntidadController@actualizarCredencialesAcceso", "as" => "entidades.actualizar.credenciales.acceso"]);
