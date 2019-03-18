@@ -40,7 +40,7 @@ Route::group(["middleware" => "auth"], function() {
   Route::group(["middleware" => "verificacion.usuario:" . RolesUsuario::Alumno . "," . RolesUsuario::Profesor], function() {
     // <editor-fold desc="Clases">
     Route::get("clasesPropias", ["uses" => "ClaseController@propias", "as" => "clases.propias"]);
-    Route::post("clasesPropias/listar", ["uses" => "ClaseController@listaPropias", "as" => "clases.propias.listar"]);
+    Route::post("clasesPropias/listar", ["uses" => "ClaseController@listarPropias", "as" => "clases.propias.listar"]);
     // </editor-fold>
   });
   Route::group(["middleware" => "verificacion.usuario:" . RolesUsuario::Principal . "," . RolesUsuario::Secundario], function() {

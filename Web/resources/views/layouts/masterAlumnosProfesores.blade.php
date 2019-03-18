@@ -150,6 +150,8 @@
     <script src="//www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
 var urlBase = "{{ url('/') }}";
+var usuarioActualEsAlumno = {{ $usuarioActual->tipo == App\Helpers\Enum\TiposEntidad::Alumno ? "true" : "false" }};
+var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
     </script>
     <script src="{{ asset("assets/eah/js/util.js") }}"></script>
     <script src="{{ asset("assets/eah/js/mensajes.js") }}"></script>      

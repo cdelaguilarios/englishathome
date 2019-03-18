@@ -3,7 +3,7 @@
 
 @section("section_script")
 <script type="text/javascript">
-  var urlListar = "{{ route('usuarios.listar') }}";  
+  var urlListar = "{{ route('clases.propias.listar') }}";    
   var estados = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
 </script>
 <script src="{{ asset("assets/eah/js/clasesPropias.js")}}"></script>
@@ -44,7 +44,8 @@
               <th>N°</th>    
               <th>Datos</th>
               <th>Estado</th>
-              <th>Fecha registro</th>
+              <th>Comentarios</th>
+              <th>Comentarios de English At Home</th>
             </tr>
           </thead>
         </table>

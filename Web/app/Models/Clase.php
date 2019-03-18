@@ -10,6 +10,7 @@ use App\Helpers\Util;
 use App\Models\Horario;
 use App\Models\Historial;
 use App\Helpers\Enum\EstadosClase;
+use App\Helpers\Enum\RolesUsuario;
 use App\Helpers\Enum\TiposHistorial;
 use App\Helpers\Enum\MensajesHistorial;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +20,7 @@ class Clase extends Model {
 
   public $timestamps = false;
   protected $table = "clase";
-  protected $fillable = ["idAlumno", "idProfesor", "numeroPeriodo", "duracion", "costoHora", "costoHoraProfesor", "pagoTotalProfesor", "fechaInicio", "fechaFin", "fechaCancelacion", "estado"];
+  protected $fillable = ["idAlumno", "idProfesor", "numeroPeriodo", "duracion", "costoHora", "costoHoraProfesor", "pagoTotalProfesor", "fechaInicio", "fechaFin", "fechaCancelacion", "comentarioAlumno", "comentarioProfesor", "comentarioAdminisradorParaAlumno", "comentarioAdminisradorParaProfesor", "estado"];
 
   public static function nombreTabla() {
     $modeloClase = new Clase();
@@ -30,7 +31,7 @@ class Clase extends Model {
 
   private static function listarBase() {
     $nombreTabla = Clase::nombreTabla();
-    $clases = Clase::leftJoin(Entidad::nombreTabla() . " as entidadAlumno", $nombreTabla . ".idAlumno", "=", "entidadAlumno.id")
+    return Clase::leftJoin(Entidad::nombreTabla() . " as entidadAlumno", $nombreTabla . ".idAlumno", "=", "entidadAlumno.id")
                     ->leftJoin(Entidad::nombreTabla() . " as entidadProfesor", function ($q) use($nombreTabla) {
                       $q->on($nombreTabla . ".idProfesor", '=', "entidadProfesor.id");
                       $q->on('entidadProfesor.eliminado', '=', DB::raw("0"));
@@ -44,17 +45,6 @@ class Clase extends Model {
                     ->where($nombreTabla . ".eliminado", 0)
                     ->groupBy($nombreTabla . ".id")
                     ->distinct();
-    if (Auth::user()->rol == RolesUsuario::Alumno) {
-      $clases->where($nombreTabla . ".idAlumno", Auth::user()->idEntidad);
-    }else if (Auth::user()->rol == RolesUsuario::Profesor) {
-      $clases->where($nombreTabla . ".idProfesor", Auth::user()->idEntidad);      
-    }
-    return $clases;
-  }
-  
-  public static function listarPropias($datos = NULL) {
-    $clases = Clase::listar(); 
-    return $clases;
   }
 
   public static function obtenerXId($idAlumno, $id, $incluirFechaProximaClase = FALSE) {
@@ -124,14 +114,14 @@ class Clase extends Model {
   public static function listarXAlumno($idAlumno, $numeroPeriodo = NULL) {
     $nombreTabla = Clase::nombreTabla();
     $preClases = Clase::listarBase()
-                    ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"))
-                    ->where($nombreTabla . ".idAlumno", $idAlumno);
-    if(!is_null($numeroPeriodo)){
+            ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"))
+            ->where($nombreTabla . ".idAlumno", $idAlumno);
+    if (!is_null($numeroPeriodo)) {
       $preClases->where($nombreTabla . ".numeroPeriodo", $numeroPeriodo)
-                ->orderBy($nombreTabla . ".fechaInicio", "ASC");
-    }else{
+              ->orderBy($nombreTabla . ".fechaInicio", "ASC");
+    } else {
       $preClases->orderBy($nombreTabla . ".numeroPeriodo", "ASC")
-                ->orderBy($nombreTabla . ".fechaInicio", "ASC");
+              ->orderBy($nombreTabla . ".fechaInicio", "ASC");
     }
     $clases = $preClases->get();
     foreach ($clases as $clase) {
@@ -161,6 +151,23 @@ class Clase extends Model {
     $datos["estado"] = (isset($datos["estadoClase"]) ? $datos["estadoClase"] : NULL);
     Util::filtrosBusqueda($nombreTabla, $clases, "fechaInicio", $datos);
     return $clases;
+  }
+
+  public static function listarPropias($datos = NULL) {
+    $clases = Clase::listarBase();
+    $nombreTabla = Clase::nombreTabla();
+
+    if (isset($datos["estado"])) {
+      $clases->where(Clase::nombreTabla() . ".estado", $datos["estado"]);
+    }    
+    return $clases->where($nombreTabla . ((Auth::user()->rol == RolesUsuario::Alumno) ? ".idAlumno" : ".idProfesor"), Auth::user()->idEntidad)
+              ->select($nombreTabla . ".id", $nombreTabla . ".idAlumno", $nombreTabla . ".idProfesor", 
+                       $nombreTabla . ".numeroPeriodo", $nombreTabla . ".duracion", $nombreTabla . ".estado",
+                       $nombreTabla . ".fechaInicio", $nombreTabla . ".fechaFin", $nombreTabla . ".fechaCancelacion",                        
+                       $nombreTabla . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAlumno" : ".comentarioProfesor") . " AS comentarioEntidad", 
+                       $nombreTabla . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAdministradorParaAlumno" : ".comentarioAdministradorParaProfesor") . " AS comentarioAdministrador", 
+                       "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", 
+                       "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor");
   }
 
   public static function listarXEstados($estados) {
