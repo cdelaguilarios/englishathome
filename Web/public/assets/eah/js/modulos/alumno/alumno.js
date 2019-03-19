@@ -65,10 +65,10 @@ function cargarLista() {
             }
           }},
         {data: "curso", name: "curso", render: function (e, t, d, m) {
-            /*llamadaAjax(urlHorario.replace("/0", "/" + d.id), "POST", {}, true, function (datos) {
+            llamadaAjax(urlHorario.replace("/0", "/" + d.id), "POST", {}, true, function (datos) {
               $("#sec-info-horario-" + datos.idEntidad).html(obtenerTextoHorario($.parseJSON(datos.datosHorario)));
-            });*/
-            return d.curso /*+ '<div id="sec-info-horario-' + d.id + '"></div>'*/;
+            });
+            return d.curso + '<div id="sec-info-horario-' + d.id + '"></div>';
           }},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
             var estado = '';
