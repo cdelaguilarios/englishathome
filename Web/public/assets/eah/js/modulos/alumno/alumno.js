@@ -49,13 +49,13 @@ function cargarLista() {
       responsive: true,
       orderCellsTop: true,
       fixedHeader: true,
-      order: [[2, "asc"]],
+      order: [[6, "desc"]],
       columns: [
         {data: "", name: "", orderable: false, "searchable": false, "className": "text-center not-mobile",
           render: function (data, type, row, meta) {
             return meta.row + meta.settings._iDisplayStart + 1;
           }},
-        {data: "nombre", name: "entidad.nombre", width: "20%", render: function (e, t, d, m) {
+        {data: "nombre", name: "entidad.nombre", render: function (e, t, d, m) {
             return '<a href="' + (urlPerfil.replace("/0", "/" + d.id)) + '">' + (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "") + '</a>' + (d.distritoAlumno ? '<br/><span class="text-info"><i class="fa fa-street-view"></i> ' + letraCapital(d.distritoAlumno) + '</span>' : '') + (d.nombreProfesor ? '<br/><br/>Profesor(a): <a href="' + (urlPerfilProfesor.replace("/0", "/" + d.idProfesor)) + '">' + (d.nombreProfesor !== null ? d.nombreProfesor : "") + " " + (d.apellidoProfesor !== null ? d.apellidoProfesor : "") + '</a>' + (d.distritoProfesor ? '<br/><span class="text-info"><i class="fa fa-street-view"></i> ' + letraCapital(d.distritoProfesor) + '</span>' : '') : '');
           }},
         {data: "porcentajeAvanceClases", name: "porcentajeAvanceClases", width: "25%", render: function (e, t, d, m) {
@@ -67,9 +67,9 @@ function cargarLista() {
             }
           }},
         {data: "curso", name: "curso", render: function (e, t, d, m) {
-            /*llamadaAjax(urlHorario.replace("/0", "/" + d.id), "POST", {}, true, function (datos) {
+            llamadaAjax(urlHorario.replace("/0", "/" + d.id), "POST", {}, true, function (datos) {
              $("#sec-info-horario-" + datos.idEntidad).html(obtenerTextoHorario($.parseJSON(datos.datosHorario)));
-             });*/
+             });
             return d.curso + '<div id="sec-info-horario-' + d.id + '"></div>';
           }},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
@@ -83,6 +83,9 @@ function cargarLista() {
           }, className: "text-center"},
         {data: "totalPagos", name: "totalPagos", render: function (e, t, d, m) {
             return 'S/. ' + redondear(d.pagoAcumulado, 2) + '<br/><span class="text-info">(' + d.totalPagos + ' pago' + (d.totalPagos > 1 ? 's' : '') + ')</span>';
+          }, className: "text-center"},
+        {data: "fechaRegistro", name: "entidad.fechaRegistro", width: "12%", render: function (e, t, d, m) {
+            return formatoFecha(d.fechaRegistro, true) + '<br/><span class="text-info">(Inicio de clases:<br/>' + formatoFecha(d.fechaInicioClase) + ')</span>';
           }, className: "text-center"},
         {data: "id", name: "entidad.id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +

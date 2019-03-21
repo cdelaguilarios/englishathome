@@ -8,7 +8,8 @@ class EstadosInteresado {
   const NoContesta = "NO-CONTESTA";
   const NoInteresado = "NO-INTERESADO";
   const ContactoAFuturo = "CONTACTO-A-FUTURO";
-  const Seguimiento = "SEGUIMIENTO";
+  const MedianamenteInteresado = "MEDIANAMENTE-INTERESADO";
+  const BastanteInteresado = "BASTANTE-INTERESADO";
   const CotizacionEnviada = "COTIZACION-ENVIADA";
   const AlumnoRegistrado = "ALUMNO-REGISTRADO";
 
@@ -18,7 +19,8 @@ class EstadosInteresado {
         EstadosInteresado::NoContesta => ["No contesta", "label-warning"],
         EstadosInteresado::NoInteresado => ["No interesado", "label-warning"],
         EstadosInteresado::ContactoAFuturo => ["Contacto a futuro", "label-info"],
-        EstadosInteresado::Seguimiento => ["Seguimiento", "label-info"],        
+        EstadosInteresado::MedianamenteInteresado => ["Medianamente interesado", "label-info"],   
+        EstadosInteresado::BastanteInteresado => ["Bastante interesado", "label-info"],   
         EstadosInteresado::CotizacionEnviada => ["Cotización enviada", "label-primary"],
         EstadosInteresado::AlumnoRegistrado => ["Alumno registrado", "label-success"]
     ];
@@ -35,7 +37,7 @@ class EstadosInteresado {
 
   public static function listarCambio() {
     $estadosBusqueda = EstadosInteresado::listarBusqueda();
-    $estadosDisponibleCambio = [EstadosInteresado::PendienteInformacion, EstadosInteresado::NoContesta, EstadosInteresado::NoInteresado, EstadosInteresado::ContactoAFuturo, EstadosInteresado::Seguimiento, EstadosInteresado::CotizacionEnviada];
+    $estadosDisponibleCambio = [EstadosInteresado::PendienteInformacion, EstadosInteresado::NoContesta, EstadosInteresado::NoInteresado, EstadosInteresado::ContactoAFuturo, EstadosInteresado::MedianamenteInteresado, EstadosInteresado::BastanteInteresado, EstadosInteresado::CotizacionEnviada];
     $estadosCambio = [];
     foreach ($estadosBusqueda as $k => $v) {
       if (in_array($k, $estadosDisponibleCambio)) {

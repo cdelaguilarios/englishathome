@@ -57,6 +57,7 @@
               <th>Curso</th>    
               <th>Estado/Nivel</th>
               <th>Pago acumulado</th>
+              <th>Fecha de registro</th>
               <th class="all">Opciones</th>
             </tr>
           </thead>

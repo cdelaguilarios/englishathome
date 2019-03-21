@@ -64,6 +64,9 @@ class AlumnoController extends Controller {
             })->filterColumn("totalPagos", function($q, $k) {
               $q->whereRaw("(SELECT COUNT(*) FROM " . PagoAlumno::nombreTabla() . " WHERE idAlumno = entidad.id) like ?", ["%{$k}%"])
                       ->orWhereRaw("(SELECT SUM(monto) FROM " . Pago::nombreTabla() . " WHERE id IN (SELECT idPago FROM " . PagoAlumno::nombreTabla() . " WHERE idAlumno = entidad.id) AND eliminado = 0) like ?", ["%{$k}%"]);
+            })->filterColumn("entidad.fechaRegistro", function($q, $k) {
+              $q->whereRaw("DATE_FORMAT(entidad.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"])
+                ->orWhereRaw("DATE_FORMAT(fechaInicioClase, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
             })->make(true);
   }
 
