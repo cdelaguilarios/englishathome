@@ -4,11 +4,10 @@ $(document).ready(function () {
 });
 function cargarLista() {
   urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
-  estados = (typeof (estados) === "undefined" ? "" : estados);
   estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
   usuarioActualEsAlumno = (typeof (usuarioActualEsAlumno) === "undefined" ? false : usuarioActualEsAlumno);
 
-  if (urlListar !== "" && estados !== "" && estadosClase !== "" && usuarioActualEsAlumno !== "") {
+  if (urlListar !== "" && estadosClase !== "" && usuarioActualEsAlumno !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -40,7 +39,7 @@ function cargarLista() {
                 '<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">' + estadosClase[d.estado][0] + '</span>' : '');
           }, className: "text-center"},
         {data: "comentarioEntidad", name: "comentarioEntidad", render: function (e, t, d, m) {
-            return (d.comentarioEntidad ? d.comentarioEntidad : '<div class="text-center"><a href="javascript:void(0);" onclick="abrirModalRFormularioComentarios(this);" class="btn btn-primary btn-xs"><i class="fa fa-commenting-o"></i> Déjanos tus comentarios de esta clase</a></div>');
+            return (d.comentarioEntidad ? d.comentarioEntidad : '<div class="text-center"><a href="javascript:void(0);" onclick="abrirModalFormularioComentarios(this);" class="btn btn-primary btn-xs"><i class="fa fa-commenting-o"></i> Déjanos tus comentarios de esta clase</a></div>');
           }},
         {data: "comentarioAdministrador", name: "comentarioAdministrador"}
       ],
@@ -55,7 +54,7 @@ function cargarLista() {
   });
 }
 
-function abrirModalRFormularioComentarios(elemento) {
+function abrirModalFormularioComentarios(elemento) {
   var tr = $(elemento).closest("tr");
   var fila = $("#tab-lista").DataTable().row(tr);
   var datosFila = fila.data();

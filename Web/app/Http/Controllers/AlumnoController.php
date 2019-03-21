@@ -295,8 +295,20 @@ class AlumnoController extends Controller {
     return Datatables::of(Clase::listarPeriodos($id))->make(true);
   }
 
-  public function listarClases($id, $numeroPeriodo) {
+  public function listarClasesXPeriodo($id, $numeroPeriodo) {
     return response()->json(Clase::listarXAlumno($id, $numeroPeriodo), 200);
+  }
+
+  public function listarClases() {
+    $idAlumno = Input::get("idAlumno");
+    if (isset($idAlumno)) {
+      return Datatables::of(Clase::listarXAlumno($idAlumno))
+                      ->filterColumn("fechaInicio", function($q, $k) {
+                        $q->whereRaw('fechaInicio like ?', ["%{$k}%"])
+                        ->orWhereRaw('duracion like ?', ["%{$k}%"])
+                        ->orWhereRaw('CONCAT(' . (Auth::user()->rol == RolesUsuario::Alumno ? 'entidadProfesor.nombre, " ", entidadProfesor.apellido' : 'entidadAlumno.nombre, " ", entidadAlumno.apellido') . ') like ?', ["%{$k}%"]);
+                      })->make(true);
+    }
   }
 
   public function actualizarEstadoClase($id, ClaseRequest\ActualizarEstadoRequest $req) {
@@ -340,6 +352,18 @@ class AlumnoController extends Controller {
       Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");
     }
     return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "clase", "nrp" => $nroPeriodo]));
+  }
+  
+  
+
+  public function actualizarComentariosClase(ClaseRequest\ActualizarComentariosRequest $req) {
+      Clase::actualizarComentarios($req->all());
+    try {
+    } catch (\Exception $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
+    }
+    return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
   public function cancelarClase($id, ClaseRequest\CancelarRequest $req) {

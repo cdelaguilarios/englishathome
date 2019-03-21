@@ -91,8 +91,10 @@ Route::group(["middleware" => "auth"], function() {
     // </editor-fold>
     // <editor-fold desc="Alumnos - clases">
     Route::post("alumno/{id}/periodosClases", ["uses" => "AlumnoController@listarPeriodosClases", "as" => "alumnos.periodos.clases.listar"]);
-    Route::post("alumno/{id}/periodo/{numeroPeriodo}/clases", ["uses" => "AlumnoController@listarClases", "as" => "alumnos.periodo.clases.listar"]);
+    Route::post("alumno/{id}/periodo/{numeroPeriodo}/clases", ["uses" => "AlumnoController@listarClasesXPeriodo", "as" => "alumnos.periodo.clases.listar"]);
+    Route::post("alumno/clases", ["uses" => "AlumnoController@listarClases", "as" => "alumnos.clases.listar"]);
     Route::post("alumno/{id}/clase/actualizarEstado", ["uses" => "AlumnoController@actualizarEstadoClase", "as" => "alumnos.clases.actualizar.estado"]);
+    Route::post("alumno/clases/actualizarComentarios", ["uses" => "AlumnoController@actualizarComentariosClase", "as" => "alumnos.clases.actualizar.comentarios"]);
     Route::post("alumno/{id}/clase/docentesDisponibles", ["uses" => "AlumnoController@listarDocentesDisponiblesXClase", "as" => "alumnos.clases.docentesDisponibles.listar"]);
     Route::post("alumno/{id}/clase/registrarActualizar", ["uses" => "AlumnoController@registrarActualizarClase", "as" => "alumnos.clases.registrar.actualizar"]);
     Route::post("alumno/{id}/clase/cancelar", ["uses" => "AlumnoController@cancelarClase", "as" => "alumnos.clases.cancelar"]);

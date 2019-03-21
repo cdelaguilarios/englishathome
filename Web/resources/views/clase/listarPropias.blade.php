@@ -4,7 +4,6 @@
 @section("section_script")
 <script type="text/javascript">
   var urlListar = "{{ route('clases.propias.listar') }}";     
-  var estados = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
 </script>
 <script src="{{ asset("assets/eah/js/clasesPropias.js")}}"></script>
 @endsection

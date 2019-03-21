@@ -20,7 +20,7 @@ class Clase extends Model {
 
   public $timestamps = false;
   protected $table = "clase";
-  protected $fillable = ["idAlumno", "idProfesor", "numeroPeriodo", "duracion", "costoHora", "costoHoraProfesor", "pagoTotalProfesor", "fechaInicio", "fechaFin", "fechaCancelacion", "comentarioAlumno", "comentarioProfesor", "comentarioAdminisradorParaAlumno", "comentarioAdminisradorParaProfesor", "estado"];
+  protected $fillable = ["idAlumno", "idProfesor", "numeroPeriodo", "duracion", "costoHora", "costoHoraProfesor", "pagoTotalProfesor", "fechaInicio", "fechaFin", "fechaCancelacion", "comentarioAlumno", "comentarioProfesor", "comentarioAdministradorParaAlumno", "comentarioAdministradorParaProfesor", "estado"];
 
   public static function nombreTabla() {
     $modeloClase = new Clase();
@@ -543,18 +543,36 @@ class Clase extends Model {
     $clase->save();
   }
 
-  public static function actualizarComentariosEntidad($datos) {
+  public static function actualizarComentarios($datos) {
+    $tipo = $datos["tipo"];
     $idClase = $datos["idClase"];
     $idAlumno = $datos["idAlumno"];
     $clase = Clase::ObtenerXId($idAlumno, $idClase);
-    if (Auth::user()->rol == RolesUsuario::Alumno) {
-      $clase->comentarioAlumno = $datos["comentario"];
-      $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
-    } else if (Auth::user()->rol == RolesUsuario::Profesor) {
-      $clase->comentarioProfesor = $datos["comentario"];
-      $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+
+    switch ($tipo) {
+      case 1:
+        $clase->comentarioAlumno = $datos["comentario"];
+        break;
+      case 2:
+        $clase->comentarioProfesor = $datos["comentario"];
+        break;
+      case 3:
+        $clase->comentarioAdministradorParaAlumno = $datos["comentario"];
+        break;
+      case 4:
+        $clase->comentarioAdministradorParaProfesor = $datos["comentario"];
+        break;
     }
+    $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $clase->save();
+  }
+
+  public static function actualizarComentariosEntidad($datos) {
+    $clase = Clase::ObtenerXId($datos["idAlumno"], $datos["idClase"]);
+    if ($clase->idAlumno == Auth::user()->idEntidad || $clase->idProfesor == Auth::user()->idEntidad) {
+      $datos["tipo"] = (Auth::user()->rol == RolesUsuario::Alumno ? 1 : 2);
+      Clase::actualizarComentarios($datos);
+    }
   }
 
   public static function cancelar($idAlumno, $datos) {

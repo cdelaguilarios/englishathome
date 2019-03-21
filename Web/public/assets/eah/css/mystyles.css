@@ -116,6 +116,12 @@ div.dataTables_info{
   font-size: 12px;
 }
 
+@media (min-width: 992px){
+  #mod-lista-clases .modal-lg{
+    width: 1100px;
+  }
+}
+
 /*Botón creación*/
 .box-header a{
   float:right;
@@ -408,7 +414,7 @@ table.dataTable thead .tabla-sec-busqueda .sorting_desc:after{
   font-family: inherit;
 }
 
-.btn-perfil-relacion-entidad{
+.btn-perfil-relacion-entidad, .btn-ver-lista-clases {
   margin-left: 5px;
 }
 
