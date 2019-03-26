@@ -9,7 +9,7 @@
   var urlActualizarEstado = "{{ route('alumnos.actualizar.estado', ['id' => 0]) }}";
   var urlEliminar = "{{ route('alumnos.eliminar', ['id' => 0]) }}";
   var urlPerfilProfesor = "{{ route('profesores.perfil', ['id' => 0]) }}";
-  var urlHorario = "{{ route('horario', ['id' => 0]) }}";
+  var urlHorarioMultiple = "{{ route('horario.multiple') }}";
   var urlListarClases = "{{ route('alumnos.clases.listar') }}";
   var estados = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listar()) !!};
   var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listarCambio()) !!};

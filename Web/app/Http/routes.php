@@ -173,6 +173,7 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("notificaciones", ["uses" => "HistorialController@listarNotificaciones", "as" => "historial.notificaciones"]);
     // </editor-fold>
     // <editor-fold desc="Horario">
+    Route::post("horarios", ["uses" => "HorarioController@obtenerMultiple", "as" => "horario.multiple"]);
     Route::post("horario/{idEntidad}", ["uses" => "HorarioController@obtener", "as" => "horario"]);
     // </editor-fold>
     // <editor-fold desc="Calendario">

@@ -28,12 +28,12 @@ function cargarLista() {
   urlActualizarEstado = (typeof (urlActualizarEstado) === "undefined" ? "" : urlActualizarEstado);
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
-  urlHorario = (typeof (urlHorario) === "undefined" ? "" : urlHorario);
+  urlHorarioMultiple = (typeof (urlHorarioMultiple) === "undefined" ? "" : urlHorarioMultiple);
   estados = (typeof (estados) === "undefined" ? "" : estados);
   estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
   estadoCuotaProgramada = (typeof (estadoCuotaProgramada) === "undefined" ? "" : estadoCuotaProgramada);
 
-  if (urlListar !== "" && urlPerfil !== "" && urlEditar !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && urlPerfilProfesor !== "" && urlHorario !== "" && estados !== "" && estadosCambio !== "" && estadoCuotaProgramada !== "") {
+  if (urlListar !== "" && urlPerfil !== "" && urlEditar !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && urlPerfilProfesor !== "" && urlHorarioMultiple !== "" && estados !== "" && estadosCambio !== "" && estadoCuotaProgramada !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -50,6 +50,7 @@ function cargarLista() {
       orderCellsTop: true,
       fixedHeader: true,
       order: [[6, "desc"]],
+      rowId: 'idEntidad',
       columns: [
         {data: "", name: "", orderable: false, "searchable": false, "className": "text-center not-mobile",
           render: function (data, type, row, meta) {
@@ -67,9 +68,6 @@ function cargarLista() {
             }
           }},
         {data: "curso", name: "curso", render: function (e, t, d, m) {
-            llamadaAjax(urlHorario.replace("/0", "/" + d.id), "POST", {}, true, function (datos) {
-             $("#sec-info-horario-" + datos.idEntidad).html(obtenerTextoHorario($.parseJSON(datos.datosHorario)));
-             });
             return d.curso + '<div id="sec-info-horario-' + d.id + '"></div>';
           }},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
@@ -106,12 +104,38 @@ function cargarLista() {
       initComplete: function (s, j) {
         establecerBotonRecargaTabla("tab-lista");
         establecerCabecerasBusquedaTabla("tab-lista");
+      },
+      drawCallback: function (s) {
+        CargarHorarios();
       }
     });
   }
   if (urlActualizarEstado !== "" && estados !== "") {
     establecerCambiosBusquedaEstados("tab-lista", urlActualizarEstado, estados, true);
   }
+}
+var datosHorariosCargados = [];
+function CargarHorarios() {
+  //Horarios
+  var ids = jQuery.map($("#tab-lista").DataTable().rows().ids(), function (ele) {
+    if (!datosHorariosCargados.some(function (dhc) {
+      return dhc.idEntidad === ele;
+    }))
+      return ele;
+  });
+  if (ids.length > 0) {
+    llamadaAjax(urlHorarioMultiple, "POST", {"idsEntidades": ids}, true, function (datos) {
+      datosHorariosCargados = datosHorariosCargados.concat(datos);
+      MostrarHorarios();
+    });
+  } else {
+    MostrarHorarios();
+  }
+}
+function MostrarHorarios() {
+  datosHorariosCargados.forEach(function (d) {
+    $("#sec-info-horario-" + d.idEntidad).html(obtenerTextoHorario($.parseJSON(d.datosHorario)));
+  });
 }
 function preCargarListaClase() {
   urlListarClases = (typeof (urlListarClases) === "undefined" ? "" : urlListarClases);
