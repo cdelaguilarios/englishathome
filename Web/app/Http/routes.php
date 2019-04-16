@@ -37,11 +37,20 @@ Route::group(["middleware" => "auth"], function() {
     Route::patch("usuario/{id}/actualizar", ["uses" => "UsuarioController@actualizar", "as" => "usuarios.actualizar"]);
     // </editor-fold>
   });
-  Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Alumno . "|" . RolesUsuario::Profesor . "]"], function() {
+  Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Profesor . "]"], function() {
     // <editor-fold desc="Clases">
-    Route::get("clasesPropias", ["uses" => "ClaseController@propias", "as" => "clases.propias"]);
-    Route::post("clasesPropias/listar", ["uses" => "ClaseController@listarPropias", "as" => "clases.propias.listar"]);
-    Route::post("clasesPropias/actualizarComentarios", ["uses" => "ClaseController@actualizarComentarios", "as" => "clases.propias.actualizar.comentarios"]);
+    Route::get("misAlumnos", ["uses" => "ProfesorController@misAlumnos", "as" => "profesores.mis.alumnos"]);
+    Route::get("misAlumnos/{id}/clases", ["uses" => "ProfesorController@clasesXAlumno", "as" => "profesores.mis.alumnos.clases"]);
+    Route::post("misAlumnos/{id}/clases/listar", ["uses" => "ProfesorController@listarClasesXAlumno", "as" => "profesores.mis.alumnos.listar.clases"]);
+    Route::post("misAlumnos/{id}/clases/comentarios", ["uses" => "ProfesorController@actualizarComentariosClase", "as" => "profesores.mis.alumnos.clases.actualizar.comentarios"]);
+    Route::post("misAlumnos/{id}/clases/confirmar", ["uses" => "ProfesorController@confirmarClase", "as" => "profesores.mis.alumnos.clases.confirmar"]);
+    // </editor-fold>
+  });
+  Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Alumno . "]"], function() {
+    // <editor-fold desc="Clases">
+    Route::get("misClases", ["uses" => "AlumnoController@misClases", "as" => "alumnos.mis.clases"]);
+    Route::post("misClases/listar", ["uses" => "AlumnoController@listarMisClases", "as" => "listar.mis.clases"]);
+    Route::put("misClases/comentarios", ["uses" => "AlumnoController@actualizarComentariosClase", "as" => "alumnos.mis.clases.actualizar.comentarios"]);
     // </editor-fold>
   });
   Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Principal . "|" . RolesUsuario::Secundario . "]"], function() {

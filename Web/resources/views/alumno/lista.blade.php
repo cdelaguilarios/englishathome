@@ -85,7 +85,7 @@
                   <thead>
                     <tr>
                       <th>N°</th>    
-                      <th>Datos</th>
+                      <th class="all">Datos</th>
                       <th>Estado</th>
                       <th>Comentarios</th>
                     </tr>

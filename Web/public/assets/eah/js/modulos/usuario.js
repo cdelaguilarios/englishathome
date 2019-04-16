@@ -79,7 +79,7 @@ function cargarLista() {
         establecerBotonRecargaTabla("tab-lista");
       }
     });
-    establecerCambiosBusquedaEstados("tab-lista", urlActualizarEstado, estados);
+    establecerCambioEstados("tab-lista", urlActualizarEstado, estados);
   }
 }
 function cargarFormulario() {

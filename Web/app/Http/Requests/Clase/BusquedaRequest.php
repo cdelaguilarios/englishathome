@@ -6,7 +6,7 @@ use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\EstadosClase;
 
-class BusquedaPropiasRequest extends Request {
+class BusquedaRequest extends Request {
 
   public function authorize() {
     return true;
@@ -24,9 +24,8 @@ class BusquedaPropiasRequest extends Request {
     $reglasValidacion = [];
 
     $listaEstados = EstadosClase::listarBusqueda();
-    if (!is_null($datos["estado"]) && !array_key_exists($datos["estado"], $listaEstados)) {
+    if (!is_null($datos["estado"]) && !array_key_exists($datos["estado"], $listaEstados))
       $reglasValidacion["estadoNoValido"] = "required";
-    }
 
     switch ($this->method()) {
       case "GET":

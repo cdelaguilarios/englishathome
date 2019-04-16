@@ -37,7 +37,8 @@ class FormularioRequest extends Request {
         "apellido" => ["max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
         "email" => "required|email|max:245|unique:" . Usuario::nombreTabla() . ",email" .
         ($modoEdicion && !is_null($idUsuario) && is_numeric($idUsuario) ? "," . $idUsuario . ",idEntidad" : ""),
-        "imagenPerfil" => "image"
+        "imagenPerfil" => "image",
+        "codigoVerificacionClases" => "min:4|max:6"
     ];
 
     $roles = RolesUsuario::listar();

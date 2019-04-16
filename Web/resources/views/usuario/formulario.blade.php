@@ -50,6 +50,19 @@
             {{ Form::password("password_confirmation", ["class" => "form-control", "minlength" =>"6", "maxlength" =>"30"]) }}
           </div>
         </div>
+        @if($usuarioActual->rol == App\Helpers\Enum\RolesUsuario::Alumno)
+        <div class="form-group">
+          <div class="col-sm-2">
+            {{ Form::label("codigoVerificacionClases", "Código de verificación ", ["class" => "control-label"]) }}
+            <a href="javascript:void(0)" onclick="mostrarOcultarCodigoVerificacionClases(this)" title="Ver código de verificación"><i class="fa fa-eye"></i></a>
+            <label>:</label>
+          </div>
+          <div class="col-sm-10">
+            {{ Form::text("codigoVerificacionClases", null, ["class" => "form-control", "minlength" =>"4", "maxlength" =>"6", "placeholder"=>"******"]) }}
+          </div>
+        </div>
+        {{ Form::hidden("auxCodigoVerificacionClases", $usuarioActual->codigoVerificacionClases) }}
+        @endif
         @if($usuarioActual->rol == App\Helpers\Enum\RolesUsuario::Principal)
         <div class="form-group">
           {{ Form::label("rol", "Rol de usuario: ", ["class" => "col-sm-2 control-label"]) }}

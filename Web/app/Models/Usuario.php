@@ -39,7 +39,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     if (isset($datos["estado"])) {
       $usuarios->where("entidad.estado", $datos["estado"]);
     }
-    if($soloUsuariosDelSistema){
+    if ($soloUsuariosDelSistema) {
       $usuarios->whereIn("rol", array_keys(RolesUsuario::listarDelSistema()));
     }
     return $usuarios;
@@ -59,7 +59,11 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
 
   public static function obtenerActual() {
     if (is_null(session("usuarioActual"))) {
-      session(["usuarioActual" => Usuario::obtenerXId(Auth::user()->idEntidad)]);
+      $usuario = Usuario::obtenerXId(Auth::user()->idEntidad);
+      if ($usuario->rol == RolesUsuario::Alumno) {
+        $usuario->codigoVerificacionClases = Alumno::obtenerXId(Auth::user()->idEntidad, TRUE)->codigoVerificacionClases;
+      }
+      session(["usuarioActual" => $usuario]);
     }
     return session("usuarioActual");
   }
@@ -82,18 +86,26 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     $datos = $req->all();
     $datos["correoElectronico"] = $datos["email"];
 
-    Entidad::actualizar($id, $datos, TiposEntidad::Usuario, $datos["estado"]);
+    $entidad = Entidad::ObtenerXId($id);
+    Entidad::actualizar($id, $datos, $entidad->tipo, (Auth::user()->rol == RolesUsuario::Principal ? $datos["estado"] : $entidad->estado));
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
 
     $usuario = Usuario::obtenerXId($id);
     if (isset($datos["password"]) && $datos["password"] != "") {
       $usuario->password = bcrypt($datos["password"]);
     }
-    $rol = Auth::user()->rol;
-    if ($rol != RolesUsuario::Principal) {
+    if (Auth::user()->rol != RolesUsuario::Principal) {
       $datos["rol"] = $usuario->rol;
     }
     $usuario->update($datos);
+
+    //Código de verificación de clases
+    if (Auth::user()->rol == RolesUsuario::Alumno && isset($datos["codigoVerificacionClases"]) && trim($datos["codigoVerificacionClases"]) !== "") {
+      $alumno = Alumno::obtenerXId($id, TRUE);
+      $alumno->codigoVerificacionClases = $datos["codigoVerificacionClases"];
+      $alumno->update();
+      session()->forget('usuarioActual');
+    }
   }
 
   public static function actualizarEstado($id, $estado) {

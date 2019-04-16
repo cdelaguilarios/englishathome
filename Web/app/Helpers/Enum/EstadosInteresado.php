@@ -15,12 +15,12 @@ class EstadosInteresado {
 
   public static function listar() {
     return [
-        EstadosInteresado::PendienteInformacion => ["Pendiente de información", "label-warning"],        
+        EstadosInteresado::PendienteInformacion => ["Pendiente de información", "label-warning"],
         EstadosInteresado::NoContesta => ["No contesta", "label-warning"],
         EstadosInteresado::NoInteresado => ["No interesado", "label-warning"],
         EstadosInteresado::ContactoAFuturo => ["Contacto a futuro", "label-info"],
-        EstadosInteresado::MedianamenteInteresado => ["Medianamente interesado", "label-info"],   
-        EstadosInteresado::BastanteInteresado => ["Bastante interesado", "label-info"],   
+        EstadosInteresado::MedianamenteInteresado => ["Medianamente interesado", "label-info"],
+        EstadosInteresado::BastanteInteresado => ["Bastante interesado", "label-info"],
         EstadosInteresado::CotizacionEnviada => ["Cotización enviada", "label-primary"],
         EstadosInteresado::AlumnoRegistrado => ["Alumno registrado", "label-success"]
     ];
@@ -28,22 +28,21 @@ class EstadosInteresado {
 
   public static function listarBusqueda() {
     $estados = EstadosInteresado::listar();
+    
     $estadosBusqueda = [];
-    foreach ($estados as $k => $v) {
+    foreach ($estados as $k => $v)
       $estadosBusqueda[$k] = $v[0];
-    }
     return $estadosBusqueda;
   }
 
   public static function listarCambio() {
     $estadosBusqueda = EstadosInteresado::listarBusqueda();
     $estadosDisponibleCambio = [EstadosInteresado::PendienteInformacion, EstadosInteresado::NoContesta, EstadosInteresado::NoInteresado, EstadosInteresado::ContactoAFuturo, EstadosInteresado::MedianamenteInteresado, EstadosInteresado::BastanteInteresado, EstadosInteresado::CotizacionEnviada];
+    
     $estadosCambio = [];
-    foreach ($estadosBusqueda as $k => $v) {
-      if (in_array($k, $estadosDisponibleCambio)) {
+    foreach ($estadosBusqueda as $k => $v)
+      if (in_array($k, $estadosDisponibleCambio))
         $estadosCambio[$k] = $v;
-      }
-    }
     return $estadosCambio;
   }
 

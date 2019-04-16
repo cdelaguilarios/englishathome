@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use PDF;
 use Log;
+use Auth;
 use Input;
 use Storage;
 use Mensajes;
@@ -20,6 +21,8 @@ use App\Http\Requests\Profesor\Pago as PagoRequest;
 use App\Http\Requests\Profesor\ActualizarEstadoRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Requests\Profesor\ActualizarComentariosPerfilRequest;
+use App\Http\Requests\Clase\BusquedaRequest as BusquedaClasesXAlumnoRequest;
+use App\Http\Requests\Clase\ActualizarComentariosRequest as ActualizarComentariosClaseRequest;
 
 class ProfesorController extends Controller {
 
@@ -277,6 +280,43 @@ class ProfesorController extends Controller {
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
     }
     return redirect(route("profesores.perfil", ["id" => $id, "sec" => "clase"]));
+  }
+
+  // </editor-fold>
+  // <editor-fold desc="Mis Alumnos">
+  public function misAlumnos() {
+    $this->data["alumnos"] = Profesor::listarAlumnosVigentes(Auth::user()->idEntidad);
+    return view("profesor.misAlumnos", $this->data);
+  }
+
+  public function clasesXAlumno($id) {
+    $this->data["idAlumno"] = $id;
+    return view("profesor.misAlumnosClases", $this->data);
+  }
+
+  public function listarClasesXAlumno($id, BusquedaClasesXAlumnoRequest $req) {
+    return Datatables::of(Clase::listarPropias($id, $req->all()))
+                    ->filterColumn("fechaInicio", function($q, $k) {
+                      $q->whereRaw('fechaInicio like ?', ["%{$k}%"])
+                      ->orWhereRaw('duracion like ?', ["%{$k}%"])
+                      ->orWhereRaw('CONCAT(' . (Auth::user()->rol == RolesUsuario::Alumno ? 'entidadProfesor.nombre, " ", entidadProfesor.apellido' : 'entidadAlumno.nombre, " ", entidadAlumno.apellido') . ') like ?', ["%{$k}%"]);
+                    })
+                    ->filterColumn("comentarioEntidad", function($q, $k) {
+                      $q->whereRaw(Clase::nombreTabla() . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAlumno" : ".comentarioProfesor") . ' like ?', ["%{$k}%"]);
+                    })
+                    ->filterColumn("comentarioAdministrador", function($q, $k) {
+                      $q->whereRaw(Clase::nombreTabla() . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAdministradorParaAlumno" : ".comentarioAdministradorParaProfesor") . ' like ?', ["%{$k}%"]);
+                    })->make(true);
+  }
+  
+  public function actualizarComentariosClase(ActualizarComentariosClaseRequest $req) {
+    try {
+      Clase::actualizarComentariosEntidad($req->all());
+    } catch (\Exception $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
+    }
+    return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
   // </editor-fold>

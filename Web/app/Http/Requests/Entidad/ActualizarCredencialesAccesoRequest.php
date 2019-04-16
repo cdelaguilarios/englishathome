@@ -30,7 +30,8 @@ class ActualizarCredencialesAccesoRequest extends Request {
 
     $reglasValidacion = [
         "email" => "required|email|max:245|unique:" . Usuario::nombreTabla() . ",email," . $idEntidad . ",idEntidad",
-        "password" => "required|confirmed|min:6|max:30"
+        "password" => "confirmed|min:6|max:30",
+        "codigoVerificacionClases" => "min:4|max:6"
     ];
         
     $entidad = Entidad::ObtenerXId($idEntidad);
@@ -54,7 +55,7 @@ class ActualizarCredencialesAccesoRequest extends Request {
 
   public function messages() {
     return [
-        "email.unique" => "El correo electrónico ingresado ya esta siendo utilizado.",
+        "email.unique" => "El correo electrónico ingresado ya está siendo utilizado.",
         "tipoEntidadNoValido.required" => "El tipo de entidad no es válido."
     ];
   }

@@ -206,7 +206,7 @@
               </div>
             </div>
             @if(isset($interesado))
-            {{ Form::hidden("costoHoraClase", $interesado->costoHoraClase) }} 
+            {{ Form::hidden("costoHoraClase", (isset($interesado->costoHoraClase) && !is_null($interesado->costoHoraClase) ? $interesado->costoHoraClase : 0)) }} 
             @elseif(!Auth::guest())
             {{ Form::label("costo-hora-clase", "Costo hora de clase (*): ", ["class" => "col-sm-3 control-label"]) }}
             <div class="col-sm-2">

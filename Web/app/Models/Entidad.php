@@ -57,9 +57,8 @@ class Entidad extends Model {
   public static function actualizar($id, $datos, $tipo, $estado) {
     $entidad = Entidad::ObtenerXId($id);
     $entidad->tipo = $tipo;
-    if (isset($estado)) {
+    if (isset($estado))
       $entidad->estado = $estado;
-    }
     $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     unset($datos["imagenPerfil"]);
     $entidad->update($datos);
@@ -98,18 +97,28 @@ class Entidad extends Model {
     $entidad = Entidad::ObtenerXId($id);
     $entidad->correoElectronico = $datos["email"];
     $entidad->update();
-    
-    $usuarioRegistrado = Usuario::verificarExistencia($id);
-    $datosUsuario = ["email" => $datos["email"], "rol" => ($entidad->tipo == TiposEntidad::Alumno ? RolesUsuario::Alumno : RolesUsuario::Profesor)];
-    if ($usuarioRegistrado) {
-      $usuario = Usuario::obtenerXId($id);
-      $usuario->password = bcrypt($datos["password"]);
-      $usuario->update($datosUsuario);
-    } else {
-      $usuario = new Usuario($datosUsuario);
-      $usuario->idEntidad = $id;
-      $usuario->password = bcrypt($datos["password"]);
-      $usuario->save();
+
+    //Credenciales de acceso
+    if (isset($datos["password"]) && trim($datos["password"]) !== "") {
+      $usuarioRegistrado = Usuario::verificarExistencia($id);
+      $datosUsuario = ["email" => $datos["email"], "rol" => ($entidad->tipo == TiposEntidad::Alumno ? RolesUsuario::Alumno : RolesUsuario::Profesor)];
+      if ($usuarioRegistrado) {
+        $usuario = Usuario::obtenerXId($id);
+        $usuario->password = bcrypt($datos["password"]);
+        $usuario->update($datosUsuario);
+      } else {
+        $usuario = new Usuario($datosUsuario);
+        $usuario->idEntidad = $id;
+        $usuario->password = bcrypt($datos["password"]);
+        $usuario->save();
+      }
+    }
+
+    //Código de verificación de clases
+    if ($entidad->tipo == TiposEntidad::Alumno && isset($datos["codigoVerificacionClases"]) && trim($datos["codigoVerificacionClases"]) !== "") {
+      $alumno = Alumno::obtenerXId($id, TRUE);
+      $alumno->codigoVerificacionClases = $datos["codigoVerificacionClases"];
+      $alumno->update();
     }
   }
 

@@ -45,7 +45,6 @@
     </div>
   </div>
 </div>
-{{ Form::open(["url" => route("interesados.enviar.cotizacion", ["id" => $interesado->idEntidad]), "id" => "formulario-interesado-cotizacion", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
 <div class="row">
   <div class="col-sm-12">
     <div class="box-header">
@@ -77,6 +76,7 @@
     @endif
   </div>
 </div>
+{{ Form::open(["url" => route("interesados.enviar.cotizacion", ["id" => $interesado->idEntidad]), "id" => "formulario-interesado-cotizacion", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
 <div class="row">
   <div class="col-sm-12">
     <div class="box-header">

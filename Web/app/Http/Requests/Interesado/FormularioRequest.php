@@ -43,18 +43,15 @@ class FormularioRequest extends Request {
     ];
 
     $listaCursos = Curso::listarSimple();
-    if (!is_null($datos["idCurso"]) && !array_key_exists($datos["idCurso"], $listaCursos->toArray())) {
+    if (!is_null($datos["idCurso"]) && !array_key_exists($datos["idCurso"], $listaCursos->toArray()))
       $reglasValidacion["cursoNoValido"] = "required";
-    }
 
-    if (!is_null($datos["codigoUbigeo"]) && !ReglasValidacion::validarUbigeo($datos["codigoDepartamento"], $datos["codigoProvincia"], $datos["codigoDistrito"], $datos["codigoUbigeo"])) {
+    if (!is_null($datos["codigoUbigeo"]) && !ReglasValidacion::validarUbigeo($datos["codigoDepartamento"], $datos["codigoProvincia"], $datos["codigoDistrito"], $datos["codigoUbigeo"]))
       $reglasValidacion["ubigeoNoValido"] = "required";
-    }
 
     $estados = EstadosInteresado::listarCambio();
-    if (!is_null($datos["estado"]) && !array_key_exists($datos["estado"], $estados)) {
+    if (!is_null($datos["estado"]) && !array_key_exists($datos["estado"], $estados))
       $reglasValidacion["estadoNoValido"] = "required";
-    }
 
     switch ($this->method()) {
       case "GET":

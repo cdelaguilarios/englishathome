@@ -83,7 +83,7 @@ function cargarLista() {
     });
   }
   if (urlActualizarEstado !== "" && estados !== "") {
-    establecerCambiosBusquedaEstados("tab-lista", urlActualizarEstado, estados);
+    establecerCambioEstados("tab-lista", urlActualizarEstado, estados);
   }
 }
 

@@ -23,7 +23,7 @@
 </div>
 @if(!(isset($observador) && $observador == 1))
 <div id="sec-historial-2" style="display: none">
-  {{ Form::open(["url" => route("historial.registrar", ["idEntidad" => $idEntidad]), "id" => "formulario-registrar-historial", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
+  {{ Form::open(["url" => route("historial.registrar", ["idEntidad" => $idEntidad, "urlRetorno" => url()->current()]), "id" => "formulario-registrar-historial", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
   <div class="box-header">
     <h3 class="box-title with-border">Nuevo evento</h3>                
   </div>  

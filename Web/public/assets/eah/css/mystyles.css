@@ -122,6 +122,19 @@ div.dataTables_info{
   }
 }
 
+.sec-btn-confirmar-clase>button{
+  margin-bottom: 20px;
+}
+@media (max-width: 768px){
+  .sec-btn-confirmar-clase{
+    text-align: center;
+  }
+  .sec-btn-confirmar-clase>button{
+    font-size: 30px;
+    width: 98%;
+  }
+}
+
 /*Botón creación*/
 .box-header a{
   float:right;
@@ -481,3 +494,14 @@ table.dataTable thead .tabla-sec-busqueda .sorting_desc:after{
   right: -25px;
 }
 
+/*Lista de alumnos por profesor*/
+.sec-entidad-alumno{
+  margin: 20px 0; 
+  text-align: center;
+}
+.sec-entidad-alumno img{
+  border-radius: 50%;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #367fa9;
+}

@@ -5,6 +5,7 @@ namespace App\Models;
 use DB;
 use Auth;
 use Carbon\Carbon;
+use App\Helpers\Enum\EstadosClase;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\EstadosProfesor;
 use App\Helpers\Enum\MensajesHistorial;
@@ -37,11 +38,22 @@ class Profesor extends Model {
   }
 
   public static function listarBusqueda($terminoBus = NULL) {
-    $alumnos = Profesor::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
+    $profesores = Profesor::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
     if (isset($terminoBus)) {
-      $alumnos->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
+      $profesores->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
     }
-    return $alumnos->lists("nombreCompleto", "entidad.id");
+    return $profesores->lists("nombreCompleto", "entidad.id");
+  }
+
+  public static function listarAlumnosVigentes($id) {
+    $idsAlumnos = Clase::listarXProfesor($id)
+                    ->whereIn(Clase::nombreTabla() . ".estado", [EstadosClase::Programada, EstadosClase::PendienteConfirmar])
+                    ->lists(Clase::nombreTabla() . ".idAlumno")->toArray();
+    if (count($idsAlumnos) > 0)
+      return Alumno::listar()
+                      ->whereIn("entidad.id", array_unique($idsAlumnos))
+                      ->get();
+    return null;
   }
 
   public static function obtenerXId($id, $simple = FALSE) {

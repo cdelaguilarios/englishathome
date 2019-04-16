@@ -30,19 +30,20 @@ class Interesado extends Model {
   }
 
   public static function listar($datos = NULL) {
-    $interesados = Interesado::leftJoin(Entidad::nombreTabla() . " as entidad", Interesado::nombreTabla() . ".idEntidad", "=", "entidad.id")->where("entidad.eliminado", 0)->groupBy("entidad.id")->distinct();
-    if (isset($datos["estado"])) {
+    $interesados = Interesado::leftJoin(Entidad::nombreTabla() . " as entidad", Interesado::nombreTabla() . ".idEntidad", "=", "entidad.id")
+            ->where("entidad.eliminado", 0)
+            ->groupBy("entidad.id")
+            ->distinct();
+    if (isset($datos["estado"]))
       $interesados->where("entidad.estado", $datos["estado"]);
-    }
     return $interesados;
   }
 
   public static function listarBusqueda($terminoBus = NULL) {
-    $alumnos = Interesado::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
-    if (isset($terminoBus)) {
-      $alumnos->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
-    }
-    return $alumnos->lists("nombreCompleto", "entidad.id");
+    $interesados = Interesado::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
+    if (isset($terminoBus))
+      $interesados->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
+    return $interesados->lists("nombreCompleto", "entidad.id");
   }
 
   public static function listarCursosInteres() {
@@ -54,16 +55,38 @@ class Interesado extends Model {
     if (!$simple) {
       $entidadCurso = EntidadCurso::obtenerXEntidad($id);
       $interesado->idCurso = (!is_null($entidadCurso) ? $entidadCurso->idCurso : NULL);
-      $idInteresadoAnterior = Interesado::listar()->select("entidad.id")->where("entidad.id", "<", $id)->where("entidad.estado", $interesado->estado)->orderBy("entidad.id", "DESC")->first();
-      $idInteresadoSiguiente = Interesado::listar()->select("entidad.id")->where("entidad.id", ">", $id)->where("entidad.estado", $interesado->estado)->first();
-      $interesado->idInteresadoAnterior = (isset($idInteresadoAnterior) ? $idInteresadoAnterior->id : NULL);
-      $interesado->idInteresadoSiguiente = (isset($idInteresadoSiguiente) ? $idInteresadoSiguiente->id : NULL);
+      
+      $idInteresadoAnterior = Interesado::listar()->select("entidad.id")
+                      ->where("entidad.id", "<", $id)
+                      ->where("entidad.estado", $interesado->estado)
+                      ->orderBy("entidad.id", "DESC")->first();
+      if (isset($idInteresadoAnterior))
+        $interesado->idInteresadoAnterior = $idInteresadoAnterior->id;
+      else {
+        $idInteresadoUltimo = Interesado::listar()->select("entidad.id")
+                      ->where("entidad.estado", $interesado->estado)
+                      ->orderBy("entidad.id", "DESC")->first();
+        $interesado->idInteresadoAnterior = (isset($idInteresadoUltimo) ? $idInteresadoUltimo->id : NULL);
+      }
+            
+      $idInteresadoSiguiente = Interesado::listar()->select("entidad.id")
+                      ->where("entidad.id", ">", $id)
+                      ->where("entidad.estado", $interesado->estado)
+                      ->orderBy("entidad.id", "ASC")->first();
+      if (isset($idInteresadoSiguiente))
+        $interesado->idInteresadoSiguiente = $idInteresadoSiguiente->id;
+      else {
+        $idInteresadoPrimero = Interesado::listar()->select("entidad.id")
+                      ->where("entidad.estado", $interesado->estado)
+                      ->orderBy("entidad.id", "ASC")->first();
+        $interesado->idInteresadoSiguiente = (isset($idInteresadoPrimero) ? $idInteresadoPrimero->id : NULL);
+      }
     }
     return $interesado;
   }
 
   public static function registrar($datos) {
-    $idEntidad = Entidad::registrar($datos, TiposEntidad::Interesado, ((isset($datos["estado"])) ? $datos["estado"] : EstadosInteresado::PendienteInformacion));
+    $idEntidad = Entidad::registrar($datos, TiposEntidad::Interesado, (isset($datos["estado"]) ? $datos["estado"] : EstadosInteresado::PendienteInformacion));
     EntidadCurso::registrarActualizar($idEntidad, $datos["idCurso"]);
     $interesado = new Interesado($datos);
     $interesado->idEntidad = $idEntidad;

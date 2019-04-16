@@ -27,7 +27,8 @@ class InteresadoController extends Controller {
   }
 
   public function listar(BusquedaRequest $req) {
-    return Datatables::of(Interesado::listar($req->all()))->filterColumn("entidad.nombre", function($q, $k) {
+    return Datatables::of(Interesado::listar($req->all()))
+            ->filterColumn("entidad.nombre", function($q, $k) {
               $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
             })->filterColumn("entidad.fechaRegistro", function($q, $k) {
               $q->whereRaw("DATE_FORMAT(entidad.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
@@ -37,10 +38,10 @@ class InteresadoController extends Controller {
   public function buscar() {
     $termino = Input::get("termino");
     $interesados = Interesado::listarBusqueda($termino["term"]);
+    
     $interesadosPro = [];
-    foreach ($interesados as $id => $nombreCompleto) {
+    foreach ($interesados as $id => $nombreCompleto) 
       $interesadosPro[] = ['id' => $id, 'text' => $nombreCompleto];
-    }
     return \Response::json(["results" => $interesadosPro]);
   }
 
@@ -65,7 +66,7 @@ class InteresadoController extends Controller {
       $id = Interesado::registrar($req->all());
     } catch (\Exception $e) {
       Log::error($e);
-      return response()->json(["mensaje" => "Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente."], 400);
+      return response()->json(["mensaje" => "Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente."], 500);
     }
     return response()->json(["mensaje" => "Registro exitoso.", "id" => $id], 200);
   }
@@ -85,6 +86,7 @@ class InteresadoController extends Controller {
     try {
       $datos = $req->all();
       Interesado::actualizar($id, $datos);
+      
       if ($datos["registrarComoAlumno"] == 1) {
         Interesado::registrarAlumno($id);
         Mensajes::agregarMensajeExitoso("El interesado seleccionado ha sido registrado como nuevo alumno.");
@@ -105,7 +107,7 @@ class InteresadoController extends Controller {
       Interesado::actualizarEstado($id, $datos["estado"]);
     } catch (\Exception $e) {
       Log::error($e);
-      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
+      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 500);
     }
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }

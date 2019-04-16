@@ -23,6 +23,7 @@ class FormularioCotizacionRequest extends Request {
     $datos["cursoIncluye"] = ReglasValidacion::formatoDato($datos, "cursoIncluye");
     $datos["inversion"] = ReglasValidacion::formatoDato($datos, "inversion");
     $datos["inversionCuotas"] = ReglasValidacion::formatoDato($datos, "inversionCuotas");
+    $datos["notasAdicionales"] = ReglasValidacion::formatoDato($datos, "notasAdicionales");
     $datos["nombresArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresArchivosAdjuntos");
     $datos["nombresOriginalesArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresOriginalesArchivosAdjuntos");
     $datos["costoHoraClase"] = ReglasValidacion::formatoDato($datos, "costoHoraClase");
@@ -47,9 +48,8 @@ class FormularioCotizacionRequest extends Request {
     ];
 
     $listaCursos = Curso::listarSimple();
-    if (!array_key_exists($datos["idCurso"], $listaCursos->toArray())) {
+    if (!array_key_exists($datos["idCurso"], $listaCursos->toArray()))
       $reglasValidacion["cursoNoValido"] = "required";
-    }
 
     switch ($this->method()) {
       case "GET":

@@ -153,15 +153,15 @@ class Clase extends Model {
     return $clases;
   }
 
-  public static function listarPropias($datos = NULL) {
+  public static function listarPropias($idAlumno, $datos = NULL) {
     $clases = Clase::listarBase();
     $nombreTabla = Clase::nombreTabla();
 
     if (isset($datos["estado"])) {
       $clases->where(Clase::nombreTabla() . ".estado", $datos["estado"]);
     }
-    return $clases->where($nombreTabla . ((Auth::user()->rol == RolesUsuario::Alumno) ? ".idAlumno" : ".idProfesor"), Auth::user()->idEntidad)
-                    ->select($nombreTabla . ".id", $nombreTabla . ".idAlumno", $nombreTabla . ".idProfesor", $nombreTabla . ".numeroPeriodo", $nombreTabla . ".duracion", $nombreTabla . ".estado", $nombreTabla . ".fechaInicio", $nombreTabla . ".fechaFin", $nombreTabla . ".fechaCancelacion", $nombreTabla . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAlumno" : ".comentarioProfesor") . " AS comentarioEntidad", $nombreTabla . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAdministradorParaAlumno" : ".comentarioAdministradorParaProfesor") . " AS comentarioAdministrador", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor");
+    return $clases->where($nombreTabla . ".idAlumno", $idAlumno)
+                    ->select($nombreTabla . ".id", $nombreTabla . ".idAlumno", $nombreTabla . ".idProfesor", $nombreTabla . ".numeroPeriodo", $nombreTabla . ".duracion", $nombreTabla . ".estado", $nombreTabla . ".fechaInicio", $nombreTabla . ".fechaFin", $nombreTabla . ".fechaConfirmacionProfesorAlumno", $nombreTabla . ".fechaCancelacion", $nombreTabla . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAlumno" : ".comentarioProfesor") . " AS comentarioEntidad", $nombreTabla . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAdministradorParaAlumno" : ".comentarioAdministradorParaProfesor") . " AS comentarioAdministrador", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor");
   }
 
   public static function listarXEstados($estados) {
@@ -209,7 +209,7 @@ class Clase extends Model {
     return $eventos;
   }
 
-  public static function listarIdsEntidadesXRangoFecha($fechaInicio, $fechaFin, $idsProfesores = FALSE, $incluirClasesCanceladas = FALSE) {
+  public static function listarXRangoFecha($fechaInicio, $fechaFin, $incluirClasesCanceladas = FALSE) {
     $clases = Clase::where("eliminado", 0)->where(function ($q) use ($fechaInicio, $fechaFin) {
       $q->where(function ($q) use ($fechaInicio) {
         $q->where("fechaInicio", "<=", $fechaInicio)->where("fechaFin", ">=", $fechaInicio);
@@ -222,6 +222,11 @@ class Clase extends Model {
     if (!$incluirClasesCanceladas) {
       $clases->where("estado", '!=', EstadosClase::Cancelada);
     }
+    return $clases;
+  }
+
+  public static function listarIdsEntidadesXRangoFecha($fechaInicio, $fechaFin, $idsProfesores = FALSE, $incluirClasesCanceladas = FALSE) {
+    $clases = Clase::listarXRangoFecha($fechaInicio, $fechaFin, $incluirClasesCanceladas);
     return ($idsProfesores ? $clases->groupBy("idProfesor")->lists("idProfesor") : $clases->groupBy("idAlumno")->lists("idAlumno"));
   }
 
@@ -572,6 +577,26 @@ class Clase extends Model {
     if ($clase->idAlumno == Auth::user()->idEntidad || $clase->idProfesor == Auth::user()->idEntidad) {
       $datos["tipo"] = (Auth::user()->rol == RolesUsuario::Alumno ? 1 : 2);
       Clase::actualizarComentarios($datos);
+    }
+  }
+
+  public static function confirmarProfesorAlumno($datos) {
+    if (Auth::user()->rol == RolesUsuario::Profesor) {
+      $nombreTabla = Clase::nombreTabla();
+      $idClase = Clase::listarXProfesor(Auth::user()->idEntidad)
+                      ->where($nombreTabla . ".idAlumno", $datos["idAlumno"])
+                      ->whereIn($nombreTabla . ".estado", [EstadosClase::Programada, EstadosClase::PendienteConfirmar])
+                      ->orderBy($nombreTabla . ".fechaInicio", "ASC")->lists($nombreTabla . ".id")->first();
+      if (isset($idClase) && $idClase != null) {
+        $fechaConfirmacion = Carbon::now()->toDateTimeString();
+        $clase = Clase::obtenerXId($datos["idAlumno"], $idClase);
+        $clase->estado = EstadosClase::ConfirmadaProfesorAlumno;
+        $clase->fechaConfirmacionProfesorAlumno = $fechaConfirmacion;
+        $clase->fechaUltimaActualizacion = $fechaConfirmacion;
+        $clase->save();
+
+        //TODO: actualizar duración de la clase confirmada y las clases restantes
+      }
     }
   }
 

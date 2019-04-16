@@ -15,11 +15,7 @@ function cargarSeccionCredencialesAcceso() {
         required: true,
         email: true
       },
-      password: {
-        required: true
-      },
       password_confirmation: {
-        required: true,
         equalTo: "#password"
       }
     },

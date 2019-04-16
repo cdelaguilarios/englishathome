@@ -319,14 +319,14 @@ function establecerCabecerasBusquedaTabla(idTabla) {
 function recargarDatosTabla(idTabla) {
   $("#" + idTabla).DataTable().ajax.reload();
 }
-function establecerCambiosBusquedaEstados(idTabla, urlActualizarEstadoDis, estadosDis, tipoCambioEstadoOpc) {
+function establecerCambioEstados(idTabla, urlActualizarEstado, estados, tipoCambioEstado) {
   $(window).click(function (e) {
     if (!$(e.target).closest(".sec-btn-editar-estado").length) {
       $(".sec-btn-editar-estado select").trigger("change");
     }
   });
   $(".btn-editar-estado").live("click", function () {    
-    if(tipoCambioEstadoOpc){      
+    if(tipoCambioEstado){      
       var sel = $("#sel-estados").clone();
       $(sel).val($(this).data("estado")).data("id", $(this).data("id")).data("estado", $(this).data("estado")).appendTo($(this).closest(".sec-btn-editar-estado"));
       $(this).remove();
@@ -340,8 +340,8 @@ function establecerCambiosBusquedaEstados(idTabla, urlActualizarEstadoDis, estad
   });
   $(".sec-btn-editar-estado select").live("change", function () {
     var id = $(this).data("id");
-    if (urlActualizarEstadoDis !== "" && $(this).data("estado") !== $(this).val()) {
-      llamadaAjax(urlActualizarEstadoDis.replace("/0", "/" + id), "POST", {"estado": $(this).val()}, true, undefined, undefined, function (de) {
+    if (urlActualizarEstado !== "" && $(this).data("estado") !== $(this).val()) {
+      llamadaAjax(urlActualizarEstado.replace("/0", "/" + id), "POST", {"estado": $(this).val()}, true, undefined, undefined, function (de) {
         var rj = de.responseJSON;
         if (rj !== undefined && rj.mensaje !== undefined) {
           agregarMensaje("errores", rj.mensaje, true);
@@ -351,7 +351,7 @@ function establecerCambiosBusquedaEstados(idTabla, urlActualizarEstadoDis, estad
         $("#" + idTabla).DataTable().ajax.reload();
       });
     }
-    $(this).closest(".sec-btn-editar-estado").append('<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + id + '" data-estado="' + $(this).val() + '"><span class="label ' + estadosDis[$(this).val()][1] + ' btn-estado">' + estadosDis[$(this).val()][0] + '</span></a>');
+    $(this).closest(".sec-btn-editar-estado").append('<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + id + '" data-estado="' + $(this).val() + '"><span class="label ' + estados[$(this).val()][1] + ' btn-estado">' + estados[$(this).val()][0] + '</span></a>');
     $(this).remove();
   });
   $("#bus-estado").change(function () {
@@ -485,6 +485,19 @@ function habilitarTodosPasosWizard(tipoEntidad) {
       pasos.eq(i).addClass('complete');
     }
   });
+}
+
+//Codigo de verificación
+function mostrarOcultarCodigoVerificacionClases(ele){
+  if($(ele).html().indexOf('<i class="fa fa-eye"></i>') >= 0){
+    $("input[name='codigoVerificacionClases']").val($("input[name='auxCodigoVerificacionClases']").val().trim());
+    $("input[name='auxCodigoVerificacionClases']").val("");
+    $(ele).html('<i class="fa fa-eye-slash"></i>');
+  }else{
+    $("input[name='auxCodigoVerificacionClases']").val($("input[name='codigoVerificacionClases']").val().trim());
+    $("input[name='codigoVerificacionClases']").val("");
+    $(ele).html('<i class="fa fa-eye"></i>');
+  }
 }
 
 //Util

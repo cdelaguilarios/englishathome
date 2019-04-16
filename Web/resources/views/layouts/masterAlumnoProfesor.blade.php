@@ -49,7 +49,6 @@
 
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
-              @include("notificacion.widget") 
               <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   @if ($usuarioActual->imagenPerfil == "null" || empty($usuarioActual->imagenPerfil))
@@ -90,9 +89,9 @@
         <section class="sidebar">
           <ul class="sidebar-menu">
             <li class="header">Menú</li>
-            <li class="{{ ((isset($seccion) && $seccion == "clases") ? "active" : "") }}">
-              <a href="{{ route("clases.propias")}}"><i class="fa flaticon-teach"></i> <span>Clases</span></a>
-            </li>
+            <li class="{{ ((isset($seccion) && $seccion == "docentes") ? "active" : "") }}">
+              <a href="{{ route("profesores.mis.alumnos") }}"><i class="fa fa-mortar-board"></i> <span>Mis alumnos</span></a>
+            </li> 
           </ul>
         </section>
       </aside>
@@ -151,6 +150,8 @@
     <script type="text/javascript">
 var urlBase = "{{ url('/') }}";
 var usuarioActualEsAlumno = {{ $usuarioActual->tipo == App\Helpers\Enum\TiposEntidad::Alumno ? "true" : "false" }};
+var minHorasClase = "{{ $minHorasClase }}";
+var maxHorasClase = "{{ $maxHorasClase }}";
 var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
     </script>
     <script src="{{ asset("assets/eah/js/util.js") }}"></script>
