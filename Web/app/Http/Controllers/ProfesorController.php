@@ -20,9 +20,9 @@ use App\Http\Requests\Profesor\FormularioRequest;
 use App\Http\Requests\Profesor\Pago as PagoRequest;
 use App\Http\Requests\Profesor\ActualizarEstadoRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Http\Requests\Profesor\MisAlumnos\ConfirmarClaseRequest;
+use App\Http\Requests\Profesor\MisAlumnos\RegistrarAvanceRequest;
 use App\Http\Requests\Profesor\ActualizarComentariosPerfilRequest;
-use App\Http\Requests\Clase\BusquedaRequest as BusquedaClasesXAlumnoRequest;
-use App\Http\Requests\Clase\ActualizarComentariosRequest as ActualizarComentariosClaseRequest;
 
 class ProfesorController extends Controller {
 
@@ -285,38 +285,56 @@ class ProfesorController extends Controller {
   // </editor-fold>
   // <editor-fold desc="Mis Alumnos">
   public function misAlumnos() {
-    $this->data["alumnos"] = Profesor::listarAlumnosVigentes(Auth::user()->idEntidad);
+    $this->data["alumnos"] = Profesor::listarAlumnos(Auth::user()->idEntidad);
     return view("profesor.misAlumnos", $this->data);
   }
 
-  public function clasesXAlumno($id) {
-    $this->data["idAlumno"] = $id;
+  public function misAlumnosClases($idAlumno) {
+    try {
+      $this->data["alumno"] = Profesor::obtenerAlumno(Auth::user()->idEntidad, $idAlumno);
+      $this->data["proximaClase"] = Profesor::obtenerProximaClase(Auth::user()->idEntidad, $idAlumno);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("No se encontraron datos del alumno seleccionado.");
+      return redirect(route("/"));
+    }
     return view("profesor.misAlumnosClases", $this->data);
   }
 
-  public function listarClasesXAlumno($id, BusquedaClasesXAlumnoRequest $req) {
-    return Datatables::of(Clase::listarPropias($id, $req->all()))
+  public function misAlumnosListarClases($idAlumno) {
+    return Datatables::of(Profesor::listarClasesAlumno(Auth::user()->idEntidad, $idAlumno))
                     ->filterColumn("fechaInicio", function($q, $k) {
                       $q->whereRaw('fechaInicio like ?', ["%{$k}%"])
                       ->orWhereRaw('duracion like ?', ["%{$k}%"])
-                      ->orWhereRaw('CONCAT(' . (Auth::user()->rol == RolesUsuario::Alumno ? 'entidadProfesor.nombre, " ", entidadProfesor.apellido' : 'entidadAlumno.nombre, " ", entidadAlumno.apellido') . ') like ?', ["%{$k}%"]);
+                      ->orWhereRaw(Clase::nombreTabla() . '.estado like ?', ["%{$k}%"]);
                     })
-                    ->filterColumn("comentarioEntidad", function($q, $k) {
-                      $q->whereRaw(Clase::nombreTabla() . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAlumno" : ".comentarioProfesor") . ' like ?', ["%{$k}%"]);
+                    ->filterColumn("comentarioProfesor", function($q, $k) {
+                      $q->whereRaw(Clase::nombreTabla() . '.comentarioProfesor like ?', ["%{$k}%"]);
                     })
-                    ->filterColumn("comentarioAdministrador", function($q, $k) {
-                      $q->whereRaw(Clase::nombreTabla() . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAdministradorParaAlumno" : ".comentarioAdministradorParaProfesor") . ' like ?', ["%{$k}%"]);
+                    ->filterColumn("comentarioParaProfesor", function($q, $k) {
+                      $q->whereRaw(Clase::nombreTabla() . '.comentarioParaProfesor like ?', ["%{$k}%"]);
                     })->make(true);
   }
-  
-  public function actualizarComentariosClase(ActualizarComentariosClaseRequest $req) {
+
+  public function misAlumnosRegistrarAvanceClase($idAlumno, RegistrarAvanceRequest $req) {
     try {
-      Clase::actualizarComentariosEntidad($req->all());
+      Profesor::registrarAvanceClase(Auth::user()->idEntidad, $idAlumno, $req->all());
     } catch (\Exception $e) {
       Log::error($e);
-      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
+      return response()->json(["mensaje" => "Ocurrió un problema durante el registro de avance. Por favor inténtelo nuevamente."], 400);
     }
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
+  }
+
+  public function misAlumnosConfirmarClase($idAlumno, ConfirmarClaseRequest $req) {
+    try {
+      Profesor::confirmarClase(Auth::user()->idEntidad, $idAlumno, $req->all());
+      Mensajes::agregarMensajeExitoso("Confirmación exitosa.");
+    } catch (\Exception $e) {
+      Log::error($e->getMessage());
+      Mensajes::agregarMensajeError("Ocurrió un problema durante la confirmación de la clase. Por favor inténtelo nuevamente.");
+    }
+    return redirect(route("profesores.mis.alumnos.clases", ["id" => $idAlumno]));
   }
 
   // </editor-fold>

@@ -40,10 +40,10 @@ Route::group(["middleware" => "auth"], function() {
   Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Profesor . "]"], function() {
     // <editor-fold desc="Clases">
     Route::get("misAlumnos", ["uses" => "ProfesorController@misAlumnos", "as" => "profesores.mis.alumnos"]);
-    Route::get("misAlumnos/{id}/clases", ["uses" => "ProfesorController@clasesXAlumno", "as" => "profesores.mis.alumnos.clases"]);
-    Route::post("misAlumnos/{id}/clases/listar", ["uses" => "ProfesorController@listarClasesXAlumno", "as" => "profesores.mis.alumnos.listar.clases"]);
-    Route::post("misAlumnos/{id}/clases/comentarios", ["uses" => "ProfesorController@actualizarComentariosClase", "as" => "profesores.mis.alumnos.clases.actualizar.comentarios"]);
-    Route::post("misAlumnos/{id}/clases/confirmar", ["uses" => "ProfesorController@confirmarClase", "as" => "profesores.mis.alumnos.clases.confirmar"]);
+    Route::get("misAlumnos/{id}/clases", ["uses" => "ProfesorController@misAlumnosClases", "as" => "profesores.mis.alumnos.clases"]);
+    Route::post("misAlumnos/{id}/clases/listar", ["uses" => "ProfesorController@misAlumnosListarClases", "as" => "profesores.mis.alumnos.listar.clases"]);
+    Route::post("misAlumnos/{id}/clases/avance", ["uses" => "ProfesorController@misAlumnosRegistrarAvanceClase", "as" => "profesores.mis.alumnos.registrar.avance.clase"]);
+    Route::post("misAlumnos/{id}/clases/confirmar", ["uses" => "ProfesorController@misAlumnosConfirmarClase", "as" => "profesores.mis.alumnos.confirmar.clase"]);
     // </editor-fold>
   });
   Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Alumno . "]"], function() {

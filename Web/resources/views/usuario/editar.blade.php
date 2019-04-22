@@ -1,4 +1,4 @@
-@extends("layouts.master" . (in_array($usuarioActual->tipo, [App\Helpers\Enum\TiposEntidad::Alumno, App\Helpers\Enum\TiposEntidad::Profesor]) ? "AlumnosProfesores" : ""))
+@extends("layouts.master" . (in_array($usuarioActual->tipo, [App\Helpers\Enum\TiposEntidad::Alumno, App\Helpers\Enum\TiposEntidad::Profesor]) ? "AlumnoProfesor" : ""))
 @section("titulo", "Usuarios")
 
 @section("section_script")

@@ -50,8 +50,8 @@
           <thead>
             <tr>
               <th>Nombre completo</th>   
-              <th>Teléfono</th>  
-              <th>Correo electrónico</th>
+              <th>Consulta</th>  
+              <th>Datos de contacto</th>
               <th>Estado</th>
               <th>Fecha registro</th>
               <th class="all">Opciones</th>

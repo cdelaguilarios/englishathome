@@ -40,7 +40,7 @@ class ClaseController extends Controller {
                       $q->whereRaw(Clase::nombreTabla() . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAlumno" : ".comentarioProfesor") . ' like ?', ["%{$k}%"]);
                     })
                     ->filterColumn("comentarioAdministrador", function($q, $k) {
-                      $q->whereRaw(Clase::nombreTabla() . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAdministradorParaAlumno" : ".comentarioAdministradorParaProfesor") . ' like ?', ["%{$k}%"]);
+                      $q->whereRaw(Clase::nombreTabla() . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioParaAlumno" : ".comentarioParaProfesor") . ' like ?', ["%{$k}%"]);
                     })->make(true);
   }
 

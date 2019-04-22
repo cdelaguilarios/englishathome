@@ -360,8 +360,8 @@ class AlumnoController extends Controller {
   
 
   public function actualizarComentariosClase(ClaseRequest\ActualizarComentariosRequest $req) {
-      Clase::actualizarComentarios($req->all());
     try {
+      Clase::actualizarComentarios($req->all());
     } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);

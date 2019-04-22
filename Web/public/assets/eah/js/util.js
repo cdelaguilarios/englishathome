@@ -301,15 +301,14 @@ function establecerCabecerasBusquedaTabla(idTabla) {
   $("#" + idTabla + " thead tr:eq(1) th").each(function (numEle) {
     var permiteBus = $("#" + idTabla + "").DataTable().settings().init().columns[numEle].searchable;
     if (permiteBus || permiteBus === undefined){
-      $(this).html('<input type="text" placeholder="Buscar por ' + $(this).text() + '" />');
+      $(this).html('<input type="text" placeholder="Buscar por ' + $(this).text().toLowerCase() + '" />');
       $("input", this).on("click", function (e) {
         e.preventDefault();
         return false;
       });
       $("input", this).on("keyup change", function () {
-        if ($("#" + idTabla + "").DataTable().column(numEle).search() !== this.value) {
+        if ($("#" + idTabla + "").DataTable().column(numEle).search() !== this.value)
           $("#" + idTabla + "").DataTable().column(numEle).search(this.value).draw();
-        }
       });
     }else{
       $(this).html("");
@@ -321,9 +320,8 @@ function recargarDatosTabla(idTabla) {
 }
 function establecerCambioEstados(idTabla, urlActualizarEstado, estados, tipoCambioEstado) {
   $(window).click(function (e) {
-    if (!$(e.target).closest(".sec-btn-editar-estado").length) {
+    if (!$(e.target).closest(".sec-btn-editar-estado").length)
       $(".sec-btn-editar-estado select").trigger("change");
-    }
   });
   $(".btn-editar-estado").live("click", function () {    
     if(tipoCambioEstado){      
@@ -343,11 +341,10 @@ function establecerCambioEstados(idTabla, urlActualizarEstado, estados, tipoCamb
     if (urlActualizarEstado !== "" && $(this).data("estado") !== $(this).val()) {
       llamadaAjax(urlActualizarEstado.replace("/0", "/" + id), "POST", {"estado": $(this).val()}, true, undefined, undefined, function (de) {
         var rj = de.responseJSON;
-        if (rj !== undefined && rj.mensaje !== undefined) {
+        if (rj !== undefined && rj.mensaje !== undefined)
           agregarMensaje("errores", rj.mensaje, true);
-        } else if (rj !== undefined && rj[Object.keys(rj)[0]] !== undefined) {
+        else if (rj !== undefined && rj[Object.keys(rj)[0]] !== undefined)
           agregarMensaje("errores", rj[Object.keys(rj)[0]][0], true);
-        }
         $("#" + idTabla).DataTable().ajax.reload();
       });
     }

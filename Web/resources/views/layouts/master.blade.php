@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="{{ asset("assets/plugins/datepicker/datepicker3.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/jQueryUploadFileMaster/css/uploadfile.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/datetimepicker/bootstrap-datetimepicker.min.css") }}" />
-    <link rel="stylesheet" href="{{ asset("assets/eah/css/mystyles.css") }}" />
+    <link rel="stylesheet" href="{{ asset("assets/eah/css/eah.css") }}" />
     @yield("section_style")   
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn"t work if you view the page via file:// -->
@@ -208,7 +208,7 @@
         </section>
       </div>
       <footer class="main-footer">
-        <strong>Copyright &copy; 2014-{!! date("Y") !!} <a href="http://englishathomeperu.com/" target="_blank">English at home</a>.</strong> Todos los derechos reservados.
+        <strong>Copyright &copy; 2014-{!! date("Y") !!} <a href="http://englishathomeperu.com/" target="_blank">English at home Perú</a>.</strong> Todos los derechos reservados.
       </footer>
     </div>
     <div id="secCargandoPrincipal" class="box cargando">

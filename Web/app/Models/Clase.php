@@ -20,7 +20,7 @@ class Clase extends Model {
 
   public $timestamps = false;
   protected $table = "clase";
-  protected $fillable = ["idAlumno", "idProfesor", "numeroPeriodo", "duracion", "costoHora", "costoHoraProfesor", "pagoTotalProfesor", "fechaInicio", "fechaFin", "fechaCancelacion", "comentarioAlumno", "comentarioProfesor", "comentarioAdministradorParaAlumno", "comentarioAdministradorParaProfesor", "estado"];
+  protected $fillable = ["idAlumno", "idProfesor", "numeroPeriodo", "duracion", "costoHora", "costoHoraProfesor", "pagoTotalProfesor", "fechaInicio", "fechaFin", "fechaCancelacion", "comentarioAlumno", "comentarioProfesor", "comentarioParaAlumno", "comentarioParaProfesor", "estado"];
 
   public static function nombreTabla() {
     $modeloClase = new Clase();
@@ -29,7 +29,7 @@ class Clase extends Model {
     return $nombreTabla;
   }
 
-  private static function listarBase() {
+  public static function listarBase() {
     $nombreTabla = Clase::nombreTabla();
     return Clase::leftJoin(Entidad::nombreTabla() . " as entidadAlumno", $nombreTabla . ".idAlumno", "=", "entidadAlumno.id")
                     ->leftJoin(Entidad::nombreTabla() . " as entidadProfesor", function ($q) use($nombreTabla) {
@@ -161,7 +161,7 @@ class Clase extends Model {
       $clases->where(Clase::nombreTabla() . ".estado", $datos["estado"]);
     }
     return $clases->where($nombreTabla . ".idAlumno", $idAlumno)
-                    ->select($nombreTabla . ".id", $nombreTabla . ".idAlumno", $nombreTabla . ".idProfesor", $nombreTabla . ".numeroPeriodo", $nombreTabla . ".duracion", $nombreTabla . ".estado", $nombreTabla . ".fechaInicio", $nombreTabla . ".fechaFin", $nombreTabla . ".fechaConfirmacionProfesorAlumno", $nombreTabla . ".fechaCancelacion", $nombreTabla . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAlumno" : ".comentarioProfesor") . " AS comentarioEntidad", $nombreTabla . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAdministradorParaAlumno" : ".comentarioAdministradorParaProfesor") . " AS comentarioAdministrador", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor");
+                    ->select($nombreTabla . ".id", $nombreTabla . ".idAlumno", $nombreTabla . ".idProfesor", $nombreTabla . ".numeroPeriodo", $nombreTabla . ".duracion", $nombreTabla . ".estado", $nombreTabla . ".fechaInicio", $nombreTabla . ".fechaFin", $nombreTabla . ".fechaConfirmacion", $nombreTabla . ".fechaCancelacion", $nombreTabla . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAlumno" : ".comentarioProfesor") . " AS comentarioEntidad", $nombreTabla . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioParaAlumno" : ".comentarioParaProfesor") . " AS comentarioAdministrador", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor");
   }
 
   public static function listarXEstados($estados) {
@@ -562,10 +562,10 @@ class Clase extends Model {
         $clase->comentarioProfesor = $datos["comentario"];
         break;
       case 3:
-        $clase->comentarioAdministradorParaAlumno = $datos["comentario"];
+        $clase->comentarioParaAlumno = $datos["comentario"];
         break;
       case 4:
-        $clase->comentarioAdministradorParaProfesor = $datos["comentario"];
+        $clase->comentarioParaProfesor = $datos["comentario"];
         break;
     }
     $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
@@ -591,7 +591,7 @@ class Clase extends Model {
         $fechaConfirmacion = Carbon::now()->toDateTimeString();
         $clase = Clase::obtenerXId($datos["idAlumno"], $idClase);
         $clase->estado = EstadosClase::ConfirmadaProfesorAlumno;
-        $clase->fechaConfirmacionProfesorAlumno = $fechaConfirmacion;
+        $clase->fechaConfirmacion = $fechaConfirmacion;
         $clase->fechaUltimaActualizacion = $fechaConfirmacion;
         $clase->save();
 

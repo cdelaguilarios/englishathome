@@ -1,13 +1,6 @@
 @extends("layouts.masterAlumnoProfesor")
 @section("titulo", "Alumnos")
 
-@section("section_script")
-@endsection
-
-@section("breadcrumb")
-<li class="active">Alumnos</li>
-@endsection
-
 @section("content")
 <div class="row">
   <div class="col-md-12">
@@ -15,7 +8,7 @@
       <div class="col-md-12">
         <div class="box box-info">
           <div class="box-header with-border">
-            <h3 class="box-title">Seleccione un alumno</h3>
+            <h3 class="box-title">Mis alumnos</h3>
           </div>
           <div class="box-body no-padding">
             @foreach ($alumnos as $alumno)              
@@ -33,4 +26,3 @@
   </div>
 </div>
 @endsection
--

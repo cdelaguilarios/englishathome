@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="{{ asset("assets/plugins/datepicker/datepicker3.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/jQueryUploadFileMaster/css/uploadfile.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/datetimepicker/bootstrap-datetimepicker.min.css") }}" />
-    <link rel="stylesheet" href="{{ asset("assets/eah/css/mystyles.css") }}" />
+    <link rel="stylesheet" href="{{ asset("assets/eah/css/eah.css") }}" />
     @yield("section_style")   
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn"t work if you view the page via file:// -->
@@ -37,7 +37,7 @@
           <span class="logo-mini" style="background-color: #ecf0f5">
             <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login" width="46" />
           </span>
-          <span class="logo-lg"><b>Administrador</b> EAH</span>
+          <span class="logo-lg">English at Home Perú</span>
         </a>
         <nav class="navbar navbar-static-top">
           <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
@@ -68,7 +68,7 @@
                     @endif
                     <p>
                       {!! ucwords(mb_strtolower($usuarioActual->nombre)) !!} {!! ucwords(mb_strtolower($usuarioActual->apellido)) !!}
-                      <small>{!! $rolesUsuarios[$usuarioActual->rol] !!}</small>
+                      <small>{{ App\Helpers\Enum\RolesUsuario::listarExternos()[$usuarioActual->rol][$usuarioActual->sexo == "F" ? 1 : 0] }}</small>
                     </p>
                   </li>
                   <li class="user-footer">
@@ -96,21 +96,13 @@
         </section>
       </aside>
       <div class="content-wrapper">
-        <section class="content-header">
-          @if (isset($seccion) && $seccion != "inicio")
-          <ol class="breadcrumb">
-            <li><a href="{{ route("/") }}"><i class="fa fa-home"></i> Inicio</a></li>
-            @yield("breadcrumb")
-          </ol>
-          @endif
-        </section>
         <section class="content">                
           @include("partials/mensajes")
           @yield("content")
         </section>
       </div>
       <footer class="main-footer">
-        <strong>Copyright &copy; 2014-{!! date("Y") !!} <a href="http://englishathomeperu.com/" target="_blank">English at home</a>.</strong> Todos los derechos reservados.
+        <strong>Copyright &copy; 2014-{!! date("Y") !!} <a href="http://englishathomeperu.com/" target="_blank">English at home Perú</a>.</strong> Todos los derechos reservados.
       </footer>
     </div>
     <div id="secCargandoPrincipal" class="box cargando">

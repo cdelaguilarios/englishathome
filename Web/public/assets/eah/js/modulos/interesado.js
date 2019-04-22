@@ -34,16 +34,20 @@ function cargarLista() {
         {data: "nombre", name: "entidad.nombre", render: function (e, t, d, m) {
             return '<a href="' + (urlEditar.replace("/0", "/" + d.id)) + '">' + (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "") + '</a>';
           }},
-        {data: "telefono", name: "entidad.telefono"},
-        {data: "correoElectronico", name: "entidad.correoElectronico"},
+        {data: "consulta", name: "consulta", width: "35%", render: function (e, t, d, m) {
+            return (d.consulta !== null ? d.consulta : '') + (d.cursoInteres !== null && d.cursoInteres !== "" ? (d.consulta !== null ? '<br/><br/>' : '') + '<b>Curso de interes:</b> ' + d.cursoInteres : '');
+          }},
+        {data: "correoElectronico", name: "entidad.correoElectronico", render: function (e, t, d, m) {
+            return (d.correoElectronico !== null ? '<b>Correo electrónico:</b> ' + d.correoElectronico : '') +
+                    (d.telefono !== null ? (d.correoElectronico !== null ? '<br/>' : '') + '<b>Teléfono:</b> ' + d.telefono : '');
+          }},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
-            if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined) {
+            if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined)
               return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
-            } else if (estados[d.estado] !== undefined) {
+            else if (estados[d.estado] !== undefined)
               return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>' + ((d.estado === estadoAlumnoRegistrado) ? '<a href="' + (urlPerfilAlumnoInteresado.replace("/0", "/" + d.id)) + '" title="Ver perfil del alumno" target="_blank" class="btn-perfil-relacion-entidad"><i class="fa fa-eye"></i></a>' : '');
-            } else {
+            else
               return "";
-            }
           }, className: "text-center"},
         {data: "fechaRegistro", name: "entidad.fechaRegistro", render: function (e, t, d, m) {
             return formatoFecha(d.fechaRegistro, true);
@@ -88,6 +92,7 @@ function cargarCajaBusqueda() {
       window.location.href = urlEditar.replace("/0", "/" + $(this).val());
   });
 }
+
 function cargarFormulario() {
   $("#formulario-interesado").validate({
     ignore: ":hidden",
@@ -153,6 +158,7 @@ function cargarFormulario() {
     $("#formulario-interesado").submit();
   });
 }
+
 var editorCargado = false;
 function cargarFormularioCotizacion() {
   if ($("#descripcion-curso").length === 0)
@@ -243,6 +249,7 @@ function cargarFormularioCotizacion() {
     onkeyup: false,
     onclick: false
   });
+  
   $("#id-curso").change(function () {
     urlDatosCurso = (typeof (urlDatosCurso) === "undefined" ? "" : urlDatosCurso);
     urlBaseImagen = (typeof (urlBaseImagen) === "undefined" ? "" : urlBaseImagen);

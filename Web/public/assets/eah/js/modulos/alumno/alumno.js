@@ -179,8 +179,8 @@ function preCargarListaClase() {
             };
             return incluirComentario(d.id, 'Del alumno', 1, d.comentarioAlumno) +
                     incluirComentario(d.id, 'Del profesor', 2, d.comentarioProfesor) +
-                    incluirComentario(d.id, 'De EAH para el alumno', 3, d.comentarioAdministradorParaAlumno) +
-                    incluirComentario(d.id, 'De EAH para el profesor', 4, d.comentarioAdministradorParaProfesor);
+                    incluirComentario(d.id, 'De EAH para el alumno', 3, d.comentarioParaAlumno) +
+                    incluirComentario(d.id, 'De EAH para el profesor', 4, d.comentarioParaProfesor);
           }, "className": "not-mobile"}
       ],
       initComplete: function (s, j) {
@@ -205,7 +205,7 @@ function abrirModalFormularioComentarios(idClase, tipo) {
   var fila = $("#tab-lista-clases").DataTable().row(tr);
   var datosFila = fila.data();
   $("#mod-comentarios").find(".modal-title").html("Comentarios " + (tipo === 1 ? "del alumno" : (tipo === 2 ? "del profesor" : (tipo === 3 ? "De EAH para el alumno" : "De EAH para el profesor"))));
-  $("#formulario-comentarios").find("textarea[name='comentario']").val(tipo === 1 ? datosFila.comentarioAlumno : (tipo === 2 ? datosFila.comentarioProfesor : (tipo === 3 ? datosFila.comentarioAdministradorParaAlumno : datosFila.comentarioAdministradorParaProfesor)));
+  $("#formulario-comentarios").find("textarea[name='comentario']").val(tipo === 1 ? datosFila.comentarioAlumno : (tipo === 2 ? datosFila.comentarioProfesor : (tipo === 3 ? datosFila.comentarioParaAlumno : datosFila.comentarioParaProfesor)));
   $("#formulario-comentarios").find("input[name='idClase']").val(datosFila.id);
   $("#formulario-comentarios").find("input[name='idAlumno']").val(datosFila.idAlumno);
   $("#formulario-comentarios").find("input[name='tipo']").val(tipo);

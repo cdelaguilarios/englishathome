@@ -28,19 +28,28 @@ class InteresadoController extends Controller {
 
   public function listar(BusquedaRequest $req) {
     return Datatables::of(Interesado::listar($req->all()))
-            ->filterColumn("entidad.nombre", function($q, $k) {
-              $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
-            })->filterColumn("entidad.fechaRegistro", function($q, $k) {
-              $q->whereRaw("DATE_FORMAT(entidad.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
-            })->make(true);
+                    ->filterColumn("entidad.nombre", function($q, $k) {
+                      $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
+                    })
+                    ->filterColumn("consulta", function($q, $k) {
+                      $q->whereRaw('consulta like ?', ["%{$k}%"])
+                      ->orWhereRaw('cursoInteres like ?', ["%{$k}%"]);
+                    })
+                    ->filterColumn("entidad.correoElectronico", function($q, $k) {
+                      $q->whereRaw('entidad.correoElectronico like ?', ["%{$k}%"])
+                      ->orWhereRaw('entidad.telefono like ?', ["%{$k}%"]);
+                    })
+                    ->filterColumn("entidad.fechaRegistro", function($q, $k) {
+                      $q->whereRaw("DATE_FORMAT(entidad.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
+                    })->make(true);
   }
 
   public function buscar() {
     $termino = Input::get("termino");
     $interesados = Interesado::listarBusqueda($termino["term"]);
-    
+
     $interesadosPro = [];
-    foreach ($interesados as $id => $nombreCompleto) 
+    foreach ($interesados as $id => $nombreCompleto)
       $interesadosPro[] = ['id' => $id, 'text' => $nombreCompleto];
     return \Response::json(["results" => $interesadosPro]);
   }
@@ -86,7 +95,7 @@ class InteresadoController extends Controller {
     try {
       $datos = $req->all();
       Interesado::actualizar($id, $datos);
-      
+
       if ($datos["registrarComoAlumno"] == 1) {
         Interesado::registrarAlumno($id);
         Mensajes::agregarMensajeExitoso("El interesado seleccionado ha sido registrado como nuevo alumno.");

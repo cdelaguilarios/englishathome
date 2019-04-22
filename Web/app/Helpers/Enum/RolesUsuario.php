@@ -25,4 +25,11 @@ class RolesUsuario {
     ];
   }
 
+  public static function listarExternos() {
+    return [
+        RolesUsuario::Alumno => ["Alumno", "Alumna"],
+        RolesUsuario::Profesor => ["Profesor", "Profesora"]
+    ];
+  }
+
 }
