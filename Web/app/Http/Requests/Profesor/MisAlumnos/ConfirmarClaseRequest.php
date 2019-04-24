@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Profesor\MisAlumnos;
 
 use Config;
+use App\Models\Alumno;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 
@@ -23,6 +24,7 @@ class ConfirmarClaseRequest extends Request {
   }
 
   public function rules() {
+    $datos = $this->all();
     $reglasValidacion = [
         "idClase" => "required",
         "duracion" => "required|numeric|between:" . ((int) Config::get("eah.minHorasClase") * 3600) . "," . ((int) Config::get("eah.maxHorasClase") * 3600),
@@ -30,6 +32,16 @@ class ConfirmarClaseRequest extends Request {
         "comentario" => "max:8000"
     ];
 
+    $idAlumno = $this->route()->getParameter('id');
+    if (Alumno::verificarExistencia($idAlumno)) {
+      $alumno = Alumno::obtenerXId($idAlumno, TRUE);
+      if ($alumno->codigoVerificacionClases != $datos["codigoVerificacion"]) {
+        $reglasValidacion["codigoVerificacionNoValido"] = "required";
+      }
+    } else {
+      $reglasValidacion["alumnoNoValido"] = "required";
+    }
+    
     switch ($this->method()) {
       case "GET":
       case "DELETE":
@@ -42,6 +54,13 @@ class ConfirmarClaseRequest extends Request {
         }
       default:break;
     }
+  }
+
+  public function messages() {
+    return [
+        "alumnoNoValido.required" => "El alumno seleccionado no es válido.",
+        "codigoVerificacionNoValido.required" => "El código de verificación del alumno no es válido."
+    ];
   }
 
 }

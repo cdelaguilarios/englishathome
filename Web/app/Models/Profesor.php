@@ -164,7 +164,7 @@ class Profesor extends Model {
   public static function obtenerAlumno($id, $idAlumno) {
     Profesor::listarClasesBase($id, $idAlumno)->firstOrFail();
     $alumno = Alumno::obtenerXId($idAlumno, TRUE);
-    $alumno->totalDuracionClasesRestantes = Profesor::listarClasesBase($id, $idAlumno, TRUE)->get()->sum("duracion") / 3600;
+    $alumno->totalDuracionClasesRestantes = Profesor::listarClasesBase($id, $idAlumno, TRUE)->get()->sum("duracion");
     return $alumno;
   }
 
@@ -189,55 +189,62 @@ class Profesor extends Model {
   }
 
   public static function confirmarClase($id, $idAlumno, $datos) {
+    $alumno = Profesor::obtenerAlumno($id, $idAlumno);
     $clase = Profesor::listarClasesAlumno($id, $idAlumno, TRUE)->where(Clase::nombreTabla() . ".id", $datos["idClase"])->firstOrFail();
-    if (!is_null($clase)) {
-      $alumno = Profesor::obtenerAlumno($id, $idAlumno);
-      $cambioDuracion = ($clase->duracion != $datos["duracion"] && $datos["duracion"] <= $alumno->totalDuracionClasesRestantes);
+    $duracionAct = (int) $clase->duracion;
+    $duracionSel = (int) $datos["duracion"];
+    $duracionMax = (int) $alumno->totalDuracionClasesRestantes;
 
-      $fechaConfirmacion = Carbon::now()->toDateTimeString();
-      $clase->estado = EstadosClase::ConfirmadaProfesorAlumno;
-      $clase->fechaConfirmacion = $fechaConfirmacion;
-      $clase->fechaUltimaActualizacion = $fechaConfirmacion;
-      if ($cambioDuracion)
-        $clase->duracion = $datos["duracion"];
-      $clase->save();
+    $fechaActual = Carbon::now()->toDateTimeString();
+    $cambioDuracion = ($duracionAct != $duracionSel && $duracionSel <= $duracionMax);
 
-      //Actualizar clases en base a variación de la duración de clases
-      if ($cambioDuracion) {
-        $variaciónDuracion = ($datos["duracion"] - $clase->duracion);
-        if ($variaciónDuracion > 0) {
-          //Se aumento las horas de la clase confirmada, se debe quitar el tiempo de más de la última o últimas clases
-          $clasesRestantes = Profesor::listarClasesBase($id, $idAlumno, TRUE)->orderBy(Clase::nombreTabla() . ".fechaInicio", "DESC")->get();
-          foreach ($clasesRestantes as $claseRestante) {
-            if ($claseRestante->duracion <= $variaciónDuracion) {
-              $variaciónDuracion -= $claseRestante->duracion;
-              Clase::eliminar($idAlumno, $claseRestante->id);
-              if ($variaciónDuracion <= 0)
-                break;
-            } else {
-              $claseRestante->duracion -= abs($variaciónDuracion);
-              $claseRestante->fechaUltimaActualizacion = $fechaConfirmacion;
-              $claseRestante->save();
+    $clase->estado = EstadosClase::ConfirmadaProfesorAlumno;
+    $clase->fechaConfirmacion = $fechaActual;
+    $clase->fechaUltimaActualizacion = $fechaActual;
+    if ($cambioDuracion)
+      $clase->duracion = $duracionSel;
+    $clase->save();
+
+    Profesor::registrarAvanceClase($id, $idAlumno, $datos);
+
+    //Actualizar clases en base a variación de la duración de clases
+    $nombreTabla = Clase::nombreTabla();
+    if ($cambioDuracion) {
+      $variaciónDuracion = ($duracionSel - $duracionAct);
+      if ($variaciónDuracion > 0) {
+        //Se aumento las horas de la clase confirmada, se debe quitar el tiempo de más de la última o últimas clases
+        $clasesRestantes = Profesor::listarClasesBase($id, $idAlumno, TRUE)->orderBy($nombreTabla . ".fechaInicio", "DESC")->select($nombreTabla . ".id", $nombreTabla . ".duracion")->get();
+        foreach ($clasesRestantes as $claseRestante) {
+          if ($claseRestante->duracion <= $variaciónDuracion) {
+            $variaciónDuracion -= $claseRestante->duracion;
+            Clase::eliminar($idAlumno, $claseRestante->id);
+            if ($variaciónDuracion <= 0)
               break;
-            }
-          }
-        } else {
-          //Se resto horas a la clase confirmada, se debe agregar el tiempo sobrante a la última clase
-          $ultimaClase = Profesor::listarClasesBase($id, $idAlumno, TRUE)->orderBy(Clase::nombreTabla() . ".fechaInicio", "DESC")->first();
-          if (!is_null($ultimaClase)) {
-            $ultimaClase->duracion += abs($variaciónDuracion);
-            $ultimaClase->fechaUltimaActualizacion = $fechaConfirmacion;
-            $ultimaClase->save();
+          } else {
+            $claseResAct = Clase::ObtenerXId($idAlumno, $claseRestante->id);
+            $claseResAct->duracion -= abs($variaciónDuracion);
+            $claseResAct->fechaUltimaActualizacion = $fechaActual;
+            $claseResAct->save();
+            break;
           }
         }
+      } else {
+        //Se resto horas a la clase confirmada, se debe agregar el tiempo sobrante a la última clase
+        $ultimaClase = Profesor::listarClasesBase($id, $idAlumno, TRUE)->orderBy(Clase::nombreTabla() . ".fechaInicio", "DESC")->select($nombreTabla . ".id")->first();
+        if (!is_null($ultimaClase)) {
+          $claseResAct = Clase::ObtenerXId($idAlumno, $ultimaClase->id);
+          $claseResAct->duracion += abs($variaciónDuracion);
+          $claseResAct->fechaUltimaActualizacion = $fechaActual;
+          $claseResAct->save();
+        }
       }
-
-      Historial::registrar([
-          "idEntidades" => [$id, $idAlumno],
-          "titulo" => "[" . TiposEntidad::Profesor . "] confirmó una clase del alumno(a) [" . TiposEntidad::Alumno . "]",
-          "mensaje" => ""
-      ]);
     }
+
+    Historial::registrar([
+        "idEntidades" => [$id, $idAlumno],
+        "titulo" => "[" . TiposEntidad::Profesor . "] confirmó una clase del alumno(a) [" . TiposEntidad::Alumno . "]",
+        "mensaje" => ""
+    ]);
   }
 
   //REPORTE

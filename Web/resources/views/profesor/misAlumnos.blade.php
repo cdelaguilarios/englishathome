@@ -1,5 +1,5 @@
 @extends("layouts.masterAlumnoProfesor")
-@section("titulo", "Alumnos")
+@section("titulo", "Mis alumnos")
 
 @section("content")
 <div class="row">

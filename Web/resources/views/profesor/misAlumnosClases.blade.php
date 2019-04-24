@@ -1,5 +1,5 @@
 @extends("layouts.masterAlumnoProfesor")
-@section("titulo", "Clases")
+@section("titulo", "Mis alumnos - Clases")
 
 @section("section_script")
 <script type="text/javascript">
@@ -7,7 +7,7 @@
   var estadoClaseProgramada = "{{ App\Helpers\Enum\EstadosClase::Programada }}";
   var estadoClasePendienteConfirmar = "{{ App\Helpers\Enum\EstadosClase::PendienteConfirmar }}";
   var duracionProximaClase = "{{ (!is_null($proximaClase) ? $proximaClase->duracion : 0) }}";
-  var totalDuracionClasesRestantes = parseInt("{{ $alumno->totalDuracionClasesRestantes }}");
+  var totalDuracionClasesRestantes = parseInt("{{ $alumno->totalDuracionClasesRestantes }}")/3600;
 
   maxHorasClase = (typeof (maxHorasClase) === "undefined" ? 0 : maxHorasClase);
   maxHorasClase = (totalDuracionClasesRestantes > maxHorasClase ? maxHorasClase : totalDuracionClasesRestantes);

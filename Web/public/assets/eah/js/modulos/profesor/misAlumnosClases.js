@@ -169,12 +169,10 @@ function cargarFormularioConfirmacionClase() {
     onclick: false
   });
   $("#btn-cambiar-duracion").click(function () {
-    duracionProximaClase = (typeof (duracionProximaClase) === "undefined" ? "" : duracionProximaClase);
-
     $(this).hide();
     $("#sec-duracion").hide();
-    $("#duracion-clase").val(duracionProximaClase);
     $("#sec-cambio-duracion").show();
   });
-  establecerCampoDuracion("duracion-clase");
+  duracionProximaClase = (typeof (duracionProximaClase) === "undefined" ? "" : duracionProximaClase);
+  establecerCampoDuracion("duracion-clase", duracionProximaClase);
 }

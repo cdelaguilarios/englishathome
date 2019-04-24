@@ -45,8 +45,7 @@ class HistorialController extends Controller {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
     }
-    $urlRetorno = Input::get("urlRetorno");
-    return redirect(isset($urlRetorno) && !is_null(Input::get("urlRetorno")) ? $urlRetorno : route("/"))->with("historial", "1");
+    return back()->with("historial", "1");
   }
 
   // </editor-fold>
