@@ -43,12 +43,12 @@ function obtenerParametroUrlXNombre(nombre, url) {
     url = window.location.href;
   nombre = nombre.replace(/[\[\]]/g, "\\$&");
   var regex = new RegExp("[?&]" + nombre + "(=([^&#]*)|&|#|$)"),
-      results = regex.exec(url);
-  if (!results)
+          resultados = regex.exec(url);
+  if (!resultados)
     return null;
-  if (!results[2])
+  if (!resultados[2])
     return '';
-  return decodeURIComponent(results[2].replace(/\+/g, " "));
+  return decodeURIComponent(resultados[2].replace(/\+/g, " "));
 }
 
 formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
@@ -106,13 +106,12 @@ function validarFecha(value, element, param) {
 }
 $.validator.addMethod("validarFechaHora", validarFechaHora, (formularioExternoPostulante ? "Please enter a valid date (valid format: dd/mm/yyyy HH:mm:ss)." : "Por favor ingrese una fecha válida (formato válido: dd/mm/aaaa HH:mm:ss)"));
 function validarFechaHora(value, element, param) {
-  var validacionFecha =  this.optional(element) || /(^(((0[1-9]|1[0-9]|2[0-8])[\/](0[1-9]|1[012]))|((29|30|31)[\/](0[13578]|1[02]))|((29|30)[\/](0[4,6,9]|11)))[\/](19|[2-9][0-9])\d\d$)|(^29[\/]02[\/](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)/i.test(value.split(" ")[0]);
+  var validacionFecha = this.optional(element) || /(^(((0[1-9]|1[0-9]|2[0-8])[\/](0[1-9]|1[012]))|((29|30|31)[\/](0[13578]|1[02]))|((29|30)[\/](0[4,6,9]|11)))[\/](19|[2-9][0-9])\d\d$)|(^29[\/]02[\/](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)/i.test(value.split(" ")[0]);
   var validacionHora = false;
-  if(value.split(" ").length === 2)
-    validacionHora =  this.optional(element) || /^([01]?[0-9]|2[0-3])(:[0-5][0-9]){2}$/.test(value.split(" ")[1]);
-   return validacionFecha && validacionHora;
+  if (value.split(" ").length === 2)
+    validacionHora = this.optional(element) || /^([01]?[0-9]|2[0-3])(:[0-5][0-9]){2}$/.test(value.split(" ")[1]);
+  return validacionFecha && validacionHora;
 }
-
 $.validator.addMethod("validarCkEditor", validarCkEditor, "Este campo es obligatorio.");
 function validarCkEditor(v, e, p) {
   CKEDITOR.instances[$(e).attr("id")].updateElement();
@@ -172,6 +171,7 @@ function validarCkEditor(v, e, p) {
       $(".wrapper").show();
     });
   }, 100);
+  establecerCambioEstados();
 });
 
 //Fechas y horarios
@@ -300,7 +300,7 @@ function establecerCabecerasBusquedaTabla(idTabla) {
   $("#" + idTabla + " thead tr").clone(true).appendTo("#" + idTabla + " thead").addClass("tabla-sec-busqueda");
   $("#" + idTabla + " thead tr:eq(1) th").each(function (numEle) {
     var permiteBus = $("#" + idTabla + "").DataTable().settings().init().columns[numEle].searchable;
-    if (permiteBus || permiteBus === undefined){
+    if (permiteBus || permiteBus === undefined) {
       $(this).html('<input type="text" placeholder="Buscar por ' + $(this).text().toLowerCase() + '" />');
       $("input", this).on("click", function (e) {
         e.preventDefault();
@@ -310,7 +310,7 @@ function establecerCabecerasBusquedaTabla(idTabla) {
         if ($("#" + idTabla + "").DataTable().column(numEle).search() !== this.value)
           $("#" + idTabla + "").DataTable().column(numEle).search(this.value).draw();
       });
-    }else{
+    } else {
       $(this).html("");
     }
   });
@@ -318,26 +318,34 @@ function establecerCabecerasBusquedaTabla(idTabla) {
 function recargarDatosTabla(idTabla) {
   $("#" + idTabla).DataTable().ajax.reload();
 }
-function establecerCambioEstados(idTabla, urlActualizarEstado, estados, tipoCambioEstado) {
+function establecerCambioEstados() {
   $(window).click(function (e) {
     if (!$(e.target).closest(".sec-btn-editar-estado").length)
       $(".sec-btn-editar-estado select").trigger("change");
   });
-  $(".btn-editar-estado").live("click", function () {    
-    if(tipoCambioEstado){      
-      var sel = $("#sel-estados").clone();
+  $(".btn-editar-estado").live("click", function () {
+    var tipoCambioDirecto = $(this).closest(".sec-btn-editar-estado").data("tipocambio");
+    var idSelEstados = $(this).closest(".sec-btn-editar-estado").data("idselestados");
+
+    if (tipoCambioDirecto === 1) {
+      var sel = $("#" + idSelEstados).clone();
       $(sel).val($(this).data("estado")).data("id", $(this).data("id")).data("estado", $(this).data("estado")).appendTo($(this).closest(".sec-btn-editar-estado"));
       $(this).remove();
       $(sel).prop('selectedIndex', (($(sel)[0].length !== ($(sel)[0].selectedIndex + 1)) ? ($(sel)[0].selectedIndex + 1) : 0)).trigger("change");
       event.stopPropagation();
-    }else{
-      $("#sel-estados").clone().val($(this).data("estado")).data("id", $(this).data("id")).data("estado", $(this).data("estado")).appendTo($(this).closest(".sec-btn-editar-estado"));
+    } else {
+      $("#" + idSelEstados).clone().val($(this).data("estado")).data("id", $(this).data("id")).data("estado", $(this).data("estado")).appendTo($(this).closest(".sec-btn-editar-estado"));
       $(this).remove();
-      event.stopPropagation();      
+      event.stopPropagation();
     }
   });
   $(".sec-btn-editar-estado select").live("change", function () {
+    var idTabla = $(this).closest(".sec-btn-editar-estado").data("idtabla");
+    var idSelEstados = $(this).closest(".sec-btn-editar-estado").data("idselestados");
+    var urlActualizarEstado = $("#" + idSelEstados).data("urlactualizar");
+    var estados = $("#" + idSelEstados).data("estados");
     var id = $(this).data("id");
+
     if (urlActualizarEstado !== "" && $(this).data("estado") !== $(this).val()) {
       llamadaAjax(urlActualizarEstado.replace("/0", "/" + id), "POST", {"estado": $(this).val()}, true, undefined, undefined, function (de) {
         var rj = de.responseJSON;
@@ -348,10 +356,14 @@ function establecerCambioEstados(idTabla, urlActualizarEstado, estados, tipoCamb
         $("#" + idTabla).DataTable().ajax.reload();
       });
     }
-    $(this).closest(".sec-btn-editar-estado").append('<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + id + '" data-estado="' + $(this).val() + '"><span class="label ' + estados[$(this).val()][1] + ' btn-estado">' + estados[$(this).val()][0] + '</span></a>');
+    $(this).closest(".sec-btn-editar-estado").append(
+            '<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + id + '" data-estado="' + $(this).val() + '">' +
+            '<span class="label ' + estados[$(this).val()][1] + ' btn-estado">' + estados[$(this).val()][0] + '</span>' +
+            '</a>');
     $(this).remove();
   });
   $("#bus-estado").change(function () {
+    var idTabla = $(this).data("idtabla");
     $("#" + idTabla).DataTable().ajax.reload();
   });
 }
@@ -359,24 +371,22 @@ function eliminarElemento(ele, mensajePrevio, idTabla, noRecargarTabla, funcionC
   mensajePrevio = (mensajePrevio !== undefined && mensajePrevio !== null && mensajePrevio.trim() !== "" ? mensajePrevio : "¿Está seguro que desea eliminar este elemento?");
   if (confirm(mensajePrevio)) {
     llamadaAjax($(ele).data("urleliminar"), "DELETE", {}, true,
-        function (d) {
-          if (idTabla !== undefined && idTabla !== null) {
-            var eleEli = $("#" + idTabla).find("a[data-id='" + d["id"] + "']").closest("tr");
-            eleEli.remove();
-          }
-          agregarMensaje("exitosos", d["mensaje"], true);
-        },
-        function (data) {
-          if (idTabla !== undefined && idTabla !== null && !noRecargarTabla) {
-            $("#" + idTabla).DataTable().ajax.reload();
-          }
-          if (funcionCompletado !== undefined) {
-            funcionCompletado(data);
-          }
-        },
-        function (de) {
-          agregarMensaje("errores", de["responseJSON"]["mensaje"], true);
-        }
+            function (d) {
+              if (idTabla !== undefined && idTabla !== null) {
+                var eleEli = $("#" + idTabla).find("a[data-id='" + d["id"] + "']").closest("tr");
+                eleEli.remove();
+              }
+              agregarMensaje("exitosos", d["mensaje"], true);
+            },
+            function (d) {
+              if (idTabla !== undefined && idTabla !== null && !noRecargarTabla)
+                $("#" + idTabla).DataTable().ajax.reload();
+              if (funcionCompletado !== undefined)
+                funcionCompletado(d);
+            },
+            function (de) {
+              agregarMensaje("errores", de["responseJSON"]["mensaje"], true);
+            }
     );
   }
 }
@@ -387,19 +397,20 @@ function obtenerDatosClase(idAlumno, idClase, funcionRetorno) {
   if (urlDatosClase !== "") {
     $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
     llamadaAjax(urlDatosClase.replace(encodeURI("/[ID_ALUMNO]"), "/" + idAlumno).replace("/0", "/" + idClase), "POST", {}, true,
-        function (d) {
-          if (funcionRetorno !== undefined)
-            funcionRetorno(d);
-          $("body").unblock();
-        },
-        function (d) {},
-        function (de) {
-          $('body').unblock({
-            onUnblock: function () {
-              agregarMensaje("errores", "Ocurrió un problema durante la carga de datos de la clase seleccionada. Por favor inténtelo nuevamente.", true);
+            function (d) {
+              if (funcionRetorno !== undefined)
+                funcionRetorno(d);
+              $("body").unblock();
+            },
+            function (d) {
+            },
+            function (de) {
+              $('body').unblock({
+                onUnblock: function () {
+                  agregarMensaje("errores", "Ocurrió un problema durante la carga de datos de la clase seleccionada. Por favor inténtelo nuevamente.", true);
+                }
+              });
             }
-          });
-        }
     );
   }
 }
@@ -485,12 +496,12 @@ function habilitarTodosPasosWizard(tipoEntidad) {
 }
 
 //Codigo de verificación
-function mostrarOcultarCodigoVerificacionClases(ele){
-  if($(ele).html().indexOf('<i class="fa fa-eye"></i>') >= 0){
+function mostrarOcultarCodigoVerificacionClases(ele) {
+  if ($(ele).html().indexOf('<i class="fa fa-eye"></i>') >= 0) {
     $("input[name='codigoVerificacionClases']").val($("input[name='auxCodigoVerificacionClases']").val().trim());
     $("input[name='auxCodigoVerificacionClases']").val("");
     $(ele).html('<i class="fa fa-eye-slash"></i>');
-  }else{
+  } else {
     $("input[name='auxCodigoVerificacionClases']").val($("input[name='codigoVerificacionClases']").val().trim());
     $("input[name='codigoVerificacionClases']").val("");
     $(ele).html('<i class="fa fa-eye"></i>');
@@ -499,7 +510,7 @@ function mostrarOcultarCodigoVerificacionClases(ele){
 
 //Util
 function letraCapital(texto) {
-  if(!texto)
+  if (!texto)
     return "";
   return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
 }

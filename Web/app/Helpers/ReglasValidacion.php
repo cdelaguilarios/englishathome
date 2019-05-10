@@ -20,15 +20,15 @@ class ReglasValidacion {
     $departamentos = Ubigeo::listarDepartamentos();
     if (!array_key_exists($codigoDepartamento, $departamentos))
       return false;
-      
+
     $provincias = Ubigeo::listarProvinciasXCodigoDepartamento($codigoDepartamento);
     if (!array_key_exists($codigoProvincia, $provincias))
       return false;
-    
+
     $distritos = Ubigeo::listarDistritosXCodigoProvincia($codigoProvincia);
     if (!array_key_exists($codigoDistrito, $distritos))
       return false;
-    
+
     return ($codigoDistrito == $codigoUbigeo);
   }
 
@@ -42,16 +42,17 @@ class ReglasValidacion {
         return FALSE;
 
       $dias = explode(",", $horario->dias);
-      foreach ($dias as $dia)
+      foreach ($dias as $dia) {
         if (!(is_numeric($dia) && (int) $dia >= 1 && (int) $dia <= 7))
           return FALSE;
+      }
 
       $horas = $horario->horas;
       foreach ($horas as $rangoHora) {
         $rangoHora = explode("-", $rangoHora);
         if (!(count($rangoHora) == 2))
           return FALSE;
-        
+
         $horaIni = $rangoHora[0];
         $horaFin = $rangoHora[1];
         if (!(preg_match(ReglasValidacion::RegexTiempo, $horaIni) && preg_match(ReglasValidacion::RegexTiempo, $horaFin)))
@@ -71,9 +72,10 @@ class ReglasValidacion {
       return FALSE;
 
     $datosNotificacionClasesSel = json_decode($datosNotificacionClases);
-    foreach ($datosNotificacionClasesSel as $datosNotificacionClase)
+    foreach ($datosNotificacionClasesSel as $datosNotificacionClase) {
       if (!(isset($datosNotificacionClase->notificar) && ($datosNotificacionClase->notificar == "" || is_bool($datosNotificacionClase->notificar))))
         return FALSE;
+    }
     return TRUE;
   }
 

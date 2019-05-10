@@ -7,6 +7,7 @@ class TiposHistorial {
   const Notificacion = "NOTIFICACION";
   const Pago = "PAGO";
   const Correo = "CORREO";
+  
   const IconoDefecto = "fa-bullhorn";
   const ClaseColorIconoDefecto = "bg-yellow";
   const ClaseTextoColorIconoDefecto = "text-yellow";

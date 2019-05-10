@@ -6,7 +6,6 @@
   var urlListar = "{{ route('profesores.listar') }}";
   var urlPerfil = "{{ route('profesores.perfil', ['id' => 0]) }}";
   var urlEditar = "{{ route('profesores.editar', ['id' => 0]) }}";
-  var urlActualizarEstado = "{{ route('profesores.actualizar.estado', ['id' => 0]) }}";
   var urlEliminar = "{{ route('profesores.eliminar', ['id' => 0]) }}";
   var estados = {!! json_encode(App\Helpers\Enum\EstadosProfesor::listar()) !!};
   var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosProfesor::listarCambio()) !!};
@@ -29,7 +28,7 @@
         <div class="form-group">          
           {{ Form::label("bus-estado", "Estado: ", ["class" => "col-sm-1 control-label"]) }}
           <div class="col-sm-3">
-            {{ Form::select("estado", App\Helpers\Enum\EstadosProfesor::listarBusqueda(), null, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos"]) }}
+            {{ Form::select("estado", App\Helpers\Enum\EstadosProfesor::listarBusqueda(), null, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos", "data-idtabla" => "tab-lista"]) }}
           </div>
         </div> 
       </div>
@@ -60,6 +59,6 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosProfesor::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosProfesor::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('profesores.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosProfesor::listar())]) }}
 </div>
 @endsection

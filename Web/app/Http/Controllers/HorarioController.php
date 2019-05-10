@@ -13,7 +13,6 @@ class HorarioController extends Controller {
     
   }
 
-  // <editor-fold desc="Horario">
   public function obtener($idEntidad) {
     $datos = [];
     $datos["idEntidad"] = $idEntidad;
@@ -22,9 +21,7 @@ class HorarioController extends Controller {
   }
 
   public function obtenerMultiple(HorarioMultipleRequest $req) {
-    $datos = $req->all();
-    return response()->json(Horario::obtenerMultiple($datos), 200);
+    return response()->json(Horario::obtenerMultiple($req->all()), 200);
   }
 
-  // </editor-fold>
 }

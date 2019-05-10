@@ -5,7 +5,6 @@
 <script type="text/javascript">
   var urlListar = "{{ route('usuarios.listar') }}";
   var urlEditar = "{{ route('usuarios.editar', ['id' => 0]) }}";
-  var urlActualizarEstado = "{{ route('usuarios.actualizar.estado', ['id' => 0]) }}";
   var urlEliminar = "{{ route('usuarios.eliminar', ['id' => 0]) }}";
   var roles = {!!  json_encode(App\Helpers\Enum\RolesUsuario::listarDelSistema()) !!};
   var estados = {!!  json_encode(App\Helpers\Enum\EstadosUsuario::listar()) !!};
@@ -29,7 +28,7 @@
         <div class="form-group">          
           {{ Form::label("bus-estado", "Estado: ", ["class" => "col-sm-1 control-label"]) }}
           <div class="col-sm-3">
-            {{ Form::select("estado", App\Helpers\Enum\EstadosUsuario::listarBusqueda(), App\Helpers\Enum\EstadosUsuario::Activo, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos"]) }}
+            {{ Form::select("estado", App\Helpers\Enum\EstadosUsuario::listarBusqueda(), App\Helpers\Enum\EstadosUsuario::Activo, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos", "data-idtabla" => "tab-lista"]) }}
           </div>
         </div> 
       </div>
@@ -61,6 +60,6 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosUsuario::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosUsuario::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('usuarios.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosUsuario::listar())]) }}
 </div>
 @endsection

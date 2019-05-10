@@ -9,7 +9,7 @@ Route::get("restablecimientoContrasenia/{token?}", ["uses" => "Auth\PasswordCont
 Route::post("restablecimientoContrasenia/correoElectronico", ["uses" => "Auth\PasswordController@sendResetLinkEmail", "as" => "auth.password.email"]);
 Route::post("restablecimientoContrasenia", ["uses" => "Auth\PasswordController@reset", "as" => "auth.password.reset"]);
 
-Route::post("interesado/registrar/externo", ["uses" => "InteresadoController@registrarExterno", "as" => "interesados.registrar.externo"]);
+Route::post("interesado/registrar/externo", ["uses" => "InteresadoController@registrarExterno", "as" => "interesados.registrar.externo"]);//--
 Route::get("alumno/nuevo/{codigoVerificacion}", ["uses" => "AlumnoController@crearExterno", "as" => "alumnos.crear.externo"]);
 Route::post("alumno/registrar/externo", ["uses" => "AlumnoController@registrarExterno", "as" => "alumnos.registrar.externo"]);
 
@@ -60,21 +60,21 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("entidades/{id}/actualizarImagenPerfil", ["uses" => "EntidadController@actualizarImagenPerfil", "as" => "entidades.actualizar.imagen.perfil"]);
     // </editor-fold>
     // <editor-fold desc="Interesados">
-    Route::get("interesados", ["uses" => "InteresadoController@index", "as" => "interesados"]);
-    Route::post("interesados/listar", ["uses" => "InteresadoController@listar", "as" => "interesados.listar"]);
-    Route::get("interesados/buscar", ["uses" => "InteresadoController@buscar", "as" => "interesados.buscar"]);
-    Route::get("interesado/nuevo", ["uses" => "InteresadoController@crear", "as" => "interesados.crear"]);
-    Route::post("interesado/registrar", ["uses" => "InteresadoController@registrar", "as" => "interesados.registrar"]);
-    Route::get("interesado/{id}/editar", ["uses" => "InteresadoController@editar", "as" => "interesados.editar"]);
-    Route::patch("interesado/{id}/actualizar", ["uses" => "InteresadoController@actualizar", "as" => "interesados.actualizar"]);
-    Route::post("interesado/{id}/actualizarEstado", ["uses" => "InteresadoController@actualizarEstado", "as" => "interesados.actualizar.estado"]);
-    Route::get("interesado/{id}/cotizar", ["uses" => "InteresadoController@cotizar", "as" => "interesados.cotizar"]);
+    Route::get("interesados", ["uses" => "InteresadoController@index", "as" => "interesados"]);//--
+    Route::post("interesados/listar", ["uses" => "InteresadoController@listar", "as" => "interesados.listar"]);//--
+    Route::get("interesados/buscar", ["uses" => "InteresadoController@buscar", "as" => "interesados.buscar"]);//--
+    Route::get("interesado/nuevo", ["uses" => "InteresadoController@crear", "as" => "interesados.crear"]);//--
+    Route::post("interesado/registrar", ["uses" => "InteresadoController@registrar", "as" => "interesados.registrar"]);//--
+    Route::get("interesado/{id}/editar", ["uses" => "InteresadoController@editar", "as" => "interesados.editar"]);//--
+    Route::patch("interesado/{id}/actualizar", ["uses" => "InteresadoController@actualizar", "as" => "interesados.actualizar"]);//--
+    Route::post("interesado/{id}/actualizarEstado", ["uses" => "InteresadoController@actualizarEstado", "as" => "interesados.actualizar.estado"]);//--
+    Route::get("interesado/{id}/cotizar", ["uses" => "InteresadoController@cotizar", "as" => "interesados.cotizar"]);//--
     Route::post("interesado/{id}/enviarCotizacion", ["uses" => "InteresadoController@enviarCotizacion", "as" => "interesados.enviar.cotizacion"]);
-    Route::get("interesado/{id}/perfilAlumno", ["uses" => "InteresadoController@perfilAlumno", "as" => "interesados.perfil.alumno"]);
-    Route::delete("interesado/{id}/eliminar", ["uses" => "InteresadoController@eliminar", "as" => "interesados.eliminar"]);
+    Route::get("interesado/{id}/perfilAlumno", ["uses" => "InteresadoController@perfilAlumno", "as" => "interesados.perfil.alumno"]);//--
+    Route::delete("interesado/{id}/eliminar", ["uses" => "InteresadoController@eliminar", "as" => "interesados.eliminar"]);//--
     // </editor-fold>
     // <editor-fold desc="Alumnos">
-    Route::get("alumnos", ["uses" => "AlumnoController@index", "as" => "alumnos"]);
+    Route::get("alumnos", ["uses" => "AlumnoController@index", "as" => "alumnos"]);//--
     Route::post("alumnos/listar", ["uses" => "AlumnoController@listar", "as" => "alumnos.listar"]);
     Route::get("alumnos/buscar", ["uses" => "AlumnoController@buscar", "as" => "alumnos.buscar"]);
     Route::get("alumno/nuevo", ["uses" => "AlumnoController@crear", "as" => "alumnos.crear"]);
@@ -101,7 +101,7 @@ Route::group(["middleware" => "auth"], function() {
     // <editor-fold desc="Alumnos - clases">
     Route::post("alumno/{id}/periodosClases", ["uses" => "AlumnoController@listarPeriodosClases", "as" => "alumnos.periodos.clases.listar"]);
     Route::post("alumno/{id}/periodo/{numeroPeriodo}/clases", ["uses" => "AlumnoController@listarClasesXPeriodo", "as" => "alumnos.periodo.clases.listar"]);
-    Route::post("alumno/clases", ["uses" => "AlumnoController@listarClases", "as" => "alumnos.clases.listar"]);
+    Route::post("alumno/{id}/clases", ["uses" => "AlumnoController@listarClases", "as" => "alumnos.clases.listar"]);
     Route::post("alumno/{id}/clase/actualizarEstado", ["uses" => "AlumnoController@actualizarEstadoClase", "as" => "alumnos.clases.actualizar.estado"]);
     Route::post("alumno/clases/actualizarComentarios", ["uses" => "AlumnoController@actualizarComentariosClase", "as" => "alumnos.clases.actualizar.comentarios"]);
     Route::post("alumno/{id}/clase/docentesDisponibles", ["uses" => "AlumnoController@listarDocentesDisponiblesXClase", "as" => "alumnos.clases.docentesDisponibles.listar"]);
@@ -173,6 +173,9 @@ Route::group(["middleware" => "auth"], function() {
       Route::delete("usuario/{id}/eliminar", ["uses" => "UsuarioController@eliminar", "as" => "usuarios.eliminar"]);
     });
     // </editor-fold>
+    // <editor-fold desc="Clases">
+    Route::post("clase/{id}/actualizarEstado", ["uses" => "ClaseController@actualizarEstado", "as" => "clases.actualizar.estado"]);
+    // </editor-fold>
     // <editor-fold desc="Historial">
     Route::post("historial/{idEntidad}/perfil", ["uses" => "HistorialController@obtener", "as" => "historial.perfil"]);
     Route::post("historial/{idEntidad}/registrar", ["uses" => "HistorialController@registrar", "as" => "historial.registrar"]);
@@ -182,7 +185,7 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("notificaciones", ["uses" => "HistorialController@listarNotificaciones", "as" => "historial.notificaciones"]);
     // </editor-fold>
     // <editor-fold desc="Horario">
-    Route::post("horarios", ["uses" => "HorarioController@obtenerMultiple", "as" => "horario.multiple"]);
+    Route::post("horarios", ["uses" => "HorarioController@obtenerMultiple", "as" => "horario.multiple"]);//--
     Route::post("horario/{idEntidad}", ["uses" => "HorarioController@obtener", "as" => "horario"]);
     // </editor-fold>
     // <editor-fold desc="Calendario">

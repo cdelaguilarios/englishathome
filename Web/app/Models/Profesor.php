@@ -146,31 +146,39 @@ class Profesor extends Model {
     return TRUE;
   }
 
-  public static function listarClasesBase($id, $idAlumno = NULL, $soloVigentes = FALSE) {
+  public static function listarClasesBase($id, $idAlumno = NULL, $soloVigentes = FALSE, $soloConfirmadasORealizadas = FALSE) {
     $nombreTabla = Clase::nombreTabla();
     $clases = Clase::listarBase()->where($nombreTabla . ".idProfesor", $id);
     if (!is_null($idAlumno))
       $clases->where($nombreTabla . ".idAlumno", $idAlumno);
-    if ($soloVigentes)
+    if($soloVigentes)
       $clases->whereIn($nombreTabla . ".estado", [EstadosClase::Programada, EstadosClase::PendienteConfirmar]);
+    else if ($soloConfirmadasORealizadas)
+      $clases->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
     return $clases;
   }
 
-  public static function listarAlumnos($id) {
-    $idsAlumnos = Profesor::listarClasesBase($id)->lists(Clase::nombreTabla() . ".idAlumno")->toArray();
+  public static function listarAlumnos($id, $soloVigentes = TRUE) {
+    $idsAlumnos = Profesor::listarClasesBase($id, NULL, $soloVigentes)->lists(Clase::nombreTabla() . ".idAlumno")->toArray();
     return (count($idsAlumnos) > 0 ? Alumno::listar()->whereIn("entidad.id", array_unique($idsAlumnos))->get() : null);
   }
 
-  public static function obtenerAlumno($id, $idAlumno) {
-    Profesor::listarClasesBase($id, $idAlumno)->firstOrFail();
+  public static function obtenerAlumno($id, $idAlumno, $soloVigente = TRUE) {
+    Profesor::listarClasesBase($id, $idAlumno, $soloVigente)->firstOrFail();
+    $preClases = Profesor::listarClasesBase($id, $idAlumno);
+    $clases = $preClases->get();
     $alumno = Alumno::obtenerXId($idAlumno, TRUE);
-    $alumno->totalDuracionClasesRestantes = Profesor::listarClasesBase($id, $idAlumno, TRUE)->get()->sum("duracion");
+    $alumno->horario = Horario::obtenerFormatoJson($idAlumno);
+    $alumno->totalClases = $clases->count();
+    $alumno->duracionTotalClases = $clases->sum("duracion");
+    $alumno->duracionTotalClasesRealizadas = $preClases->whereIn(Clase::nombreTabla() . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada])->get()->sum("duracion");
+    $alumno->porcentajeAvance = ($alumno->duracionTotalClasesRealizadas * 100/$alumno->duracionTotalClases);
     return $alumno;
   }
 
-  public static function listarClasesAlumno($id, $idAlumno) {
+  public static function listarClasesAlumno($id, $idAlumno, $soloVigentes = FALSE, $soloConfirmadasORealizadas = TRUE) {
     $nombreTabla = Clase::nombreTabla();
-    return Profesor::listarClasesBase($id, $idAlumno)
+    return Profesor::listarClasesBase($id, $idAlumno, $soloVigentes, $soloConfirmadasORealizadas)
                     ->select($nombreTabla . ".id", $nombreTabla . ".numeroPeriodo", $nombreTabla . ".duracion", $nombreTabla . ".estado", $nombreTabla . ".fechaInicio", $nombreTabla . ".fechaFin", $nombreTabla . ".fechaConfirmacion", $nombreTabla . ".fechaCancelacion", $nombreTabla . ".comentarioProfesor", $nombreTabla . ".comentarioParaProfesor");
   }
 
@@ -193,7 +201,7 @@ class Profesor extends Model {
     $clase = Profesor::listarClasesAlumno($id, $idAlumno, TRUE)->where(Clase::nombreTabla() . ".id", $datos["idClase"])->firstOrFail();
     $duracionAct = (int) $clase->duracion;
     $duracionSel = (int) $datos["duracion"];
-    $duracionMax = (int) $alumno->totalDuracionClasesRestantes;
+    $duracionMax = (int) $alumno->duracionTotalClases - $alumno->duracionTotalClasesRealizadas;
 
     $fechaActual = Carbon::now()->toDateTimeString();
     $cambioDuracion = ($duracionAct != $duracionSel && $duracionSel <= $duracionMax);

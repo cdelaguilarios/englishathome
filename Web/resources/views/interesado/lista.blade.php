@@ -7,8 +7,8 @@
   var urlEditar = "{{ route('interesados.editar', ['id' => 0]) }}";
   var urlCotizar = "{{ route('interesados.cotizar', ['id' => 0]) }}";
   var urlEliminar = "{{ route('interesados.eliminar', ['id' => 0]) }}";
-  var urlActualizarEstado = "{{ route('interesados.actualizar.estado', ['id' => 0]) }}";
   var urlPerfilAlumnoInteresado = "{{ route('interesados.perfil.alumno', ['id' => 0]) }}";
+  
   var estados = {!! json_encode(App\Helpers\Enum\EstadosInteresado::listar()) !!};
   var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosInteresado::listarCambio()) !!};
   var estadoAlumnoRegistrado = "{{ App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado }}";
@@ -31,7 +31,7 @@
         <div class="form-group">          
           {{ Form::label("bus-estado", "Estado: ", ["class" => "col-sm-1 control-label"]) }}
           <div class="col-sm-3">
-            {{ Form::select("estado", App\Helpers\Enum\EstadosInteresado::listarBusqueda(), App\Helpers\Enum\EstadosInteresado::PendienteInformacion, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos"]) }}
+            {{ Form::select("estado", App\Helpers\Enum\EstadosInteresado::listarBusqueda(), App\Helpers\Enum\EstadosInteresado::PendienteInformacion, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos", "data-idtabla" => "tab-lista"]) }}
           </div>
         </div> 
       </div>
@@ -49,6 +49,7 @@
         <table id="tab-lista" class="table table-bordered table-hover">
           <thead>
             <tr>
+              <th>N°</th> 
               <th>Nombre completo</th>   
               <th>Consulta</th>  
               <th>Datos de contacto</th>
@@ -63,6 +64,6 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosInteresado::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosInteresado::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('interesados.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosInteresado::listar())]) }}
 </div>
 @endsection

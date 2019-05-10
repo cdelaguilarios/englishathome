@@ -6,14 +6,16 @@
   var urlListar = "{{ route('alumnos.listar') }}";
   var urlPerfil = "{{ route('alumnos.perfil', ['id' => 0]) }}";
   var urlEditar = "{{ route('alumnos.editar', ['id' => 0]) }}";
-  var urlActualizarEstado = "{{ route('alumnos.actualizar.estado', ['id' => 0]) }}";
   var urlEliminar = "{{ route('alumnos.eliminar', ['id' => 0]) }}";
   var urlPerfilProfesor = "{{ route('profesores.perfil', ['id' => 0]) }}";
   var urlHorarioMultiple = "{{ route('horario.multiple') }}";
-  var urlListarClases = "{{ route('alumnos.clases.listar') }}";
+  var urlListarClases = "{{ route('alumnos.clases.listar', ['id' => 0]) }}";
+  
   var estados = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listar()) !!};
   var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listarCambio()) !!};
-  var estadoCuotaProgramada = "{{ App\Helpers\Enum\EstadosAlumno::CuotaProgramada }}";</script>
+  var estadoCuotaProgramada = "{{ App\Helpers\Enum\EstadosAlumno::CuotaProgramada }}";
+  var estadosClaseCambio = {!! json_encode(App\Helpers\Enum\EstadosClase::listarCambio()) !!};
+</script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/alumno.js") }}"></script>
 <script src="{{ asset("assets/eah/js/horario.js") }}"></script>
 @endsection
@@ -33,7 +35,7 @@
         <div class="form-group">          
           {{ Form::label("bus-estado", "Estado: ", ["class" => "col-sm-1 control-label"]) }}
           <div class="col-sm-3">
-            {{ Form::select("estado", App\Helpers\Enum\EstadosAlumno::listarBusqueda(), App\Helpers\Enum\EstadosAlumno::Activo, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos"]) }}
+            {{ Form::select("estado", App\Helpers\Enum\EstadosAlumno::listarBusqueda(), App\Helpers\Enum\EstadosAlumno::Activo, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos", "data-idtabla" => "tab-lista"]) }}
           </div>
         </div> 
       </div>
@@ -79,7 +81,7 @@
         <div id="sec-men-lista-clases"></div><br/>
         <div class="row">
           <div class="col-sm-12">
-            <div class="box box-info">       
+            <div>       
               <div class="box-body">
                 <table id="tab-lista-clases" class="table table-bordered table-hover">
                   <thead>
@@ -91,7 +93,6 @@
                     </tr>
                   </thead>
                 </table>
-                {{ Form::hidden("idAlumno") }}
               </div>
             </div>
           </div>
@@ -134,6 +135,7 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosAlumno::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosAlumno::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('alumnos.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosAlumno::listar())]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosClase::listarCambio(), null, ["id" => "sel-estados-clase", "class" => "form-control", "data-urlactualizar" => route('clases.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosClase::listar())]) }}
 </div>
 @endsection

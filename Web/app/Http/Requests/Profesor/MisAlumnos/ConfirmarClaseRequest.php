@@ -15,7 +15,6 @@ class ConfirmarClaseRequest extends Request {
 
   protected function getValidatorInstance() {
     $datos = $this->all();
-    $datos["idClase"] = ReglasValidacion::formatoDato($datos, "idClase");
     $datos["duracion"] = ReglasValidacion::formatoDato($datos, "duracion");
     $datos["comentario"] = ReglasValidacion::formatoDato($datos, "comentario");
     $datos["codigoVerificacion"] = ReglasValidacion::formatoDato($datos, "codigoVerificacion");
@@ -26,7 +25,6 @@ class ConfirmarClaseRequest extends Request {
   public function rules() {
     $datos = $this->all();
     $reglasValidacion = [
-        "idClase" => "required",
         "duracion" => "required|numeric|between:" . ((int) Config::get("eah.minHorasClase") * 3600) . "," . ((int) Config::get("eah.maxHorasClase") * 3600),
         "codigoVerificacion" => "required|min:4|max:6",
         "comentario" => "max:8000"

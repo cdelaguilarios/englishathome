@@ -50,9 +50,7 @@
           {{ Form::label("estado", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
           @if(!isset($interesado) || (isset($interesado) && array_key_exists($interesado->estado, App\Helpers\Enum\EstadosInteresado::listarCambio())))
           <div class="col-sm-3">
-            {{ Form::select("estado", App\Helpers\Enum\EstadosInteresado::listarCambio(),
-            (isset($interesado) ? $interesado->estado : App\Helpers\Enum\EstadosInteresado::PendienteInformacion)
-            , ["class" => "form-control"]) }}
+            {{ Form::select("estado", App\Helpers\Enum\EstadosInteresado::listarCambio(), (isset($interesado) ? $interesado->estado : App\Helpers\Enum\EstadosInteresado::PendienteInformacion), ["class" => "form-control"]) }}
           </div>
           @else
           <div class="col-sm-2">
@@ -64,7 +62,7 @@
           @endif
         </div>
         <div class="form-group">  
-          {{ Form::label("costo-hora-clase", "Costo por hora de clase(*): ", ["class" => "col-sm-2 control-label"]) }}   
+          {{ Form::label("costo-hora-clase", "Costo por hora de clase (*): ", ["class" => "col-sm-2 control-label"]) }}   
           <div class="col-sm-3">
             <div class="input-group">
               <span class="input-group-addon">

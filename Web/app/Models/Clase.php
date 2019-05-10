@@ -20,7 +20,7 @@ class Clase extends Model {
 
   public $timestamps = false;
   protected $table = "clase";
-  protected $fillable = ["idAlumno", "idProfesor", "numeroPeriodo", "duracion", "costoHora", "costoHoraProfesor", "pagoTotalProfesor", "fechaInicio", "fechaFin", "fechaCancelacion", "comentarioAlumno", "comentarioProfesor", "comentarioParaAlumno", "comentarioParaProfesor", "estado"];
+  protected $fillable = ["idAlumno", "idProfesor", "numeroPeriodo", "duracion", "costoHora", "costoHoraProfesor", "pagoTotalProfesor", "fechaInicio", "fechaFin", "fechaCancelacion", "comentarioAlumno", "comentarioProfesor", "comentarioParaAlumno", "comentarioParaProfesor", "fechaConfirmacion", "estado"];
 
   public static function nombreTabla() {
     $modeloClase = new Clase();
@@ -39,12 +39,22 @@ class Clase extends Model {
                     ->leftJoin(Historial::nombreTabla() . " as historial", function ($q) use($nombreTabla) {
                       $q->on($nombreTabla . ".id", '=', "historial.idClase");
                       $q->on('historial.eliminado', '=', DB::raw("0"));
-                      $q->on('historial.enviarCorreo', '=', DB::raw("1"));
+                      $q->on('historial.enviarCorreo', '=', DB::raw("1")); //TODO: Revisar porque historial.enviarCorreo debe ser igual a 1
                     })
                     ->leftJoin(PagoClase::nombreTabla() . " as pagoClase", $nombreTabla . ".id", "=", "pagoClase.idClase")
                     ->where($nombreTabla . ".eliminado", 0)
                     ->groupBy($nombreTabla . ".id")
                     ->distinct();
+  }
+  
+  public static function obtenerXIdNUEVO($id) {
+    $nombreTabla = Clase::nombreTabla();
+    $clase = Clase::listarBase()
+            ->select($nombreTabla . ".*")
+            ->where($nombreTabla . ".id", $id)
+            ->orderBy($nombreTabla . ".fechaInicio", "ASC")
+            ->firstOrFail();
+    return $clase;
   }
 
   public static function obtenerXId($idAlumno, $id, $incluirFechaProximaClase = FALSE) {
@@ -131,6 +141,43 @@ class Clase extends Model {
       $clase->estadoPagoProfesor = (!is_null($pagoProfesor) ? $pagoProfesor["estado"] : NULL);
       $clase->estadoPagoAlumno = (!is_null($pagoAlumno) ? $pagoAlumno["estado"] : NULL);
     }
+    return $clases;
+  }
+
+  public static function listarXAlumnoNUEVO($idAlumno, $numeroPeriodo = NULL) {
+    $nombreTabla = Clase::nombreTabla();
+    $clases = Clase::listarBase()->where($nombreTabla . ".idAlumno", $idAlumno);
+    if (!is_null($numeroPeriodo)) {
+      $clases->where($nombreTabla . ".numeroPeriodo", $numeroPeriodo);
+    }
+    //Pago del alumno
+    $clases->leftJoin(PagoAlumno::nombreTabla() . " as relPagoAlumno", function ($q) use ($nombreTabla) {
+      $q->on("relPagoAlumno.idAlumno", "=", $nombreTabla . ".idAlumno")
+              ->on("relPagoAlumno.idPago", "=", DB::raw("(SELECT idPago
+                                                            FROM " . PagoClase::nombreTabla() . "
+                                                            WHERE idClase = " . $nombreTabla . ".id
+                                                            LIMIT 1)"));
+    });
+    $clases->leftJoin(Pago::nombreTabla() . " as pagoAlumno", "pagoAlumno.id", "=", "relPagoAlumno.idPago");
+    //Pago al profesor
+    $clases->leftJoin(PagoProfesor::nombreTabla() . " as relPagoProfesor", function ($q) use ($nombreTabla) {
+      $q->on("relPagoProfesor.idProfesor", "=", $nombreTabla . ".idProfesor")
+              ->on("relPagoProfesor.idPago", "=", DB::raw("(SELECT idPago
+                                                              FROM " . PagoClase::nombreTabla() . "
+                                                              WHERE idClase = " . $nombreTabla . ".id
+                                                              LIMIT 1)"));
+    });
+    $clases->leftJoin(Pago::nombreTabla() . " as pagoProfesor", "pagoProfesor.id", "=", "relPagoProfesor.idPago");
+
+    $clases->orderBy($nombreTabla . ".numeroPeriodo", "ASC")->orderBy($nombreTabla . ".fechaInicio", "ASC");
+    $clases->select(DB::raw(
+                    $nombreTabla . ".*, 
+                    entidadProfesor.nombre AS nombreProfesor, 
+                    entidadProfesor.apellido AS apellidoProfesor, 
+                    pagoAlumno.estado AS estadoPagoAlumno,
+                    pagoProfesor.estado AS estadoPagoProfesor,                    
+                    max(historial.id) AS idHistorial")
+    );
     return $clases;
   }
 
@@ -543,6 +590,13 @@ class Clase extends Model {
 
   public static function actualizarEstado($idAlumno, $datos) {
     $clase = Clase::obtenerXId($idAlumno, $datos["idClase"]);
+    $clase->estado = $datos["estado"];
+    $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+    $clase->save();
+  }
+
+  public static function actualizarEstadoNUEVO($id, $datos) {
+    $clase = Clase::obtenerXIdNUEVO($id);
     $clase->estado = $datos["estado"];
     $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $clase->save();

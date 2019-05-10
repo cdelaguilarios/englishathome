@@ -2,38 +2,24 @@ var mapa;
 
 $(document).ready(function () {
   cargarLista();
+  cargarCajaBusqueda();
   preCargarListaClase();
-  cargarFormulario();
   cargarFormularioComentarios();
-
-  urlPerfil = (typeof (urlPerfil) === "undefined" ? "" : urlPerfil);
-  urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
-  urlBuscar = (typeof (urlBuscar) === "undefined" ? "" : urlBuscar);
-  idAlumno = (typeof (idAlumno) === "undefined" ? "" : idAlumno);
-  nombreCompletoAlumno = (typeof (nombreCompletoAlumno) === "undefined" ? "" : nombreCompletoAlumno);
-  establecerListaBusqueda("#sel-alumno", urlBuscar);
-  $("#sel-alumno").empty().append('<option value="' + idAlumno + '">' + nombreCompletoAlumno + '</option>').val(idAlumno);
-  $("#sel-alumno").change(function () {
-    if ($(this).data("seccion") === "perfil" && urlPerfil !== "" && $(this).val() !== this.options[this.selectedIndex].innerHTML)
-      window.location.href = urlPerfil.replace("/0", "/" + $(this).val());
-    else if (urlEditar !== "" && $(this).val() !== this.options[this.selectedIndex].innerHTML)
-      window.location.href = urlEditar.replace("/0", "/" + $(this).val());
-  });
+  cargarFormulario();
 });
 
 function cargarLista() {
   urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
   urlPerfil = (typeof (urlPerfil) === "undefined" ? "" : urlPerfil);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
-  urlActualizarEstado = (typeof (urlActualizarEstado) === "undefined" ? "" : urlActualizarEstado);
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
-  urlHorarioMultiple = (typeof (urlHorarioMultiple) === "undefined" ? "" : urlHorarioMultiple);
+
   estados = (typeof (estados) === "undefined" ? "" : estados);
   estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
   estadoCuotaProgramada = (typeof (estadoCuotaProgramada) === "undefined" ? "" : estadoCuotaProgramada);
 
-  if (urlListar !== "" && urlPerfil !== "" && urlEditar !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && urlPerfilProfesor !== "" && urlHorarioMultiple !== "" && estados !== "" && estadosCambio !== "" && estadoCuotaProgramada !== "") {
+  if (urlListar !== "" && urlPerfil !== "" && urlEditar !== "" && urlEliminar !== "" && urlPerfilProfesor !== "" && estados !== "" && estadosCambio !== "" && estadoCuotaProgramada !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -56,12 +42,33 @@ function cargarLista() {
             return meta.row + meta.settings._iDisplayStart + 1;
           }, "className": "text-center not-mobile"},
         {data: "nombre", name: "entidad.nombre", render: function (e, t, d, m) {
-            return '<a href="' + (urlPerfil.replace("/0", "/" + d.id)) + '">' + (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "") + '</a>' + (d.distritoAlumno ? '<br/><span class="text-info"><i class="fa fa-street-view"></i> ' + letraCapital(d.distritoAlumno) + '</span>' : '') + (d.nombreProfesor ? '<br/><br/>Profesor(a): <a href="' + (urlPerfilProfesor.replace("/0", "/" + d.idProfesor)) + '">' + (d.nombreProfesor !== null ? d.nombreProfesor : "") + " " + (d.apellidoProfesor !== null ? d.apellidoProfesor : "") + '</a>' + (d.distritoProfesor ? '<br/><span class="text-info"><i class="fa fa-street-view"></i> ' + letraCapital(d.distritoProfesor) + '</span>' : '') : '');
+            return '<a href="' + (urlPerfil.replace("/0", "/" + d.id)) + '">' + (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "") + '</a>' +
+                    (d.distritoAlumno ? '<br/><span class="text-info"><i class="fa fa-street-view"></i> ' + letraCapital(d.distritoAlumno) + '</span>' : '') +
+                    (d.nombreProfesor ?
+                            '<br/><br/>Profesor(a): <a href="' + (urlPerfilProfesor.replace("/0", "/" + d.idProfesor)) + '">' + (d.nombreProfesor !== null ? d.nombreProfesor : "") + " " + (d.apellidoProfesor !== null ? d.apellidoProfesor : "") + '</a>' +
+                            (d.distritoProfesor ? '<br/><span class="text-info"><i class="fa fa-street-view"></i> ' + letraCapital(d.distritoProfesor) + '</span>' : '')
+                            : '');
           }},
         {data: "porcentajeAvanceClases", name: "porcentajeAvanceClases", width: "25%", render: function (e, t, d, m) {
             if (d.duracionTotalClases) {
               var porcentajeAvance = (d.duracionTotalClasesRealizadas ? d.porcentajeAvanceClases : 0);
-              return '<div class="clearfix"><span class="pull-left">Total de clases: ' + d.totalClases + '</span><a href="javascript:void(0);" onclick="abrirModalListaClases(' + d.idEntidad + ');" title="Ver lista de clases" class="btn-ver-lista-clases"><i class="fa fa-eye"></i></a><small class="pull-right">' + redondear(porcentajeAvance, 2) + '%</small></div><div class="progress xs"><div class="progress-bar progress-bar-green" style="width: ' + porcentajeAvance + '%;"></div></div><div class="clearfix"><span class="pull-left"><span class="text-green" data-toggle="tooltip" title="" data-original-title="Horas realizadas"><i class="fa fa-clock-o"></i> ' + formatoHora(d.duracionTotalClasesRealizadas) + '</span>  de  <span class="text-info" data-toggle="tooltip" title="" data-original-title="Horas programadas"><i class="fa fa-clock-o"></i> ' + formatoHora(d.duracionTotalClases) + '</span></span></div>';
+              return '<div class="clearfix">' +
+                      '<span class="pull-left">Total de clases: ' + d.totalClases + '</span>' +
+                      '<a href="javascript:void(0);" onclick="abrirModalListaClases(' + d.idEntidad + ');" title="Ver lista de clases" class="btn-ver-lista-clases">' +
+                      '<i class="fa fa-eye"></i>' +
+                      '</a>' +
+                      '<small class="pull-right">' + redondear(porcentajeAvance, 2) + ' %</small>' +
+                      '</div>' +
+                      '<div class="progress xs">' +
+                      '<div class="progress-bar progress-bar-green" style="width: ' + porcentajeAvance + '%;"></div>' +
+                      '</div>' +
+                      '<div class="clearfix">' +
+                      '<span class="pull-left">' +
+                      '<span class="text-green" data-toggle="tooltip" title="" data-original-title="Horas realizadas">' +
+                      '<i class="fa fa-clock-o"></i> ' + formatoHora(d.duracionTotalClasesRealizadas) +
+                      '</span>  de  <span class="text-info" data-toggle="tooltip" title="" data-original-title="Horas programadas"><i class="fa fa-clock-o"></i> ' + formatoHora(d.duracionTotalClases) + '</span>' +
+                      '</span>' +
+                      '</div>';
             } else {
               return 'Sin clases registradas';
             }
@@ -72,17 +79,25 @@ function cargarLista() {
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
             var estado = '';
             if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined) {
-              estado = '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>' + (d.estado === estadoCuotaProgramada && d.fechaUltimaClase ? '<small class="text-red">(Última clase: ' + formatoFecha(d.fechaUltimaClase) + ')</small><br/>' : '');
+              estado = '<div class="sec-btn-editar-estado" data-idtabla="tab-lista" data-idselestados="sel-estados" data-tipocambio="1">' +
+                      '<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '">' +
+                      '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>' +
+                      '</a>' +
+                      '</div>' +
+                      (d.estado === estadoCuotaProgramada && d.fechaUltimaClase ? '<small class="text-red">(Última clase: ' + formatoFecha(d.fechaUltimaClase) + ')</small><br/>' : '');
             } else if (estados[d.estado] !== undefined) {
-              estado = '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>' + (d.estado === estadoCuotaProgramada && d.fechaUltimaClase ? '<small class="text-red">(Última clase: ' + formatoFecha(d.fechaUltimaClase) + ')</small><br/>' : '');
+              estado = '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span><br/>' +
+                      (d.estado === estadoCuotaProgramada && d.fechaUltimaClase ? '<small class="text-red">(Última clase: ' + formatoFecha(d.fechaUltimaClase) + ')</small><br/>' : '');
             }
             return estado + '<span class="text-info">(Nivel ' + d.nivelIngles + ')</span>';
           }, "className": "text-center not-mobile"},
         {data: "totalPagos", name: "totalPagos", render: function (e, t, d, m) {
-            return 'S/. ' + redondear(d.pagoAcumulado, 2) + '<br/><span class="text-info">(' + d.totalPagos + ' pago' + (d.totalPagos > 1 ? 's' : '') + ')</span>';
+            return 'S/. ' + redondear(d.pagoAcumulado, 2) + '<br/>' +
+                    '<span class="text-info">(' + d.totalPagos + ' pago' + (d.totalPagos > 1 ? 's' : '') + ')</span>';
           }, "className": "text-center not-mobile"},
         {data: "fechaRegistro", name: "entidad.fechaRegistro", width: "12%", render: function (e, t, d, m) {
-            return formatoFecha(d.fechaRegistro, true) + '<br/><span class="text-info">(Inicio de clases:<br/>' + formatoFecha(d.fechaInicioClase) + ')</span>';
+            return formatoFecha(d.fechaRegistro, true) + '<br/>' +
+                    '<span class="text-info">(Inicio de clases:<br/>' + formatoFecha(d.fechaInicioClase) + ')</span>';
           }, "className": "text-center not-mobile"},
         {data: "id", name: "entidad.id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
@@ -109,26 +124,46 @@ function cargarLista() {
       }
     });
   }
-  if (urlActualizarEstado !== "" && estados !== "") {
-    establecerCambioEstados("tab-lista", urlActualizarEstado, estados, true);
+}
+function cargarCajaBusqueda() {
+  urlBuscar = (typeof (urlBuscar) === "undefined" ? "" : urlBuscar);
+  urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
+  urlPerfil = (typeof (urlPerfil) === "undefined" ? "" : urlPerfil);
+  idAlumno = (typeof (idAlumno) === "undefined" ? "" : idAlumno);
+  nombreCompletoAlumno = (typeof (nombreCompletoAlumno) === "undefined" ? "" : nombreCompletoAlumno);
+
+  if (urlBuscar !== "" && idAlumno !== "" && nombreCompletoAlumno !== "") {
+    establecerListaBusqueda("#sel-alumno", urlBuscar);
+    $("#sel-alumno").empty().append('<option value="' + idAlumno + '">' + nombreCompletoAlumno + '</option>').val(idAlumno);
+    $("#sel-alumno").change(function () {
+      if ($(this).data("seccion") === "perfil" && urlPerfil !== "" && $(this).val() !== this.options[this.selectedIndex].innerHTML)
+        window.location.href = urlPerfil.replace("/0", "/" + $(this).val());
+      else if (urlEditar !== "" && $(this).val() !== this.options[this.selectedIndex].innerHTML)
+        window.location.href = urlEditar.replace("/0", "/" + $(this).val());
+    });
   }
 }
+
 var datosHorariosCargados = [];
 function CargarHorarios() {
-  //Horarios
-  var ids = jQuery.map($("#tab-lista").DataTable().rows().ids(), function (ele) {
-    if (!datosHorariosCargados.some(function (dhc) {
-      return dhc.idEntidad === ele;
-    }))
-      return ele;
-  });
-  if (ids.length > 0) {
-    llamadaAjax(urlHorarioMultiple, "POST", {"idsEntidades": ids}, true, function (datos) {
-      datosHorariosCargados = datosHorariosCargados.concat(datos);
-      MostrarHorarios();
+  urlHorarioMultiple = (typeof (urlHorarioMultiple) === "undefined" ? "" : urlHorarioMultiple);
+  if (urlHorarioMultiple !== "") {
+    //Horarios
+    var ids = jQuery.map($("#tab-lista").DataTable().rows().ids(), function (ele) {
+      if (!datosHorariosCargados.some(function (dhc) {
+        return dhc.idEntidad === ele;
+      })) {
+        return ele;
+      }
     });
-  } else {
-    MostrarHorarios();
+    if (ids.length > 0) {
+      llamadaAjax(urlHorarioMultiple, "POST", {"idsEntidades": ids}, true, function (datos) {
+        datosHorariosCargados = datosHorariosCargados.concat(datos);
+        MostrarHorarios();
+      });
+    } else {
+      MostrarHorarios();
+    }
   }
 }
 function MostrarHorarios() {
@@ -136,11 +171,13 @@ function MostrarHorarios() {
     $("#sec-info-horario-" + d.idEntidad).html(obtenerTextoHorario($.parseJSON(d.datosHorario)));
   });
 }
+
 function preCargarListaClase() {
   urlListarClases = (typeof (urlListarClases) === "undefined" ? "" : urlListarClases);
+  urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
   estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
 
-  if (urlListarClases !== "" && estadosClase !== "") {
+  if (urlListarClases !== "" && urlPerfilProfesor !== "" && estadosClase !== "") {
     $("#tab-lista-clases").DataTable({
       processing: true,
       serverSide: true,
@@ -161,18 +198,32 @@ function preCargarListaClase() {
           render: function (data, type, row, meta) {
             return meta.row + meta.settings._iDisplayStart + 1;
           }},
-        {data: "fechaInicio", name: "fechaInicio", width: "22%", render: function (e, t, d, m) {
-            return '<b id="sec-clase-' + d.id + '">Fecha:</b> ' + formatoFecha(d.fechaInicio) + ' - De ' + formatoFecha(d.fechaInicio, false, true) + ' a ' + formatoFecha(d.fechaFin, false, true) + '<br/>'
-                    + '<b>Duración:</b> ' + formatoHora(d.duracion) + '<br/>'
-                    + (d.idHistorial !== null ?
-                            '<b>Notificar:</b> ' + ' <i class="fa fa-check icon-notificar-clase"></i>' + '<br/>' : '')
-                    + '<b>Profesor:</b> ' + (d.idProfesor !== null && d.nombreProfesor !== null && d.nombreProfesor !== '' ? d.nombreProfesor + ' ' + d.apellidoProfesor : 'Sin profesor asignado');
+        {data: "fechaInicio", name: "fechaInicio", render: function (e, t, d, m) {
+            var fechaConfirmacionIni = "";
+            if (d.fechaConfirmacion !== null && !isNaN(Date.parse(d.fechaConfirmacion))) {
+              fechaConfirmacionIni = new Date(d.fechaConfirmacion);
+              fechaConfirmacionIni.setSeconds(fechaConfirmacionIni.getSeconds() - d.duracion);
+            }
+            return '<b>Fecha:</b> ' + formatoFecha(d.fechaInicio) + ' - De ' + formatoFecha(d.fechaInicio, false, true) + ' a ' + formatoFecha(d.fechaFin, false, true) + '<br/>' +
+                    (d.fechaConfirmacion !== null ? '<b>Fecha de confirmación:</b> ' + formatoFecha(d.fechaConfirmacion) + ' - De ' + formatoFecha(fechaConfirmacionIni, false, true) + ' a ' + formatoFecha(d.fechaConfirmacion, false, true) + '<br/>' : '') +
+                    '<b>Duración:</b> ' + formatoHora(d.duracion) + '<br/>' +
+                    (d.idHistorial !== null ? '<b>Notificar:</b> ' + ' <i class="fa fa-check icon-notificar-clase"></i>' + '<br/>' : '') +
+                    '<b>Profesor(a):</b> ' + (d.idProfesor !== null ? '<a href="' + (urlPerfilProfesor.replace("/0", "/" + d.idProfesor)) + '">' + (d.nombreProfesor !== null ? d.nombreProfesor : "") + " " + (d.apellidoProfesor !== null ? d.apellidoProfesor : "") + '</a>' : 'Sin profesor asignad');
           }},
-        {data: "estado", name: "estado", render: function (e, t, d, m) {
-            return (estadosClase[d.estado] !== undefined ?
-                    '<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">' + estadosClase[d.estado][0] + '</span>' : '');
+        {data: "estado", name: "estado", width: "13%", render: function (e, t, d, m) {
+            var estado = '';
+            if (estadosClase[d.estado] !== undefined && estadosClaseCambio[d.estado] !== undefined) {
+              estado = '<div class="sec-btn-editar-estado" data-idtabla="tab-lista-clases" data-idselestados="sel-estados-clase" data-tipocambio="1">' +
+                      '<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '">' +
+                      '<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">' + estadosClase[d.estado][0] + '</span>' +
+                      '</a>' +
+                      '</div>';
+            } else if (estadosClase[d.estado] !== undefined) {
+              estado = '<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">' + estadosClase[d.estado][0] + '</span>';
+            }
+            return estado;
           }, className: "text-center"},
-        {data: "comentarioAlumno", name: "comentarioAlumno", render: function (e, t, d, m) {
+        {data: "comentarioAlumno", name: "comentarioAlumno", width: "50%", render: function (e, t, d, m) {
             var incluirComentario = function (idClase, titulo, tipo, comentario) {
               var maxTexto = 200;
               return '<b>' + titulo + ':</b> ' + (comentario ? comentario.substring(0, maxTexto) + (comentario.length > maxTexto ? '...' : '') : '<i>Sin comentarios</i>') + ' <a href="javascript:void(0);" onclick="abrirModalFormularioComentarios(' + idClase + ', ' + tipo + ');" title="Ver/editar comentarios"><i class="fa fa-eye"></i></a>' + '<br/><br/>';
@@ -191,15 +242,21 @@ function preCargarListaClase() {
   }
 }
 function abrirModalListaClases(id) {
-  var tr = $("#" + id);
-  var fila = $("#tab-lista").DataTable().row(tr);
-  var datosFila = fila.data();
+  urlListarClases = (typeof (urlListarClases) === "undefined" ? "" : urlListarClases);
+  if (urlListarClases !== "") {
+    var tr = $("#" + id);
+    var fila = $("#tab-lista").DataTable().row(tr);
+    var datosAlumno = fila.data();
 
-  $("#mod-lista-clases").find(".modal-title").html("Lista de clases " + (datosFila.sexo === "F" ? "de la alumna " : "del alumno ") + datosFila.nombre + " " + datosFila.apellido);
-  $("#mod-lista-clases").find("input[name='idAlumno']").val(datosFila.id);
-  $("#tab-lista-clases").DataTable().ajax.reload();
-  $("#mod-lista-clases").modal("show");
+    $.blockUI({message: "<h4>Cargando...</h4>"});
+    $("#mod-lista-clases").find(".modal-title").html("Lista de clases " + (datosAlumno.sexo === "F" ? "de la alumna " : "del alumno ") + datosAlumno.nombre + " " + datosAlumno.apellido);
+    $("#tab-lista-clases").DataTable().ajax.url(urlListarClases.replace("/0", "/" + datosAlumno.id)).load(function () {
+      $("#mod-lista-clases").modal("show");
+      $("body").unblock();
+    });
+  }
 }
+
 function abrirModalFormularioComentarios(idClase, tipo) {
   var tr = $("#" + idClase);
   var fila = $("#tab-lista-clases").DataTable().row(tr);

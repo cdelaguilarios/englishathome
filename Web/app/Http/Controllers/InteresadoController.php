@@ -133,6 +133,7 @@ class InteresadoController extends Controller {
   }
 
   public function enviarCotizacion($id, FormularioCotizacionRequest $req) {
+    //TODO: Cambiar envío de cotización
     try {
       Interesado::enviarCotizacion($id, $req->all());
       Mensajes::agregarMensajeExitoso("Cotización enviada.");

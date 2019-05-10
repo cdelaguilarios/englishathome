@@ -8,8 +8,10 @@ function cargarLista() {
   estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
   estadoClaseProgramada = (typeof (estadoClaseProgramada) === "undefined" ? "" : estadoClaseProgramada);
   estadoClasePendienteConfirmar = (typeof (estadoClasePendienteConfirmar) === "undefined" ? "" : estadoClasePendienteConfirmar);
+  estadoClaseConfirmadaProfesorAlumno = (typeof (estadoClaseConfirmadaProfesorAlumno) === "undefined" ? "" : estadoClaseConfirmadaProfesorAlumno);
+  estadoClaseRealizada = (typeof (estadoClaseRealizada) === "undefined" ? "" : estadoClaseRealizada);
 
-  if (urlListar !== "" && estadosClase !== "" && estadoClaseProgramada !== "" && estadoClasePendienteConfirmar !== "") {
+  if (urlListar !== "" && estadosClase !== "" && estadoClaseProgramada !== "" && estadoClasePendienteConfirmar !== "" && estadoClaseConfirmadaProfesorAlumno !== "" && estadoClaseRealizada !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -34,16 +36,14 @@ function cargarLista() {
               fechaConfirmacionIni = new Date(d.fechaConfirmacion);
               fechaConfirmacionIni.setSeconds(fechaConfirmacionIni.getSeconds() - d.duracion);
             }
+            d.estado = (d.estado === estadoClaseConfirmadaProfesorAlumno ? estadoClaseRealizada : d.estado);
             return (d.estado === estadoClaseProgramada ? '' :
-                    '<b>Fecha:</b> ' + (d.fechaConfirmacion !== null ?
+                    '<b>Fecha:</b> ' + (d.fechaConfirmacion !== null && (d.estado === estadoClaseConfirmadaProfesorAlumno || d.estado === estadoClaseRealizada) ?
                             formatoFecha(d.fechaConfirmacion) + ' - De ' + formatoFecha(fechaConfirmacionIni, false, true) + ' a ' + formatoFecha(d.fechaConfirmacion, false, true) :
                             formatoFecha(d.fechaInicio) + ' - De ' + formatoFecha(d.fechaInicio, false, true) + ' a ' + formatoFecha(d.fechaFin, false, true)) + '<br/>')
                     + '<b>Duración:</b> ' + formatoHora(d.duracion) + '<br/>'
                     + '<b>Estado:</b> ' + (estadosClase[d.estado] !== undefined ? '<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">' + estadosClase[d.estado][0] + '</span>' : '');
           }},
-        {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
-            return (d.estado === estadoClaseProgramada || d.estado === estadoClasePendienteConfirmar ? '<div class="text-center"><a href="javascript:void(0);" onclick="abrirModalFormularioConfirmacionClase(' + d.id + ');" class="btn btn-success btn-xs"><i class="fa fa-check"></i> Confirmar clase</a></div>' : '');
-          }, "className": "text-center"},
         {data: "comentarioProfesor", name: "comentarioProfesor", render: function (e, t, d, m) {
             return (d.comentarioProfesor ?
                     d.comentarioProfesor :
@@ -122,14 +122,6 @@ function cargarFormularioAvancesClase() {
   });
 }
 
-function abrirModalFormularioConfirmacionClase(idClase) {
-  var tr = $("#" + idClase);
-  var datosFila = $("#tab-lista").DataTable().row(tr).data();
-  $("#formulario-confirmar-clase").find("input[name='codigoVerificacion']").val("");
-  $("#formulario-confirmar-clase").find("textarea[name='comentario']").val("");
-  $("#formulario-confirmar-clase").find("input[name='idClase']").val(datosFila.id);
-  $("#mod-confirmar-clase").modal("show");
-}
 function cargarFormularioConfirmacionClase() {
   $("#formulario-confirmar-clase").validate({
     ignore: ":hidden",

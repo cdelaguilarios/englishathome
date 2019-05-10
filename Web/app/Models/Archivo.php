@@ -61,9 +61,8 @@ class Archivo {
     if (isset($datos[$variableNombresArchivosEliminados])) {
       $nombresArchivosEliminados = explode(",", $datos[$variableNombresArchivosEliminados]);
       for ($i = 0; $i < count($nombresArchivosEliminados); $i++) {
-        if (trim($nombresArchivosEliminados[$i]) == "") {
+        if (trim($nombresArchivosEliminados[$i]) == "")
           continue;
-        }
         try {
           Archivo::eliminar($nombresArchivosEliminados[$i]);
           $datArchivosActualesSel = explode(",", $archivosActualesSel);
@@ -82,12 +81,10 @@ class Archivo {
       $nombresArchivos = explode(",", $datos[$variableNombresArchivos]);
       $nombresOriginalesArchivos = explode(",", $datos[$variableNombresOriginalesArchivos]);
       for ($i = 0; $i < count($nombresArchivos); $i++) {
-        if (count(explode(",", $archivosActualesSel)) == ($maxCantidadArchivos + 1)) {
+        if (count(explode(",", $archivosActualesSel)) == ($maxCantidadArchivos + 1))
           break;
-        }
-        if (trim($nombresArchivos[$i]) == "") {
+        if (trim($nombresArchivos[$i]) == "")
           continue;
-        }
         $nombreOriginalArchivo = (array_key_exists($i, $nombresOriginalesArchivos) && $nombresOriginalesArchivos[$i] != "" ? str_replace(",", "", $nombresOriginalesArchivos[$i]) : NULL);
         $archivosActualesSel .= $nombresArchivos[$i] . ":" . (isset($nombreOriginalArchivo) && $nombreOriginalArchivo != "" ? $nombreOriginalArchivo : $nombresArchivos[$i]) . ",";
       }

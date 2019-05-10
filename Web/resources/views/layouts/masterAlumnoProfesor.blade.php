@@ -102,7 +102,7 @@
         </section>
       </div>
       <footer class="main-footer">
-        <strong>Copyright &copy; 2014-{!! date("Y") !!} <a href="http://englishathomeperu.com/" target="_blank">English at home Perú</a>.</strong> Todos los derechos reservados.
+        <strong>Copyright &copy; 2014-{!! date("Y") !!} <a href="http://englishathomeperu.com/" target="_blank">English at Home Perú</a>.</strong> Todos los derechos reservados.
       </footer>
     </div>
     <div id="secCargandoPrincipal" class="box cargando">
@@ -144,6 +144,8 @@ var urlBase = "{{ url('/') }}";
 var usuarioActualEsAlumno = {{ $usuarioActual->tipo == App\Helpers\Enum\TiposEntidad::Alumno ? "true" : "false" }};
 var minHorasClase = "{{ $minHorasClase }}";
 var maxHorasClase = "{{ $maxHorasClase }}";
+var minHorario = "{{ $minHorario }}";
+var maxHorario = "{{ $maxHorario}}";
 var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
     </script>
     <script src="{{ asset("assets/eah/js/util.js") }}"></script>

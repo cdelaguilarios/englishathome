@@ -47,7 +47,11 @@ class Interesado extends Model {
   }
 
   public static function listarCursosInteres() {
-    return Interesado::listar()->select(DB::raw("(CASE WHEN " . Interesado::nombreTabla() . ".cursoInteres <> '' THEN " . Interesado::nombreTabla() . ".cursoInteres ELSE 'Otros' END) AS 'cursoInteres'"))->groupBy(Interesado::nombreTabla() . ".cursoInteres")->lists("cursoInteres", "cursoInteres");
+    $nombreTabla = Interesado::nombreTabla();
+    return Interesado::listar()
+                    ->select(DB::raw("(CASE WHEN " . $nombreTabla . ".cursoInteres <> '' THEN " . $nombreTabla . ".cursoInteres ELSE 'Otros' END) AS 'cursoInteres'"))
+                    ->groupBy($nombreTabla . ".cursoInteres")
+                    ->lists("cursoInteres", "cursoInteres");
   }
 
   public static function obtenerXId($id, $simple = FALSE) {
@@ -55,20 +59,20 @@ class Interesado extends Model {
     if (!$simple) {
       $entidadCurso = EntidadCurso::obtenerXEntidad($id);
       $interesado->idCurso = (!is_null($entidadCurso) ? $entidadCurso->idCurso : NULL);
-      
+
       $idInteresadoAnterior = Interesado::listar()->select("entidad.id")
                       ->where("entidad.id", "<", $id)
                       ->where("entidad.estado", $interesado->estado)
                       ->orderBy("entidad.id", "DESC")->first();
-      if (isset($idInteresadoAnterior))
+      if (isset($idInteresadoAnterior)) {
         $interesado->idInteresadoAnterior = $idInteresadoAnterior->id;
-      else {
+      } else {
         $idInteresadoUltimo = Interesado::listar()->select("entidad.id")
-                      ->where("entidad.estado", $interesado->estado)
-                      ->orderBy("entidad.id", "DESC")->first();
+                        ->where("entidad.estado", $interesado->estado)
+                        ->orderBy("entidad.id", "DESC")->first();
         $interesado->idInteresadoAnterior = (isset($idInteresadoUltimo) ? $idInteresadoUltimo->id : NULL);
       }
-            
+
       $idInteresadoSiguiente = Interesado::listar()->select("entidad.id")
                       ->where("entidad.id", ">", $id)
                       ->where("entidad.estado", $interesado->estado)
@@ -77,8 +81,8 @@ class Interesado extends Model {
         $interesado->idInteresadoSiguiente = $idInteresadoSiguiente->id;
       else {
         $idInteresadoPrimero = Interesado::listar()->select("entidad.id")
-                      ->where("entidad.estado", $interesado->estado)
-                      ->orderBy("entidad.id", "ASC")->first();
+                        ->where("entidad.estado", $interesado->estado)
+                        ->orderBy("entidad.id", "ASC")->first();
         $interesado->idInteresadoSiguiente = (isset($idInteresadoPrimero) ? $idInteresadoPrimero->id : NULL);
       }
     }
@@ -183,7 +187,7 @@ class Interesado extends Model {
       } else {
         return NULL;
       }
-    } catch (\Exception $ex) {
+    } catch (\Exception $e) {
       return NULL;
     }
   }
@@ -237,16 +241,6 @@ class Interesado extends Model {
   public static function eliminar($id) {
     Interesado::obtenerXId($id, TRUE);
     Entidad::eliminar($id);
-  }
-
-  //REPORTE
-  public static function listarCampos() {
-    return [
-        "consulta" => ["titulo" => "Consulta"],
-        "cursoInteres" => ["titulo" => "Curso de interes"],
-        "costoHoraClase" => ["titulo" => "Costo por hora de clase"],
-        "comentarioAdicional" => ["titulo" => "Comentario adicional"]
-    ];
   }
 
 }

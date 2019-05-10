@@ -21,13 +21,12 @@ $(document).ready(function () {
 function cargarLista() {
   urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
-  urlActualizarEstado = (typeof (urlActualizarEstado) === "undefined" ? "" : urlActualizarEstado);
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   roles = (typeof (roles) === "undefined" ? "" : roles);
   estados = (typeof (estados) === "undefined" ? "" : estados);
   estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
 
-  if (urlListar !== "" && urlEditar !== "" && urlActualizarEstado !== "" && urlEliminar !== "" && roles !== "" && estados !== "" && estadosCambio !== "") {
+  if (urlListar !== "" && urlEditar !== "" && urlEliminar !== "" && roles !== "" && estados !== "" && estadosCambio !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -52,7 +51,8 @@ function cargarLista() {
           }},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
             if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined) {
-              return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
+              return '<div class="sec-btn-editar-estado" data-idtabla="tab-lista" data-idselestados="sel-estados" data-tipocambio="2">'+
+                      '<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
             } else if (estados[d.estado] !== undefined) {
               return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>';
             } else {
@@ -79,7 +79,6 @@ function cargarLista() {
         establecerBotonRecargaTabla("tab-lista");
       }
     });
-    establecerCambioEstados("tab-lista", urlActualizarEstado, estados);
   }
 }
 function cargarFormulario() {

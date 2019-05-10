@@ -123,7 +123,7 @@ div.dataTables_info{
 }
 
 .sec-btn-confirmar-clase>button{
-  margin-bottom: 20px;
+  margin: 0 0 20px 25px;
 }
 @media (max-width: 768px){
   .sec-btn-confirmar-clase{
@@ -131,7 +131,8 @@ div.dataTables_info{
   }
   .sec-btn-confirmar-clase>button{
     font-size: 30px;
-    width: 98%;
+    width: 90%;
+    margin: 0 0 20px 0;
   }
 }
 
@@ -504,4 +505,11 @@ table.dataTable thead .tabla-sec-busqueda .sorting_desc:after{
   max-width: 100%;
   height: auto;
   border: 2px solid #367fa9;
+}
+
+
+@media (max-width: 768px){
+  .main-footer {
+    text-align: center;
+  }
 }

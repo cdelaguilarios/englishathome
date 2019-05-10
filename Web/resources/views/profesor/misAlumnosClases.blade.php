@@ -6,8 +6,10 @@
   var urlListar = "{{ route('profesores.mis.alumnos.listar.clases', ['id' => $alumno->id]) }}";
   var estadoClaseProgramada = "{{ App\Helpers\Enum\EstadosClase::Programada }}";
   var estadoClasePendienteConfirmar = "{{ App\Helpers\Enum\EstadosClase::PendienteConfirmar }}";
+  var estadoClaseConfirmadaProfesorAlumno = "{{ App\Helpers\Enum\EstadosClase::ConfirmadaProfesorAlumno }}";
+  var estadoClaseRealizada = "{{ App\Helpers\Enum\EstadosClase::Realizada }}";
   var duracionProximaClase = "{{ (!is_null($proximaClase) ? $proximaClase->duracion : 0) }}";
-  var totalDuracionClasesRestantes = parseInt("{{ $alumno->totalDuracionClasesRestantes }}")/3600;
+  var totalDuracionClasesRestantes = parseInt("{{ $alumno->duracionTotalClases - $alumno->duracionTotalClasesRealizadas }}") / 3600;
 
   maxHorasClase = (typeof (maxHorasClase) === "undefined" ? 0 : maxHorasClase);
   maxHorasClase = (totalDuracionClasesRestantes > maxHorasClase ? maxHorasClase : totalDuracionClasesRestantes);
@@ -19,7 +21,7 @@
 @include("partials/errors")
 @if(!is_null($proximaClase))
 <div class="row">
-  <div class="col-sm-12 sec-btn-confirmar-clase">
+  <div class="col-sm-12">
     <div id="mod-confirmar-clase" class="modal" data-keyboard="false" style="text-align: initial">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -58,7 +60,6 @@
                       {{ Form::textarea("comentario", null, ["class" => "form-control", "rows" => "6", "maxlength" =>"8000"]) }}
                     </div>  
                   </div>
-                  {{ Form::hidden("idClase") }}
                 </div>   
               </div>
             </div>
@@ -78,7 +79,43 @@
   <div class="col-sm-12">
     <div class="box box-info">
       <div class="box-header">
-        <h3 class="box-title">Lista de clases {{ $alumno->sexo == "F" ? "de la alumna" : "del alumno" }} {{ $alumno->nombre . " " .  $alumno->apellido }}</h3>
+        <h3 class="box-title">{{ $alumno->sexo == "F" ? "Alumna" : "Alumno" }} {{ $alumno->nombre . " " .  $alumno->apellido }}</h3> 
+      </div>         
+      <div class="box-body">
+        <div class="form-group">          
+          <div class="col-sm-6">
+            <b>Horario</b> @include("util.horario", ["horario" => $alumno->horario, "modo" => "visualizar", "vistaImpresion" => true])
+          </div>
+          <div class="clear"></div>
+          <div class="col-sm-6">
+            <div class="clearfix">
+              <span class="pull-left">Total de clases: {{ $alumno->totalClases }}</span>
+              <small class="pull-right">{{ number_format($alumno->porcentajeAvance, 2, ".", "") }} %</small>
+            </div>
+            <div class="progress xs">
+              <div class="progress-bar progress-bar-green" style="width: {{ $alumno->porcentajeAvance }}%;"></div>              
+            </div>
+            <div class="clearfix">
+              <span class="pull-left">
+                <span class="text-green" data-toggle="tooltip" title="" data-original-title="Horas realizadas"><i class="fa fa-clock-o"></i> {{ App\Helpers\Util::formatoHora($alumno->duracionTotalClasesRealizadas) }}</span> horas realizadas de un total de <span class="text-info" data-toggle="tooltip" title="" data-original-title="Horas programadas"><i class="fa fa-clock-o"></i> {{ App\Helpers\Util::formatoHora($alumno->duracionTotalClases) }}</span>
+              </span>
+            </div>
+          </div>        
+        </div>
+      </div>
+      <div class="sec-btn-confirmar-clase">
+        <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#mod-confirmar-clase">
+          Confirmar clase
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <div class="box box-info">
+      <div class="box-header">
+        <h3 class="box-title">Lista de clases</h3>
       </div>         
       <div class="box-body">
         <table id="tab-lista" class="table table-bordered table-hover">
@@ -86,7 +123,6 @@
             <tr>
               <th>N°</th>    
               <th class="all">Datos</th>
-              <th class="all">Confirmación de clases</th>
               <th>Avances</th>
               <th>Comentarios de English At Home</th>
             </tr>

@@ -1,21 +1,22 @@
 $(document).ready(function () {
   cargarLista();
+  cargarCajaBusqueda();
   cargarFormulario();
   cargarFormularioCotizacion();
-  cargarCajaBusqueda();
 });
+
 function cargarLista() {
   urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
   urlCotizar = (typeof (urlCotizar) === "undefined" ? "" : urlCotizar);
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
-  urlActualizarEstado = (typeof (urlActualizarEstado) === "undefined" ? "" : urlActualizarEstado);
   urlPerfilAlumnoInteresado = (typeof (urlPerfilAlumnoInteresado) === "undefined" ? "" : urlPerfilAlumnoInteresado);
+
   estados = (typeof (estados) === "undefined" ? "" : estados);
   estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
   estadoAlumnoRegistrado = (typeof (estadoAlumnoRegistrado) === "undefined" ? "" : estadoAlumnoRegistrado);
 
-  if (urlListar !== "" && urlEditar !== "" && urlCotizar !== "" && urlEliminar !== "" && urlActualizarEstado !== "" && urlPerfilAlumnoInteresado !== "" && estados !== "" && estadosCambio !== "" && estadoAlumnoRegistrado !== "") {
+  if (urlListar !== "" && urlEditar !== "" && urlCotizar !== "" && urlEliminar !== "" && urlPerfilAlumnoInteresado !== "" && estados !== "" && estadosCambio !== "" && estadoAlumnoRegistrado !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -29,29 +30,38 @@ function cargarLista() {
       },
       autoWidth: false,
       responsive: true,
-      order: [[4, "desc"]],
+      order: [[5, "desc"]],
+      rowId: 'idEntidad',
       columns: [
+        {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+            return m.row + m.settings._iDisplayStart + 1;
+          }, "className": "text-center not-mobile"},
         {data: "nombre", name: "entidad.nombre", render: function (e, t, d, m) {
             return '<a href="' + (urlEditar.replace("/0", "/" + d.id)) + '">' + (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "") + '</a>';
           }},
         {data: "consulta", name: "consulta", width: "35%", render: function (e, t, d, m) {
             return (d.consulta !== null ? d.consulta : '') + (d.cursoInteres !== null && d.cursoInteres !== "" ? (d.consulta !== null ? '<br/><br/>' : '') + '<b>Curso de interes:</b> ' + d.cursoInteres : '');
-          }},
+          }, "className": "not-mobile"},
         {data: "correoElectronico", name: "entidad.correoElectronico", render: function (e, t, d, m) {
-            return (d.correoElectronico !== null ? '<b>Correo electrónico:</b> ' + d.correoElectronico : '') +
-                    (d.telefono !== null ? (d.correoElectronico !== null ? '<br/>' : '') + '<b>Teléfono:</b> ' + d.telefono : '');
-          }},
+            return (d.correoElectronico !== null ? '<b>Correo electrónico:</b> ' + d.correoElectronico : '') + (d.telefono !== null ? (d.correoElectronico !== null ? '<br/>' : '') + '<b>Teléfono:</b> ' + d.telefono : '');
+          }, "className": "not-mobile"},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
-            if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined)
-              return '<div class="sec-btn-editar-estado"><a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
-            else if (estados[d.estado] !== undefined)
-              return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>' + ((d.estado === estadoAlumnoRegistrado) ? '<a href="' + (urlPerfilAlumnoInteresado.replace("/0", "/" + d.id)) + '" title="Ver perfil del alumno" target="_blank" class="btn-perfil-relacion-entidad"><i class="fa fa-eye"></i></a>' : '');
-            else
-              return "";
-          }, className: "text-center"},
+            if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined) {
+              return '<div class="sec-btn-editar-estado" data-idtabla="tab-lista" data-idselestados="sel-estados" data-tipocambio="2">' +
+                      '<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '">' +
+                      '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>' +
+                      '</a>' +
+                      '</div>';
+            } else if (estados[d.estado] !== undefined) {
+              return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>' +
+                      ((d.estado === estadoAlumnoRegistrado) ? '<a href="' + (urlPerfilAlumnoInteresado.replace("/0", "/" + d.id)) + '" title="Ver perfil del alumno" target="_blank" class="btn-perfil-relacion-entidad"><i class="fa fa-eye"></i></a>' : '');
+            } else {
+              return '';
+            }
+          }, className: "text-center not-mobile"},
         {data: "fechaRegistro", name: "entidad.fechaRegistro", render: function (e, t, d, m) {
             return formatoFecha(d.fechaRegistro, true);
-          }, className: "text-center"},
+          }, className: "text-center not-mobile"},
         {data: "id", name: "entidad.id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
                     '<li>' +
@@ -73,7 +83,6 @@ function cargarLista() {
         establecerCabecerasBusquedaTabla("tab-lista");
       }
     });
-    establecerCambioEstados("tab-lista", urlActualizarEstado, estados);
   }
 }
 function cargarCajaBusqueda() {
@@ -83,14 +92,16 @@ function cargarCajaBusqueda() {
   idInteresado = (typeof (idInteresado) === "undefined" ? "" : idInteresado);
   nombreCompletoInteresado = (typeof (nombreCompletoInteresado) === "undefined" ? "" : nombreCompletoInteresado);
 
-  establecerListaBusqueda("#sel-interesado", urlBuscar);
-  $("#sel-interesado").empty().append('<option value="' + idInteresado + '">' + nombreCompletoInteresado + '</option>').val(idInteresado);
-  $("#sel-interesado").change(function () {
-    if ($(this).data("seccion") === "cotizar" && urlCotizar !== "" && $(this).val() !== this.options[this.selectedIndex].innerHTML)
-      window.location.href = urlCotizar.replace("/0", "/" + $(this).val());
-    else if (urlEditar !== "" && $(this).val() !== this.options[this.selectedIndex].innerHTML)
-      window.location.href = urlEditar.replace("/0", "/" + $(this).val());
-  });
+  if (urlBuscar !== "" && idInteresado !== "" && nombreCompletoInteresado !== "") {
+    establecerListaBusqueda("#sel-interesado", urlBuscar);
+    $("#sel-interesado").empty().append('<option value="' + idInteresado + '">' + nombreCompletoInteresado + '</option>').val(idInteresado);
+    $("#sel-interesado").change(function () {
+      if ($(this).data("seccion") === "cotizar" && urlCotizar !== "" && $(this).val() !== this.options[this.selectedIndex].innerHTML)
+        window.location.href = urlCotizar.replace("/0", "/" + $(this).val());
+      else if (urlEditar !== "" && $(this).val() !== this.options[this.selectedIndex].innerHTML)
+        window.location.href = urlEditar.replace("/0", "/" + $(this).val());
+    });
+  }
 }
 
 function cargarFormulario() {
@@ -122,10 +133,11 @@ function cargarFormulario() {
     },
     submitHandler: function (f) {
       var mensajeConfirmacion = "¿Está seguro que desea registrar a esta persona interesada como un nuevo alumno?";
-      if ($("input[name='registrarComoAlumno']").val() !== "1")
+      if ($("input[name='registrarComoAlumno']").val() !== "1") {
         mensajeConfirmacion = ($("#btn-guardar").text().trim() === "Guardar"
                 ? "¿Está seguro que desea guardar los cambios de los datos de la persona interesada?"
                 : "¿Está seguro que desea registrar los datos de esta persona interesada?");
+      }
       if (confirm(mensajeConfirmacion)) {
         $.blockUI({message: "<h4>" + ($("#btn-guardar").text().trim() === "Guardar" ? "Guardando" : "Registrando") + " datos...</h4>"});
         f.submit();
@@ -157,6 +169,11 @@ function cargarFormulario() {
     $("input[name='registrarComoAlumno']").val("0");
     $("#formulario-interesado").submit();
   });
+}
+
+function copiarEnlaceFichaInscripcion(enlace) {
+  window.prompt("Copiar enlace ficha de inscripción: Ctrl+C, Enter", enlace);
+  return false;
 }
 
 var editorCargado = false;
@@ -249,7 +266,7 @@ function cargarFormularioCotizacion() {
     onkeyup: false,
     onclick: false
   });
-  
+
   $("#id-curso").change(function () {
     urlDatosCurso = (typeof (urlDatosCurso) === "undefined" ? "" : urlDatosCurso);
     urlBaseImagen = (typeof (urlBaseImagen) === "undefined" ? "" : urlBaseImagen);
@@ -306,8 +323,4 @@ function cargarFormularioCotizacion() {
   incluirSeccionSubidaArchivos("adjuntos", {onSubmit: function () {
       return true;
     }, acceptFiles: "*", uploadStr: "Subir archivo"});
-}
-function copiarEnlaceFichaInscripcion(enlace) {
-  window.prompt("Copiar enlace ficha de inscripción: Ctrl+C, Enter", enlace);
-  return false;
 }

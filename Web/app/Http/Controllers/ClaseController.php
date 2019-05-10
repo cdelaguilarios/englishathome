@@ -11,6 +11,7 @@ use App\Models\Profesor;
 use App\Helpers\Enum\RolesUsuario;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Clase\BusquedaPropiasRequest;
+use App\Http\Requests\Clase\ActualizarEstadoRequest;
 use App\Http\Requests\Clase\ActualizarComentariosRequest;
 use App\Http\Requests\Clase\ConfirmarProfesorAlumnoRequest;
 
@@ -42,6 +43,16 @@ class ClaseController extends Controller {
                     ->filterColumn("comentarioAdministrador", function($q, $k) {
                       $q->whereRaw(Clase::nombreTabla() . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioParaAlumno" : ".comentarioParaProfesor") . ' like ?', ["%{$k}%"]);
                     })->make(true);
+  }
+  
+  public function actualizarEstado($id, ActualizarEstadoRequest $req) {
+    try {
+      Clase::actualizarEstadoNUEVO($id, $req->all());
+    } catch (\Exception $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
+    }
+    return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
   public function actualizarComentarios(ActualizarComentariosRequest $req) {

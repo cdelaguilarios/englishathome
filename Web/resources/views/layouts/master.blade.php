@@ -208,7 +208,7 @@
         </section>
       </div>
       <footer class="main-footer">
-        <strong>Copyright &copy; 2014-{!! date("Y") !!} <a href="http://englishathomeperu.com/" target="_blank">English at home Perú</a>.</strong> Todos los derechos reservados.
+        <strong>Copyright &copy; 2014-{!! date("Y") !!} <a href="http://englishathomeperu.com/" target="_blank">English at Home Perú</a>.</strong> Todos los derechos reservados.
       </footer>
     </div>
     <div id="secCargandoPrincipal" class="box cargando">

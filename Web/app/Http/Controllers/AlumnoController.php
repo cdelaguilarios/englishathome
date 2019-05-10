@@ -46,27 +46,43 @@ class AlumnoController extends Controller {
   }
 
   public function listar(BusquedaRequest $req) {
-    return Datatables::of(Alumno::listar($req->all()))->filterColumn("entidad.nombre", function($q, $k) {
+    return Datatables::of(Alumno::listar($req->all(), FALSE))->filterColumn("entidad.nombre", function($q, $k) {
               $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"])
                       ->orWhereRaw('distritoAlumno.distrito like ?', ["%{$k}%"])
                       ->orWhereRaw('CONCAT(profesorProximaClase.nombre, " ", profesorProximaClase.apellido) like ?', ["%{$k}%"])
                       ->orWhereRaw('distritoProfesor.distrito like ?', ["%{$k}%"]);
             })->filterColumn("porcentajeAvanceClases", function($q, $k) {
-              $q->whereRaw("(SELECT COUNT(*) FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')) like ?", ["%{$k}%"])
-                      ->orWhereRaw("(SELECT SUM(duracion) FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "'))/ 3600 like ?", ["%{$k}%"])
-                      ->orWhereRaw("(SELECT SUM(duracion) FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')AND estado IN('" . EstadosClase::Realizada . "'))/ 3600 like ?", ["%{$k}%"])
-                      ->orWhereRaw("(SELECT SUM(duracion)*100/((SELECT SUM(duracion) FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "'))) FROM " . Clase::nombreTabla() . " WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')AND estado IN('" . EstadosClase::Realizada . "')) like ?", ["%{$k}%"]);
+              $q->whereRaw("(SELECT COUNT(*) 
+                              FROM " . Clase::nombreTabla() . " 
+                              WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')) like ?", ["%{$k}%"])
+                      ->orWhereRaw("(SELECT SUM(duracion) 
+                                      FROM " . Clase::nombreTabla() . " 
+                                      WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "'))/ 3600 like ?", ["%{$k}%"])
+                      ->orWhereRaw("(SELECT SUM(duracion) 
+                                      FROM " . Clase::nombreTabla() . " 
+                                      WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')AND estado IN('" . EstadosClase::Realizada . "'))/ 3600 like ?", ["%{$k}%"])
+                      ->orWhereRaw("(SELECT SUM(duracion)*100/(SELECT SUM(duracion) 
+                                                                 FROM " . Clase::nombreTabla() . " 
+                                                                 WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')) 
+                                      FROM " . Clase::nombreTabla() . " 
+                                      WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')AND estado IN('" . EstadosClase::Realizada . "')) like ?", ["%{$k}%"]);
             })->filterColumn("curso", function($q, $k) {
               $q->whereRaw("curso.nombre like ?", ["%{$k}%"]);
             })->filterColumn("entidad.estado", function($q, $k) {
               $q->whereRaw("entidad.estado like ?", ["%{$k}%"])
                       ->orWhereRaw('nivelIngles.nombre like ?', ["%{$k}%"]);
             })->filterColumn("totalPagos", function($q, $k) {
-              $q->whereRaw("(SELECT COUNT(*) FROM " . PagoAlumno::nombreTabla() . " WHERE idAlumno = entidad.id) like ?", ["%{$k}%"])
-                      ->orWhereRaw("(SELECT SUM(monto) FROM " . Pago::nombreTabla() . " WHERE id IN (SELECT idPago FROM " . PagoAlumno::nombreTabla() . " WHERE idAlumno = entidad.id) AND eliminado = 0) like ?", ["%{$k}%"]);
+              $q->whereRaw("(SELECT COUNT(*) 
+                              FROM " . PagoAlumno::nombreTabla() . " 
+                              WHERE idAlumno = entidad.id) like ?", ["%{$k}%"])
+                      ->orWhereRaw("(SELECT SUM(monto) 
+                                      FROM " . Pago::nombreTabla() . " 
+                                      WHERE id IN (SELECT idPago 
+                                                    FROM " . PagoAlumno::nombreTabla() . " 
+                                                    WHERE idAlumno = entidad.id) AND eliminado = 0) like ?", ["%{$k}%"]);
             })->filterColumn("entidad.fechaRegistro", function($q, $k) {
               $q->whereRaw("DATE_FORMAT(entidad.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"])
-                ->orWhereRaw("DATE_FORMAT(fechaInicioClase, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
+                      ->orWhereRaw("DATE_FORMAT(fechaInicioClase, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
             })->make(true);
   }
 
@@ -302,16 +318,13 @@ class AlumnoController extends Controller {
     return response()->json(Clase::listarXAlumno($id, $numeroPeriodo), 200);
   }
 
-  public function listarClases() {
-    $idAlumno = Input::get("idAlumno");
-    if (isset($idAlumno)) {
-      return Datatables::of(Clase::listarXAlumno($idAlumno))
-                      ->filterColumn("fechaInicio", function($q, $k) {
-                        $q->whereRaw('fechaInicio like ?', ["%{$k}%"])
-                        ->orWhereRaw('duracion like ?', ["%{$k}%"])
-                        ->orWhereRaw('CONCAT(' . (Auth::user()->rol == RolesUsuario::Alumno ? 'entidadProfesor.nombre, " ", entidadProfesor.apellido' : 'entidadAlumno.nombre, " ", entidadAlumno.apellido') . ') like ?', ["%{$k}%"]);
-                      })->make(true);
-    }
+  public function listarClases($id) {
+    return Datatables::of(Clase::listarXAlumnoNUEVO($id))
+                    ->filterColumn("fechaInicio", function($q, $k) {
+                      $q->whereRaw('fechaInicio like ?', ["%{$k}%"])
+                      ->orWhereRaw('duracion like ?', ["%{$k}%"])
+                      ->orWhereRaw('CONCAT(' . (Auth::user()->rol == RolesUsuario::Alumno ? 'entidadProfesor.nombre, " ", entidadProfesor.apellido' : 'entidadAlumno.nombre, " ", entidadAlumno.apellido') . ') like ?', ["%{$k}%"]);
+                    })->make(true);
   }
 
   public function actualizarEstadoClase($id, ClaseRequest\ActualizarEstadoRequest $req) {
@@ -356,8 +369,6 @@ class AlumnoController extends Controller {
     }
     return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "clase", "nrp" => $nroPeriodo]));
   }
-  
-  
 
   public function actualizarComentariosClase(ClaseRequest\ActualizarComentariosRequest $req) {
     try {
