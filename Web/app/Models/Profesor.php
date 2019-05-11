@@ -198,7 +198,7 @@ class Profesor extends Model {
 
   public static function confirmarClase($id, $idAlumno, $datos) {
     $alumno = Profesor::obtenerAlumno($id, $idAlumno);
-    $clase = Profesor::listarClasesAlumno($id, $idAlumno, TRUE)->where(Clase::nombreTabla() . ".id", $datos["idClase"])->firstOrFail();
+    $clase = Profesor::obtenerProximaClase($id, $idAlumno);
     $duracionAct = (int) $clase->duracion;
     $duracionSel = (int) $datos["duracion"];
     $duracionMax = (int) $alumno->duracionTotalClases - $alumno->duracionTotalClasesRealizadas;
@@ -215,6 +215,7 @@ class Profesor extends Model {
 
     Profesor::registrarAvanceClase($id, $idAlumno, $datos);
 
+    //TODO: Considerar pagos sin clases
     //Actualizar clases en base a variación de la duración de clases
     $nombreTabla = Clase::nombreTabla();
     if ($cambioDuracion) {
@@ -247,6 +248,7 @@ class Profesor extends Model {
         }
       }
     }
+    //TODO: Reajustar clases en base a pago y clases confirmadas y realizadas
 
     Historial::registrar([
         "idEntidades" => [$id, $idAlumno],

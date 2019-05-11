@@ -12,7 +12,7 @@ class Pago extends Model {
 
   public $timestamps = false;
   protected $table = "pago";
-  protected $fillable = ["motivo", "descripcion", "monto", "imagenesComprobante", "saldoFavor", "saldoFavorUtilizado", "cuenta", "estado", "fecha"];
+  protected $fillable = ["motivo", "descripcion", "monto", "imagenesComprobante", "saldoFavor", "saldoFavorUtilizado", "costoHoraClaseBase", "cuenta", "estado", "fecha"];
 
   public static function nombreTabla() {
     $modeloPago = new Pago();
@@ -65,6 +65,12 @@ class Pago extends Model {
     $pago = new Pago($datos);
     $pago->estado = $estado;
     $pago->fechaRegistro = Carbon::now()->toDateTimeString();
+    
+    //TODO: Realizar las validaciones necesarias
+    if (isset($datos["registrarSinGenerarClases"]) && isset($datos["costoHoraClase"]) && (int) $datos["registrarSinGenerarClases"] == 0) {
+      $pago->costoHoraClaseBase = $datos["costoHoraClase"];
+    }
+    
     $pago->save();
     Pago::registrarActualizarImagenes($pago["id"], $request);
     return Pago::obtenerXId($pago["id"]);
