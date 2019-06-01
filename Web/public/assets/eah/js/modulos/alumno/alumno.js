@@ -3,12 +3,12 @@ var mapa;
 $(document).ready(function () {
   cargarLista();
   cargarCajaBusqueda();
-  preCargarListaClase();
+  cargarListaClase();
   cargarFormularioComentarios();
   cargarFormulario();
 });
 
-function cargarLista() {
+function cargarLista()/* - */ {
   urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
   urlPerfil = (typeof (urlPerfil) === "undefined" ? "" : urlPerfil);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
@@ -172,7 +172,7 @@ function MostrarHorarios() {
   });
 }
 
-function preCargarListaClase() {
+function cargarListaClase() {
   urlListarClases = (typeof (urlListarClases) === "undefined" ? "" : urlListarClases);
   urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
   estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
@@ -257,19 +257,6 @@ function abrirModalListaClases(id) {
   }
 }
 
-function abrirModalFormularioComentarios(idClase, tipo) {
-  var tr = $("#" + idClase);
-  var fila = $("#tab-lista-clases").DataTable().row(tr);
-  var datosFila = fila.data();
-  $("#mod-comentarios").find(".modal-title").html("Comentarios " + (tipo === 1 ? "del alumno" : (tipo === 2 ? "del profesor" : (tipo === 3 ? "De EAH para el alumno" : "De EAH para el profesor"))));
-  $("#formulario-comentarios").find("textarea[name='comentario']").val(tipo === 1 ? datosFila.comentarioAlumno : (tipo === 2 ? datosFila.comentarioProfesor : (tipo === 3 ? datosFila.comentarioParaAlumno : datosFila.comentarioParaProfesor)));
-  $("#formulario-comentarios").find("input[name='idClase']").val(datosFila.id);
-  $("#formulario-comentarios").find("input[name='idAlumno']").val(datosFila.idAlumno);
-  $("#formulario-comentarios").find("input[name='tipo']").val(tipo);
-  $("#mod-comentarios").modal("show").on('hidden.bs.modal', function () {
-    $("body").addClass("modal-open");
-  });
-}
 function cargarFormularioComentarios() {
   $("#formulario-comentarios").validate({
     rules: {
@@ -327,6 +314,19 @@ function cargarFormularioComentarios() {
     onfocusout: false,
     onkeyup: false,
     onclick: false
+  });
+}
+function abrirModalFormularioComentarios(idClase, tipo) {
+  var tr = $("#" + idClase);
+  var fila = $("#tab-lista-clases").DataTable().row(tr);
+  var datosFila = fila.data();
+  $("#mod-comentarios").find(".modal-title").html("Comentarios " + (tipo === 1 ? "del alumno" : (tipo === 2 ? "del profesor" : (tipo === 3 ? "De EAH para el alumno" : "De EAH para el profesor"))));
+  $("#formulario-comentarios").find("textarea[name='comentario']").val(tipo === 1 ? datosFila.comentarioAlumno : (tipo === 2 ? datosFila.comentarioProfesor : (tipo === 3 ? datosFila.comentarioParaAlumno : datosFila.comentarioParaProfesor)));
+  $("#formulario-comentarios").find("input[name='idClase']").val(datosFila.id);
+  $("#formulario-comentarios").find("input[name='idAlumno']").val(datosFila.idAlumno);
+  $("#formulario-comentarios").find("input[name='tipo']").val(tipo);
+  $("#mod-comentarios").modal("show").on('hidden.bs.modal', function () {
+    $("body").addClass("modal-open");
   });
 }
 

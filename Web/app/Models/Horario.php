@@ -11,7 +11,7 @@ class Horario extends Model {
   protected $table = "horario";
   protected $fillable = ["idEntidad", "numeroDiaSemana", "horaInicio", "horaFin"];
 
-  public static function nombreTabla() {
+  public static function nombreTabla()/* - */ {
     $modeloHorario = new Horario();
     $nombreTabla = $modeloHorario->getTable();
     unset($modeloHorario);
@@ -50,7 +50,7 @@ class Horario extends Model {
     return $idsEntidades;
   }
 
-  public static function obtener($idEntidad) {
+  public static function obtenerXIdEntidad($idEntidad)/* - */ {
     return Horario::where("idEntidad", $idEntidad)->orderBy("numeroDiaSemana", "asc")->get();
   }
 
@@ -59,15 +59,15 @@ class Horario extends Model {
     foreach ($datos["idsEntidades"] as $idEntidad) {
       $horarios[] = [
           "idEntidad" => $idEntidad,
-          "datosHorario" => Horario::obtenerFormatoJson($idEntidad)
+          "datosHorario" => Horario::obtenerJsonXIdEntidad($idEntidad)
       ];
     }
     return $horarios;
   }
 
-  public static function obtenerFormatoJson($idEntidad) {
+  public static function obtenerJsonXIdEntidad($idEntidad)/* - */ {
     $horarioSel = [];
-    $horario = Horario::obtener($idEntidad);
+    $horario = Horario::obtenerXIdEntidad($idEntidad);
     foreach ($horario as $datHorario) {
       $i = count($horarioSel);
       $rangoHoras = date("H:i", strtotime($datHorario->horaInicio)) . "-" . date("H:i", strtotime($datHorario->horaFin));
@@ -112,7 +112,7 @@ class Horario extends Model {
 
   public static function copiarHorario($idEntidadOri, $idEntidadDes) {
     Horario::where("idEntidad", $idEntidadDes)->delete();
-    $horario = Horario::obtener($idEntidadOri);
+    $horario = Horario::obtenerXIdEntidad($idEntidadOri);
     foreach ($horario as $datHorario) {
       $horario = new Horario([
           "idEntidad" => $idEntidadDes,

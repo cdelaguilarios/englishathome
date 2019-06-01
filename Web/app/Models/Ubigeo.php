@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DB;
+use Log;
 use Illuminate\Database\Eloquent\Model;
 
 class Ubigeo extends Model {
@@ -19,7 +20,7 @@ class Ubigeo extends Model {
     return DB::table("distrito")->where("codigoProvincia", $codigoProvincia)->orderBy("distrito")->lists("distrito", "codigo");
   }
 
-  public static function obtenerTextoUbigeo($codigoUbigeo) {
+  public static function obtenerTextoUbigeo($codigoUbigeo)/* - */ {
     $texto = "";
     if (strlen($codigoUbigeo) == 6) {
       $codigoDepartamento = substr($codigoUbigeo, 0, 2);
@@ -32,7 +33,7 @@ class Ubigeo extends Model {
         $departamentoSel = DB::table("departamento")->where("codigo", $codigoDepartamento)->get();
         $texto = ucwords(strtolower($distritoSel[0]->distrito . ", " . $provinciaSel[0]->provincia . ", " . str_replace("DEPARTAMENTO ", "", $departamentoSel[0]->departamento)));
       } catch (\Exception $e) {
-        
+        Log::error($e);
       }
     }
     return $texto;

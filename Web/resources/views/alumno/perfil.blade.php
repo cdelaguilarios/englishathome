@@ -62,7 +62,7 @@
         <p class="text-muted">
           <a href="{{ route("profesores.perfil", ["id" => $alumno->profesorProximaClase->idEntidad]) }}" target="_blank">
             {{ $alumno->profesorProximaClase->nombre . " " .  $alumno->profesorProximaClase->apellido }}
-          </a><br>(Pago por hora de clase: <b>{{ number_format($alumno->datosProximaClase->costoHoraProfesor, 2, ".", ",") }}</b>)
+          </a><br>(Pago por hora de clase: <b>{{ number_format($alumno->proximaClase->costoHoraProfesor, 2, ".", ",") }}</b>)
         </p>
         <hr> 
         @endif
@@ -73,10 +73,10 @@
         </p>
         <hr>    
         @endif
-        @if(isset($alumno->datosProximaClase) && isset($alumno->datosProximaClase->tiempos))
+        @if(isset($alumno->proximaClase) && isset($alumno->proximaClase->tiempos))
         <strong><i class="fa fa-clock-o margin-r-5"></i> Total de horas pagadas</strong>
         <p class="text-muted">
-          {{ App\Helpers\Util::formatoHora($alumno->datosProximaClase->tiempos->duracionTotal) }}
+          {{ App\Helpers\Util::formatoHora($alumno->proximaClase->tiempos->duracionTotal) }}
         </p>
         <hr>    
         @endif

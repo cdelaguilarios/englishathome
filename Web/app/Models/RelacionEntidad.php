@@ -10,14 +10,14 @@ class RelacionEntidad extends Model {
   protected $table = "relacionEntidad";
   protected $fillable = ["idEntidadA", "idEntidadB", "tipo"];
 
-  public static function nombreTabla() {
+  public static function nombreTabla()/* - */ {
     $modeloRelacionEntidad = new RelacionEntidad();
     $nombreTabla = $modeloRelacionEntidad->getTable();
     unset($modeloRelacionEntidad);
     return $nombreTabla;
   }
 
-  public static function registrar($idEntidadA, $idEntidadB, $tipo) {
+  public static function registrar($idEntidadA, $idEntidadB, $tipo)/* - */ {
     $relacionEntidad = new RelacionEntidad([
         "idEntidadA" => $idEntidadA,
         "idEntidadB" => $idEntidadB,
@@ -26,11 +26,11 @@ class RelacionEntidad extends Model {
     $relacionEntidad->save();
   }
 
-  public static function obtenerXIdEntidadA($id) {
+  public static function obtenerXIdEntidadA($id)/* - */ {
     return RelacionEntidad::where("idEntidadA", $id)->get();
   }
-  
-  public static function obtenerXIdEntidadB($id) {
+
+  public static function obtenerXIdEntidadB($id)/* - */ {
     return RelacionEntidad::where("idEntidadB", $id)->get();
   }
 

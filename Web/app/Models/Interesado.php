@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DB;
+use Log;
 use Mail;
 use Auth;
 use Crypt;
@@ -29,11 +30,12 @@ class Interesado extends Model {
     return $nombreTabla;
   }
 
-  public static function listar($datos = NULL) {
+  public static function listar($datos = NULL)/* - */ {
     $interesados = Interesado::leftJoin(Entidad::nombreTabla() . " as entidad", Interesado::nombreTabla() . ".idEntidad", "=", "entidad.id")
             ->where("entidad.eliminado", 0)
             ->groupBy("entidad.id")
             ->distinct();
+    
     if (isset($datos["estado"]))
       $interesados->where("entidad.estado", $datos["estado"]);
     return $interesados;
@@ -54,10 +56,11 @@ class Interesado extends Model {
                     ->lists("cursoInteres", "cursoInteres");
   }
 
-  public static function obtenerXId($id, $simple = FALSE) {
+  public static function obtenerXId($id, $simple = FALSE)/* - */ {
     $interesado = Interesado::listar()->where("entidad.id", $id)->firstOrFail();
+    
     if (!$simple) {
-      $entidadCurso = EntidadCurso::obtenerXEntidad($id);
+      $entidadCurso = EntidadCurso::obtenerXIdEntidad($id);
       $interesado->idCurso = (!is_null($entidadCurso) ? $entidadCurso->idCurso : NULL);
 
       $idInteresadoAnterior = Interesado::listar()->select("entidad.id")
@@ -179,7 +182,7 @@ class Interesado extends Model {
     return ((count($relacionEntidad) > 0) ? $relacionEntidad[0]->idEntidadA : 0);
   }
 
-  public static function obtenerXIdAlumno($idAlumno) {
+  public static function obtenerXIdAlumno($idAlumno)/* - */ {
     try {
       $relacionEntidad = RelacionEntidad::obtenerXIdEntidadA($idAlumno);
       if (count($relacionEntidad) > 0) {
@@ -188,6 +191,7 @@ class Interesado extends Model {
         return NULL;
       }
     } catch (\Exception $e) {
+      Log::error($e);
       return NULL;
     }
   }
@@ -208,7 +212,7 @@ class Interesado extends Model {
           "conAmbienteClase" => 0,
           "numeroHorasClase" => 2
       ];
-      $entidadCurso = EntidadCurso::obtenerXEntidad($id);
+      $entidadCurso = EntidadCurso::obtenerXIdEntidad($id);
       if (!is_null($entidadCurso)) {
         EntidadCurso::registrarActualizar($idEntidad, $entidadCurso->idCurso);
       }

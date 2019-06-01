@@ -22,7 +22,7 @@ class Clase extends Model {
   protected $table = "clase";
   protected $fillable = ["idAlumno", "idProfesor", "numeroPeriodo", "duracion", "costoHora", "costoHoraProfesor", "pagoTotalProfesor", "fechaInicio", "fechaFin", "fechaCancelacion", "comentarioAlumno", "comentarioProfesor", "comentarioParaAlumno", "comentarioParaProfesor", "fechaConfirmacion", "estado"];
 
-  public static function nombreTabla() {
+  public static function nombreTabla()/* - */ {
     $modeloClase = new Clase();
     $nombreTabla = $modeloClase->getTable();
     unset($modeloClase);
@@ -34,19 +34,19 @@ class Clase extends Model {
     return Clase::leftJoin(Entidad::nombreTabla() . " as entidadAlumno", $nombreTabla . ".idAlumno", "=", "entidadAlumno.id")
                     ->leftJoin(Entidad::nombreTabla() . " as entidadProfesor", function ($q) use($nombreTabla) {
                       $q->on($nombreTabla . ".idProfesor", '=', "entidadProfesor.id");
-                      $q->on('entidadProfesor.eliminado', '=', DB::raw("0"));
+                      $q->on('entidadProfesor.eliminado', '=', "0");
                     })
                     ->leftJoin(Historial::nombreTabla() . " as historial", function ($q) use($nombreTabla) {
                       $q->on($nombreTabla . ".id", '=', "historial.idClase");
-                      $q->on('historial.eliminado', '=', DB::raw("0"));
-                      $q->on('historial.enviarCorreo', '=', DB::raw("1")); //TODO: Revisar porque historial.enviarCorreo debe ser igual a 1
+                      $q->on('historial.eliminado', '=', "0");
+                      $q->on('historial.enviarCorreo', '=', "1"); //TODO: Revisar porque historial.enviarCorreo debe ser igual a 1
                     })
                     ->leftJoin(PagoClase::nombreTabla() . " as pagoClase", $nombreTabla . ".id", "=", "pagoClase.idClase")
                     ->where($nombreTabla . ".eliminado", 0)
                     ->groupBy($nombreTabla . ".id")
                     ->distinct();
   }
-  
+
   public static function obtenerXIdNUEVO($id) {
     $nombreTabla = Clase::nombreTabla();
     $clase = Clase::listarBase()
@@ -74,7 +74,7 @@ class Clase extends Model {
       $ultimaClase = Clase::obtenerUltimaClase($idAlumno);
       if (isset($ultimaClase)) {
         $fechaProximaClase = new Carbon($ultimaClase->fechaInicio);
-        $horarioAlumno = Horario::obtener($idAlumno);
+        $horarioAlumno = Horario::obtenerXIdEntidad($idAlumno);
         $flg = TRUE;
 
         while ($flg) {
@@ -100,7 +100,7 @@ class Clase extends Model {
                     ->first();
   }
 
-  public static function obtenerProximaClase($idAlumno) {
+  public static function obtenerProximaClaseXIdAlumno($idAlumno) {
     $nombreTabla = Clase::nombreTabla();
     return Clase::listarBase()
                     ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor")
@@ -215,12 +215,18 @@ class Clase extends Model {
     return Clase::where("eliminado", 0)->whereIn("estado", (is_array($estados) ? $estados : [$estados]));
   }
 
-  public static function listarPeriodos($idAlumno) {
-    return Clase::select("numeroPeriodo", DB::raw("min(fechaInicio) AS fechaInicio, max(fechaFin) AS fechaFin, sum(duracion) AS horasTotal"))->where("idAlumno", $idAlumno)->where("eliminado", 0)->groupBy("numeroPeriodo");
+  public static function listarPeriodosXIdAlumno($idAlumno)/* - */ {
+    return Clase::select(DB::raw("numeroPeriodo, 
+                                  min(fechaInicio) AS fechaInicio, 
+                                  max(fechaFin) AS fechaFin, 
+                                  sum(duracion) AS horasTotal"))
+                    ->where("idAlumno", $idAlumno)
+                    ->where("eliminado", 0)
+                    ->groupBy("numeroPeriodo");
   }
 
-  public static function totalPeriodos($idAlumno) {
-    $sub = Clase::listarPeriodos($idAlumno);
+  public static function totalPeriodosXIdAlumno($idAlumno)/* - */ {
+    $sub = Clase::listarPeriodosXIdAlumno($idAlumno);
     return DB::table(DB::raw("({$sub->toSql()}) as sub"))->mergeBindings($sub->getQuery())->count();
   }
 
@@ -433,7 +439,7 @@ class Clase extends Model {
     $preHorasPagadas = ((float) $datos["monto"] / (float) $datos["costoHoraClase"]);
     $horasPagadas = ($preHorasPagadas - fmod($preHorasPagadas, 0.5));
     $fechaInicioClase = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaInicioClases"] . " 00:00:00");
-    $horarioAlumno = Horario::obtener($idAlumno);
+    $horarioAlumno = Horario::obtenerXIdEntidad($idAlumno);
     $montoRestanteOpcional = 0;
 
     while ($duracionTotalSeg < ($horasPagadas * 3600)) {

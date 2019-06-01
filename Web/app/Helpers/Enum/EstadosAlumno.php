@@ -11,7 +11,7 @@ class EstadosAlumno {
   const Activo = "ACTIVO";
   const Inactivo = "INACTIVO";
 
-  public static function listar() {
+  public static function listar()/* - */ {
     return [
         EstadosAlumno::PorConfirmar => ["Por confirmar", "label-primary"],
         EstadosAlumno::StandBy => ["Stand by", "label-warning"],
@@ -22,7 +22,7 @@ class EstadosAlumno {
     ];
   }
 
-  public static function listarBusqueda() {
+  public static function listarBusqueda()/* - */ {
     $estados = EstadosAlumno::listar();
     $estadosBusqueda = [];
     foreach ($estados as $k => $v) {
@@ -31,9 +31,9 @@ class EstadosAlumno {
     return $estadosBusqueda;
   }
 
-  public static function listarCambio() {
+  public static function listarCambio()/* - */ {
     $estadosBusqueda = EstadosAlumno::listarBusqueda();
-    $estadosDisponibleCambio = [EstadosAlumno::CuotaProgramada, EstadosAlumno::StandBy, EstadosAlumno::PeriodoTrunco, EstadosAlumno::Activo, EstadosAlumno::Inactivo];
+    $estadosDisponibleCambio = [EstadosAlumno::StandBy, EstadosAlumno::PeriodoTrunco, EstadosAlumno::Activo, EstadosAlumno::CuotaProgramada, EstadosAlumno::Inactivo];
     $estadosCambio = [];
     foreach ($estadosBusqueda as $k => $v) {
       if (in_array($k, $estadosDisponibleCambio)) {

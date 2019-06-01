@@ -91,12 +91,12 @@
           @endif 
           @if(isset($alumno->profesorProximaClase)) 
           <strong><i class="fa fa-fw flaticon-teach"></i> Profesor</strong>
-          <p class="text-muted">{{ $alumno->profesorProximaClase->nombre . " " .  $alumno->profesorProximaClase->apellido }}<br>(Pago por hora de clase: <b>{{ number_format($alumno->datosProximaClase->costoHoraProfesor, 2, ".", ",") }}</b>)</p>
+          <p class="text-muted">{{ $alumno->profesorProximaClase->nombre . " " .  $alumno->profesorProximaClase->apellido }}<br>(Pago por hora de clase: <b>{{ number_format($alumno->proximaClase->costoHoraProfesor, 2, ".", ",") }}</b>)</p>
           <hr> 
           @endif
-          @if(isset($alumno->datosProximaClase) && isset($alumno->datosProximaClase->tiempos))
+          @if(isset($alumno->proximaClase) && isset($alumno->proximaClase->tiempos))
           <strong><i class="fa fa-fw fa-clock-o"></i> Total de horas pagadas</strong>
-          <p class="text-muted">{{ App\Helpers\Util::formatoHora($alumno->datosProximaClase->tiempos->duracionTotal) }}</p>
+          <p class="text-muted">{{ App\Helpers\Util::formatoHora($alumno->proximaClase->tiempos->duracionTotal) }}</p>
           <hr> 
           @endif
           <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>

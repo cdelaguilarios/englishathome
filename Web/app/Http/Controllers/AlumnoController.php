@@ -30,7 +30,7 @@ class AlumnoController extends Controller {
   protected $data = array();
   protected $rutasArchivosEliminar = array();
 
-  public function __construct() {
+  public function __construct()/* - */ {
     $this->data["seccion"] = "alumnos";
   }
 
@@ -41,11 +41,11 @@ class AlumnoController extends Controller {
   }
 
   // <editor-fold desc="Alumno">
-  public function index() {
+  public function index()/* - */ {
     return view("alumno.lista", $this->data);
   }
 
-  public function listar(BusquedaRequest $req) {
+  public function listar(BusquedaRequest $req)/* - */  {
     return Datatables::of(Alumno::listar($req->all(), FALSE))->filterColumn("entidad.nombre", function($q, $k) {
               $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"])
                       ->orWhereRaw('distritoAlumno.distrito like ?', ["%{$k}%"])
@@ -311,7 +311,7 @@ class AlumnoController extends Controller {
   // </editor-fold>
   // <editor-fold desc="Clases">
   public function listarPeriodosClases($id) {
-    return Datatables::of(Clase::listarPeriodos($id))->make(true);
+    return Datatables::of(Clase::listarPeriodosXIdAlumno($id))->make(true);
   }
 
   public function listarClasesXPeriodo($id, $numeroPeriodo) {

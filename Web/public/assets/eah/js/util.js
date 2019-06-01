@@ -318,7 +318,7 @@ function establecerCabecerasBusquedaTabla(idTabla) {
 function recargarDatosTabla(idTabla) {
   $("#" + idTabla).DataTable().ajax.reload();
 }
-function establecerCambioEstados() {
+function establecerCambioEstados()/* - */ {
   $(window).click(function (e) {
     if (!$(e.target).closest(".sec-btn-editar-estado").length)
       $(".sec-btn-editar-estado select").trigger("change");

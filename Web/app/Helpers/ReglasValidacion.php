@@ -79,7 +79,7 @@ class ReglasValidacion {
     return TRUE;
   }
 
-  public static function formatoDato($datos, $nombreDato, $retornoOpc = NULL) {
+  public static function formatoDato($datos, $nombreDato, $retornoOpc = NULL)/* - */ {
     if ((isset($datos[$nombreDato])) && ((!is_array($datos[$nombreDato]) && $datos[$nombreDato] != "") || (is_array($datos[$nombreDato]))))
       return $datos[$nombreDato];
     return $retornoOpc;

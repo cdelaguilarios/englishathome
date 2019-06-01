@@ -10,14 +10,14 @@ class EntidadCurso extends Model {
   protected $table = "entidadCurso";
   protected $fillable = ["idEntidad", "idCurso"];
 
-  public static function nombreTabla() {
+  public static function nombreTabla()/* - */ {
     $modeloEntidadCurso = new EntidadCurso();
     $nombreTabla = $modeloEntidadCurso->getTable();
     unset($modeloEntidadCurso);
     return $nombreTabla;
   }
 
-  public static function obtenerXEntidad($idEntidad, $soloPrimerCurso = TRUE) {
+  public static function obtenerXIdEntidad($idEntidad, $soloPrimerCurso = TRUE)/* - */ {
     $entidadCursos = EntidadCurso::where("idEntidad", $idEntidad)->select("idCurso")->get();
     return (count($entidadCursos) > 0 ? ($soloPrimerCurso ? $entidadCursos[0] : $entidadCursos) : NULL);
   }

@@ -19,18 +19,19 @@ class Alumno extends Model {
   protected $table = "alumno";
   protected $fillable = ["inglesLugarEstudio", "inglesPracticaComo", "inglesObjetivo", "conComputadora", "conInternet", "conPlumonPizarra", "conAmbienteClase", "numeroHorasClase", "fechaInicioClase", "comentarioAdicional", "costoHoraClase"];
 
-  public static function nombreTabla() {
+  public static function nombreTabla()/* - */ {
     $modeloAlumno = new Alumno();
     $nombreTabla = $modeloAlumno->getTable();
     unset($modeloAlumno);
     return $nombreTabla;
   }
 
-  public static function listar($datos = NULL, $simple = TRUE) {
+  public static function listar($datos = NULL, $simple = TRUE)/* - */ {
     $alumnos = Alumno::leftJoin(Entidad::nombreTabla() . " as entidad", Alumno::nombreTabla() . ".idEntidad", "=", "entidad.id")
             ->where("entidad.eliminado", 0)
             ->groupBy("entidad.id")
             ->distinct();
+
     if (isset($datos["estado"])) {
       if ($datos["estado"] == EstadosAlumno::Activo) {
         $alumnos->where(function ($q) use($datos) {
@@ -40,21 +41,25 @@ class Alumno extends Model {
         $alumnos->where("entidad.estado", $datos["estado"]);
       }
     }
+
     if (!$simple) {
+      $nombreTablaClase = Clase::nombreTabla();
+
       //Datos de la última clase
-      $alumnos->leftJoin(Clase::nombreTabla() . " as ultimaClase", function ($q) {
+      $alumnos->leftJoin($nombreTablaClase . " as ultimaClase", function ($q) use ($nombreTablaClase) {
         $q->on("ultimaClase.idAlumno", "=", "entidad.id")
                 ->on("ultimaClase.id", "=", DB::raw("(SELECT id 
-                                                        FROM " . Clase::nombreTabla() . "
+                                                        FROM " . $nombreTablaClase . "
                                                         WHERE idAlumno = entidad.id AND eliminado=0 
                                                         ORDER BY fechaFin DESC 
                                                         LIMIT 1)"))
                 ->where("ultimaClase.eliminado", "=", 0);
       });
+
       //Datos del profesor de la próxima clase
-      $alumnos->leftJoin(Entidad::nombreTabla() . " as profesorProximaClase", function ($q) {
+      $alumnos->leftJoin(Entidad::nombreTabla() . " as profesorProximaClase", function ($q) use ($nombreTablaClase) {
         $q->on("profesorProximaClase.id", "=", DB::raw("(SELECT idProfesor 
-                                                          FROM " . Clase::nombreTabla() . " 
+                                                          FROM " . $nombreTablaClase . " 
                                                           WHERE idAlumno = entidad.id AND fechaInicio >= '" . Carbon::now() . "' AND eliminado=0 
                                                           ORDER BY fechaFin ASC 
                                                           LIMIT 1)"))
@@ -63,6 +68,7 @@ class Alumno extends Model {
       $alumnos->leftJoin("distrito as distritoProfesor", function ($q) {
         $q->on("distritoProfesor.codigo", "=", "profesorProximaClase.codigoUbigeo");
       });
+
       //Nivel de inglés
       $alumnos->leftJoin(NivelIngles::nombreTabla() . " as nivelIngles", function ($q) {
         $q->on("nivelIngles.id", "=", DB::raw("(SELECT idNivelIngles 
@@ -71,6 +77,7 @@ class Alumno extends Model {
                 ->where("nivelIngles.activo", "=", 1)
                 ->where("nivelIngles.eliminado", "=", 0);
       });
+
       //Otros datos
       $alumnos->join(EntidadCurso::nombreTabla() . " as entidadCurso", function ($q) {
         $q->on("entidadCurso.idEntidad", "=", "entidad.id");
@@ -81,26 +88,27 @@ class Alumno extends Model {
       $alumnos->leftJoin("distrito as distritoAlumno", function ($q) {
         $q->on("distritoAlumno.codigo", "=", "entidad.codigoUbigeo");
       });
+
       $alumnos->select(DB::raw(
                       Alumno::nombreTabla() . ".*, 
                       entidad.*, 
                       ultimaClase.fechaFin as fechaUltimaClase, 
                       (SELECT COUNT(*) 
-                        FROM " . Clase::nombreTabla() . " 
+                        FROM " . $nombreTablaClase . " 
                         WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')
                       ) AS totalClases, 
                       (SELECT SUM(duracion) 
-                        FROM " . Clase::nombreTabla() . " 
+                        FROM " . $nombreTablaClase . " 
                         WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')
                       ) AS duracionTotalClases, 
                       (SELECT SUM(duracion) 
-                        FROM " . Clase::nombreTabla() . " 
+                        FROM " . $nombreTablaClase . " 
                         WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "') AND estado IN('" . EstadosClase::Realizada . "')
                       ) AS duracionTotalClasesRealizadas, 
                       (SELECT SUM(duracion)*100/(SELECT SUM(duracion) 
-                                                  FROM " . Clase::nombreTabla() . " 
+                                                  FROM " . $nombreTablaClase . " 
                                                   WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')) 
-                        FROM " . Clase::nombreTabla() . "
+                        FROM " . $nombreTablaClase . "
                         WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "') AND estado IN('" . EstadosClase::Realizada . "')
                       ) AS porcentajeAvanceClases, 
                       GROUP_CONCAT(curso.nombre SEPARATOR ', ') as curso, 
@@ -136,21 +144,23 @@ class Alumno extends Model {
 
   public static function obtenerXId($id, $simple = FALSE) {
     $alumno = Alumno::listar()->where("entidad.id", $id)->firstOrFail();
+    
     if (!$simple) {
+      $entidadNivelIngles = EntidadNivelIngles::obtenerXIdEntidad($id);
+      $entidadCurso = EntidadCurso::obtenerXIdEntidad($id);
+      
       $alumno->interesadoRelacionado = Interesado::obtenerXIdAlumno($id);
-      $alumno->horario = Horario::obtenerFormatoJson($id);
+      $alumno->horario = Horario::obtenerJsonXIdEntidad($id);
       $alumno->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($alumno->codigoUbigeo);
-      $alumno->numeroPeriodos = Clase::totalPeriodos($id);
-      $entidadNivelIngles = EntidadNivelIngles::obtenerXEntidad($id);
+      $alumno->numeroPeriodos = Clase::totalPeriodosXIdAlumno($id);
       $alumno->idNivelIngles = (isset($entidadNivelIngles) ? $entidadNivelIngles->idNivelIngles : NULL);
-      $entidadCurso = EntidadCurso::obtenerXEntidad($id);
       $alumno->idCurso = (isset($entidadCurso) ? $entidadCurso->idCurso : NULL);
-      $alumno->datosProximaClase = Clase::obtenerProximaClase($id);
-      if (isset($alumno->datosProximaClase)) {
-        $datosPago = PagoAlumno::obtenerXClase($id, $alumno->datosProximaClase->id);
-        $alumno->datosProximaClase->tiempos = (isset($datosPago) ? PagoAlumno::obtenerTiemposClasesXId($id, $datosPago->id) : NULL);
+      $alumno->proximaClase = Clase::obtenerProximaClaseXIdAlumno($id);
+      if (isset($alumno->proximaClase)) {
+        $datosPago = PagoAlumno::obtenerXClase($id, $alumno->proximaClase->id);
+        $alumno->proximaClase->tiempos = (isset($datosPago) ? PagoAlumno::obtenerTiemposClasesXId($id, $datosPago->id) : NULL);
       }
-      $alumno->profesorProximaClase = (isset($alumno->datosProximaClase) && Profesor::verificarExistencia($alumno->datosProximaClase->idProfesor) ? Profesor::obtenerXId($alumno->datosProximaClase->idProfesor) : NULL);
+      $alumno->profesorProximaClase = (isset($alumno->proximaClase) && Profesor::verificarExistencia($alumno->proximaClase->idProfesor) ? Profesor::obtenerXId($alumno->proximaClase->idProfesor) : NULL);
       $idAlumnoAnterior = Alumno::listar()->select("entidad.id")->where("entidad.id", "<", $id)->where("entidad.estado", $alumno->estado)->orderBy("entidad.id", "DESC")->first();
       $idAlumnoSiguiente = Alumno::listar()->select("entidad.id")->where("entidad.id", ">", $id)->where("entidad.estado", $alumno->estado)->first();
       $alumno->idAlumnoAnterior = (isset($idAlumnoAnterior) ? $idAlumnoAnterior->id : NULL);

@@ -16,7 +16,7 @@ class HorarioController extends Controller {
   public function obtener($idEntidad) {
     $datos = [];
     $datos["idEntidad"] = $idEntidad;
-    $datos["datosHorario"] = Horario::obtenerFormatoJson($idEntidad);
+    $datos["datosHorario"] = Horario::obtenerJsonXIdEntidad($idEntidad);
     return response()->json($datos, 200);
   }
 

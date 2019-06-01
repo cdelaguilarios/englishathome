@@ -50,9 +50,9 @@ class Postulante extends Model {
   public static function obtenerXId($id, $simple = FALSE) {
     $postulante = Postulante::listar()->where("entidad.id", $id)->firstOrFail();
     if (!$simple) {
-      $postulante->horario = Horario::obtenerFormatoJson($id);
+      $postulante->horario = Horario::obtenerJsonXIdEntidad($id);
       $postulante->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($postulante->codigoUbigeo);
-      $postulante->cursos = EntidadCurso::obtenerXEntidad($id, FALSE);
+      $postulante->cursos = EntidadCurso::obtenerXIdEntidad($id, FALSE);
       $idPostulanteAnterior = Postulante::listar()->select("entidad.id")->where("entidad.id", "<", $id)->where("entidad.estado", $postulante->estado)->orderBy("entidad.id", "DESC")->first();
       $idPostulanteSiguiente = Postulante::listar()->select("entidad.id")->where("entidad.id", ">", $id)->where("entidad.estado", $postulante->estado)->first();
       $postulante->idPostulanteAnterior = (isset($idPostulanteAnterior) ? $idPostulanteAnterior->id : NULL);
@@ -134,7 +134,7 @@ class Postulante extends Model {
     }
     if (is_null($idProfesor)) {
       $idEntidad = Entidad::registrar($datos, TiposEntidad::Profesor, EstadosProfesor::Registrado);
-      $entidadCursos = EntidadCurso::obtenerXEntidad($id, FALSE);
+      $entidadCursos = EntidadCurso::obtenerXIdEntidad($id, FALSE);
       if (!is_null($entidadCursos)) {
         $idsCursos = [];
         foreach ($entidadCursos as $entidadCurso) {

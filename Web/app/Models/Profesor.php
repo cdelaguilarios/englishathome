@@ -52,9 +52,9 @@ class Profesor extends Model {
                     ->where("entidad.id", $id)
                     ->where("entidad.eliminado", 0)->firstOrFail();
     if (!$simple) {
-      $profesor->horario = Horario::obtenerFormatoJson($id);
+      $profesor->horario = Horario::obtenerJsonXIdEntidad($id);
       $profesor->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($profesor->codigoUbigeo);
-      $profesor->cursos = EntidadCurso::obtenerXEntidad($id, FALSE);
+      $profesor->cursos = EntidadCurso::obtenerXIdEntidad($id, FALSE);
       $idProfesorAnterior = Profesor::listar()->select("entidad.id")->where("entidad.id", "<", $id)->where("entidad.estado", $profesor->estado)->orderBy("entidad.id", "DESC")->first();
       $idProfesorSiguiente = Profesor::listar()->select("entidad.id")->where("entidad.id", ">", $id)->where("entidad.estado", $profesor->estado)->first();
       $profesor->idProfesorAnterior = (isset($idProfesorAnterior) ? $idProfesorAnterior->id : NULL);
@@ -168,7 +168,7 @@ class Profesor extends Model {
     $preClases = Profesor::listarClasesBase($id, $idAlumno);
     $clases = $preClases->get();
     $alumno = Alumno::obtenerXId($idAlumno, TRUE);
-    $alumno->horario = Horario::obtenerFormatoJson($idAlumno);
+    $alumno->horario = Horario::obtenerJsonXIdEntidad($idAlumno);
     $alumno->totalClases = $clases->count();
     $alumno->duracionTotalClases = $clases->sum("duracion");
     $alumno->duracionTotalClasesRealizadas = $preClases->whereIn(Clase::nombreTabla() . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada])->get()->sum("duracion");

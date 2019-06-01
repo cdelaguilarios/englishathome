@@ -10,14 +10,14 @@ class EntidadNivelIngles extends Model {
   protected $table = "entidadNivelIngles";
   protected $fillable = ["idEntidad", "idNivelIngles"];
 
-  public static function nombreTabla() {
+  public static function nombreTabla()/* - */ {
     $modeloEntidadNivelIngles = new EntidadNivelIngles();
     $nombreTabla = $modeloEntidadNivelIngles->getTable();
     unset($modeloEntidadNivelIngles);
     return $nombreTabla;
   }
 
-  public static function obtenerXEntidad($idEntidad) {
+  public static function obtenerXIdEntidad($idEntidad)/* - */ {
     return EntidadNivelIngles::where("idEntidad", $idEntidad)->first();
   }
 

@@ -6,7 +6,7 @@ use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\EstadosAlumno;
 
-class BusquedaRequest extends Request {
+class BusquedaRequest extends Request/* - */ {
 
   public function authorize() {
     return true;
