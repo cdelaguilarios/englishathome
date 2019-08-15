@@ -8,7 +8,7 @@ $(document).ready(function () {
   cargarFormulario();
 });
 
-function cargarLista()/* - */ {
+/* - */function cargarLista() {
   urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
   urlPerfil = (typeof (urlPerfil) === "undefined" ? "" : urlPerfil);
   urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
@@ -242,19 +242,18 @@ function cargarListaClase() {
   }
 }
 function abrirModalListaClases(id) {
-  urlListarClases = (typeof (urlListarClases) === "undefined" ? "" : urlListarClases);
-  if (urlListarClases !== "") {
-    var tr = $("#" + id);
-    var fila = $("#tab-lista").DataTable().row(tr);
-    var datosAlumno = fila.data();
+  var tr = $("#" + id);
+  var fila = $("#tab-lista").DataTable().row(tr);
+  var datosAlumno = fila.data();
 
-    $.blockUI({message: "<h4>Cargando...</h4>"});
+  $.blockUI({message: "<h4>Cargando...</h4>"});
+  actualizarListaClases(datosAlumno.id, function () {
+    $("#mod-lista-clases").modal("show");
     $("#mod-lista-clases").find(".modal-title").html("Lista de clases " + (datosAlumno.sexo === "F" ? "de la alumna " : "del alumno ") + datosAlumno.nombre + " " + datosAlumno.apellido);
-    $("#tab-lista-clases").DataTable().ajax.url(urlListarClases.replace("/0", "/" + datosAlumno.id)).load(function () {
-      $("#mod-lista-clases").modal("show");
-      $("body").unblock();
-    });
-  }
+    $("body").unblock();
+  }, function () {
+    $("body").unblock();
+  });
 }
 
 function cargarFormularioComentarios() {

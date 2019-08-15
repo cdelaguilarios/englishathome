@@ -8,6 +8,7 @@ use Datatables;
 use App\Models\Pago;
 use App\Models\Clase;
 use App\Models\Reporte;
+use App\Helpers\Enum\EstadosClase;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Util\BusquedaRequest;
 use App\Http\Requests\Reporte\FormularioRequest;
@@ -98,7 +99,10 @@ class ReporteController extends Controller {
   }
 
   public function listarClases(BusquedaRequest $req) {
-    return Datatables::of(Clase::listar($req->all()))->filterColumn("nombreProfesor", function($q, $k) {
+    $nombreTabla = Clase::nombreTabla();
+    return Datatables::of(Clase::listar($req->all()))
+            ->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada])
+            ->filterColumn("nombreProfesor", function($q, $k) {
               $q->whereRaw('CONCAT(entidadProfesor.nombre, " ", entidadProfesor.apellido) like ?', ["%{$k}%"]);
             })->filterColumn("nombreAlumno", function($q, $k) {
               $q->whereRaw('CONCAT(entidadAlumno.nombre, " ", entidadAlumno.apellido) like ?', ["%{$k}%"]);

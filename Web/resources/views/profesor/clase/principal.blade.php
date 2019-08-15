@@ -1,4 +1,4 @@
-@include("util.filtroBusqueda", ["idSeccion" => "sec-clase-filtros-busqueda", "incluirEstadosClase" => 1, "incluirEstadosPago" => 1])
+@include("util.filtroBusqueda", ["idSeccion" => "sec-clase-filtros-busqueda", "incluirEstadosClase" => 0, "incluirEstadosPago" => 1])
 <div class="row">
   <div class="col-sm-12">
     <div id="sec-mensajes-clase"></div>

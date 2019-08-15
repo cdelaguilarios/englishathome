@@ -245,6 +245,7 @@ class Alumno extends Model {
   public static function sincronizarEstados() {
     Clase::sincronizarEstados();
     $alumnos = Alumno::listar()
+            ->whereIn("entidad.id", Clase::where("eliminado", 0)->groupBy("idAlumno")->lists("idAlumno"))//TODO:Cambiar
             ->whereNotIn("entidad.id", Clase::listarXEstados([EstadosClase::Programada, EstadosClase::PendienteConfirmar])->groupBy("idAlumno")->lists("idAlumno"))
             ->whereNotIn("entidad.estado", [EstadosAlumno::PorConfirmar, EstadosAlumno::StandBy, EstadosAlumno::Inactivo])
             ->get();

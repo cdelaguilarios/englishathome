@@ -33,16 +33,16 @@ class Clase extends Model {
     $nombreTabla = Clase::nombreTabla();
     return Clase::leftJoin(Entidad::nombreTabla() . " as entidadAlumno", $nombreTabla . ".idAlumno", "=", "entidadAlumno.id")
                     ->leftJoin(Entidad::nombreTabla() . " as entidadProfesor", function ($q) use($nombreTabla) {
-                      $q->on($nombreTabla . ".idProfesor", '=', "entidadProfesor.id");
-                      $q->on('entidadProfesor.eliminado', '=', "0");
+                      $q->on($nombreTabla . ".idProfesor", "=", "entidadProfesor.id");
+                      $q->on("entidadProfesor.eliminado", "=", DB::raw("0"));
                     })
                     ->leftJoin(Historial::nombreTabla() . " as historial", function ($q) use($nombreTabla) {
-                      $q->on($nombreTabla . ".id", '=', "historial.idClase");
-                      $q->on('historial.eliminado', '=', "0");
-                      $q->on('historial.enviarCorreo', '=', "1"); //TODO: Revisar porque historial.enviarCorreo debe ser igual a 1
+                      $q->on($nombreTabla . ".id", "=", "historial.idClase");
+                      $q->on("historial.eliminado", "=", DB::raw("0"));
+                      $q->on("historial.enviarCorreo", "=", DB::raw("1")); //TODO: Revisar porque historial.enviarCorreo debe ser igual a 1
                     })
                     ->leftJoin(PagoClase::nombreTabla() . " as pagoClase", $nombreTabla . ".id", "=", "pagoClase.idClase")
-                    ->where($nombreTabla . ".eliminado", 0)
+                    ->where($nombreTabla . ".eliminado", DB::raw("0"))
                     ->groupBy($nombreTabla . ".id")
                     ->distinct();
   }
@@ -125,7 +125,8 @@ class Clase extends Model {
     $nombreTabla = Clase::nombreTabla();
     $preClases = Clase::listarBase()
             ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"))
-            ->where($nombreTabla . ".idAlumno", $idAlumno);
+            ->where($nombreTabla . ".idAlumno", $idAlumno)
+            ->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
     if (!is_null($numeroPeriodo)) {
       $preClases->where($nombreTabla . ".numeroPeriodo", $numeroPeriodo)
               ->orderBy($nombreTabla . ".fechaInicio", "ASC");
@@ -146,7 +147,8 @@ class Clase extends Model {
 
   public static function listarXAlumnoNUEVO($idAlumno, $numeroPeriodo = NULL) {
     $nombreTabla = Clase::nombreTabla();
-    $clases = Clase::listarBase()->where($nombreTabla . ".idAlumno", $idAlumno);
+    $clases = Clase::listarBase()->where($nombreTabla . ".idAlumno", $idAlumno)
+            ->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
     if (!is_null($numeroPeriodo)) {
       $clases->where($nombreTabla . ".numeroPeriodo", $numeroPeriodo);
     }
@@ -197,6 +199,7 @@ class Clase extends Model {
     }
     $datos["estado"] = (isset($datos["estadoClase"]) ? $datos["estadoClase"] : NULL);
     Util::filtrosBusqueda($nombreTabla, $clases, "fechaInicio", $datos);
+    $clases->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
     return $clases;
   }
 
@@ -237,7 +240,8 @@ class Clase extends Model {
     $preClases = Clase::listarBase()
             ->select($nombreTabla . ".*", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor")
             ->where($nombreTabla . ".fechaInicio", ">=", $fechaInicio)
-            ->where($nombreTabla . ".fechaFin", "<=", $fechaFin);
+            ->where($nombreTabla . ".fechaFin", "<=", $fechaFin)
+            ->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
     if (!(is_null($datos["idAlumno"]) && is_null($datos["idProfesor"]))) {
       if ($datos["tipoEntidad"] !== "0") {
         $preClases->where($nombreTabla . ".idProfesor", $datos["idProfesor"]);

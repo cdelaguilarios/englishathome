@@ -24,7 +24,7 @@
 @endsection
 
 @section("content")
-@include("util.filtroBusqueda", ["incluirEstadosClase" => 1, "incluirClaseBox" => 1]) 
+@include("util.filtroBusqueda", ["incluirEstadosClase" => 0, "incluirClaseBox" => 1]) 
 <div class="row">
   <div class="col-sm-12">
     <div class="nav-tabs-custom">
