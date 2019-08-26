@@ -48,7 +48,7 @@ class FormularioRequest extends Request {
     if (!is_null($datos["idClase"]) && !Clase::verificarExistencia($datos["idAlumno"], $datos["idClase"])) {
       $reglasValidacion["claseNoValida"] = "required";
     }
-    $estados = EstadosClase::listarCambio();
+    $estados = EstadosClase::listarDisponibleCambio();
     if ((is_null($datos["idClase"]) || (!is_null($datos["idClase"]) && !is_null($datos["estado"]))) && !array_key_exists($datos["estado"], $estados)) {
       $reglasValidacion["estadoNoValido"] = "required";
     }

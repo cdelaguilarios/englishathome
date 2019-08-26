@@ -24,7 +24,7 @@
     </div>
     {{ Form::label("estado-actualizar-pago", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
-      {{ Form::select("estado", App\Helpers\Enum\EstadosPago::listarCambio(), null, ["id" => "estado-actualizar-pago", "class" => "form-control"]) }}
+      {{ Form::select("estado", App\Helpers\Enum\EstadosPago::listarDisponibleCambio(), null, ["id" => "estado-actualizar-pago", "class" => "form-control"]) }}
     </div>   
   </div>
   <div class="form-group">

@@ -29,7 +29,7 @@ class ActualizarEstadoRequest extends Request {
     if (!Clase::verificarExistencia($datos["idAlumno"], $datos["idClase"])) {
       $reglasValidacion["claseNoValida"] = "required";
     }
-    $estados = EstadosClase::listarCambio();
+    $estados = EstadosClase::listarDisponibleCambio();
     if (!array_key_exists($datos["estado"], $estados)) {
       $reglasValidacion["estadoNoValido"] = "required";
     }

@@ -30,7 +30,7 @@
         <h3 class="profile-username">Alumn{{ $alumno->sexo == "F" ? "a" : "o" }} {{ $alumno->nombre . " " .  $alumno->apellido }}</h3>
         <p class="text-muted">{{ $alumno->correoElectronico }}</p>
         <p>
-        @if(array_key_exists($alumno->estado, App\Helpers\Enum\EstadosAlumno::listarCambio()))
+        @if(array_key_exists($alumno->estado, App\Helpers\Enum\EstadosAlumno::listarDisponibleCambio()))
         <div class="sec-btn-editar-estado">
           <a href="javascript:void(0);" class="btn-editar-estado" data-id="{{ $alumno->id }}" data-estado="{{ $alumno->estado }}">
             <span class="label {{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][0] }}</span>
@@ -212,6 +212,6 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosAlumno::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosAlumno::listarDisponibleCambio(), null, ["id" => "sel-estados", "class" => "form-control"]) }}
 </div>
 @endsection

@@ -29,7 +29,7 @@ class Clase extends Model {
     return $nombreTabla;
   }
 
-  public static function listarBase() {
+  public static function listarBase()/* - */ {
     $nombreTabla = Clase::nombreTabla();
     return Clase::leftJoin(Entidad::nombreTabla() . " as entidadAlumno", $nombreTabla . ".idAlumno", "=", "entidadAlumno.id")
                     ->leftJoin(Entidad::nombreTabla() . " as entidadProfesor", function ($q) use($nombreTabla) {
@@ -39,8 +39,10 @@ class Clase extends Model {
                     ->leftJoin(Historial::nombreTabla() . " as historial", function ($q) use($nombreTabla) {
                       $q->on($nombreTabla . ".id", "=", "historial.idClase");
                       $q->on("historial.eliminado", "=", DB::raw("0"));
-                      $q->on("historial.enviarCorreo", "=", DB::raw("1")); //TODO: Revisar porque historial.enviarCorreo debe ser igual a 1
+                      //TODO: Las clases solo se notifican por medio de correo electrónico pero se debe considerar cambiar esta lógica de negocio debido a las nuevas reglas
+                      $q->on("historial.enviarCorreo", "=", DB::raw("1"));
                     })
+                    //TODO: Los pagos de una clase pueden ser más de uno
                     ->leftJoin(PagoClase::nombreTabla() . " as pagoClase", $nombreTabla . ".id", "=", "pagoClase.idClase")
                     ->where($nombreTabla . ".eliminado", DB::raw("0"))
                     ->groupBy($nombreTabla . ".id")
@@ -145,30 +147,27 @@ class Clase extends Model {
     return $clases;
   }
 
-  public static function listarXAlumnoNUEVO($idAlumno, $numeroPeriodo = NULL) {
+  public static function listarXAlumnoNUEVO($idAlumno, $numeroPeriodo = NULL)/* - */ {
     $nombreTabla = Clase::nombreTabla();
-    $clases = Clase::listarBase()->where($nombreTabla . ".idAlumno", $idAlumno)
+    $clases = Clase::listarBase()
+            ->where($nombreTabla . ".idAlumno", $idAlumno)
             ->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
     if (!is_null($numeroPeriodo)) {
       $clases->where($nombreTabla . ".numeroPeriodo", $numeroPeriodo);
     }
+
     //Pago del alumno
-    $clases->leftJoin(PagoAlumno::nombreTabla() . " as relPagoAlumno", function ($q) use ($nombreTabla) {
-      $q->on("relPagoAlumno.idAlumno", "=", $nombreTabla . ".idAlumno")
-              ->on("relPagoAlumno.idPago", "=", DB::raw("(SELECT idPago
-                                                            FROM " . PagoClase::nombreTabla() . "
-                                                            WHERE idClase = " . $nombreTabla . ".id
-                                                            LIMIT 1)"));
-    });
+    $clases->leftJoin(PagoAlumno::nombreTabla() . " as relPagoAlumno", DB::raw("relPagoAlumno.idAlumno=" . $nombreTabla . ".idAlumno 
+                                                                                  AND relPagoAlumno.idPago IN (SELECT idPago
+                                                                                                                FROM " . PagoClase::nombreTabla() . "
+                                                                                                                WHERE idClase = " . $nombreTabla . ".id)"), DB::raw(""), DB::raw(""));
     $clases->leftJoin(Pago::nombreTabla() . " as pagoAlumno", "pagoAlumno.id", "=", "relPagoAlumno.idPago");
+
     //Pago al profesor
-    $clases->leftJoin(PagoProfesor::nombreTabla() . " as relPagoProfesor", function ($q) use ($nombreTabla) {
-      $q->on("relPagoProfesor.idProfesor", "=", $nombreTabla . ".idProfesor")
-              ->on("relPagoProfesor.idPago", "=", DB::raw("(SELECT idPago
-                                                              FROM " . PagoClase::nombreTabla() . "
-                                                              WHERE idClase = " . $nombreTabla . ".id
-                                                              LIMIT 1)"));
-    });
+    $clases->leftJoin(PagoProfesor::nombreTabla() . " as relPagoProfesor", DB::raw("relPagoProfesor.idProfesor=" . $nombreTabla . ".idProfesor 
+                                                                                      AND relPagoProfesor.idPago IN (SELECT idPago
+                                                                                                                      FROM " . PagoClase::nombreTabla() . "
+                                                                                                                      WHERE idClase = " . $nombreTabla . ".id)"), DB::raw(""), DB::raw(""));
     $clases->leftJoin(Pago::nombreTabla() . " as pagoProfesor", "pagoProfesor.id", "=", "relPagoProfesor.idPago");
 
     $clases->orderBy($nombreTabla . ".numeroPeriodo", "ASC")->orderBy($nombreTabla . ".fechaInicio", "ASC");

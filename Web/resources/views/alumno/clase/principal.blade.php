@@ -36,7 +36,7 @@
   @include("alumno.util.docentesDisponibles", ["seccion" => "clase", "idCurso" => $idCurso])
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosClase::listarCambio(), null, ["id" => "sel-estados-clase", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosClase::listarDisponibleCambio(), null, ["id" => "sel-estados-clase", "class" => "form-control"]) }}
 </div>
 <script>
   var idAlumno = "{{ $idAlumno }}";
@@ -47,7 +47,7 @@
   var urlDatosClasesGrupo = "{{ route('alumnos.clases.datos.grupo', ['id' => $idAlumno]) }}";
   var urlTotalClasesXHorario = "{{ route('alumnos.clases.total.horario', ['id' => $idAlumno]) }}";
   var urlEliminarClase = "{{ route('alumnos.clases.eliminar', ['id' => $idAlumno, 'idClase' => 0]) }}";
-  var estadosClaseCambio = {!! json_encode(App\Helpers\Enum\EstadosClase::listarCambio()) !!};
+  var estadosClaseDisponibleCambio = {!! json_encode(App\Helpers\Enum\EstadosClase::listarDisponibleCambio()) !!};
   var estadoClaseRealizada = "{{ App\Helpers\Enum\EstadosClase::Realizada }}";
   var estadoClaseCancelada = "{{ App\Helpers\Enum\EstadosClase::Cancelada }}";
   var tipoCancelacionClaseAlumno = "{{ App\Helpers\Enum\TiposCancelacionClase::CancelacionAlumno }}";</script>

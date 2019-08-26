@@ -41,7 +41,7 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosPago::listarCambio(), null, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosPago::listarDisponibleCambio(), null, ["id" => "sel-estados-pago", "class" => "form-control"]) }}
 </div>
 <script>
   var urlListarPagos = "{{ route('profesores.pagos.listar', ['id' => $idProfesor]) }}";

@@ -46,14 +46,14 @@ class Alumno extends Model {
       $nombreTablaClase = Clase::nombreTabla();
 
       //Datos de la última clase
+      //TODO: La última clase puede determinarse por la fecha de confirmación. Revisar.
       $alumnos->leftJoin($nombreTablaClase . " as ultimaClase", function ($q) use ($nombreTablaClase) {
         $q->on("ultimaClase.idAlumno", "=", "entidad.id")
                 ->on("ultimaClase.id", "=", DB::raw("(SELECT id 
                                                         FROM " . $nombreTablaClase . "
                                                         WHERE idAlumno = entidad.id AND eliminado=0 
                                                         ORDER BY fechaFin DESC 
-                                                        LIMIT 1)"))
-                ->where("ultimaClase.eliminado", "=", 0);
+                                                        LIMIT 1)"));
       });
 
       //Datos del profesor de la próxima clase
@@ -88,7 +88,7 @@ class Alumno extends Model {
       $alumnos->leftJoin("distrito as distritoAlumno", function ($q) {
         $q->on("distritoAlumno.codigo", "=", "entidad.codigoUbigeo");
       });
-
+      //TODO: Revisar si el totalClases y duracionTotalClases son correctos
       $alumnos->select(DB::raw(
                       Alumno::nombreTabla() . ".*, 
                       entidad.*, 
@@ -103,13 +103,13 @@ class Alumno extends Model {
                       ) AS duracionTotalClases, 
                       (SELECT SUM(duracion) 
                         FROM " . $nombreTablaClase . " 
-                        WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "') AND estado IN('" . EstadosClase::Realizada . "')
+                        WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "') AND estado IN('" . EstadosClase::Realizada . "','" . EstadosClase::ConfirmadaProfesorAlumno . "')
                       ) AS duracionTotalClasesRealizadas, 
                       (SELECT SUM(duracion)*100/(SELECT SUM(duracion) 
                                                   FROM " . $nombreTablaClase . " 
                                                   WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')) 
                         FROM " . $nombreTablaClase . "
-                        WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "') AND estado IN('" . EstadosClase::Realizada . "')
+                        WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "') AND estado IN('" . EstadosClase::Realizada . "','" . EstadosClase::ConfirmadaProfesorAlumno . "')
                       ) AS porcentajeAvanceClases, 
                       GROUP_CONCAT(curso.nombre SEPARATOR ', ') as curso, 
                       distritoAlumno.distrito as distritoAlumno, 
@@ -144,11 +144,11 @@ class Alumno extends Model {
 
   public static function obtenerXId($id, $simple = FALSE) {
     $alumno = Alumno::listar()->where("entidad.id", $id)->firstOrFail();
-    
+
     if (!$simple) {
       $entidadNivelIngles = EntidadNivelIngles::obtenerXIdEntidad($id);
       $entidadCurso = EntidadCurso::obtenerXIdEntidad($id);
-      
+
       $alumno->interesadoRelacionado = Interesado::obtenerXIdAlumno($id);
       $alumno->horario = Horario::obtenerJsonXIdEntidad($id);
       $alumno->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($alumno->codigoUbigeo);
@@ -226,7 +226,7 @@ class Alumno extends Model {
     }
   }
 
-  public static function actualizarEstado($id, $estado) {
+  public static function actualizarEstado($id, $estado)/* - */ {
     Alumno::obtenerXId($id, TRUE);
     Entidad::actualizarEstado($id, $estado);
   }

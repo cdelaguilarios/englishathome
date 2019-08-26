@@ -21,10 +21,10 @@ function cargarLista() {
   urlPerfilProfesorPostulante = (typeof (urlPerfilProfesorPostulante) === "undefined" ? "" : urlPerfilProfesorPostulante);
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   estados = (typeof (estados) === "undefined" ? "" : estados);
-  estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
+  estadosDisponibleCambio = (typeof (estadosDisponibleCambio) === "undefined" ? "" : estadosDisponibleCambio);
   estadoProfesorRegistrado = (typeof (estadoProfesorRegistrado) === "undefined" ? "" : estadoProfesorRegistrado);
 
-  if (urlListar !== "" && urlPerfil !== "" && urlEditar !== "" && urlPerfilProfesorPostulante !== "" && urlEliminar !== "" && estados !== "" && estadosCambio !== "" && estadoProfesorRegistrado !== "") {
+  if (urlListar !== "" && urlPerfil !== "" && urlEditar !== "" && urlPerfilProfesorPostulante !== "" && urlEliminar !== "" && estados !== "" && estadosDisponibleCambio !== "" && estadoProfesorRegistrado !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -45,7 +45,7 @@ function cargarLista() {
           }},
         {data: "correoElectronico", name: "entidad.correoElectronico"},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
-            if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined) {
+            if (estados[d.estado] !== undefined && estadosDisponibleCambio[d.estado] !== undefined) {
               return '<div class="sec-btn-editar-estado" data-idtabla="tab-lista" data-idselestados="sel-estados" data-tipocambio="2">'+
                       '<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
             } else if (estados[d.estado] !== undefined) {
@@ -55,7 +55,7 @@ function cargarLista() {
             }
           }, className: "text-center"},
         {data: "fechaRegistro", name: "entidad.fechaRegistro", render: function (e, t, d, m) {
-            return formatoFecha(d.fechaRegistro, true);
+            return utilFechasHorarios.formatoFecha(d.fechaRegistro, true);
           }, className: "text-center"},
         {data: "id", name: "entidad.id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
@@ -66,7 +66,7 @@ function cargarLista() {
                 '<a href="' + (urlEditar.replace("/0", "/" + d.id)) + '" title="Editar datos"><i class="fa fa-pencil"></i></a>' +
                 '</li>' +
                 '<li>' +
-                '<a href="javascript:void(0);" title="Eliminar alumno" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este postulante?\', \'tab-lista\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminar.replace("/0", "/" + d.id))) + '">' +
+                '<a href="javascript:void(0);" title="Eliminar alumno" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este postulante?\', \'tab-lista\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminar.replace("/0", "/" + d.id))) + '">' +
                 '<i class="fa fa-trash"></i>' +
                 '</a>' +
                 '</li>' +
@@ -74,7 +74,7 @@ function cargarLista() {
           }, className: "text-center"}
       ],
       initComplete: function (s, j) {
-        establecerBotonRecargaTabla("tab-lista");
+        utilTablas.establecerBotonRecargaTabla("tab-lista");
       }
     });
   }
@@ -195,7 +195,7 @@ function cargarFormulario() {
 
     if (!formularioExternoPostulante) {
       var fechaNacimiento = $("#fecha-nacimiento").val();
-      establecerCalendario("fecha-nacimiento", false, true, false);
+      utilFechasHorarios.establecerCalendario("fecha-nacimiento", false, true, false);
       if (fechaNacimiento !== "") {
         var datFechaNacimiento = fechaNacimiento.split("/");
         $("#fecha-nacimiento").datepicker("setDate", (new Date(datFechaNacimiento[1] + "/" + datFechaNacimiento[0] + "/" + datFechaNacimiento[2])));
@@ -212,7 +212,7 @@ function cargarFormulario() {
     $("input[name='horario']").change(function () {
       if (urlActualizarHorario !== "" && $(this).val() !== "") {
         $.blockUI({message: "<h4>Actualizando horario...</h4>"});
-        llamadaAjax(urlActualizarHorario, "POST", {"horario": $(this).val()}, true,
+        util.llamadaAjax(urlActualizarHorario, "POST", {"horario": $(this).val()}, true,
             function (d) {
               $("body").unblock({
                 onUnblock: function () {

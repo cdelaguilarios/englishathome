@@ -16,10 +16,10 @@ $(document).ready(function () {
   urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
 
   estados = (typeof (estados) === "undefined" ? "" : estados);
-  estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
+  estadosDisponibleCambio = (typeof (estadosDisponibleCambio) === "undefined" ? "" : estadosDisponibleCambio);
   estadoCuotaProgramada = (typeof (estadoCuotaProgramada) === "undefined" ? "" : estadoCuotaProgramada);
 
-  if (urlListar !== "" && urlPerfil !== "" && urlEditar !== "" && urlEliminar !== "" && urlPerfilProfesor !== "" && estados !== "" && estadosCambio !== "" && estadoCuotaProgramada !== "") {
+  if (urlListar !== "" && urlPerfil !== "" && urlEditar !== "" && urlEliminar !== "" && urlPerfilProfesor !== "" && estados !== "" && estadosDisponibleCambio !== "" && estadoCuotaProgramada !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -43,10 +43,10 @@ $(document).ready(function () {
           }, "className": "text-center not-mobile"},
         {data: "nombre", name: "entidad.nombre", render: function (e, t, d, m) {
             return '<a href="' + (urlPerfil.replace("/0", "/" + d.id)) + '">' + (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "") + '</a>' +
-                    (d.distritoAlumno ? '<br/><span class="text-info"><i class="fa fa-street-view"></i> ' + letraCapital(d.distritoAlumno) + '</span>' : '') +
+                    (d.distritoAlumno ? '<br/><span class="text-info"><i class="fa fa-street-view"></i> ' + util.letraCapital(d.distritoAlumno) + '</span>' : '') +
                     (d.nombreProfesor ?
                             '<br/><br/>Profesor(a): <a href="' + (urlPerfilProfesor.replace("/0", "/" + d.idProfesor)) + '">' + (d.nombreProfesor !== null ? d.nombreProfesor : "") + " " + (d.apellidoProfesor !== null ? d.apellidoProfesor : "") + '</a>' +
-                            (d.distritoProfesor ? '<br/><span class="text-info"><i class="fa fa-street-view"></i> ' + letraCapital(d.distritoProfesor) + '</span>' : '')
+                            (d.distritoProfesor ? '<br/><span class="text-info"><i class="fa fa-street-view"></i> ' + util.letraCapital(d.distritoProfesor) + '</span>' : '')
                             : '');
           }},
         {data: "porcentajeAvanceClases", name: "porcentajeAvanceClases", width: "25%", render: function (e, t, d, m) {
@@ -57,7 +57,7 @@ $(document).ready(function () {
                       '<a href="javascript:void(0);" onclick="abrirModalListaClases(' + d.idEntidad + ');" title="Ver lista de clases" class="btn-ver-lista-clases">' +
                       '<i class="fa fa-eye"></i>' +
                       '</a>' +
-                      '<small class="pull-right">' + redondear(porcentajeAvance, 2) + ' %</small>' +
+                      '<small class="pull-right">' + util.redondear(porcentajeAvance, 2) + ' %</small>' +
                       '</div>' +
                       '<div class="progress xs">' +
                       '<div class="progress-bar progress-bar-green" style="width: ' + porcentajeAvance + '%;"></div>' +
@@ -65,8 +65,8 @@ $(document).ready(function () {
                       '<div class="clearfix">' +
                       '<span class="pull-left">' +
                       '<span class="text-green" data-toggle="tooltip" title="" data-original-title="Horas realizadas">' +
-                      '<i class="fa fa-clock-o"></i> ' + formatoHora(d.duracionTotalClasesRealizadas) +
-                      '</span>  de  <span class="text-info" data-toggle="tooltip" title="" data-original-title="Horas programadas"><i class="fa fa-clock-o"></i> ' + formatoHora(d.duracionTotalClases) + '</span>' +
+                      '<i class="fa fa-clock-o"></i> ' + utilFechasHorarios.formatoHora(d.duracionTotalClasesRealizadas) +
+                      '</span>  de  <span class="text-info" data-toggle="tooltip" title="" data-original-title="Horas programadas"><i class="fa fa-clock-o"></i> ' + utilFechasHorarios.formatoHora(d.duracionTotalClases) + '</span>' +
                       '</span>' +
                       '</div>';
             } else {
@@ -78,26 +78,26 @@ $(document).ready(function () {
           }, "className": "not-mobile"},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
             var estado = '';
-            if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined) {
+            if (estados[d.estado] !== undefined && estadosDisponibleCambio[d.estado] !== undefined) {
               estado = '<div class="sec-btn-editar-estado" data-idtabla="tab-lista" data-idselestados="sel-estados" data-tipocambio="1">' +
                       '<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '">' +
                       '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>' +
                       '</a>' +
                       '</div>' +
-                      (d.estado === estadoCuotaProgramada && d.fechaUltimaClase ? '<small class="text-red">(Última clase: ' + formatoFecha(d.fechaUltimaClase) + ')</small><br/>' : '');
+                      (d.estado === estadoCuotaProgramada && d.fechaUltimaClase ? '<small class="text-red">(Última clase: ' + utilFechasHorarios.formatoFecha(d.fechaUltimaClase) + ')</small><br/>' : '');
             } else if (estados[d.estado] !== undefined) {
               estado = '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span><br/>' +
-                      (d.estado === estadoCuotaProgramada && d.fechaUltimaClase ? '<small class="text-red">(Última clase: ' + formatoFecha(d.fechaUltimaClase) + ')</small><br/>' : '');
+                      (d.estado === estadoCuotaProgramada && d.fechaUltimaClase ? '<small class="text-red">(Última clase: ' + utilFechasHorarios.formatoFecha(d.fechaUltimaClase) + ')</small><br/>' : '');
             }
             return estado + '<span class="text-info">(Nivel ' + d.nivelIngles + ')</span>';
           }, "className": "text-center not-mobile"},
         {data: "totalPagos", name: "totalPagos", render: function (e, t, d, m) {
-            return 'S/. ' + redondear(d.pagoAcumulado, 2) + '<br/>' +
+            return 'S/. ' + util.redondear(d.pagoAcumulado, 2) + '<br/>' +
                     '<span class="text-info">(' + d.totalPagos + ' pago' + (d.totalPagos > 1 ? 's' : '') + ')</span>';
           }, "className": "text-center not-mobile"},
         {data: "fechaRegistro", name: "entidad.fechaRegistro", width: "12%", render: function (e, t, d, m) {
-            return formatoFecha(d.fechaRegistro, true) + '<br/>' +
-                    '<span class="text-info">(Inicio de clases:<br/>' + formatoFecha(d.fechaInicioClase) + ')</span>';
+            return utilFechasHorarios.formatoFecha(d.fechaRegistro, true) + '<br/>' +
+                    '<span class="text-info">(Inicio de clases:<br/>' + utilFechasHorarios.formatoFecha(d.fechaInicioClase) + ')</span>';
           }, "className": "text-center not-mobile"},
         {data: "id", name: "entidad.id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
@@ -108,7 +108,7 @@ $(document).ready(function () {
                     '<a href="' + (urlEditar.replace("/0", "/" + d.id)) + '" title="Editar datos"><i class="fa fa-pencil"></i></a>' +
                     '</li>' +
                     '<li>' +
-                    '<a href="javascript:void(0);" title="Eliminar alumno" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este alumno?\', \'tab-lista\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminar.replace("/0", "/" + d.id))) + '">' +
+                    '<a href="javascript:void(0);" title="Eliminar alumno" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este alumno?\', \'tab-lista\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminar.replace("/0", "/" + d.id))) + '">' +
                     '<i class="fa fa-trash"></i>' +
                     '</a>' +
                     '</li>' +
@@ -116,8 +116,8 @@ $(document).ready(function () {
           }, className: "text-center"}
       ],
       initComplete: function (s, j) {
-        establecerBotonRecargaTabla("tab-lista");
-        establecerCabecerasBusquedaTabla("tab-lista");
+        utilTablas.establecerBotonRecargaTabla("tab-lista");
+        utilTablas.establecerCabecerasBusquedaTabla("tab-lista");
       },
       drawCallback: function (s) {
         CargarHorarios();
@@ -157,7 +157,7 @@ function CargarHorarios() {
       }
     });
     if (ids.length > 0) {
-      llamadaAjax(urlHorarioMultiple, "POST", {"idsEntidades": ids}, true, function (datos) {
+      util.llamadaAjax(urlHorarioMultiple, "POST", {"idsEntidades": ids}, true, function (datos) {
         datosHorariosCargados = datosHorariosCargados.concat(datos);
         MostrarHorarios();
       });
@@ -168,7 +168,7 @@ function CargarHorarios() {
 }
 function MostrarHorarios() {
   datosHorariosCargados.forEach(function (d) {
-    $("#sec-info-horario-" + d.idEntidad).html(obtenerTextoHorario($.parseJSON(d.datosHorario)));
+    $("#sec-info-horario-" + d.idEntidad).html(horario.obtenerTexto($.parseJSON(d.datosHorario)));
   });
 }
 
@@ -204,15 +204,15 @@ function cargarListaClase() {
               fechaConfirmacionIni = new Date(d.fechaConfirmacion);
               fechaConfirmacionIni.setSeconds(fechaConfirmacionIni.getSeconds() - d.duracion);
             }
-            return '<b>Fecha:</b> ' + formatoFecha(d.fechaInicio) + ' - De ' + formatoFecha(d.fechaInicio, false, true) + ' a ' + formatoFecha(d.fechaFin, false, true) + '<br/>' +
-                    (d.fechaConfirmacion !== null ? '<b>Fecha de confirmación:</b> ' + formatoFecha(d.fechaConfirmacion) + ' - De ' + formatoFecha(fechaConfirmacionIni, false, true) + ' a ' + formatoFecha(d.fechaConfirmacion, false, true) + '<br/>' : '') +
-                    '<b>Duración:</b> ' + formatoHora(d.duracion) + '<br/>' +
+            return '<b>Fecha:</b> ' + utilFechasHorarios.formatoFecha(d.fechaInicio) + ' - De ' + utilFechasHorarios.formatoFecha(d.fechaInicio, false, true) + ' a ' + utilFechasHorarios.formatoFecha(d.fechaFin, false, true) + '<br/>' +
+                    (d.fechaConfirmacion !== null ? '<b>Fecha de confirmación:</b> ' + utilFechasHorarios.formatoFecha(d.fechaConfirmacion) + ' - De ' + utilFechasHorarios.formatoFecha(fechaConfirmacionIni, false, true) + ' a ' + utilFechasHorarios.formatoFecha(d.fechaConfirmacion, false, true) + '<br/>' : '') +
+                    '<b>Duración:</b> ' + utilFechasHorarios.formatoHora(d.duracion) + '<br/>' +
                     (d.idHistorial !== null ? '<b>Notificar:</b> ' + ' <i class="fa fa-check icon-notificar-clase"></i>' + '<br/>' : '') +
                     '<b>Profesor(a):</b> ' + (d.idProfesor !== null ? '<a href="' + (urlPerfilProfesor.replace("/0", "/" + d.idProfesor)) + '">' + (d.nombreProfesor !== null ? d.nombreProfesor : "") + " " + (d.apellidoProfesor !== null ? d.apellidoProfesor : "") + '</a>' : 'Sin profesor asignad');
           }},
         {data: "estado", name: "estado", width: "13%", render: function (e, t, d, m) {
             var estado = '';
-            if (estadosClase[d.estado] !== undefined && estadosClaseCambio[d.estado] !== undefined) {
+            if (estadosClase[d.estado] !== undefined && estadosClaseDisponibleCambio[d.estado] !== undefined) {
               estado = '<div class="sec-btn-editar-estado" data-idtabla="tab-lista-clases" data-idselestados="sel-estados-clase" data-tipocambio="1">' +
                       '<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '">' +
                       '<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">' + estadosClase[d.estado][0] + '</span>' +
@@ -235,8 +235,8 @@ function cargarListaClase() {
           }, "className": "not-mobile"}
       ],
       initComplete: function (s, j) {
-        establecerBotonRecargaTabla("tab-lista-clases");
-        establecerCabecerasBusquedaTabla("tab-lista-clases");
+        utilTablas.establecerBotonRecargaTabla("tab-lista-clases");
+        utilTablas.establecerCabecerasBusquedaTabla("tab-lista-clases");
       }
     });
   }
@@ -267,7 +267,7 @@ function cargarFormularioComentarios() {
       if (confirm("¿Está seguro que desea guardar los cambios de estos comentarios?")) {
         $.blockUI({message: "<h4>Guardando...</h4>"});
         var datos = procesarDatosFormulario(f);
-        llamadaAjax($(f).attr("action"), "POST", datos, true,
+        util.llamadaAjax($(f).attr("action"), "POST", datos, true,
                 function (d) {
                   $("body").unblock({
                     onUnblock: function () {
@@ -432,7 +432,7 @@ function cargarFormulario() {
 
     if (!($("input[name='idInteresado']").length > 0 && $("input[name='idInteresado']").val() !== "")) {
       var fechaNacimiento = $("#fecha-nacimiento").val();
-      establecerCalendario("fecha-nacimiento", false, true, false);
+      utilFechasHorarios.establecerCalendario("fecha-nacimiento", false, true, false);
       if (fechaNacimiento !== "") {
         if (Date.parse(fechaNacimiento)) {
           var datFechaNacimiento = fechaNacimiento.split("/");
@@ -444,7 +444,7 @@ function cargarFormulario() {
     }
 
     var fechaInicioClase = $("#fecha-inicio-clase").val();
-    establecerCalendario("fecha-inicio-clase", false, false, false);
+    utilFechasHorarios.establecerCalendario("fecha-inicio-clase", false, false, false);
     if (fechaInicioClase !== "") {
       if (Date.parse(fechaInicioClase)) {
         var datFechaInicioClase = fechaInicioClase.split("/");
@@ -455,7 +455,7 @@ function cargarFormulario() {
     }
 
     var numeroHorasClase = $("input[name='auxNumeroHorasClase']").val();
-    establecerCampoDuracion("numero-horas-clase", (numeroHorasClase !== "" ? numeroHorasClase : 7200));
+    utilFechasHorarios.establecerCampoDuracion("numero-horas-clase", (numeroHorasClase !== "" ? numeroHorasClase : 7200));
 
     $("#direccion").focusout(verificarDatosBusquedaMapa);
     $("input[name='codigoUbigeo']").change(verificarDatosBusquedaMapa);
@@ -463,7 +463,7 @@ function cargarFormulario() {
     $("input[name='horario']").change(function () {
       if (urlActualizarHorario !== "" && $(this).val() !== "") {
         $.blockUI({message: "<h4>Actualizando horario...</h4>"});
-        llamadaAjax(urlActualizarHorario, "POST", {"horario": $(this).val()}, true,
+        util.llamadaAjax(urlActualizarHorario, "POST", {"horario": $(this).val()}, true,
                 function (d) {
                   $("body").unblock({
                     onUnblock: function () {

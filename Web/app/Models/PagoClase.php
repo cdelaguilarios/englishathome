@@ -10,7 +10,7 @@ class PagoClase extends Model {
   protected $table = "pagoClase";
   protected $fillable = ["idPago", "idClase"];
 
-  public static function nombreTabla() {
+  public static function nombreTabla()/* - */ {
     $modeloPagoClase = new PagoClase();
     $nombreTabla = $modeloPagoClase->getTable();
     unset($modeloPagoClase);

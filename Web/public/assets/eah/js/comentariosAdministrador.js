@@ -10,7 +10,7 @@ function  cargarSeccionComentariosAdministrador() {
         $.blockUI({message: "<h4>Guardando...</h4>"});
         CKEDITOR.instances["comentarios-administrador"].updateElement();
         var datos = procesarDatosFormulario(f);
-        llamadaAjax($(f).attr("action"), "POST", datos, true,
+        util.llamadaAjax($(f).attr("action"), "POST", datos, true,
             function (d) {
               $("body").unblock({
                 onUnblock: function () {

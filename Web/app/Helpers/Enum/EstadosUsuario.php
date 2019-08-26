@@ -30,16 +30,16 @@ class EstadosUsuario {
     return $estadosBusqueda;
   }
 
-  public static function listarCambio() {
+  public static function listarDisponibleCambio() {
     $estadosBusqueda = EstadosUsuario::listarBusqueda();
     $estadosDisponibleCambio = [EstadosUsuario::Activo, EstadosUsuario::Inactivo];
-    $estadosCambio = [];
+    $estadosDisponibleCambioSel = [];
     foreach ($estadosBusqueda as $k => $v) {
       if (in_array($k, $estadosDisponibleCambio)) {
-        $estadosCambio[$k] = $v;
+        $estadosDisponibleCambioSel[$k] = $v;
       }
     }
-    return $estadosCambio;
+    return $estadosDisponibleCambioSel;
   }
 
 }

@@ -29,7 +29,7 @@
         <h3 class="profile-username">Postulante {{ $postulante->nombre . " " .  $postulante->apellido }}</h3>
         <p class="text-muted">{{ $postulante->correoElectronico }}</p>
         <p>
-        @if(array_key_exists($postulante->estado, App\Helpers\Enum\EstadosPostulante::listarCambio()))
+        @if(array_key_exists($postulante->estado, App\Helpers\Enum\EstadosPostulante::listarDisponibleCambio()))
         <div class="sec-btn-editar-estado">
           <a href="javascript:void(0);" class="btn-editar-estado" data-id="{{ $postulante->id }}" data-estado="{{ $postulante->estado }}">
             <span class="label {{ App\Helpers\Enum\EstadosPostulante::listar()[$postulante->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosPostulante::listar()[$postulante->estado][0] }}</span>
@@ -150,6 +150,6 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosPostulante::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosPostulante::listarDisponibleCambio(), null, ["id" => "sel-estados", "class" => "form-control"]) }}
 </div>
 @endsection

@@ -60,12 +60,12 @@ class AlumnoController extends Controller {
                                       WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "'))/ 3600 like ?", ["%{$k}%"])
                       ->orWhereRaw("(SELECT SUM(duracion) 
                                       FROM " . Clase::nombreTabla() . " 
-                                      WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')AND estado IN('" . EstadosClase::Realizada . "'))/ 3600 like ?", ["%{$k}%"])
+                                      WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')AND estado IN('" . EstadosClase::Realizada . "','" . EstadosClase::ConfirmadaProfesorAlumno . "'))/ 3600 like ?", ["%{$k}%"])
                       ->orWhereRaw("(SELECT SUM(duracion)*100/(SELECT SUM(duracion) 
                                                                  FROM " . Clase::nombreTabla() . " 
                                                                  WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')) 
                                       FROM " . Clase::nombreTabla() . " 
-                                      WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')AND estado IN('" . EstadosClase::Realizada . "')) like ?", ["%{$k}%"]);
+                                      WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')AND estado IN('" . EstadosClase::Realizada . "','" . EstadosClase::ConfirmadaProfesorAlumno . "')) like ?", ["%{$k}%"]);
             })->filterColumn("curso", function($q, $k) {
               $q->whereRaw("curso.nombre like ?", ["%{$k}%"]);
             })->filterColumn("entidad.estado", function($q, $k) {
@@ -207,7 +207,7 @@ class AlumnoController extends Controller {
     return redirect(route("alumnos.editar", ["id" => $id]));
   }
 
-  public function actualizarEstado($id, ActualizarEstadoRequest $req) {
+  public function actualizarEstado($id, ActualizarEstadoRequest $req)/* - */ {
     try {
       $datos = $req->all();
       Alumno::actualizarEstado($id, $datos["estado"]);

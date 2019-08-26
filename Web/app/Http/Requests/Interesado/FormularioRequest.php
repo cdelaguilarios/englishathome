@@ -49,7 +49,7 @@ class FormularioRequest extends Request {
     if (!is_null($datos["codigoUbigeo"]) && !ReglasValidacion::validarUbigeo($datos["codigoDepartamento"], $datos["codigoProvincia"], $datos["codigoDistrito"], $datos["codigoUbigeo"]))
       $reglasValidacion["ubigeoNoValido"] = "required";
 
-    $estados = EstadosInteresado::listarCambio();
+    $estados = EstadosInteresado::listarDisponibleCambio();
     if (!is_null($datos["estado"]) && !array_key_exists($datos["estado"], $estados))
       $reglasValidacion["estadoNoValido"] = "required";
 

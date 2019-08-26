@@ -1,14 +1,14 @@
 function cargarFiltrosBusqueda(funcionBusquedaCambio) {
   if (funcionBusquedaCambio !== undefined) {
-    establecerCalendario("bus-fecha-dia", false, false, false, funcionBusquedaCambio);
-    establecerCalendario("bus-fecha-mes", false, false, false, funcionBusquedaCambio, true);
-    establecerCalendario("bus-fecha-anho", false, false, false, funcionBusquedaCambio, false, true);
-    establecerCalendario("bus-fecha-dia-inicio", false, false, false, funcionBusquedaCambio);
-    establecerCalendario("bus-fecha-dia-fin", false, false, false, funcionBusquedaCambio);
-    establecerCalendario("bus-fecha-mes-inicio", false, false, false, funcionBusquedaCambio, true);
-    establecerCalendario("bus-fecha-mes-fin", false, false, false, funcionBusquedaCambio, true);
-    establecerCalendario("bus-fecha-anho-inicio", false, false, false, funcionBusquedaCambio, false, true);
-    establecerCalendario("bus-fecha-anho-fin", false, false, false, funcionBusquedaCambio, false, true);
+    utilFechasHorarios.establecerCalendario("bus-fecha-dia", false, false, false, funcionBusquedaCambio);
+    utilFechasHorarios.establecerCalendario("bus-fecha-mes", false, false, false, funcionBusquedaCambio, true);
+    utilFechasHorarios.establecerCalendario("bus-fecha-anho", false, false, false, funcionBusquedaCambio, false, true);
+    utilFechasHorarios.establecerCalendario("bus-fecha-dia-inicio", false, false, false, funcionBusquedaCambio);
+    utilFechasHorarios.establecerCalendario("bus-fecha-dia-fin", false, false, false, funcionBusquedaCambio);
+    utilFechasHorarios.establecerCalendario("bus-fecha-mes-inicio", false, false, false, funcionBusquedaCambio, true);
+    utilFechasHorarios.establecerCalendario("bus-fecha-mes-fin", false, false, false, funcionBusquedaCambio, true);
+    utilFechasHorarios.establecerCalendario("bus-fecha-anho-inicio", false, false, false, funcionBusquedaCambio, false, true);
+    utilFechasHorarios.establecerCalendario("bus-fecha-anho-fin", false, false, false, funcionBusquedaCambio, false, true);
     $("#bus-estado-clase, #bus-estado-pago, #bus-tipo-pago, #bus-tipo-fecha").change(funcionBusquedaCambio);
     $("#bus-tipo-fecha").change(function () {
       $('[id*="sec-bus-fecha-"]').hide();

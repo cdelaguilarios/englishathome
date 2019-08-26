@@ -13,10 +13,10 @@ function cargarLista() {
   urlPerfilAlumnoInteresado = (typeof (urlPerfilAlumnoInteresado) === "undefined" ? "" : urlPerfilAlumnoInteresado);
 
   estados = (typeof (estados) === "undefined" ? "" : estados);
-  estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
+  estadosDisponibleCambio = (typeof (estadosDisponibleCambio) === "undefined" ? "" : estadosDisponibleCambio);
   estadoAlumnoRegistrado = (typeof (estadoAlumnoRegistrado) === "undefined" ? "" : estadoAlumnoRegistrado);
 
-  if (urlListar !== "" && urlEditar !== "" && urlCotizar !== "" && urlEliminar !== "" && urlPerfilAlumnoInteresado !== "" && estados !== "" && estadosCambio !== "" && estadoAlumnoRegistrado !== "") {
+  if (urlListar !== "" && urlEditar !== "" && urlCotizar !== "" && urlEliminar !== "" && urlPerfilAlumnoInteresado !== "" && estados !== "" && estadosDisponibleCambio !== "" && estadoAlumnoRegistrado !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -46,7 +46,7 @@ function cargarLista() {
             return (d.correoElectronico !== null ? '<b>Correo electrónico:</b> ' + d.correoElectronico : '') + (d.telefono !== null ? (d.correoElectronico !== null ? '<br/>' : '') + '<b>Teléfono:</b> ' + d.telefono : '');
           }, "className": "not-mobile"},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
-            if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined) {
+            if (estados[d.estado] !== undefined && estadosDisponibleCambio[d.estado] !== undefined) {
               return '<div class="sec-btn-editar-estado" data-idtabla="tab-lista" data-idselestados="sel-estados" data-tipocambio="2">' +
                       '<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '">' +
                       '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>' +
@@ -60,7 +60,7 @@ function cargarLista() {
             }
           }, className: "text-center not-mobile"},
         {data: "fechaRegistro", name: "entidad.fechaRegistro", render: function (e, t, d, m) {
-            return formatoFecha(d.fechaRegistro, true);
+            return utilFechasHorarios.formatoFecha(d.fechaRegistro, true);
           }, className: "text-center not-mobile"},
         {data: "id", name: "entidad.id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
@@ -71,7 +71,7 @@ function cargarLista() {
                     '<a href="' + (urlCotizar.replace("/0", "/" + d.id)) + '" title="Enviar cotización"><i class="fa fa-envelope"></i></a>' +
                     '</li>' +
                     '<li>' +
-                    '<a href="javascript:void(0);" title="Eliminar interesado" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de esta persona interesada?\', \'tab-lista\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminar.replace("/0", "/" + d.id))) + '">' +
+                    '<a href="javascript:void(0);" title="Eliminar interesado" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de esta persona interesada?\', \'tab-lista\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminar.replace("/0", "/" + d.id))) + '">' +
                     '<i class="fa fa-trash"></i>' +
                     '</a>' +
                     '</li>' +
@@ -79,8 +79,8 @@ function cargarLista() {
           }, className: "text-center"}
       ],
       initComplete: function (s, j) {
-        establecerBotonRecargaTabla("tab-lista");
-        establecerCabecerasBusquedaTabla("tab-lista");
+        utilTablas.establecerBotonRecargaTabla("tab-lista");
+        utilTablas.establecerCabecerasBusquedaTabla("tab-lista");
       }
     });
   }
@@ -225,7 +225,7 @@ function cargarFormularioCotizacion() {
         $.blockUI({message: "<h4>Enviando cotización...</h4>"});
         if ($("#correo-cotizacion-prueba").val() !== "") {
           var datos = procesarDatosFormulario(f);
-          llamadaAjax($(f).attr("action"), "POST", datos, true,
+          util.llamadaAjax($(f).attr("action"), "POST", datos, true,
                   function (d) {
                     $("body").unblock({
                       onUnblock: function () {
@@ -272,7 +272,7 @@ function cargarFormularioCotizacion() {
     urlBaseImagen = (typeof (urlBaseImagen) === "undefined" ? "" : urlBaseImagen);
     if (urlDatosCurso !== "" && urlBaseImagen !== "") {
       $.blockUI({message: "<h4>Cargando...</h4>"});
-      llamadaAjax(urlDatosCurso.replace("/0", "/" + $(this).val()), "POST", {}, true,
+      util.llamadaAjax(urlDatosCurso.replace("/0", "/" + $(this).val()), "POST", {}, true,
               function (d) {
                 var imagenCurso = (d.imagen !== null ? urlBaseImagen.replace(encodeURI("[RUTA_IMAGEN]"), d.imagen) : "");
                 $("input[name='imagenCurso']").val(imagenCurso);

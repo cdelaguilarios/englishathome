@@ -31,16 +31,16 @@ class EstadosPostulante {
     return $estadosBusqueda;
   }
 
-  public static function listarCambio() {
+  public static function listarDisponibleCambio() {
     $estadosBusqueda = EstadosPostulante::listarBusqueda();
     $estadosDisponibleCambio = [EstadosPostulante::Registrado, EstadosPostulante::RegistradoExterno, EstadosPostulante::Activo, EstadosPostulante::Inactivo, EstadosPostulante::Vetado];
-    $estadosCambio = [];
+    $estadosDisponibleCambioSel = [];
     foreach ($estadosBusqueda as $k => $v) {
       if (in_array($k, $estadosDisponibleCambio)) {
-        $estadosCambio[$k] = $v;
+        $estadosDisponibleCambioSel[$k] = $v;
       }
     }
-    return $estadosCambio;
+    return $estadosDisponibleCambioSel;
   }
 
 }

@@ -10,7 +10,7 @@
   var urlPerfilAlumnoInteresado = "{{ route('interesados.perfil.alumno', ['id' => 0]) }}";
   
   var estados = {!! json_encode(App\Helpers\Enum\EstadosInteresado::listar()) !!};
-  var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosInteresado::listarCambio()) !!};
+  var estadosDisponibleCambio = {!! json_encode(App\Helpers\Enum\EstadosInteresado::listarDisponibleCambio()) !!};
   var estadoAlumnoRegistrado = "{{ App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/interesado.js") }}"></script>
@@ -64,6 +64,6 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosInteresado::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('interesados.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosInteresado::listar())]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosInteresado::listarDisponibleCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('interesados.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosInteresado::listar())]) }}
 </div>
 @endsection

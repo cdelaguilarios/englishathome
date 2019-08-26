@@ -17,7 +17,7 @@ class PagoAlumno extends Model {
   protected $table = "pagoAlumno";
   protected $fillable = ["idAlumno", "idPago"];
 
-  public static function nombreTabla() {
+  public static function nombreTabla()/* - */ {
     $modeloPagoAlumno = new PagoAlumno();
     $nombreTabla = $modeloPagoAlumno->getTable();
     unset($modeloPagoAlumno);

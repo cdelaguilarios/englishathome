@@ -72,7 +72,7 @@
     <div class="box box-info">
       <div class="box-header with-border">
         <h3 class="box-title">Variables de configuración</h3>
-        <button class="btn btn-default btn-clean pull-right" onclick="limpiarCampos();" type="button">Limpiar campos</button>
+        <button class="btn btn-default btn-clean pull-right" onclick="utilFormularios.limpiarCampos();" type="button">Limpiar campos</button>
       </div>
       <div class="box-body">
         @foreach($variablesSistema as $variableSistema)

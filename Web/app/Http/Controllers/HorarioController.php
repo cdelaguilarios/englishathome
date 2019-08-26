@@ -20,7 +20,7 @@ class HorarioController extends Controller {
     return response()->json($datos, 200);
   }
 
-  public function obtenerMultiple(HorarioMultipleRequest $req) {
+  public function obtenerMultiple(HorarioMultipleRequest $req)/* - */ {
     return response()->json(Horario::obtenerMultiple($req->all()), 200);
   }
 

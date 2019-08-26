@@ -13,7 +13,7 @@ class Curso extends Model {
   protected $table = "curso";
   protected $fillable = ["nombre", "descripcion", "modulos", "metodologia", "incluye", "inversion", "incluirInversionCuotas", "inversionCuotas", "notasAdicionales", "activo"];
 
-  public static function nombreTabla() {
+  public static function nombreTabla()/* - */ {
     $modeloCurso = new Curso();
     $nombreTabla = $modeloCurso->getTable();
     unset($modeloCurso);

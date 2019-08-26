@@ -54,7 +54,7 @@ class Horario extends Model {
     return Horario::where("idEntidad", $idEntidad)->orderBy("numeroDiaSemana", "asc")->get();
   }
 
-  public static function obtenerMultiple($datos) {
+  public static function obtenerMultiple($datos)/* - */ {
     $horarios = [];
     foreach ($datos["idsEntidades"] as $idEntidad) {
       $horarios[] = [

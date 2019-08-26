@@ -35,7 +35,7 @@ class EstadosInteresado {
     return $estadosBusqueda;
   }
 
-  public static function listarCambio() {
+  public static function listarDisponibleCambio() {
     $estadosBusqueda = EstadosInteresado::listarBusqueda();
     $estadosDisponibleCambio = [
         EstadosInteresado::PendienteInformacion,
@@ -47,11 +47,11 @@ class EstadosInteresado {
         EstadosInteresado::CotizacionEnviada
     ];
 
-    $estadosCambio = [];
+    $estadosDisponibleCambioSel = [];
     foreach ($estadosBusqueda as $k => $v)
       if (in_array($k, $estadosDisponibleCambio))
-        $estadosCambio[$k] = $v;
-    return $estadosCambio;
+        $estadosDisponibleCambioSel[$k] = $v;
+    return $estadosDisponibleCambioSel;
   }
 
 }

@@ -8,7 +8,7 @@
   var urlEditar = "{{ route('profesores.editar', ['id' => 0]) }}";
   var urlEliminar = "{{ route('profesores.eliminar', ['id' => 0]) }}";
   var estados = {!! json_encode(App\Helpers\Enum\EstadosProfesor::listar()) !!};
-  var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosProfesor::listarCambio()) !!};
+  var estadosDisponibleCambio = {!! json_encode(App\Helpers\Enum\EstadosProfesor::listarDisponibleCambio()) !!};
 </script>
 <script src="{{ asset("assets/eah/js/modulos/profesor/profesor.js") }}"></script>
 @endsection
@@ -59,6 +59,6 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosProfesor::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('profesores.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosProfesor::listar())]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosProfesor::listarDisponibleCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('profesores.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosProfesor::listar())]) }}
 </div>
 @endsection

@@ -26,7 +26,7 @@ function cargarSeccionPagos() {
   $(".usar-saldo-favor").click(function (e) {
     var modo = $(this).data("modo");
     if ($(".monto-pago[data-modo='" + modo + "']").valid() && saldoFavorTotal > 0) {
-      $(".monto-pago[data-modo='" + modo + "']").val(redondear(parseFloat($(".monto-pago[data-modo='" + modo + "']").val()) + ($(this).is(":checked") ? saldoFavorTotal : (-1 * saldoFavorTotal)), 2));
+      $(".monto-pago[data-modo='" + modo + "']").val(util.redondear(parseFloat($(".monto-pago[data-modo='" + modo + "']").val()) + ($(this).is(":checked") ? saldoFavorTotal : (-1 * saldoFavorTotal)), 2));
       $(this).attr("checked", $(this).is(":checked"));
     } else {
       e.stopPropagation();
@@ -39,7 +39,7 @@ function cargarSeccionPagos() {
 
   //Común   
   registroHistorial = (typeof (registroHistorial) === "undefined" ? false : registroHistorial);
-  if (obtenerParametroUrlXNombre("sec") === "pago" && !registroHistorial) {
+  if (util.obtenerParametroUrlXNombre("sec") === "pago" && !registroHistorial) {
     $("a[href='#pago']").trigger("click");
   }
   $("a[href='#pago']").click(function () {
@@ -70,10 +70,10 @@ function cargarListaPago() {
       columns: [
         {data: "id", name: "pago.id", render: function (e, t, d, m) {
             var costoHoraPromedio = (d.costoHoraPromedio !== null ? parseFloat(d.costoHoraPromedio + "") : 0);
-            return '<b>Código: </b>' + d.id + '<br/><b>Motivo: </b>' + motivosPago[d.motivo] + '<br/><b>Cuenta: </b>' + cuentasBanco[d.cuenta] + '<br/><span data-toggle="tooltip" title="Fecha de registro"><i class="fa fa-fw fa-calendar"></i> ' + formatoFecha(d.fechaRegistro, true) + '</span>' + (costoHoraPromedio > 0 ? '<br/><small><b>S/. ' + redondear(costoHoraPromedio, 2) + ' por hora de clase</b></small>' : '');
+            return '<b>Código: </b>' + d.id + '<br/><b>Motivo: </b>' + motivosPago[d.motivo] + '<br/><b>Cuenta: </b>' + cuentasBanco[d.cuenta] + '<br/><span data-toggle="tooltip" title="Fecha de registro"><i class="fa fa-fw fa-calendar"></i> ' + utilFechasHorarios.formatoFecha(d.fechaRegistro, true) + '</span>' + (costoHoraPromedio > 0 ? '<br/><small><b>S/. ' + util.redondear(costoHoraPromedio, 2) + ' por hora de clase</b></small>' : '');
           }},
         {data: "fecha", name: "pago.fecha", render: function (e, t, d, m) {
-            return formatoFecha(d.fecha);
+            return utilFechasHorarios.formatoFecha(d.fecha);
           }, className: "text-center", type: "fecha"},
         {data: "estado", name: "pago.estado", render: function (e, t, d, m) {
             return '<div class="sec-btn-editar-estado-pago"><a href="javascript:void(0);" class="btn-editar-estado-pago" data-idpago="' + d.id + '" data-idalumno="' + d.idAlumno + '" data-estado="' + d.estado + '"><span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span></a></div>';
@@ -104,11 +104,11 @@ function cargarListaPago() {
               montoRealizado = montoTotalClases;
             }
 
-            return '<b>S/. ' + redondear(montoTotal, 2) + '</b>' +
-                ('<div class="info-adicional">' + (duracionRealizada > 0 ? '<br/><span class="text-green" data-toggle="tooltip" title="Horas realizadas"><i class="fa fa-clock-o"></i> ' + formatoHora(duracionRealizada) + ' (S/. ' + redondear(montoRealizado, 2) + ')</span>' : '') +
-                    (duracionPendienteReal > 0 ? '<br/><span class="text-yellow" data-toggle="tooltip" title="Horas pendientes"><i class="fa fa-clock-o"></i> ' + formatoHora(montoNoPagado > 0 ? duracionPendiente : duracionPendienteReal) + ' (S/. ' + redondear(montoNoPagado > 0 ? montoPendiente : montoPendienteReal, 2) + ')</span>' : '') +
-                    (duracionNoPagada > 0 ? '<br/><span class="text-red" data-toggle="tooltip" title="Horas no pagadas"><i class="fa fa-clock-o"></i> ' + formatoHora(duracionNoPagada) + ' (S/. ' + redondear(montoNoPagado, 2) + ')</span>' : '') +
-                    (saldoFavorTotalPago > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(saldoFavorTotalPago, 2) + (saldoFavorUtilizado ? ' <br/>(<span class="text-green">utilizado</span>)' : '') + '</b></small>' : '') + '</div>');
+            return '<b>S/. ' + util.redondear(montoTotal, 2) + '</b>' +
+                ('<div class="info-adicional">' + (duracionRealizada > 0 ? '<br/><span class="text-green" data-toggle="tooltip" title="Horas realizadas"><i class="fa fa-clock-o"></i> ' + utilFechasHorarios.formatoHora(duracionRealizada) + ' (S/. ' + util.redondear(montoRealizado, 2) + ')</span>' : '') +
+                    (duracionPendienteReal > 0 ? '<br/><span class="text-yellow" data-toggle="tooltip" title="Horas pendientes"><i class="fa fa-clock-o"></i> ' + utilFechasHorarios.formatoHora(montoNoPagado > 0 ? duracionPendiente : duracionPendienteReal) + ' (S/. ' + util.redondear(montoNoPagado > 0 ? montoPendiente : montoPendienteReal, 2) + ')</span>' : '') +
+                    (duracionNoPagada > 0 ? '<br/><span class="text-red" data-toggle="tooltip" title="Horas no pagadas"><i class="fa fa-clock-o"></i> ' + utilFechasHorarios.formatoHora(duracionNoPagada) + ' (S/. ' + util.redondear(montoNoPagado, 2) + ')</span>' : '') +
+                    (saldoFavorTotalPago > 0 ? '<br/><small><b>Saldo a favor de S/. ' + util.redondear(saldoFavorTotalPago, 2) + (saldoFavorUtilizado ? ' <br/>(<span class="text-green">utilizado</span>)' : '') + '</b></small>' : '') + '</div>');
           }, className: "text-center", type: "monto"},
         {data: "id", name: "pago.id", orderable: false, searchable: false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
@@ -116,7 +116,7 @@ function cargarListaPago() {
                 '<a href="javascript:void(0);" onclick="editarPago(' + d.id + ');" title="Editar datos del pago"><i class="fa fa-pencil"></i></a>' +
                 '</li>' +
                 '<li>' +
-                '<a href="javascript:void(0);" title="Eliminar pago" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?, considere que si el pago está relacionado a una o más clases estas también serán eliminadas.\', \'tab-lista-pagos\', false, function(){recargarDatosTabla(\'tab-lista-periodos-clases\');reiniciarHistorial();})" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' +
+                '<a href="javascript:void(0);" title="Eliminar pago" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?, considere que si el pago está relacionado a una o más clases estas también serán eliminadas.\', \'tab-lista-pagos\', false, function(){utilTablas.recargarDatosTabla(\'tab-lista-periodos-clases\');reiniciarHistorial();})" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' +
                 '<i class="fa fa-trash"></i>' +
                 '</a>' +
                 '</li>' +
@@ -124,7 +124,7 @@ function cargarListaPago() {
           }, className: "text-center"}
       ],
       initComplete: function (s, j) {
-        establecerBotonRecargaTabla("tab-lista-pagos");
+        utilTablas.establecerBotonRecargaTabla("tab-lista-pagos");
       },
       footerCallback: function (r, d, s, e, di) {
         var api = this.api();
@@ -138,7 +138,7 @@ function cargarListaPago() {
         });
         if (saldoFavorTotal > 0) {
           $("#sec-saldo-favor").show();
-          $("#lbl-usar-saldo-favor").text("Utilizar saldo a favor total (S/. " + redondear(saldoFavorTotal, 2) + ")");
+          $("#lbl-usar-saldo-favor").text("Utilizar saldo a favor total (S/. " + util.redondear(saldoFavorTotal, 2) + ")");
         }
 
         var saldoFavorTotalUtilizadoTotal = 0, saldoFavorTotalUtilizadoPagina = 0;
@@ -154,7 +154,7 @@ function cargarListaPago() {
             saldoFavorTotalUtilizadoPagina += saldoFavorTotalPago;
           montoTotalPagina += parseFloat(i.monto);
         });
-        $(api.column(3).footer()).html("Total S/. " + redondear(montoTotal - saldoFavorTotalUtilizadoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + redondear(montoTotalPagina - saldoFavorTotalUtilizadoPagina, 2) : ""));
+        $(api.column(3).footer()).html("Total S/. " + util.redondear(montoTotal - saldoFavorTotalUtilizadoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + util.redondear(montoTotalPagina - saldoFavorTotalUtilizadoPagina, 2) : ""));
       }
     });
 
@@ -172,7 +172,7 @@ function cargarListaPago() {
       var idpago = $(this).data("idpago");
       var idAlumno = $(this).data("idalumno");
       if (urlActualizarEstadoPago !== "" && $(this).data("estado") !== $(this).val()) {
-        llamadaAjax(urlActualizarEstadoPago, "POST", {"idPago": idpago, "idAlumno": idAlumno, "estado": $(this).val()}, true, undefined, undefined, function (de) {
+        util.llamadaAjax(urlActualizarEstadoPago, "POST", {"idPago": idpago, "idAlumno": idAlumno, "estado": $(this).val()}, true, undefined, undefined, function (de) {
           var rj = de.responseJSON;
           if (rj !== undefined && rj.mensaje !== undefined) {
             agregarMensaje("errores", rj.mensaje, true);
@@ -264,10 +264,10 @@ function cargarFormularioPago() {
     onclick: false
   });
 
-  establecerCalendario("fecha-pago", false, false, false);
+  utilFechasHorarios.establecerCalendario("fecha-pago", false, false, false);
 
   var fechaInicioClasesPago = $("#fecha-inicio-clases-pago").val();
-  establecerCalendario("fecha-inicio-clases-pago", false, false, false);
+  utilFechasHorarios.establecerCalendario("fecha-inicio-clases-pago", false, false, false);
   if (Date.parse(fechaInicioClasesPago)) {
     var datFechaInicioClasesPago = fechaInicioClasesPago.split("/");
     $("#fecha-inicio-clases-pago").datepicker("setDate", (new Date(datFechaInicioClasesPago[1] + "/" + datFechaInicioClasesPago[0] + "/" + datFechaInicioClasesPago[2])));
@@ -344,7 +344,7 @@ function generarClases(e) {
   urlGenerarClasesPago = (typeof (urlGenerarClasesPago) === "undefined" ? "" : urlGenerarClasesPago);
   if (urlGenerarClasesPago !== "") {
     $.blockUI({message: "<h4>Cargando...</h4>"});
-    llamadaAjax(urlGenerarClasesPago, "POST", datos, true,
+    util.llamadaAjax(urlGenerarClasesPago, "POST", datos, true,
         function (d) {
           $("#sec-lista-clases-pago tbody, #sec-saldo-favor-pago").html("");
           $("input[name='saldoFavor']").val("");
@@ -367,27 +367,27 @@ function generarClases(e) {
 
               $("#sec-lista-clases-pago tbody").append('<tr' + (tiempoAdicional !== "" ? ' class="sec-clase-incompleta"' : '') + '>' +
                   '<td>' + (parseInt(i) + 1) + '</td>' +
-                  '<td><b>' + formatoFecha(v.fechaInicio.date) + '</b> - De ' + formatoFecha(v.fechaInicio.date, false, true) + ' a ' + formatoFecha(v.fechaFin.date, false, true) + '</td>' +
-                  '<td>' + formatoHora(v.duracion) + tiempoAdicional + '</td>' +
+                  '<td><b>' + utilFechasHorarios.formatoFecha(v.fechaInicio.date) + '</b> - De ' + utilFechasHorarios.formatoFecha(v.fechaInicio.date, false, true) + ' a ' + utilFechasHorarios.formatoFecha(v.fechaFin.date, false, true) + '</td>' +
+                  '<td>' + utilFechasHorarios.formatoHora(v.duracion) + tiempoAdicional + '</td>' +
                   '<td class="text-center"><input type="checkbox" name="notificarClasePago_' + (parseInt(i) + 1) + '"' + (v.idProfesor !== '' ? '' : ' checked="checked"') + '/></td>' +
                   '</tr>');
             } else if (i === "montoRestante" && (v > 0 || existeClaseIncompleta)) {
-              $("#sec-saldo-favor-pago").html('<span id="sub-sec-saldo-favor-pago">El alumno tiene un saldo a favor de <b id="saldo-favor-pago">S/. ' + redondear(v, 2) + '</b></span><br/>' + (existeClaseIncompleta ? '<label for="cb-considerar-clases-incompletas">Considerar clases incompletas</label> <input type="checkbox" checked="checked" id="cb-considerar-clases-incompletas" name="considerarClasesIncompletas" />' : ''));
+              $("#sec-saldo-favor-pago").html('<span id="sub-sec-saldo-favor-pago">El alumno tiene un saldo a favor de <b id="saldo-favor-pago">S/. ' + util.redondear(v, 2) + '</b></span><br/>' + (existeClaseIncompleta ? '<label for="cb-considerar-clases-incompletas">Considerar clases incompletas</label> <input type="checkbox" checked="checked" id="cb-considerar-clases-incompletas" name="considerarClasesIncompletas" />' : ''));
               ((v > 0) ? $("#sub-sec-saldo-favor-pago").show() : $("#sub-sec-saldo-favor-pago").hide());
               if (existeClaseIncompleta) {
                 $("#cb-considerar-clases-incompletas").live("change", function () {
-                  var saldoFavorPago = redondear(($(this).is(':checked') ? saldoFavorBase : saldoFavorTotal), 2);
+                  var saldoFavorPago = util.redondear(($(this).is(':checked') ? saldoFavorBase : saldoFavorTotal), 2);
                   $("#saldo-favor-pago").text('S/. ' + saldoFavorPago);
                   ((saldoFavorPago > 0) ? $("#sub-sec-saldo-favor-pago").show() : $("#sub-sec-saldo-favor-pago").hide());
                   ($(this).is(':checked') ? $(".sec-clase-incompleta").show() : $(".sec-clase-incompleta").hide());
                 });
               }
 
-              $("input[name='saldoFavor']").val(redondear(v, 4));
+              $("input[name='saldoFavor']").val(util.redondear(v, 4));
               saldoFavorBase = parseFloat(v);
               saldoFavorTotal += saldoFavorBase;
             } else if (i === "montoRestanteOpcional") {
-              $("input[name='saldoFavorAdicional']").val(redondear(v, 4));
+              $("input[name='saldoFavorAdicional']").val(util.redondear(v, 4));
               saldoFavorTotal += parseFloat(v);
             } else if (i === "idProfesor") {
               idProfesor = v;
@@ -471,7 +471,7 @@ function cargarDocentesDisponiblesPago(recargarListaPago) {
           $("td", r).eq(2).addClass("text-center");
         },
         initComplete: function (s, j) {
-          establecerBotonRecargaTabla("tab-lista-docentes-pago");
+          utilTablas.establecerBotonRecargaTabla("tab-lista-docentes-pago");
         }
       });
     }
@@ -520,7 +520,7 @@ function cargarFormularioActualizarPago() {
     onkeyup: false,
     onclick: false
   });
-  establecerCalendario("fecha-actualizar-pago", false, false, false);
+  utilFechasHorarios.establecerCalendario("fecha-actualizar-pago", false, false, false);
 }
 function editarPago(idPago) {
   obtenerDatosPago(idPago, function (d) {
@@ -528,7 +528,7 @@ function editarPago(idPago) {
       limpiarCamposPago();
       $("#motivo-actualizar-pago").val(d.motivo);
       $("#cuenta-actualizar-pago").val(d.cuenta);
-      var datFecha = formatoFecha(d.fecha).split("/");
+      var datFecha = utilFechasHorarios.formatoFecha(d.fecha).split("/");
       $("#fecha-actualizar-pago").datepicker("setDate", (new Date(datFecha[1] + "/" + datFecha[0] + "/" + datFecha[2])));
       $("#estado-actualizar-pago").val(d.estado);
       $("#descripcion-actualizar-pago").val(d.descripcion);
@@ -542,7 +542,7 @@ function editarPago(idPago) {
           }
         }
       }
-      $("#monto-actualizar-pago").val(redondear(d.monto, 2));
+      $("#monto-actualizar-pago").val(util.redondear(d.monto, 2));
       $("input[name='idPago']").val(d.id);
       mostrarSeccionPago([3]);
     }
@@ -560,10 +560,10 @@ function verDatosPago(idPago) {
       $("#dat-motivo-pago").text(motivosPago[d.motivo]);
       $("#dat-cuenta-pago").text(cuentasBanco[d.cuenta]);
       $("#dat-descripcion-pago").text(d.descripcion);
-      $("#dat-monto-pago").html('S/. ' + redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="text-green">utilizado</span>)' : '') + '</b></small>' : ''));
+      $("#dat-monto-pago").html('S/. ' + util.redondear(d.monto, 2) + (d.saldoFavor !== null && parseFloat(d.saldoFavor + "") > 0 ? '<br/><small><b>Saldo a favor de S/. ' + util.redondear(d.saldoFavor, 2) + (d.saldoFavorUtilizado !== null && d.saldoFavorUtilizado === 1 ? ' (<span class="text-green">utilizado</span>)' : '') + '</b></small>' : ''));
       $("#dat-estado-pago").html('<span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span>');
-      $("#dat-fecha-pago").text(formatoFecha(d.fecha));
-      $("#dat-fecha-registro-pago").text(formatoFecha(d.fechaRegistro, true));
+      $("#dat-fecha-pago").text(utilFechasHorarios.formatoFecha(d.fecha));
+      $("#dat-fecha-registro-pago").text(utilFechasHorarios.formatoFecha(d.fechaRegistro, true));
       if (d.imagenesComprobante !== null && d.imagenesComprobante !== "") {
         var imagenes = d.imagenesComprobante.split(",");
         if (imagenes.length > 0) {
@@ -617,7 +617,7 @@ function obtenerDatosPago(idPago, funcionRetorno) {
   urlDatosPago = (typeof (urlDatosPago) === "undefined" ? "" : urlDatosPago);
   if (urlDatosPago !== "") {
     $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
-    llamadaAjax(urlDatosPago.replace("/0", "/" + idPago), "POST", {}, true,
+    util.llamadaAjax(urlDatosPago.replace("/0", "/" + idPago), "POST", {}, true,
         function (d) {
           if (funcionRetorno !== undefined)
             funcionRetorno(d);

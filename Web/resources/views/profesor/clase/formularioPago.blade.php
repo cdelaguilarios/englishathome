@@ -19,7 +19,7 @@
     </div>
     {{ Form::label("estado", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
-      {{ Form::select("estado", App\Helpers\Enum\EstadosPago::listarCambio(), null, ["class" => "form-control"]) }}
+      {{ Form::select("estado", App\Helpers\Enum\EstadosPago::listarDisponibleCambio(), null, ["class" => "form-control"]) }}
     </div>   
   </div>
   <div class="form-group">

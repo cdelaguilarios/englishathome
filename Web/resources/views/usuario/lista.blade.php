@@ -8,7 +8,7 @@
   var urlEliminar = "{{ route('usuarios.eliminar', ['id' => 0]) }}";
   var roles = {!!  json_encode(App\Helpers\Enum\RolesUsuario::listarDelSistema()) !!};
   var estados = {!!  json_encode(App\Helpers\Enum\EstadosUsuario::listar()) !!};
-  var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosUsuario::listarCambio()) !!};
+  var estadosDisponibleCambio = {!! json_encode(App\Helpers\Enum\EstadosUsuario::listarDisponibleCambio()) !!};
 </script>
 <script src="{{ asset("assets/eah/js/modulos/usuario.js")}}"></script>
 @endsection
@@ -60,6 +60,6 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosUsuario::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('usuarios.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosUsuario::listar())]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosUsuario::listarDisponibleCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('usuarios.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosUsuario::listar())]) }}
 </div>
 @endsection

@@ -23,7 +23,7 @@ class ActualizarEstadoRequest extends Request {
     $datos = $this->all();
     $reglasValidacion = [];
     
-    $estados = EstadosInteresado::listarCambio();
+    $estados = EstadosInteresado::listarDisponibleCambio();
     if (!array_key_exists($datos["estado"], $estados))
       $reglasValidacion["estadoNoValido"] = "required";
 

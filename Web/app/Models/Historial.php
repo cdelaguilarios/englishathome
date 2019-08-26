@@ -19,7 +19,7 @@ class Historial extends Model {
 
   const numeroMensajesXCarga = 10;
 
-  public static function nombreTabla() {
+  public static function nombreTabla()/* - */ {
     $modeloHistorial = new Historial();
     $nombreTabla = $modeloHistorial->getTable();
     unset($modeloHistorial);

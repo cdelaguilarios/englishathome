@@ -8,10 +8,10 @@
   var urlEditar = "{{ route('alumnos.editar', ['id' => 0]) }}";
   var urlEliminar = "{{ route('alumnos.eliminar', ['id' => 0]) }}";
   var urlHorarioMultiple = "{{ route('horario.multiple') }}";
+  
   var estados = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listar()) !!};
-  var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listarCambio()) !!};
+  var estadosDisponibleCambio = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listarDisponibleCambio()) !!};
   var estadoCuotaProgramada = "{{ App\Helpers\Enum\EstadosAlumno::CuotaProgramada }}";
-  var estadosClaseCambio = {!! json_encode(App\Helpers\Enum\EstadosClase::listarCambio()) !!};
 </script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/lista.js") }}"></script>
 <script src="{{ asset("assets/eah/js/horario.js") }}"></script>
@@ -32,7 +32,7 @@
         <div class="form-group">          
           {{ Form::label("bus-estado", "Estado: ", ["class" => "col-sm-1 control-label"]) }}
           <div class="col-sm-3">
-            {{ Form::select("estado", App\Helpers\Enum\EstadosAlumno::listarBusqueda(), App\Helpers\Enum\EstadosAlumno::Activo, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos", "data-idtabla" => "tab-lista"]) }}
+            {{ Form::select("estado", App\Helpers\Enum\EstadosAlumno::listarBusqueda(), App\Helpers\Enum\EstadosAlumno::Activo, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos", "data-idtabla" => "tab-lista-alumnos"]) }}
           </div>
         </div> 
       </div>
@@ -47,7 +47,7 @@
         <a href="{{ route("alumnos.crear")}}" class="btn btn-primary btn-clean">Nuevo alumno</a>   
       </div>         
       <div class="box-body">
-        <table id="tab-lista" class="table table-bordered table-hover">
+        <table id="tab-lista-alumnos" class="table table-bordered table-hover">
           <thead>
             <tr>
               <th>N°</th> 
@@ -81,7 +81,6 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosAlumno::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('alumnos.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosAlumno::listar())]) }}
-  {{ Form::select("", App\Helpers\Enum\EstadosClase::listarCambio(), null, ["id" => "sel-estados-clase", "class" => "form-control", "data-urlactualizar" => route('clases.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosClase::listar())]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosAlumno::listarDisponibleCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('alumnos.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosAlumno::listar())]) }}
 </div>
 @endsection

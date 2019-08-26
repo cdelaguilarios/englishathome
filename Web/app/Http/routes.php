@@ -81,7 +81,7 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("alumno/registrar", ["uses" => "AlumnoController@registrar", "as" => "alumnos.registrar"]);
     Route::get("alumno/{id}/editar", ["uses" => "AlumnoController@editar", "as" => "alumnos.editar"]);
     Route::patch("alumno/{id}/actualizar", ["uses" => "AlumnoController@actualizar", "as" => "alumnos.actualizar"]);
-    Route::post("alumno/{id}/actualizarEstado", ["uses" => "AlumnoController@actualizarEstado", "as" => "alumnos.actualizar.estado"]);
+    Route::post("alumno/{id}/actualizarEstado", ["uses" => "AlumnoController@actualizarEstado", "as" => "alumnos.actualizar.estado"]);//--
     Route::post("alumno/{id}/actualizarHorario", ["uses" => "AlumnoController@actualizarHorario", "as" => "alumnos.actualizar.horario"]);
     Route::get("alumno/{id}/perfil", ["uses" => "AlumnoController@perfil", "as" => "alumnos.perfil"]);
     Route::get("alumno/{id}/ficha", ["uses" => "AlumnoController@ficha", "as" => "alumnos.ficha"]);

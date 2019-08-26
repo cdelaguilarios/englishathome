@@ -429,8 +429,8 @@ var seccionPaso4 = new function () {
     $(this.contenedor).find(idSeccion).on('change', "#" + idSelTipo, function () {
       ($(this).val() !== "BETWEEN" ? $("#" + idFiltroFechaFin).hide() : $("#" + idFiltroFechaFin).show());
     });
-    establecerCalendario(idFiltroFechaIni);
-    establecerCalendario(idFiltroFechaFin);
+    utilFechasHorarios.establecerCalendario(idFiltroFechaIni);
+    utilFechasHorarios.establecerCalendario(idFiltroFechaFin);
 
     $("#" + idFiltroFechaIni).rules("add", {
       validarFecha: true
@@ -733,7 +733,7 @@ var util = new function () {
     urlListarCampos = (typeof (urlListarCampos) === "undefined" ? "" : urlListarCampos);
     if (urlListarCampos !== "") {
       $.blockUI({message: "<h4>Cargando datos...</h4>"});
-      llamadaAjax(urlListarCampos, "POST", {entidad: entidad}, true,
+      util.llamadaAjax(urlListarCampos, "POST", {entidad: entidad}, true,
           function (campos) {
             $("body").unblock({
               onUnblock: function () {
@@ -756,7 +756,7 @@ var util = new function () {
   this.listarEntidadesRelacionadas = function (entidad, retrollamada) {
     urlListarEntidadesRelacionadas = (typeof (urlListarEntidadesRelacionadas) === "undefined" ? "" : urlListarEntidadesRelacionadas);
     if (urlListarEntidadesRelacionadas !== "") {
-      llamadaAjax(urlListarEntidadesRelacionadas, "POST", {entidad: entidad}, true,
+      util.llamadaAjax(urlListarEntidadesRelacionadas, "POST", {entidad: entidad}, true,
           function (datos) {
             retrollamada(datos);
           },

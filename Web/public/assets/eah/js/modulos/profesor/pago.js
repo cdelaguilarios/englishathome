@@ -19,7 +19,7 @@ function cargarSeccionPagos() {
 
   //Común   
   registroHistorial = (typeof (registroHistorial) === "undefined" ? false : registroHistorial);
-  if (obtenerParametroUrlXNombre("sec") === "pago" && !registroHistorial) {
+  if (util.obtenerParametroUrlXNombre("sec") === "pago" && !registroHistorial) {
     $("a[href='#pago']").trigger("click");
   }
   $("a[href='#pago']").click(function () {
@@ -53,16 +53,16 @@ function cargarListaPago() {
             return motivosPago[d.motivo];
           }},
         {data: "fecha", name: "pago.fecha", render: function (e, t, d, m) {
-            return formatoFecha(d.fecha);
+            return utilFechasHorarios.formatoFecha(d.fecha);
           }, className: "text-center", type: "fecha"},
         {data: "fechaRegistro", name: "pago.fechaRegistro", render: function (e, t, d, m) {
-            return formatoFecha(d.fechaRegistro, true);
+            return utilFechasHorarios.formatoFecha(d.fechaRegistro, true);
           }, className: "text-center", type: "fecha"},
         {data: "estado", name: "pago.estado", render: function (e, t, d, m) {
             return '<div class="sec-btn-editar-estado-pago"><a href="javascript:void(0);" class="btn-editar-estado-pago" data-idpago="' + d.id + '" data-idprofesor="' + d.idProfesor + '" data-estado="' + d.estado + '"><span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span></a></div>';
           }, className: "text-center"},
         {data: "monto", name: "pago.monto", render: function (e, t, d, m) {
-            return 'S/. ' + redondear(d.monto, 2);
+            return 'S/. ' + util.redondear(d.monto, 2);
           }, className: "text-center", type: "monto"},
         {data: "id", name: "pago.id", orderable: false, searchable: false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
@@ -70,7 +70,7 @@ function cargarListaPago() {
                 '<a href="javascript:void(0);" onclick="editarPago(' + d.id + ');" title="Editar datos del pago"><i class="fa fa-pencil"></i></a>' +
                 '</li>' +
                 '<li>' +
-                '<a href="javascript:void(0);" title="Eliminar pago" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?\', \'tab-lista-pagos\', false, function(){recargarDatosTabla(\'tab-lista-clases\');reiniciarHistorial();})" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' +
+                '<a href="javascript:void(0);" title="Eliminar pago" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?\', \'tab-lista-pagos\', false, function(){utilTablas.recargarDatosTabla(\'tab-lista-clases\');reiniciarHistorial();})" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' +
                 '<i class="fa fa-trash"></i>' +
                 '</a>' +
                 '</li>' +
@@ -78,7 +78,7 @@ function cargarListaPago() {
           }, className: "text-center"}
       ],
       initComplete: function (s, j) {
-        establecerBotonRecargaTabla("tab-lista-pagos");
+        utilTablas.establecerBotonRecargaTabla("tab-lista-pagos");
       },
       footerCallback: function (r, d, s, e, di) {
         var api = this.api();
@@ -90,7 +90,7 @@ function cargarListaPago() {
         $('#tab-lista-pagos').DataTable().rows({page: 'current'}).data().each(function (i) {
           montoTotalPagina += parseFloat(i.monto);
         });
-        $(api.column(5).footer()).html("Total S/. " + redondear(montoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + redondear(montoTotalPagina, 2) : ""));
+        $(api.column(5).footer()).html("Total S/. " + util.redondear(montoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + util.redondear(montoTotalPagina, 2) : ""));
       }
     });
     $(window).click(function (e) {
@@ -107,7 +107,7 @@ function cargarListaPago() {
       var idpago = $(this).data("idpago");
       var idprofesor = $(this).data("idprofesor");
       if (urlActualizarEstadoPago !== "" && $(this).data("estado") !== $(this).val()) {
-        llamadaAjax(urlActualizarEstadoPago, "POST", {"idPago": idpago, "idProfesor": idprofesor, "estado": $(this).val()}, true, undefined, undefined, function (de) {
+        util.llamadaAjax(urlActualizarEstadoPago, "POST", {"idPago": idpago, "idProfesor": idprofesor, "estado": $(this).val()}, true, undefined, undefined, function (de) {
           var rj = de.responseJSON;
           if (rj !== undefined && rj.mensaje !== undefined) {
             agregarMensaje("errores", rj.mensaje, true);
@@ -165,7 +165,7 @@ function cargarFormularioPago() {
     onkeyup: false,
     onclick: false
   });
-  establecerCalendario("fecha-pago", false, false, false);
+  utilFechasHorarios.establecerCalendario("fecha-pago", false, false, false);
 
   $("#btn-nuevo-pago").click(function () {
     limpiarCamposPago();
@@ -222,7 +222,7 @@ function cargarFormularioActualizarPago() {
     onkeyup: false,
     onclick: false
   });
-  establecerCalendario("fecha-actualizar-pago", false, false, false);
+  utilFechasHorarios.establecerCalendario("fecha-actualizar-pago", false, false, false);
   incluirSeccionSubidaArchivos("documentos-verificacion", {onSubmit: function () {
       return true;
     }, acceptFiles: "image/*", uploadStr: "Subir archivo", maxFileCount: 20});
@@ -235,7 +235,7 @@ function editarPago(idPago) {
       $("#lista-motivo-actualizar-pago").val(d.motivo);
       $("#titulo-motivo-actualizar-pago").text($("#lista-motivo-actualizar-pago option:selected").text());
       $("#motivo-actualizar-pago").val(d.motivo);
-      var datFecha = formatoFecha(d.fecha).split("/");
+      var datFecha = utilFechasHorarios.formatoFecha(d.fecha).split("/");
       $("#fecha-actualizar-pago").datepicker("setDate", (new Date(datFecha[1] + "/" + datFecha[0] + "/" + datFecha[2])));
       $("#estado-actualizar-pago").val(d.estado);
       $("#descripcion-actualizar-pago").val(d.descripcion);
@@ -273,7 +273,7 @@ function editarPago(idPago) {
       } else {
         $("#sec-documentos-verificacion-actualizar-pago").hide();
       }
-      $("#monto-actualizar-pago").val(redondear(d.monto, 2));
+      $("#monto-actualizar-pago").val(util.redondear(d.monto, 2));
       $("input[name='idPago']").val(d.id);
       mostrarSeccionPago([3]);
     }
@@ -294,10 +294,10 @@ function verDatosPago(idPago) {
       }
       $("#dat-motivo-pago").text(motivosPago[d.motivo]);
       $("#dat-descripcion-pago").text(d.descripcion);
-      $("#dat-monto-pago").html('S/. ' + redondear(d.monto, 2));
+      $("#dat-monto-pago").html('S/. ' + util.redondear(d.monto, 2));
       $("#dat-estado-pago").html('<span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span>');
-      $("#dat-fecha-pago").text(formatoFecha(d.fecha));
-      $("#dat-fecha-registro-pago").text(formatoFecha(d.fechaRegistro, true));
+      $("#dat-fecha-pago").text(utilFechasHorarios.formatoFecha(d.fecha));
+      $("#dat-fecha-registro-pago").text(utilFechasHorarios.formatoFecha(d.fechaRegistro, true));
       if (d.imagenesComprobante !== null && d.imagenesComprobante !== "") {
         var imagenes = d.imagenesComprobante.split(",");
         if (imagenes[0] !== "") {
@@ -345,7 +345,7 @@ function obtenerDatosPago(idPago, funcionRetorno) {
   urlDatosPago = (typeof (urlDatosPago) === "undefined" ? "" : urlDatosPago);
   if (urlDatosPago !== "") {
     $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
-    llamadaAjax(urlDatosPago.replace("/0", "/" + idPago), "POST", {}, true,
+    util.llamadaAjax(urlDatosPago.replace("/0", "/" + idPago), "POST", {}, true,
         function (d) {
           if (funcionRetorno !== undefined)
             funcionRetorno(d);

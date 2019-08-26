@@ -1,3 +1,8 @@
+<script>
+  var urlListarClases = "{{ route('alumnos.clases.listar', ['id' => 0]) }}";
+  var estadosClaseDisponibleCambio = {!! json_encode(App\Helpers\Enum\EstadosClase::listarDisponibleCambio()) !!};
+</script>
+<script src="{{ asset("assets/eah/js/modulos/util/listaClases.js") }}"></script>
 <div id="sec-men-lista-clases"></div><br/>
 <div class="row">
   <div class="col-sm-12">
@@ -50,6 +55,6 @@
     </div>
   </div>
 </div>
-<script>
-  var urlListarClases = "{{ route('alumnos.clases.listar', ['id' => 0]) }}";
-</script>
+<div style="display: none">
+  {{ Form::select("", App\Helpers\Enum\EstadosClase::listarDisponibleCambio(), null, ["id" => "sel-estados-clase", "class" => "form-control", "data-urlactualizar" => route('clases.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosClase::listar())]) }}
+</div>

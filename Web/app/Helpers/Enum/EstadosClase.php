@@ -10,7 +10,7 @@ class EstadosClase {
   const ConfirmadaProfesorAlumno = "CONFIRMADA_PROFESOR_ALUMNO";
   const Realizada = "REALIZADA";
 
-  public static function listar() {
+  public static function listar()/* - */ {
     return [
         EstadosClase::Programada => ["Programada", "label-primary", "#3c8dbc"],
         EstadosClase::Cancelada => ["Cancelada", "label-danger", "#dd4b39"],
@@ -20,7 +20,7 @@ class EstadosClase {
     ];
   }
 
-  public static function listarBusqueda() {
+  public static function listarBusqueda()/* - */ {
     $estados = EstadosClase::listar();
     $estadosBusqueda = [];
     foreach ($estados as $k => $v) {
@@ -29,16 +29,16 @@ class EstadosClase {
     return $estadosBusqueda;
   }
 
-  public static function listarCambio() {
+  public static function listarDisponibleCambio()/* - */ {
     $estadosBusqueda = EstadosClase::listarBusqueda();
     $estadosDisponibleCambio = [EstadosClase::Programada, EstadosClase::PendienteConfirmar, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada];
-    $estadosCambio = [];
+    $estadosDisponibleCambioSel = [];
     foreach ($estadosBusqueda as $k => $v) {
       if (in_array($k, $estadosDisponibleCambio)) {
-        $estadosCambio[$k] = $v;
+        $estadosDisponibleCambioSel[$k] = $v;
       }
     }
-    return $estadosCambio;
+    return $estadosDisponibleCambioSel;
   }
 
 }

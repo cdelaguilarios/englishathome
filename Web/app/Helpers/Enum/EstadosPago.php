@@ -21,13 +21,13 @@ class EstadosPago {
     ];
   }
 
-  public static function listarCambio() {
+  public static function listarDisponibleCambio() {
     $estados = EstadosPago::listar();
-    $estadosCambio = [];
+    $estadosDisponibleCambio = [];
     foreach ($estados as $k => $v) {
-      $estadosCambio[$k] = $v[0];
+      $estadosDisponibleCambio[$k] = $v[0];
     }
-    return $estadosCambio;
+    return $estadosDisponibleCambio;
   }
 
 }

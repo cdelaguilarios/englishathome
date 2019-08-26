@@ -45,7 +45,7 @@ function cargarLista() {
                 '<li><a href="' + (urlEditar.replace("/0", "/" + d.id)) + '" title="Editar datos"><i class="fa fa-pencil"></i></a>' +
                 '</li>' +
                 '<li>' +
-                '<a href="javascript:void(0);" title="Eliminar curso" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este curso?\', \'tab-lista\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminar.replace("/0", "/" + d.id))) + '">' +
+                '<a href="javascript:void(0);" title="Eliminar curso" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este curso?\', \'tab-lista\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminar.replace("/0", "/" + d.id))) + '">' +
                 '<i class="fa fa-trash"></i>' +
                 '</a>' +
                 '</li>' +
@@ -53,7 +53,7 @@ function cargarLista() {
           }, className: "text-center"}
       ],
       initComplete: function (s, j) {
-        establecerBotonRecargaTabla("tab-lista");
+        utilTablas.establecerBotonRecargaTabla("tab-lista");
       }
     });
   }

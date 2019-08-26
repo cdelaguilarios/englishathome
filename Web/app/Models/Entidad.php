@@ -13,7 +13,7 @@ class Entidad extends Model {
   protected $table = "entidad";
   protected $fillable = ["nombre", "apellido", "fechaNacimiento", "sexo", "telefono", "idTipoDocumento", "numeroDocumento", "correoElectronico", "imagenPerfil", "direccion", "numeroDepartamento", "referenciaDireccion", "codigoUbigeo", "geoLatitud", "geoLongitud", "comentarioAdministrador"];
 
-  public static function nombreTabla() {
+  public static function nombreTabla()/* - */ {
     $modeloEntidad = new Entidad();
     $nombreTabla = $modeloEntidad->getTable();
     unset($modeloEntidad);
@@ -28,7 +28,7 @@ class Entidad extends Model {
     return $entidades->get();
   }
 
-  public static function ObtenerXId($id) {
+  public static function ObtenerXId($id)/* - */ {
     return Entidad::where("eliminado", 0)->where("id", $id)->firstOrFail();
   }
 
@@ -64,7 +64,7 @@ class Entidad extends Model {
     $entidad->update($datos);
   }
 
-  public static function actualizarEstado($id, $estado) {
+  public static function actualizarEstado($id, $estado)/* - */ {
     $entidad = Entidad::ObtenerXId($id);
     $entidad->estado = $estado;
     $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();

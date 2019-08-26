@@ -9,7 +9,7 @@
   var urlPerfilProfesorPostulante = "{{ route('postulantes.perfil.profesor', ['id' => 0]) }}";
   var urlEliminar = "{{ route('postulantes.eliminar', ['id' => 0]) }}";
   var estados = {!! json_encode(App\Helpers\Enum\EstadosPostulante::listar()) !!};
-  var estadosCambio = {!! json_encode(App\Helpers\Enum\EstadosPostulante::listarCambio()) !!};
+  var estadosDisponibleCambio = {!! json_encode(App\Helpers\Enum\EstadosPostulante::listarDisponibleCambio()) !!};
   var estadoProfesorRegistrado = "{{ App\Helpers\Enum\EstadosPostulante::ProfesorRegistrado }}";</script>
 <script src="{{ asset("assets/eah/js/modulos/postulante.js") }}"></script>
 @endsection
@@ -63,6 +63,6 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosPostulante::listarCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('postulantes.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosPostulante::listar())]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosPostulante::listarDisponibleCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('postulantes.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosPostulante::listar())]) }}
 </div>
 @endsection

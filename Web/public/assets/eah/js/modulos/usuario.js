@@ -24,9 +24,9 @@ function cargarLista() {
   urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
   roles = (typeof (roles) === "undefined" ? "" : roles);
   estados = (typeof (estados) === "undefined" ? "" : estados);
-  estadosCambio = (typeof (estadosCambio) === "undefined" ? "" : estadosCambio);
+  estadosDisponibleCambio = (typeof (estadosDisponibleCambio) === "undefined" ? "" : estadosDisponibleCambio);
 
-  if (urlListar !== "" && urlEditar !== "" && urlEliminar !== "" && roles !== "" && estados !== "" && estadosCambio !== "") {
+  if (urlListar !== "" && urlEditar !== "" && urlEliminar !== "" && roles !== "" && estados !== "" && estadosDisponibleCambio !== "") {
     $("#tab-lista").DataTable({
       processing: true,
       serverSide: true,
@@ -50,7 +50,7 @@ function cargarLista() {
             return roles[d.rol];
           }},
         {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
-            if (estados[d.estado] !== undefined && estadosCambio[d.estado] !== undefined) {
+            if (estados[d.estado] !== undefined && estadosDisponibleCambio[d.estado] !== undefined) {
               return '<div class="sec-btn-editar-estado" data-idtabla="tab-lista" data-idselestados="sel-estados" data-tipocambio="2">'+
                       '<a href="javascript:void(0);" class="btn-editar-estado" data-id="' + d.id + '" data-estado="' + d.estado + '"><span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span></a></div>';
             } else if (estados[d.estado] !== undefined) {
@@ -60,7 +60,7 @@ function cargarLista() {
             }
           }, className: "text-center"},
         {data: "fechaRegistro", name: "entidad.fechaRegistro", render: function (e, t, d, m) {
-            return formatoFecha(d.fechaRegistro, true);
+            return utilFechasHorarios.formatoFecha(d.fechaRegistro, true);
           }, className: "text-center"},
         {data: "id", name: "entidad.id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
             return '<ul class="buttons">' +
@@ -68,7 +68,7 @@ function cargarLista() {
                 '<a href="' + (urlEditar.replace("/0", "/" + d.id)) + '" title="Editar datos"><i class="fa fa-pencil"></i></a>' +
                 '</li>' +
                 '<li>' +
-                '<a href="javascript:void(0);" title="Eliminar usuario" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este usuario?\', \'tab-lista\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminar.replace("/0", "/" + d.id))) + '">' +
+                '<a href="javascript:void(0);" title="Eliminar usuario" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este usuario?\', \'tab-lista\')" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminar.replace("/0", "/" + d.id))) + '">' +
                 '<i class="fa fa-trash"></i>' +
                 '</a>' +
                 '</li>' +
@@ -76,7 +76,7 @@ function cargarLista() {
           }, className: "text-center"}
       ],
       initComplete: function (s, j) {
-        establecerBotonRecargaTabla("tab-lista");
+        utilTablas.establecerBotonRecargaTabla("tab-lista");
       }
     });
   }

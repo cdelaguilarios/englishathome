@@ -27,16 +27,16 @@ class EstadosProfesor {
     return $estadosBusqueda;
   }
 
-  public static function listarCambio() {
+  public static function listarDisponibleCambio() {
     $estadosBusqueda = EstadosProfesor::listarBusqueda();
     $estadosDisponibleCambio = [EstadosProfesor::Registrado, EstadosProfesor::Activo, EstadosProfesor::Inactivo, EstadosProfesor::Vetado];
-    $estadosCambio = [];
+    $estadosDisponibleCambioSel = [];
     foreach ($estadosBusqueda as $k => $v) {
       if (in_array($k, $estadosDisponibleCambio)) {
-        $estadosCambio[$k] = $v;
+        $estadosDisponibleCambioSel[$k] = $v;
       }
     }
-    return $estadosCambio;
+    return $estadosDisponibleCambioSel;
   }
 
 }

@@ -6,11 +6,11 @@ use App\Http\Requests\Request;
 
 class HorarioMultipleRequest extends Request {
 
-  public function authorize() {
+  public function authorize()/* - */ {
     return true;
   }
 
-  protected function getValidatorInstance() {
+  protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     if (isset($datos["idsEntidades"]) && !is_array($datos["idsEntidades"])) {
       $datos["idsEntidades"] = explode(",", $datos["idsEntidades"]);
@@ -19,7 +19,7 @@ class HorarioMultipleRequest extends Request {
     return parent::getValidatorInstance();
   }
 
-  public function rules() {
+  public function rules()/* - */ {
     switch ($this->method()) {
       case "GET":
       case "DELETE":

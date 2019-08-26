@@ -41,17 +41,17 @@ function cargarListaPagos() {
             return cuentasBanco[d.cuenta];
           }, className: "text-center"},
         {data: "fecha", name: "fecha", render: function (e, t, d, m) {
-            return formatoFecha(d.fecha);
+            return utilFechasHorarios.formatoFecha(d.fecha);
           }, className: "text-center", type: "fecha"},
         {data: "estado", name: "estado", render: function (e, t, d, m) {
             return '<span class="label ' + estados[d.estado][1] + ' btn-estado">' + estados[d.estado][0] + '</span>';
           }, className: "text-center"},
         {data: "monto", name: "monto", render: function (e, t, d, m) {
-            return 'S/. ' + redondear(d.monto, 2);
+            return 'S/. ' + util.redondear(d.monto, 2);
           }, className: "text-center", type: "monto"}
       ],
       initComplete: function (s, j) {
-        establecerBotonRecargaTabla("tab-lista");
+        utilTablas.establecerBotonRecargaTabla("tab-lista");
       },
       footerCallback: function (r, d, s, e, di) {
         var api = this.api();
@@ -63,7 +63,7 @@ function cargarListaPagos() {
         $('#tab-lista').DataTable().rows({page: 'current'}).data().each(function (i) {
           montoTotalPagina += parseFloat(i.monto);
         });
-        $(api.column(6).footer()).html("Total S/. " + redondear(montoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + redondear(montoTotalPagina, 2) : ""));
+        $(api.column(6).footer()).html("Total S/. " + util.redondear(montoTotal, 2) + (montoTotal !== montoTotalPagina ? "<br/>Total de la página S/." + util.redondear(montoTotalPagina, 2) : ""));
       },
       drawCallback: function (os) {
         var idsSel = [];

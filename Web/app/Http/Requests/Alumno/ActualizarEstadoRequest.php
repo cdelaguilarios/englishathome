@@ -8,22 +8,22 @@ use App\Helpers\Enum\EstadosAlumno;
 
 class ActualizarEstadoRequest extends Request/* - */ {
 
-  public function authorize() {
+  public function authorize()/* - */ {
     return true;
   }
 
-  protected function getValidatorInstance() {
+  protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
 
-  public function rules() {
+  public function rules()/* - */ {
     $datos = $this->all();
     $reglasValidacion = [];
     
-    $estados = EstadosAlumno::listarCambio();
+    $estados = EstadosAlumno::listarDisponibleCambio();
     if (!array_key_exists($datos["estado"], $estados)) {
       $reglasValidacion["estadoNoValido"] = "required";
     }
@@ -42,7 +42,7 @@ class ActualizarEstadoRequest extends Request/* - */ {
     }
   }
 
-  public function messages() {
+  public function messages()/* - */ {
     return [
         "estadoNoValido.required" => "El estado seleccionado no es válido."
     ];

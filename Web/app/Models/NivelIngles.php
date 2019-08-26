@@ -9,7 +9,7 @@ class NivelIngles extends Model {
   public $timestamps = false;
   protected $table = "nivelIngles";
 
-  public static function nombreTabla() {
+  public static function nombreTabla()/* - */ {
     $modeloNivelIngles = new NivelIngles();
     $nombreTabla = $modeloNivelIngles->getTable();
     unset($modeloNivelIngles);

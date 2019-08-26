@@ -9,7 +9,7 @@ function  cargarSeccionClases() {
 
   //Común   
   registroHistorial = (typeof (registroHistorial) === "undefined" ? false : registroHistorial);
-  if (obtenerParametroUrlXNombre("sec") === "clase" && !registroHistorial) {
+  if (util.obtenerParametroUrlXNombre("sec") === "clase" && !registroHistorial) {
     $("a[href='#clase']").trigger("click");
   }
   $("a[href='#clase']").click(function () {
@@ -48,20 +48,20 @@ function cargarListaClase() {
             return '<a target="_blank" href="' + urlPerfilAlumno.replace("/0", "/" + d.idAlumno) + '">' + d.nombreAlumno + ' ' + d.apellidoAlumno + '</a>';
           }},
         {data: "fechaInicio", name: "fechaInicio", render: function (e, t, d, m) {
-            return formatoFecha(d.fechaInicio) + ' - De ' + formatoFecha(d.fechaInicio, false, true) + ' a ' + formatoFecha(d.fechaFin, false, true);
+            return utilFechasHorarios.formatoFecha(d.fechaInicio) + ' - De ' + utilFechasHorarios.formatoFecha(d.fechaInicio, false, true) + ' a ' + utilFechasHorarios.formatoFecha(d.fechaFin, false, true);
           }, className: "text-center", type: "fecha"},
         {data: "estado", name: "estado", render: function (e, t, d, m) {
             return '<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">Clase - ' + estadosClase[d.estado][0] + '</span>' + (d.estadoPago !== null ? '&nbsp;<span class="label ' + estadosPago[d.estadoPago][1] + ' btn-estado">Pago - ' + estadosPago[d.estadoPago][0] + '</span>' : '');
           }, className: "text-center"},
         {data: "duracion", name: "duracion", render: function (e, t, d, m) {
-            return formatoHora(d.duracion);
+            return utilFechasHorarios.formatoHora(d.duracion);
           }, className: "text-center"},
         {data: "costoHoraProfesor", name: "costoHoraProfesor", render: function (e, t, d, m) {
-            return "S/. " + redondear(d.costoHoraProfesor, 2) + (d.pagoTotalProfesor !== null ? ("<br/>(Pago total de S/. " + redondear(d.pagoTotalProfesor, 2) + ")") : "");
+            return "S/. " + util.redondear(d.costoHoraProfesor, 2) + (d.pagoTotalProfesor !== null ? ("<br/>(Pago total de S/. " + util.redondear(d.pagoTotalProfesor, 2) + ")") : "");
           }, className: "text-center", type: "monto"}
       ],
       initComplete: function (s, j) {
-        establecerBotonRecargaTabla("tab-lista-clases");
+        utilTablas.establecerBotonRecargaTabla("tab-lista-clases");
       },
       footerCallback: function (r, d, s, e, di) {
         var api = this.api();
@@ -73,7 +73,7 @@ function cargarListaClase() {
         $('#tab-lista-clases').DataTable().rows({page: 'current'}).data().each(function (i) {
           totalPagoProfesorPagina += (i.pagoTotalProfesor !== null ? parseFloat(i.pagoTotalProfesor) : ((i.duracion !== 0 ? (i.duracion / 3600) : 0) * parseFloat(i.costoHoraProfesor)));
         });
-        $(api.column(4).footer()).html("Total S/. " + redondear(totalPagoProfesor, 2) + (totalPagoProfesor !== totalPagoProfesorPagina ? "<br/>Total de la página S/." + redondear(totalPagoProfesorPagina, 2) : ""));
+        $(api.column(4).footer()).html("Total S/. " + util.redondear(totalPagoProfesor, 2) + (totalPagoProfesor !== totalPagoProfesorPagina ? "<br/>Total de la página S/." + util.redondear(totalPagoProfesorPagina, 2) : ""));
       }
     });
     cargarFiltrosBusqueda(function () {
@@ -164,7 +164,7 @@ function cargarFormularioPagoClase() {
     onkeyup: false,
     onclick: false
   });
-  establecerCalendario("fecha-pago-clases", false, false, false);
+  utilFechasHorarios.establecerCalendario("fecha-pago-clases", false, false, false);
   incluirSeccionSubidaArchivos("documentos-verificacion-clases", {onSubmit: function () {
       return true;
     }, acceptFiles: "image/*", uploadStr: "Subir archivo", maxFileCount: 20});
@@ -180,7 +180,7 @@ function cargarFormularioPagoClase() {
         totalPago += ($(v).data("duracion") !== 0 ? ($(v).data("duracion") / 3600) : 0) * parseFloat($(v).data("pagoxhora"));
       }
     });
-    $("#monto-clase-pago").val(parseFloat(redondear(totalPago, 2)));
+    $("#monto-clase-pago").val(parseFloat(util.redondear(totalPago, 2)));
     mostrarSeccionClase([2]);
   });
   $("#btn-cancelar-pago-clase").click(function () {

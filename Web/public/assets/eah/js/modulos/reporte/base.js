@@ -21,12 +21,12 @@ function cargarDatosGrafico(idsSel, nuevaCarga) {
   } else {
     urlListarGrafico = (typeof (urlListarGrafico) === "undefined" ? "" : urlListarGrafico);
     estados = (typeof (estados) === "undefined" ? "" : estados);
-    meses = (typeof (meses) === "undefined" ? "" : meses);
-    if (urlListarGrafico !== "" && estados !== "" && meses !== "") {
+    var meses = utilFechasHorarios.obtenerMeses();
+    if (urlListarGrafico !== "" && estados !== "") {
       var datos = obtenerDatosFiltrosBusqueda();
       datos["ids"] = idsSel;
       $('#sec-grafico').block({message: '<h4>Cargando...</h4>'});
-      llamadaAjax(urlListarGrafico, "POST", datos, true, function (d) {
+      util.llamadaAjax(urlListarGrafico, "POST", datos, true, function (d) {
         var datosBar = [];
         if (d.length > 0) {
           var datosCabecera = [(d[0].mes !== undefined ? "Mes" : (d[0].anho !== undefined ? "Año" : "Día"))];
@@ -39,7 +39,7 @@ function cargarDatosGrafico(idsSel, nuevaCarga) {
           datosBar.push(datosCabecera);
 
           for (var i = 0; i < d.length; i++) {
-            var grupo = "" + (d[i].mes !== undefined ? meses[d[i].mes] : (d[i].anho !== undefined ? d[i].anho : formatoFecha((d[i].fechaInicio !== undefined ? d[i].fechaInicio : d[i].fechaRegistro))));
+            var grupo = "" + (d[i].mes !== undefined ? meses[d[i].mes] : (d[i].anho !== undefined ? d[i].anho : utilFechasHorarios.formatoFecha((d[i].fechaInicio !== undefined ? d[i].fechaInicio : d[i].fechaRegistro))));
             var itemSel = null;
             for (var j = 0; j < datosBar.length; j++) {
               var item = datosBar[j];
@@ -72,7 +72,7 @@ function cargarDatosGrafico(idsSel, nuevaCarga) {
           var opcionesGrafico = {
             chart: {
               title: "Reporte de " + nombreEntidadReporte,
-              subtitle: (datosMontosReporte ? ("S/. " + redondear(total, 2)) : total) + " " + (total === 1 ? detalleSingularReporte : detallePluralReporte)
+              subtitle: (datosMontosReporte ? ("S/. " + util.redondear(total, 2)) : total) + " " + (total === 1 ? detalleSingularReporte : detallePluralReporte)
             },
             bars: "vertical",
             vAxis: {format: (datosMontosReporte ? "decimal" : "")},

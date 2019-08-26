@@ -16,11 +16,11 @@ var ultimaFechaCargada = "";
 function cargarListaHistorial() {
   urlCargarHistorial = (typeof (urlCargarHistorial) === "undefined" ? "" : urlCargarHistorial);
   urlArchivos = (typeof (urlArchivos) === "undefined" ? "" : urlArchivos);
-  meses = (typeof (meses) === "undefined" ? "" : meses);
+  var meses = utilFechasHorarios.obtenerMeses();
 
   $("input[name='numeroCarga']").val(($("#sec-historial").html() !== "") ? $("input[name='numeroCarga']").val() : 0);
   var numeroCarga = $("input[name='numeroCarga']").val();
-  if (urlCargarHistorial !== "" && urlArchivos !== "" && meses !== "" && !isNaN(parseInt(numeroCarga))) {
+  if (urlCargarHistorial !== "" && urlArchivos !== "" && !isNaN(parseInt(numeroCarga))) {
     $("#sec-historial").find("#sec-cierre-historial").hide("slow");
     $("#sec-historial").find("#sec-cierre-historial").remove();
     $("#sec-boton-carga-mas-historial").hide();
@@ -33,10 +33,10 @@ function cargarListaHistorial() {
         '</li>');
 
     var datosLLamada = {numeroCarga: numeroCarga};
-    if (obtenerParametroUrlXNombre("id", window.location.href) !== null) {
-      datosLLamada.id = obtenerParametroUrlXNombre("id", window.location.href);
+    if (util.obtenerParametroUrlXNombre("id", window.location.href) !== null) {
+      datosLLamada.id = util.obtenerParametroUrlXNombre("id", window.location.href);
     }
-    llamadaAjax(urlCargarHistorial, "POST", datosLLamada, true,
+    util.llamadaAjax(urlCargarHistorial, "POST", datosLLamada, true,
         function (d) {
           var datosHistorial = d.datos;
           var htmlHistorial = "";
@@ -156,7 +156,7 @@ function cargarFormularioHistorial() {
     onclick: false
   });
   CKEDITOR.replace("mensaje-evento-historial");
-  establecerCalendario("fecha-notificacion-evento-historial", true, false);
+  utilFechasHorarios.establecerCalendario("fecha-notificacion-evento-historial", true, false);
   incluirSeccionSubidaArchivos("adjuntos", {onSubmit: function () {
       return true;
     }, acceptFiles: "*", uploadStr: "Subir archivo", maxFileCount: 20});

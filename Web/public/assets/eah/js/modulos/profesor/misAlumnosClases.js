@@ -39,9 +39,9 @@ function cargarLista() {
             d.estado = (d.estado === estadoClaseConfirmadaProfesorAlumno ? estadoClaseRealizada : d.estado);
             return (d.estado === estadoClaseProgramada ? '' :
                     '<b>Fecha:</b> ' + (d.fechaConfirmacion !== null && (d.estado === estadoClaseConfirmadaProfesorAlumno || d.estado === estadoClaseRealizada) ?
-                            formatoFecha(d.fechaConfirmacion) + ' - De ' + formatoFecha(fechaConfirmacionIni, false, true) + ' a ' + formatoFecha(d.fechaConfirmacion, false, true) :
-                            formatoFecha(d.fechaInicio) + ' - De ' + formatoFecha(d.fechaInicio, false, true) + ' a ' + formatoFecha(d.fechaFin, false, true)) + '<br/>')
-                    + '<b>Duración:</b> ' + formatoHora(d.duracion) + '<br/>'
+                            utilFechasHorarios.formatoFecha(d.fechaConfirmacion) + ' - De ' + utilFechasHorarios.formatoFecha(fechaConfirmacionIni, false, true) + ' a ' + utilFechasHorarios.formatoFecha(d.fechaConfirmacion, false, true) :
+                            utilFechasHorarios.formatoFecha(d.fechaInicio) + ' - De ' + utilFechasHorarios.formatoFecha(d.fechaInicio, false, true) + ' a ' + utilFechasHorarios.formatoFecha(d.fechaFin, false, true)) + '<br/>')
+                    + '<b>Duración:</b> ' + utilFechasHorarios.formatoHora(d.duracion) + '<br/>'
                     + '<b>Estado:</b> ' + (estadosClase[d.estado] !== undefined ? '<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">' + estadosClase[d.estado][0] + '</span>' : '');
           }},
         {data: "comentarioProfesor", name: "comentarioProfesor", render: function (e, t, d, m) {
@@ -52,8 +52,8 @@ function cargarLista() {
         {data: "comentarioParaProfesor", name: "comentarioParaProfesor", "className": "not-mobile"}
       ],
       initComplete: function (s, j) {
-        establecerBotonRecargaTabla("tab-lista");
-        establecerCabecerasBusquedaTabla("tab-lista");
+        utilTablas.establecerBotonRecargaTabla("tab-lista");
+        utilTablas.establecerCabecerasBusquedaTabla("tab-lista");
       }
     });
   }
@@ -77,7 +77,7 @@ function cargarFormularioAvancesClase() {
       if (confirm("¿Está seguro que desea guardar los avances de la clase seleccionada?")) {
         $.blockUI({message: "<h4>Guardando...</h4>"});
         var datos = procesarDatosFormulario(f);
-        llamadaAjax($(f).attr("action"), "POST", datos, true,
+        util.llamadaAjax($(f).attr("action"), "POST", datos, true,
                 function (d) {
                   $("body").unblock({
                     onUnblock: function () {
@@ -166,5 +166,5 @@ function cargarFormularioConfirmacionClase() {
     $("#sec-cambio-duracion").show();
   });
   duracionProximaClase = (typeof (duracionProximaClase) === "undefined" ? "" : duracionProximaClase);
-  establecerCampoDuracion("duracion-clase", duracionProximaClase);
+  utilFechasHorarios.establecerCampoDuracion("duracion-clase", duracionProximaClase);
 }

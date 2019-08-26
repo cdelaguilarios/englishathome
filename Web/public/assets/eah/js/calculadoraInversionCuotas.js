@@ -43,14 +43,14 @@ function agregarCamposCalculoInversionCuotas(establecerNumeroCuotasIniciales) {
             '<th class="text-center"><b>Materiales ' + (moneda !== '' ? '(' + moneda + ')' : '') + '</b></th>' +
             '<th class="text-center"><b>Inversión total ' + (moneda !== '' ? '(' + moneda + ')' : '') + '</b></th>' +
             '</tr>';
-        var nroHorasCta = parseFloat(redondear((nroHoras / i), 2));
-        var inversionCta = parseFloat(redondear((inversion / i), 2));
+        var nroHorasCta = parseFloat(util.redondear((nroHoras / i), 2));
+        var inversionCta = parseFloat(util.redondear((inversion / i), 2));
         var inversionHora = (inversion / nroHoras);
         var auxTotalNroHoras = 0, auxTotalInversion = 0;
 
         for (var j = 1; j <= i; j++) {
           var th = parseInt((auxTotalNroHoras + nroHorasCta >= nroHoras) || (j === i) ? (nroHoras - auxTotalNroHoras) : nroHorasCta);
-          var tm = (j === 1 ? redondear(materiales, 2) : '');
+          var tm = (j === 1 ? util.redondear(materiales, 2) : '');
           htmlCuota += '<tr>' +
               '<td class="text-center"><input id="inversion-numero-horas-cta-' + i + '-' + j + '" type="number" value="' + th + '" style="width: 40px; margin: 0 4px;" /></td>' +
               '<td class="text-center"><input id="inversion-materiales-cta-' + i + '-' + j + '" type="text" value="' + tm + '" /></td>' +
@@ -99,20 +99,20 @@ function recalcularInversionCuotas() {
 
       var tic = (thc * ihc) + tmc;
       ti += tic;
-      $("#inversion-total-cta-" + i + "-" + j).text(redondear(tic, 2));
+      $("#inversion-total-cta-" + i + "-" + j).text(util.redondear(tic, 2));
       htmlInversionCuota += '<tr class="' + (j % 2 === 0 ? 'fila-par' : 'fila-impar') + '">' +
           '<td>' + thc + '</td>' +
           '<td>' + (tmc === 0 ? '&nbsp;' : (moneda + tmc)) + '</td>' +
-          '<td>' + (moneda + redondear(tic, 2)) + '</td>' +
+          '<td>' + (moneda + util.redondear(tic, 2)) + '</td>' +
           '</tr>';
     }
     htmlInversionCuota += '<tr class="fila-total">' +
         '<td colspan="2">TOTAL</td>' +
-        '<td>' + (moneda + redondear(ti, 2)) + '</td>' +
+        '<td>' + (moneda + util.redondear(ti, 2)) + '</td>' +
         '</tr>' +
         '</tbody>' +
         '</table>';
-    $("#inversion-total-" + i).text("Total " + redondear(ti, 2));
+    $("#inversion-total-" + i).text("Total " + util.redondear(ti, 2));
   }
   CKEDITOR.instances["inversion-cuotas"].setData(htmlInversionCuota);
 }

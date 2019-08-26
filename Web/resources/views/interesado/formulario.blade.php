@@ -3,7 +3,7 @@
     <div class="{{ ((isset($modo) && $modo == "registrar") ? "box box-info" : "") }}">
       <div class="box-header with-border">
         <h3 class="box-title">Datos</h3>
-        <button class="btn btn-default btn-clean pull-right" onclick="limpiarCampos();" type="button">Limpiar campos</button>
+        <button class="btn btn-default btn-clean pull-right" onclick="utilFormularios.limpiarCampos();" type="button">Limpiar campos</button>
       </div>
       <div class="box-body">
         <div class="form-group">
@@ -48,9 +48,9 @@
         @include("util.ubigeo")     
         <div class="form-group">
           {{ Form::label("estado", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
-          @if(!isset($interesado) || (isset($interesado) && array_key_exists($interesado->estado, App\Helpers\Enum\EstadosInteresado::listarCambio())))
+          @if(!isset($interesado) || (isset($interesado) && array_key_exists($interesado->estado, App\Helpers\Enum\EstadosInteresado::listarDisponibleCambio())))
           <div class="col-sm-3">
-            {{ Form::select("estado", App\Helpers\Enum\EstadosInteresado::listarCambio(), (isset($interesado) ? $interesado->estado : App\Helpers\Enum\EstadosInteresado::PendienteInformacion), ["class" => "form-control"]) }}
+            {{ Form::select("estado", App\Helpers\Enum\EstadosInteresado::listarDisponibleCambio(), (isset($interesado) ? $interesado->estado : App\Helpers\Enum\EstadosInteresado::PendienteInformacion), ["class" => "form-control"]) }}
           </div>
           @else
           <div class="col-sm-2">

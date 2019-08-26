@@ -52,7 +52,7 @@ function cargarDistritos() {
 function cargarDatosUbigeo(eleUbigeoLista, urlListarUbigeo, parametros, textoSeleccionDefecto, codigoUbigeoSel, noMostrarMensajeBloqueo, funcionCompletado) {
   if (urlListarUbigeo !== "") {
     (!noMostrarMensajeBloqueo ? $.blockUI({message: "<h4>" + (formularioExternoPostulante ? "Loading" : "Cargando") + "...</h4>"}) : "");
-    llamadaAjax(urlListarUbigeo, "POST", parametros, true,
+    util.llamadaAjax(urlListarUbigeo, "POST", parametros, true,
             function (d) {
               var elementosUbigeo = d["elementosUbigeo"];
               var codigosUbigeo = Object.keys(elementosUbigeo);

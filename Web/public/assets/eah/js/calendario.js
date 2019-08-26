@@ -23,7 +23,7 @@ function  cargarSeccionCalendario() {
       },
       contentHeight: 400
     });
-    establecerCalendario("bus-fecha-calendario", false, false, false, function () {
+    utilFechasHorarios.establecerCalendario("bus-fecha-calendario", false, false, false, function () {
       var fechaBus = $("#bus-fecha-calendario").val();
       var datFechaBus = fechaBus.split("/");
       if (datFechaBus.length === 3) {

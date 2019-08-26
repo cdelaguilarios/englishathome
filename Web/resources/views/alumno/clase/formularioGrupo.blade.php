@@ -45,7 +45,7 @@
     </div>
     {{ Form::label("estado-clases", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-3">
-      {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarCambio(), null, ["id" => "estado-clases", "class" => "form-control"]) }}
+      {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarDisponibleCambio(), null, ["id" => "estado-clases", "class" => "form-control"]) }}
     </div>
   </div>
   <div id="sec-clase-42" class="form-group">    

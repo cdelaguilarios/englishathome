@@ -10,7 +10,7 @@
     <div id="sec-estado-clase">
       {{ Form::label("estado-clase", "Estado: ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-3">
-        {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarCambio(), null, ["id" => "estado-clase", "class" => "form-control"]) }}
+        {{ Form::select("estado", App\Helpers\Enum\EstadosClase::listarDisponibleCambio(), null, ["id" => "estado-clase", "class" => "form-control"]) }}
       </div>
     </div>
     <div id="sec-notificar-clase" class="col-sm-2">

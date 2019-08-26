@@ -9,7 +9,7 @@ function cargarNotificaciones() {
   urlListaNotificaciones = (typeof (urlListaNotificaciones) === "undefined" ? "" : urlListaNotificaciones);
   urlNuevasNotificaciones = (typeof (urlNuevasNotificaciones) === "undefined" ? "" : urlNuevasNotificaciones);
   if (urlListaNotificaciones !== "" && urlNuevasNotificaciones !== "") {
-    llamadaAjax(urlNuevasNotificaciones, "POST", {}, true,
+    util.llamadaAjax(urlNuevasNotificaciones, "POST", {}, true,
         function (d) {
           var datosHistorial = d.datos;
           var htmlListaNuevasNotificaciones = "";
@@ -42,7 +42,7 @@ function cargarNotificaciones() {
         if ($(".notifications-menu.open").length > 0) {
           urlRevisarNuevasNotificaciones = (typeof (urlRevisarNuevasNotificaciones) === "undefined" ? "" : urlRevisarNuevasNotificaciones);
           if (urlRevisarNuevasNotificaciones !== "" && idsNuevasNotificaciones.length > 0 && !revisionRealizada) {
-            llamadaAjax(urlRevisarNuevasNotificaciones, "POST", {idsNuevasNotificaciones: idsNuevasNotificaciones}, true, undefined, function () {
+            util.llamadaAjax(urlRevisarNuevasNotificaciones, "POST", {idsNuevasNotificaciones: idsNuevasNotificaciones}, true, undefined, function () {
               revisionRealizada = true;
               $("#sec-total-nuevas-notificaciones").remove();
             });

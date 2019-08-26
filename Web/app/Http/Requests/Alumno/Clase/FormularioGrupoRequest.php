@@ -48,7 +48,7 @@ class FormularioGrupoRequest extends Request {
         "costoHoraDocente" => ["regex:" . ReglasValidacion::RegexDecimal]
     ];
 
-    $estados = EstadosClase::listarCambio();
+    $estados = EstadosClase::listarDisponibleCambio();
     if ($datos["editarDatosGenerales"] == 1 && !array_key_exists($datos["estado"], $estados)) {
       $reglasValidacion["estadoNoValido"] = "required";
     }

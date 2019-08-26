@@ -5,7 +5,7 @@ function verificarJqueryClase() {
 function  cargarSeccionClases() {
   urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
   estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
-  estadosClaseCambio = (typeof (estadosClaseCambio) === "undefined" ? "" : estadosClaseCambio);
+  estadosClaseDisponibleCambio = (typeof (estadosClaseDisponibleCambio) === "undefined" ? "" : estadosClaseDisponibleCambio);
   minHorario = (typeof (minHorario) === "undefined" ? "" : minHorario);
   maxHorario = (typeof (maxHorario) === "undefined" ? "" : maxHorario);
   minHorasClase = (typeof (minHorasClase) === "undefined" ? "" : minHorasClase);
@@ -19,7 +19,7 @@ function  cargarSeccionClases() {
 
   //Común   
   registroHistorial = (typeof (registroHistorial) === "undefined" ? false : registroHistorial);
-  if (obtenerParametroUrlXNombre("sec") === "clase" && !registroHistorial) {
+  if (util.obtenerParametroUrlXNombre("sec") === "clase" && !registroHistorial) {
     $("a[href='#clase']").tab("show");
   }
   $("#fecha-clase, #fecha-clase-reprogramada, #hora-inicio-clase, #hora-inicio-clase-reprogramada, #hora-inicio-clases, #duracion-clase, #duracion-clase-reprogramada, #duracion-clases").live("change", function () {
@@ -91,15 +91,15 @@ function cargarListaPeriodos() {
         var fechaFinSel = new Date(d.fechaFin);
 
         //Número de período                       
-        $("td", r).eq(0).html("<b>Período: </b>" + d.numeroPeriodo + ((fechaActual >= fechaInicioSel && fechaActual <= fechaFinSel) ? " (Actual)" : "") + "<br/>Del <b>" + formatoFecha(d.fechaInicio) + "</b> al <b>" + formatoFecha(d.fechaFin) + "</b><br/><b>Total de horas:</b> " + formatoHora(d.horasTotal));
+        $("td", r).eq(0).html("<b>Período: </b>" + d.numeroPeriodo + ((fechaActual >= fechaInicioSel && fechaActual <= fechaFinSel) ? " (Actual)" : "") + "<br/>Del <b>" + utilFechasHorarios.formatoFecha(d.fechaInicio) + "</b> al <b>" + utilFechasHorarios.formatoFecha(d.fechaFin) + "</b><br/><b>Total de horas:</b> " + utilFechasHorarios.formatoHora(d.horasTotal));
 
         //Opciones
         $("td", r).eq(1).addClass("text-center");
       },
       initComplete: function (s, j) {
-        establecerBotonRecargaTabla("tab-lista-periodos-clases");
-        if (obtenerParametroUrlXNombre("nrp"))
-          $('a[data-periodo="' + obtenerParametroUrlXNombre("nrp") + '"]').trigger("click");
+        utilTablas.establecerBotonRecargaTabla("tab-lista-periodos-clases");
+        if (util.obtenerParametroUrlXNombre("nrp"))
+          $('a[data-periodo="' + util.obtenerParametroUrlXNombre("nrp") + '"]').trigger("click");
       }
     });
 
@@ -119,8 +119,8 @@ function cargarListaPeriodos() {
       var idClase = $(this).data("idclase");
       var idAlumno = $(this).data("idalumno");
       if (urlActualizarEstadoClase !== "" && $(this).data("estado") !== $(this).val()) {
-        llamadaAjax(urlActualizarEstadoClase, "POST", {"idClase": idClase, "idAlumno": idAlumno, "estado": $(this).val()}, true, undefined, function () {
-          recargarDatosTabla('tab-lista-pagos');
+        util.llamadaAjax(urlActualizarEstadoClase, "POST", {"idClase": idClase, "idAlumno": idAlumno, "estado": $(this).val()}, true, undefined, function () {
+          utilTablas.recargarDatosTabla('tab-lista-pagos');
         }, function (de) {
           var rj = de.responseJSON;
           if (rj !== undefined && rj.mensaje !== undefined) {
@@ -154,7 +154,7 @@ function listarClases(tr, fila, datosFila) {
 
   if (urlListarClases !== "" && urlEliminarClase !== "" && urlPerfilProfesor !== "" && estadosClase !== "" && estadoClaseRealizada !== "" && estadoClaseCancelada !== "" && estadosPago !== "") {
     $.blockUI({message: "<h4>Cargando...</h4>"});
-    llamadaAjax(((urlListarClases.replace("/0", "/" + datosFila.numeroPeriodo))), "POST", {}, true,
+    util.llamadaAjax(((urlListarClases.replace("/0", "/" + datosFila.numeroPeriodo))), "POST", {}, true,
         function (d) {
           if (d.length > 0) {
             $("body").unblock({
@@ -186,7 +186,7 @@ function listarClases(tr, fila, datosFila) {
               }
             });
           } else {
-            recargarDatosTabla("tab-lista-periodos-clases");
+            utilTablas.recargarDatosTabla("tab-lista-periodos-clases");
             $("body").unblock();
           }
         },
@@ -211,14 +211,14 @@ function htmlListaClases(d) {
         '<b>(' + (i + 1) + ')</b> ' + (d[i].estado !== estadoClaseCancelada ? '<input type="checkbox" data-id="' + d[i].id + '" />' : '') +
         '</td>' +
         '<td>' +
-        '<b>Fecha:</b> ' + formatoFecha(d[i].fechaInicio) + ' - De ' + formatoFecha(d[i].fechaInicio, false, true) + ' a ' + formatoFecha(d[i].fechaFin, false, true) + '<br/>'
-        + '<b>Duración:</b> ' + formatoHora(d[i].duracion) + '<br/>'
+        '<b>Fecha:</b> ' + utilFechasHorarios.formatoFecha(d[i].fechaInicio) + ' - De ' + utilFechasHorarios.formatoFecha(d[i].fechaInicio, false, true) + ' a ' + utilFechasHorarios.formatoFecha(d[i].fechaFin, false, true) + '<br/>'
+        + '<b>Duración:</b> ' + utilFechasHorarios.formatoHora(d[i].duracion) + '<br/>'
         + (d[i].idHistorial !== null ?
             '<b>Notificar:</b> ' + ' <i class="fa fa-check icon-notificar-clase"></i>' + '<br/>' : '')
         + '<b>Profesor:</b> ' + (d[i].idProfesor !== null && d[i].nombreProfesor !== null && d[i].nombreProfesor !== '' ? '<a target="_blank" href="' + urlPerfilProfesor.replace("/0", "/" + d[i].idProfesor) + '">' + d[i].nombreProfesor + ' ' + d[i].apellidoProfesor + '</a>' + (d[i].estadoPagoProfesor !== null ? '<br/><span class="label ' + estadosPago[d[i].estadoPagoProfesor][1] + ' btn-estado">Pago al profesor - ' + estadosPago[d[i].estadoPagoProfesor][0] + '</span>' : '') : 'Sin profesor asignado') +
         '</td>' +
         '<td class="text-center">' +
-        ((estadosClase[d[i].estado] !== undefined && estadosClaseCambio[d[i].estado] !== undefined) ?
+        ((estadosClase[d[i].estado] !== undefined && estadosClaseDisponibleCambio[d[i].estado] !== undefined) ?
             '<div class="sec-btn-editar-estado-clase"><a href="javascript:void(0);" class="btn-editar-estado-clase" data-idclase="' + d[i].id + '" data-idalumno="' + d[i].idAlumno + '" data-estado="' + d[i].estado + '"><span class="label ' + estadosClase[d[i].estado][1] + ' btn-estado">' + estadosClase[d[i].estado][0] + '</span></a></div>' : ((estadosClase[d[i].estado] !== undefined) ? '<span class="label ' + estadosClase[d[i].estado][1] + ' btn-estado">' + estadosClase[d[i].estado][0] + '</span>' : '')) +
         '</td>' +
         '<td class="text-center">' +
@@ -231,7 +231,7 @@ function htmlListaClases(d) {
             '</li>' :
             '') +
         "<li>" +
-        '<a href="javascript:void(0);" title="Eliminar clase" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de esta clase?\', null, true, function(){recargarDatosTabla(\'tab-lista-pagos\');mostrarOcultarClases($(\'a[data-periodo=' + d[i].numeroPeriodo + ']\'), true);})" data-id="' + d[i].id + '" data-urleliminar="' + ((urlEliminarClase.replace('/0', '/' + d[i].id))) + '">' +
+        '<a href="javascript:void(0);" title="Eliminar clase" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de esta clase?\', null, true, function(){utilTablas.recargarDatosTabla(\'tab-lista-pagos\');mostrarOcultarClases($(\'a[data-periodo=' + d[i].numeroPeriodo + ']\'), true);})" data-id="' + d[i].id + '" data-urleliminar="' + ((urlEliminarClase.replace('/0', '/' + d[i].id))) + '">' +
         "<i class='fa fa-trash'></i>" +
         "</a>" +
         "</li>" +
@@ -275,11 +275,11 @@ function htmlListaClasesMovil(d) {
         '<tr>' +
         '<td>' +
         '<b>Número:</b> ' + (i + 1) + '<br/>' +
-        '<b>Fecha:</b> ' + formatoFecha(d[i].fechaInicio) + ' - De ' + formatoFecha(d[i].fechaInicio, false, true) + ' a ' + formatoFecha(d[i].fechaFin, false, true) + '<br/>' +
-        '<b>Duración:</b> ' + formatoHora(d[i].duracion) + '<br/>' +
+        '<b>Fecha:</b> ' + utilFechasHorarios.formatoFecha(d[i].fechaInicio) + ' - De ' + utilFechasHorarios.formatoFecha(d[i].fechaInicio, false, true) + ' a ' + utilFechasHorarios.formatoFecha(d[i].fechaFin, false, true) + '<br/>' +
+        '<b>Duración:</b> ' + utilFechasHorarios.formatoHora(d[i].duracion) + '<br/>' +
         '<b>Profesor:</b> ' + (d[i].idProfesor !== null && d[i].nombreProfesor !== null && d[i].nombreProfesor !== '' ? '<a target="_blank" href="' + urlPerfilProfesor.replace("/0", "/" + d[i].idProfesor) + '">' + d[i].nombreProfesor + ' ' + d[i].apellidoProfesor + (d[i].estadoPagoProfesor !== null ? '<br/><span class="label ' + estadosPago[d[i].estadoPagoProfesor][1] + ' btn-estado">Pago al profesor - ' + estadosPago[d[i].estadoPagoProfesor][0] + '</span>' : '') + '</a>' : 'Sin profesor asignado') + '<br/>' +
         (d[i].idHistorial !== null ? '<b>Notificar:</b> <i class="fa fa-check icon-notificar-clase"></i><br/>' : '') +
-        ((estadosClase[d[i].estado] !== undefined && estadosClaseCambio[d[i].estado] !== undefined) ?
+        ((estadosClase[d[i].estado] !== undefined && estadosClaseDisponibleCambio[d[i].estado] !== undefined) ?
             '<div class="sec-btn-editar-estado-clase"><a href="javascript:void(0);" class="btn-editar-estado-clase" data-idclase="' + d[i].id + '" data-idalumno="' + d[i].idAlumno + '" data-estado="' + d[i].estado + '"><span class="label ' + estadosClase[d[i].estado][1] + ' btn-estado">' + estadosClase[d[i].estado][0] + '</span></a></div>' : ((estadosClase[d[i].estado] !== undefined) ? '<span class="label ' + estadosClase[d[i].estado][1] + ' btn-estado">' + estadosClase[d[i].estado][0] + '</span>' : '')) +
         '</td>' +
         '<td class="text-center">' +
@@ -292,7 +292,7 @@ function htmlListaClasesMovil(d) {
             '</li>' :
             '') +
         "<li>" +
-        '<a href="javascript:void(0);" title="Eliminar clase" onclick="eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de esta clase?\', null, true, function(){mostrarOcultarClases($(\'a[data-periodo=' + d[i].numeroPeriodo + ']\'), true);})" data-id="' + d[i].id + '" data-urleliminar="' + ((urlEliminarClase.replace('/0', '/' + d[i].id))) + '">' +
+        '<a href="javascript:void(0);" title="Eliminar clase" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de esta clase?\', null, true, function(){mostrarOcultarClases($(\'a[data-periodo=' + d[i].numeroPeriodo + ']\'), true);})" data-id="' + d[i].id + '" data-urleliminar="' + ((urlEliminarClase.replace('/0', '/' + d[i].id))) + '">' +
         "<i class='fa fa-trash'></i>" +
         "</a>" +
         "</li>" +
@@ -377,9 +377,9 @@ function cargarFormularioClase() {
     onclick: false
   });
   //Registrar
-  establecerCalendario("fecha-clase", false, false, false);
-  establecerCampoHorario("hora-inicio-clase");
-  establecerCampoDuracion("duracion-clase");
+  utilFechasHorarios.establecerCalendario("fecha-clase", false, false, false);
+  utilFechasHorarios.establecerCampoHorario("hora-inicio-clase");
+  utilFechasHorarios.establecerCampoDuracion("duracion-clase");
   $("#btn-nuevo-clase").click(function () {
     limpiarCamposClase();
     $("#titulo-formulario").text("Nueva clase");
@@ -400,18 +400,18 @@ function editarClase(idClase) {
       $("#notificar-clase").attr("checked", true);
       $("#notificar-clase").closest("label").addClass("checked");
     }
-    var datFechaInicio = formatoFecha(d.fechaInicio).split("/");
+    var datFechaInicio = utilFechasHorarios.formatoFecha(d.fechaInicio).split("/");
     $("#fecha-clase").datepicker("setDate", (new Date(datFechaInicio[1] + "/" + datFechaInicio[0] + "/" + datFechaInicio[2])));
-    $("#hora-inicio-clase").val(tiempoSegundos(d.fechaInicio));
+    $("#hora-inicio-clase").val(utilFechasHorarios.tiempoSegundos(d.fechaInicio));
     $("#duracion-clase").val(d.duracion);
-    $("#costo-hora-clase").val(redondear(d.costoHora, 2));
+    $("#costo-hora-clase").val(util.redondear(d.costoHora, 2));
     $("#id-pago-clase").val(d.idPago);
     $("#btn-guardar-clase").text("Guardar");
 
     if (d.idProfesor !== null && d.nombreProfesor !== null && d.nombreProfesor !== '') {
       $(".id-docente-clase").val(d.idProfesor);
       $(".nombre-docente-clase").html('<i class="fa flaticon-teach"></i> <b>' + d.nombreProfesor + ' ' + d.apellidoProfesor + '</b> <a href=' + (urlPerfilProfesor.replace('/0', '/' + d.idProfesor)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>');
-      $("#costo-hora-docente").val(redondear(d.costoHoraProfesor, 2));
+      $("#costo-hora-docente").val(util.redondear(d.costoHoraProfesor, 2));
       mostrarSeccionClase([2, 1]);
     } else {
       mostrarSeccionClase([2]);
@@ -478,9 +478,9 @@ function cargarFormularioCancelarClase() {
       onkeyup: false,
       onclick: false
     });
-    establecerCalendario("fecha-clase-reprogramada", false, false, false);
-    establecerCampoHorario("hora-inicio-clase-reprogramada");
-    establecerCampoDuracion("duracion-clase-reprogramada");
+    utilFechasHorarios.establecerCalendario("fecha-clase-reprogramada", false, false, false);
+    utilFechasHorarios.establecerCampoHorario("hora-inicio-clase-reprogramada");
+    utilFechasHorarios.establecerCampoDuracion("duracion-clase-reprogramada");
     $("#reprogramar-clase-cancelacion").change(verificarSeccionReprogramarClase);
   }
 }
@@ -494,11 +494,11 @@ function cancelarClase(idClase) {
     } else {
       $("#sec-campo-pago-profesor").hide();
     }
-    var datFechaProximaClase = formatoFecha(d.fechaProximaClase).split("/");
+    var datFechaProximaClase = utilFechasHorarios.formatoFecha(d.fechaProximaClase).split("/");
     $("#fecha-clase-reprogramada").datepicker("setDate", (new Date(datFechaProximaClase[1] + "/" + datFechaProximaClase[0] + "/" + datFechaProximaClase[2])));
-    $("#hora-inicio-clase-reprogramada").val(tiempoSegundos(d.fechaInicio));
+    $("#hora-inicio-clase-reprogramada").val(utilFechasHorarios.tiempoSegundos(d.fechaInicio));
     $("#duracion-clase-reprogramada").val(d.duracion);
-    $("#costo-hora-clase-reprogramada").val(redondear(d.costoHora, 2));
+    $("#costo-hora-clase-reprogramada").val(util.redondear(d.costoHora, 2));
     $("#id-pago-clase-reprogramada").val(d.idPago);
     mostrarSeccionClase([3, 1, 1]);
     $(window).scrollTop($("#formulario-cancelar-clase").offset().top);
@@ -571,8 +571,8 @@ function cargarFormularioClasesGrupo() {
     onclick: false
   });
   //Registrar
-  establecerCampoHorario("hora-inicio-clases");
-  establecerCampoDuracion("duracion-clases");
+  utilFechasHorarios.establecerCampoHorario("hora-inicio-clases");
+  utilFechasHorarios.establecerCampoDuracion("duracion-clases");
   $("#editar-datos-generales-clases, #editar-datos-tiempo-clases, #editar-datos-pago-clases, #editar-datos-profesor-clases").live("click", function () {
     (($(this).is(':checked')) ? $("#" + $(this).data("seccion")).show() : $("#" + $(this).data("seccion")).hide());
     if ($(this).data("seccion") === "sec-clase-44" && $("#costo-hora-docente-clases").val() !== "") {
@@ -594,9 +594,9 @@ function editarClasesGrupo(numeroPeriodo) {
     $("#numero-periodo-clases").val(d.numeroPeriodo);
     $("#estado-clases").val(d.estado);
     if (d.fechaInicio)
-      $("#hora-inicio-clases").val(tiempoSegundos(d.fechaInicio));
+      $("#hora-inicio-clases").val(utilFechasHorarios.tiempoSegundos(d.fechaInicio));
     $("#duracion-clases").val(d.duracion);
-    $("#costo-hora-clases").val(redondear(d.costoHora, 2));
+    $("#costo-hora-clases").val(util.redondear(d.costoHora, 2));
     $("#id-pago-clases").val(d.idPago);
     $("input[name='idsClases']").val(idsClases);
 
@@ -605,7 +605,7 @@ function editarClasesGrupo(numeroPeriodo) {
     if (d.idProfesor !== null && d.nombreProfesor !== null && d.nombreProfesor !== '') {
       $(".id-docente-clase").val(d.idProfesor);
       $(".nombre-docente-clase").html('<i class="fa flaticon-teach"></i> <b>' + d.nombreProfesor + ' ' + d.apellidoProfesor + '</b> <a href=' + (urlPerfilProfesor.replace('/0', '/' + d.idProfesor)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>');
-      $("#costo-hora-docente-clases").val(redondear(d.costoHoraProfesor, 2));
+      $("#costo-hora-docente-clases").val(util.redondear(d.costoHoraProfesor, 2));
     }
     mostrarSeccionClase([4, 1]);
     $(window).scrollTop($("#formulario-actualizar-clases").offset().top);
@@ -615,7 +615,7 @@ function obtenerDatosClasesGrupo(idsClases, funcionRetorno) {
   urlDatosClasesGrupo = (typeof (urlDatosClasesGrupo) === "undefined" ? "" : urlDatosClasesGrupo);
   if (urlDatosClasesGrupo !== "") {
     $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
-    llamadaAjax(urlDatosClasesGrupo, "POST", {"ids": idsClases}, true,
+    util.llamadaAjax(urlDatosClasesGrupo, "POST", {"ids": idsClases}, true,
         function (d) {
           if (funcionRetorno !== undefined)
             funcionRetorno(d);
@@ -703,7 +703,7 @@ function cargarDocentesDisponiblesClase(recargarListaPeriodos, recrearTabla) {
           $("td", r).eq(2).addClass("text-center");
         },
         initComplete: function (s, j) {
-          establecerBotonRecargaTabla("tab-lista-docentes-clase");
+          utilTablas.establecerBotonRecargaTabla("tab-lista-docentes-clase");
         }
       });
     }
@@ -753,7 +753,7 @@ function cambioFechaHorario(idsClases, fecha, horaInicio, duracion, numFormulari
   urlTotalClasesXHorario = (typeof (urlTotalClasesXHorario) === "undefined" ? "" : urlTotalClasesXHorario);
   if (urlTotalClasesXHorario !== "" && !cargandoDatosClaseXHorario && ((idsClases !== "" && idsClases !== null) || ((idsClases === "" || idsClases === null) && (fecha !== "" && fecha !== null))) && (horaInicio !== "" && horaInicio !== null) && (duracion !== "" && duracion !== null)) {
     cargandoDatosClaseXHorario = true;
-    llamadaAjax(urlTotalClasesXHorario, "POST", {"ids": idsClases, "fecha": fecha, "horaInicio": horaInicio, "duracion": duracion}, true,
+    util.llamadaAjax(urlTotalClasesXHorario, "POST", {"ids": idsClases, "fecha": fecha, "horaInicio": horaInicio, "duracion": duracion}, true,
         function (d) {
           if (parseInt(d) > 0) {
             agregarMensaje("advertencias", "El alumno ya tiene programada un clase para este fecha en el horario seleccionado.", true, "#sec-mensajes-clase");

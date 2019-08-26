@@ -11,7 +11,7 @@ function cargarSeccionDocente() {
     $("#tab-lista").DataTable().ajax.reload();
   });
   
-  if (obtenerParametroUrlXNombre("sec") === "experiencia-laboral") {
+  if (util.obtenerParametroUrlXNombre("sec") === "experiencia-laboral") {
     $("a[href='#experiencia-laboral']").trigger("click");
   }
 }
@@ -55,11 +55,11 @@ function cargarListaDocentes() {
             }
           }, className: "text-center"},
         {data: "fechaRegistro", name: "entidad.fechaRegistro", render: function (e, t, d, m) {
-            return formatoFecha(d.fechaRegistro, true);
+            return utilFechasHorarios.formatoFecha(d.fechaRegistro, true);
           }, className: "text-center"},
       ],
       initComplete: function (s, j) {
-        establecerBotonRecargaTabla("tab-lista");
+        utilTablas.establecerBotonRecargaTabla("tab-lista");
       }
     });
   }
