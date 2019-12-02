@@ -9,7 +9,12 @@ class Horario extends Model {
 
   public $timestamps = false;
   protected $table = "horario";
-  protected $fillable = ["idEntidad", "numeroDiaSemana", "horaInicio", "horaFin"];
+  protected $fillable = [
+      "idEntidad",
+      "numeroDiaSemana",
+      "horaInicio",
+      "horaFin"
+  ];
 
   public static function nombreTabla()/* - */ {
     $modeloHorario = new Horario();
@@ -88,7 +93,7 @@ class Horario extends Model {
     return json_encode($horarioSel);
   }
 
-  public static function registrarActualizar($idEntidad, $datosJsonHorario) {
+  public static function registrarActualizar($idEntidad, $datosJsonHorario)/* - */ {
     Horario::where("idEntidad", $idEntidad)->delete();
     $datosHorario = json_decode($datosJsonHorario);
     foreach ($datosHorario as $horario) {

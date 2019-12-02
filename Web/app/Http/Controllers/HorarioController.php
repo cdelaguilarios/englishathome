@@ -5,19 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Horario;
 use App\Http\Requests\Horario\HorarioMultipleRequest;
 
-class HorarioController extends Controller {
+class HorarioController extends Controller/* - */ {
 
   protected $data = array();
 
-  public function __construct() {
-    
-  }
-
-  public function obtener($idEntidad) {
-    $datos = [];
-    $datos["idEntidad"] = $idEntidad;
-    $datos["datosHorario"] = Horario::obtenerJsonXIdEntidad($idEntidad);
-    return response()->json($datos, 200);
+  public function __construct()/* - */ {    
   }
 
   public function obtenerMultiple(HorarioMultipleRequest $req)/* - */ {

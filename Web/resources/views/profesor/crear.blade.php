@@ -1,8 +1,9 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Profesores")
 
 @section("section_script")
-<script src="{{ asset("assets/eah/js/modulos/profesor/profesor.js") }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/profesor/formulario.js") }}"></script>
 @endsection
 
 @section("breadcrumb")

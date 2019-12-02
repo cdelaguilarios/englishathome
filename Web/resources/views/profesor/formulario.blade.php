@@ -1,3 +1,4 @@
+{{----}}
 <div class="row">
   <div class="col-sm-12">
     <div id="wiz-registro-profesor" class="box box-info wizard" data-initialize="wizard">
@@ -142,7 +143,11 @@
               {{ Form::textarea("ensayo", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
             </div>              
           </div>
-          @include("util.documentosPersonalesDocente", ["docente" => (isset($profesor) ? $profesor : null)]) 
+          @include("util.archivosAdjuntos", ["adjuntos" => [
+          (object)["idCampo" => "DocumentoPersonalCv", "idHtml" => "documento-personal-cv", "titulo" => "CV", "archivosRegistrados" => (isset($profesor) ? $profesor->cv : null), "mensajeReferencia" => null, "cantidadMaximaArchivos" => 1],
+          (object)["idCampo" => "DocumentoPersonalCertificadoInternacional", "idHtml" => "documento-personal-certificado-internacional", "titulo" => (Auth::guest() ? "International Certificate" : "Certificado internacional"), "archivosRegistrados" => (isset($profesor) ? $profesor->certificadoInternacional : null), "mensajeReferencia" => null, "cantidadMaximaArchivos" => 1],
+          (object)["idCampo" => "DocumentoPersonalImagenDocumentoIdentidad", "idHtml" => "documento-personal-imagen-documento-identidad", "titulo" => (Auth::guest() ? "ID Card image" : "Imagen del documento de identidad"), "archivosRegistrados" => (isset($profesor) ? $profesor->imagenDocumentoIdentidad : null), "mensajeReferencia" => null, "cantidadMaximaArchivos" => 1]
+          ]])
         </div>               
         <div id="sec-wiz-profesor-4" class="step-pane sample-pane alert" data-step="4">                    
           <div class="form-group">
@@ -182,7 +187,7 @@
           <div class="form-group">
             <div class="col-sm-offset-1 col-sm-10">
               <audio controls>
-                <source src="{{ route("archivos", ["nombre" => ($profesor->audio), "audio" => 1]) }}">
+                <source src="{{ route("archivos", ["nombre" => ($profesor->audio), "esAudio" => 1]) }}">
                 Tu explorador no soporta este elemento de audio
               </audio>
             </div>            

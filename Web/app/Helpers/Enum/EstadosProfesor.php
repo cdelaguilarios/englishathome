@@ -2,14 +2,14 @@
 
 namespace App\Helpers\Enum;
 
-class EstadosProfesor {
+class EstadosProfesor/* - */ {
 
   const Registrado = "REGISTRADO";
   const Activo = "ACTIVO";
   const Inactivo = "INACTIVO";
   const Vetado = "VETADO";
 
-  public static function listar() {
+  public static function listar()/* - */ {
     return [
         EstadosProfesor::Registrado => ["Registrado", "label-primary"],
         EstadosProfesor::Activo => ["Activo", "label-success"],
@@ -18,7 +18,7 @@ class EstadosProfesor {
     ];
   }
 
-  public static function listarBusqueda() {
+  public static function listarBusqueda()/* - */ {
     $estados = EstadosProfesor::listar();
     $estadosBusqueda = [];
     foreach ($estados as $k => $v) {
@@ -27,9 +27,15 @@ class EstadosProfesor {
     return $estadosBusqueda;
   }
 
-  public static function listarDisponibleCambio() {
+  public static function listarDisponibleCambio()/* - */ {
     $estadosBusqueda = EstadosProfesor::listarBusqueda();
-    $estadosDisponibleCambio = [EstadosProfesor::Registrado, EstadosProfesor::Activo, EstadosProfesor::Inactivo, EstadosProfesor::Vetado];
+    $estadosDisponibleCambio = [
+        EstadosProfesor::Registrado,
+        EstadosProfesor::Activo,
+        EstadosProfesor::Inactivo,
+        EstadosProfesor::Vetado
+    ];
+
     $estadosDisponibleCambioSel = [];
     foreach ($estadosBusqueda as $k => $v) {
       if (in_array($k, $estadosDisponibleCambio)) {

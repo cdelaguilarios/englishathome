@@ -1,3 +1,4 @@
+{{----}}
 <div class="row">
   <div class="col-sm-12">
     <div class="box box-info">
@@ -54,7 +55,7 @@
         <div class="form-group">
           <div class="col-sm-2">
             {{ Form::label("codigoVerificacionClases", "Código de verificación ", ["class" => "control-label"]) }}
-            <a href="javascript:void(0)" onclick="mostrarOcultarCodigoVerificacionClases(this)" title="Ver código de verificación"><i class="fa fa-eye"></i></a>
+            <a href="javascript:void(0)" onclick="utilAlumno.mostrarOcultarCodigoVerificacionClases(this)" title="Ver código de verificación"><i class="fa fa-eye"></i></a>
             <label>:</label>
           </div>
           <div class="col-sm-10">

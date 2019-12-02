@@ -1,3 +1,4 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Calendario")
 
@@ -6,5 +7,5 @@
 @endsection
 
 @section("content")
-@include("util.calendario", ["incluirListasBusqueda" => 1, "incluirClaseBox" => 1]) 
+@include("util.calendario", ["paginaIndependiente" => 1]) 
 @endsection

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DB;
+use Log;
 use Auth;
 use Config;
 use Carbon\Carbon;
@@ -20,7 +21,24 @@ class Clase extends Model {
 
   public $timestamps = false;
   protected $table = "clase";
-  protected $fillable = ["idAlumno", "idProfesor", "numeroPeriodo", "duracion", "costoHora", "costoHoraProfesor", "pagoTotalProfesor", "fechaInicio", "fechaFin", "fechaCancelacion", "comentarioAlumno", "comentarioProfesor", "comentarioParaAlumno", "comentarioParaProfesor", "fechaConfirmacion", "estado"];
+  protected $fillable = [
+      "idAlumno",
+      "idProfesor",
+      "numeroPeriodo",
+      "duracion",
+      "costoHora",
+      "costoHoraProfesor",
+      "pagoTotalProfesor",
+      "fechaInicio",
+      "fechaFin",
+      "fechaCancelacion",
+      "comentarioAlumno",
+      "comentarioProfesor",
+      "comentarioParaAlumno",
+      "comentarioParaProfesor",
+      "fechaConfirmacion",
+      "estado"
+  ];
 
   public static function nombreTabla()/* - */ {
     $modeloClase = new Clase();
@@ -29,68 +47,276 @@ class Clase extends Model {
     return $nombreTabla;
   }
 
-  public static function listarBase()/* - */ {
-    $nombreTabla = Clase::nombreTabla();
-    return Clase::leftJoin(Entidad::nombreTabla() . " as entidadAlumno", $nombreTabla . ".idAlumno", "=", "entidadAlumno.id")
-                    ->leftJoin(Entidad::nombreTabla() . " as entidadProfesor", function ($q) use($nombreTabla) {
-                      $q->on($nombreTabla . ".idProfesor", "=", "entidadProfesor.id");
-                      $q->on("entidadProfesor.eliminado", "=", DB::raw("0"));
-                    })
-                    ->leftJoin(Historial::nombreTabla() . " as historial", function ($q) use($nombreTabla) {
-                      $q->on($nombreTabla . ".id", "=", "historial.idClase");
-                      $q->on("historial.eliminado", "=", DB::raw("0"));
-                      //TODO: Las clases solo se notifican por medio de correo electrónico pero se debe considerar cambiar esta lógica de negocio debido a las nuevas reglas
-                      $q->on("historial.enviarCorreo", "=", DB::raw("1"));
-                    })
-                    //TODO: Los pagos de una clase pueden ser más de uno
-                    ->leftJoin(PagoClase::nombreTabla() . " as pagoClase", $nombreTabla . ".id", "=", "pagoClase.idClase")
-                    ->where($nombreTabla . ".eliminado", DB::raw("0"))
-                    ->groupBy($nombreTabla . ".id")
-                    ->distinct();
+  public static function listarBase($incluirSoloRealizadas = FALSE)/* - */ {
+    $nombreTablaClase = Clase::nombreTabla();
+    $nombreTablaEntidad = Entidad::nombreTabla();
+    $nombreTablaPagoClase = PagoClase::nombreTabla();
+
+    $clases = Clase::
+            //Datos del alumno
+            join($nombreTablaEntidad . " as entidadAlumno", function ($q) use($nombreTablaClase) {
+              $q->on($nombreTablaClase . ".idAlumno", "=", "entidadAlumno.id")
+              ->on("entidadAlumno.eliminado", "=", DB::raw("0"));
+            })
+            //Pago del alumno asociado
+            ->leftJoin(PagoAlumno::nombreTabla() . " AS relPagoAlumno", function ($q) use ($nombreTablaClase, $nombreTablaPagoClase) {
+              $q->on("relPagoAlumno.idPago", "IN", DB::raw("(SELECT idPago 
+                                                      FROM " . $nombreTablaPagoClase . "
+                                                      WHERE idClase = " . $nombreTablaClase . ".id)"))
+              ->on("relPagoAlumno.idAlumno", "=", $nombreTablaClase . ".idAlumno");
+            })
+            ->leftJoin(Pago::nombreTabla() . " as pagoAlumno", "pagoAlumno.id", "=", "relPagoAlumno.idPago")
+
+            //Datos del profesor
+            ->leftJoin($nombreTablaEntidad . " as entidadProfesor", function ($q) use($nombreTablaClase) {
+              $q->on($nombreTablaClase . ".idProfesor", "=", "entidadProfesor.id")
+              ->on("entidadProfesor.eliminado", "=", DB::raw("0"));
+            })
+            //Pago al profesor asociado
+            ->leftJoin(PagoProfesor::nombreTabla() . " AS relPagoProfesor", function ($q) use ($nombreTablaClase, $nombreTablaPagoClase) {
+              $q->on("relPagoProfesor.idPago", "IN", DB::raw("(SELECT idPago 
+                                                        FROM " . $nombreTablaPagoClase . "
+                                                        WHERE idClase = " . $nombreTablaClase . ".id)"))
+              ->on("relPagoProfesor.idProfesor", "=", $nombreTablaClase . ".idProfesor");
+            })
+            ->leftJoin(Pago::nombreTabla() . " as pagoProfesor", "pagoProfesor.id", "=", "relPagoProfesor.idPago")
+            ->where($nombreTablaClase . ".eliminado", DB::raw("0"))
+            ->distinct();
+    if ($incluirSoloRealizadas) {
+      $clases->whereIn($nombreTablaClase . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
+    }
+    return $clases;
   }
 
-  public static function obtenerXIdNUEVO($id) {
+  public static function listarNUEVO($incluirSoloRealizadas = FALSE)/* - */ {
+    $nombreTablaClase = Clase::nombreTabla();
+    return Clase::listarBase($incluirSoloRealizadas)
+                    ->select(DB::raw(
+                                    $nombreTablaClase . ".*, 
+                                    entidadAlumno.nombre AS nombreAlumno, 
+                                    entidadAlumno.apellido AS apellidoAlumno, 
+                                    pagoAlumno.id AS idPagoAlumno,
+                                    entidadProfesor.nombre AS nombreProfesor, 
+                                    entidadProfesor.apellido AS apellidoProfesor, 
+                                    pagoProfesor.id AS idPagoProfesor")
+                    )
+                    ->groupBy($nombreTablaClase . ".id");
+  }
+
+  public static function listarXAlumnoNUEVO($idAlumno, $incluirSoloRealizadas = TRUE)/* - */ {
+    return Clase::listarNUEVO($incluirSoloRealizadas)->where(Clase::nombreTabla() . ".idAlumno", $idAlumno);
+  }
+
+  public static function listarXProfesorNUEVO($idProfesor, $incluirSoloRealizadas = TRUE)/* - */ {
+    return Clase::listarNUEVO($incluirSoloRealizadas)->where(Clase::nombreTabla() . ".idProfesor", $idProfesor);
+  }
+
+  public static function obtenerXIdNUEVO($id)/* - */ {
     $nombreTabla = Clase::nombreTabla();
     $clase = Clase::listarBase()
             ->select($nombreTabla . ".*")
             ->where($nombreTabla . ".id", $id)
-            ->orderBy($nombreTabla . ".fechaInicio", "ASC")
             ->firstOrFail();
     return $clase;
   }
 
-  public static function obtenerXId($idAlumno, $id, $incluirFechaProximaClase = FALSE) {
-    $nombreTabla = Clase::nombreTabla();
-    $clase = Clase::listarBase()
-            ->select($nombreTabla . ".*", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"), DB::raw("max(pago.id) AS idPago"))
-            ->leftJoin(PagoAlumno::nombreTabla() . " as pagoAlumno", "pagoClase.idPago", "=", "pagoAlumno.idPago")
-            ->leftJoin(Pago::nombreTabla() . " as pago", "pagoAlumno.idPago", "=", "pago.id")
-            ->where($nombreTabla . ".idAlumno", $idAlumno)
-            ->where($nombreTabla . ".id", $id)
-            ->where(function ($q) use ($idAlumno) {
-              $q->whereNull("pagoAlumno.idAlumno")->orWhere("pagoAlumno.idAlumno", $idAlumno);
-            })
-            ->orderBy($nombreTabla . ".fechaInicio", "ASC")
-            ->firstOrFail();
-    if ($incluirFechaProximaClase) {
-      $ultimaClase = Clase::obtenerUltimaClase($idAlumno);
-      if (isset($ultimaClase)) {
-        $fechaProximaClase = new Carbon($ultimaClase->fechaInicio);
-        $horarioAlumno = Horario::obtenerXIdEntidad($idAlumno);
-        $flg = TRUE;
+  public static function listarPeriodosXIdAlumno($idAlumno)/* - */ {
+    return Clase::select(DB::raw("numeroPeriodo, 
+                                  min(fechaInicio) AS fechaInicio, 
+                                  max(fechaFin) AS fechaFin, 
+                                  sum(duracion) AS horasTotal"))
+                    ->where("idAlumno", $idAlumno)
+                    ->where("eliminado", 0)
+                    ->groupBy("numeroPeriodo");
+  }
 
-        while ($flg) {
-          $fechaProximaClase->addDay();
-          foreach ($horarioAlumno as $datHorarioAlumno) {
-            if (($fechaProximaClase->dayOfWeek != 0 ? $fechaProximaClase->dayOfWeek : 7) == $datHorarioAlumno->numeroDiaSemana) {
-              $flg = FALSE;
-            }
+  public static function totalPeriodosXIdAlumno($idAlumno)/* - */ {
+    $sub = Clase::listarPeriodosXIdAlumno($idAlumno);
+    return DB::table(DB::raw("({$sub->toSql()}) as sub"))->mergeBindings($sub->getQuery())->count();
+  }
+
+  public static function calendario($datos)/* - */ {
+    $nombreTablaClase = Clase::nombreTabla();
+
+    if ($datos["tipoEntidad"] !== "0" && !is_null($datos["idProfesor"])) {
+      $preClases = Clase::listarXProfesorNUEVO($datos["idProfesor"]);
+    } else if (!is_null($datos["idAlumno"])) {
+      $preClases = Clase::listarXAlumnoNUEVO($datos["idAlumno"]);
+    } else {
+      $preClases = Clase::listarNUEVO(TRUE);
+    }
+
+    $fechaInicio = Carbon::createFromFormat("Y-m-d H:i:s", $datos["start"] . " 00:00:00");
+    $fechaFin = Carbon::createFromFormat("Y-m-d H:i:s", $datos["end"] . " 23:59:59");
+    $clases = $preClases
+                    ->where(function ($q) use ($nombreTablaClase, $fechaInicio, $fechaFin) {
+                      $q->whereBetween($nombreTablaClase . ".fechaConfirmacion", [$fechaInicio, $fechaFin])
+                      ->orWhereBetween($nombreTablaClase . ".fechaInicio", [$fechaInicio, $fechaFin])
+                      ->orWhereBetween($nombreTablaClase . ".fechaFin", [$fechaInicio, $fechaFin]);
+                    })->get();
+
+    $eventos = [];
+    $estadosClase = EstadosClase::listar();
+    foreach ($clases as $clase) {
+      $titulo = "Clase " . $estadosClase[$clase->estado][0];
+      if (is_null($datos["idAlumno"])) {
+        $titulo .= "\n- Alumno: " . $clase->nombreAlumno . " " . $clase->apellidoAlumno;
+      }
+      if (is_null($datos["idProfesor"])) {
+        $titulo .= "\n- Profesor: " . $clase->nombreProfesor . " " . $clase->apellidoProfesor;
+      }
+
+      $fechaIni = $clase->fechaInicio;
+      $fechaFin = $clase->fechaFin;
+
+      if (isset($clase->fechaConfirmacion)) {
+        $fechaConfirmacion = Carbon::createFromFormat("Y-m-d H:i:s", $clase->fechaConfirmacion);
+
+        $fechaIni = $fechaConfirmacion->subSeconds($clase->duracion)->toDateTimeString();
+        $fechaFin = $clase->fechaConfirmacion;
+      }
+
+      array_push($eventos, [
+          "id" => $clase->id,
+          "idAlumno" => $clase->idAlumno,
+          "idProfesor" => $clase->idProfesor,
+          "title" => $titulo,
+          "start" => $fechaIni,
+          "end" => $fechaFin,
+          "backgroundColor" => $estadosClase[$clase->estado][2]
+      ]);
+    }
+    return $eventos;
+  }
+
+  public static function listarIdsEntidadesXHorario($datosJsonHorario, $idsProfesores = FALSE, $incluirClasesCanceladas = FALSE) {
+    $idsEntidades = [];
+    $datosHorario = json_decode($datosJsonHorario);
+    foreach ($datosHorario as $horario) {
+      $dias = explode(",", $horario->dias);
+      $horas = $horario->horas;
+      foreach ($dias as $dia) {
+        foreach ($horas as $rangoHora) {
+          $rangoHora = explode("-", $rangoHora);
+
+          $diaSel = ((int) $dia != 7 ? ((int) $dia) + 1 : 1);
+          $fechaActual = Carbon::now();
+          $horaInicio = Carbon::createFromFormat("d/m/Y H:i:s", "01/01/1970 " . $rangoHora[0] . ":00")->subMinutes((int) Config::get("eah.rangoMinutosBusquedaHorarioDocente"))->toTimeString();
+          $horaFin = Carbon::createFromFormat("d/m/Y H:i:s", "01/01/1970 " . $rangoHora[1] . ":00")->addMinutes((int) Config::get("eah.rangoMinutosBusquedaHorarioDocente"))->toTimeString();
+
+          $clases = Clase::where("eliminado", 0)
+                  ->where(function ($q) use ($horaInicio, $horaFin) {
+                    $q->where(function ($q) use ($horaInicio) {
+                      $q->whereRaw("TIME(fechaInicio) <= '" . $horaInicio . "'")->whereRaw("TIME(fechaFin) >= '" . $horaInicio . "'");
+                    })->orWhere(function ($q) use ($horaFin) {
+                      $q->whereRaw("TIME(fechaInicio) <= '" . $horaFin . "'")->whereRaw("TIME(fechaFin) >= '" . $horaFin . "'");
+                    })->orWhere(function ($q) use ($horaInicio, $horaFin) {
+                      $q->whereRaw("TIME(fechaInicio) >= '" . $horaInicio . "'")->whereRaw("TIME(fechaFin) <= '" . $horaFin . "'");
+                    });
+                  })
+                  ->where("fechaInicio", ">=", $fechaActual)
+                  ->whereRaw("DAYOFWEEK(fechaInicio) = " . $diaSel)
+                  ->whereRaw("DAYOFWEEK(fechaFin) = " . $diaSel);
+          if (!$incluirClasesCanceladas) {
+            $clases->where("estado", '!=', EstadosClase::Cancelada);
           }
+          $idsEntidadesHorario = ($idsProfesores ? $clases->groupBy("idProfesor")->lists("idProfesor") : $clases->groupBy("idAlumno")->lists("idAlumno"));
+          $idsEntidades = array_merge($idsEntidades, $idsEntidadesHorario->toArray());
         }
-        $clase->fechaProximaClase = (string) $fechaProximaClase;
       }
     }
-    return $clase;
+    return $idsEntidades;
+  }
+
+  public static function actualizarEstadoNUEVO($id, $estado)/* - */ {
+    $clase = Clase::obtenerXIdNUEVO($id);
+    $clase->estado = $estado;
+    $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+    $clase->save();
+  }
+
+  public static function actualizarComentarios($id, $datos)/* - */ {
+    $clase = Clase::obtenerXIdNUEVO($id);
+
+    if (Auth::user()->rol == RolesUsuario::Alumno && Auth::user()->idEntidad == $clase->idAlumno) {
+      $clase->comentarioAlumno = $datos["comentario"];
+    }if (Auth::user()->rol == RolesUsuario::Profesor && Auth::user()->idEntidad == $clase->idProfesor) {
+      if ($clase->idAlumno != $datos["idAlumno"]) {
+        return;
+      }
+      $clase->comentarioProfesor = $datos["comentario"];
+    } else if (in_array(Auth::user()->rol, [RolesUsuario::Principal, RolesUsuario::Secundario])) {
+      switch ($datos["tipo"]) {
+        case 1:
+          $clase->comentarioAlumno = $datos["comentario"];
+          break;
+        case 2:
+          $clase->comentarioProfesor = $datos["comentario"];
+          break;
+        case 3:
+          $clase->comentarioParaAlumno = $datos["comentario"];
+          break;
+        case 4:
+          $clase->comentarioParaProfesor = $datos["comentario"];
+          break;
+      }
+    } else {
+      return;
+    }
+    $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+    $clase->save();
+  }
+
+  public static function verificarExistencia($idAlumno, $id) {
+    try {
+      Clase::listarXAlumnoNUEVO($idAlumno, FALSE)->where(Clase::nombreTabla() . ".id", $id)->firstOrFail();
+    } catch (\Exception $e) {
+      Log::error($e);
+      return FALSE;
+    }
+    return TRUE;
+  }
+
+  public static function eliminadXIdPago($idAlumno, $idPago) {
+    $pagosClases = PagoClase::obtenerXIdPago($idPago);
+    foreach ($pagosClases as $pagoClase) {
+      if (Clase::verificarExistencia($idAlumno, $pagoClase->idClase)) {
+        Clase::eliminar($idAlumno, $pagoClase->idClase);
+      }
+    }
+  }
+
+  public static function eliminadXIdAdlumno($idAlumno) {
+    $clases = Clase::where("eliminado", 0)->where("idAlumno", $idAlumno)->get();
+    foreach ($clases as $clase) {
+      Clase::eliminar($idAlumno, $clase->id);
+    }
+  }
+
+  public static function eliminar($idAlumno, $id)/* - */ {
+    if (Clase::verificarExistencia($idAlumno, $id)) {
+      $clase = Clase::obtenerXIdNUEVO($id);
+      $clase->eliminado = 1;
+      $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+      $clase->save();
+      Historial::eliminarXIdClase($id);
+    }
+  }
+
+  // <editor-fold desc="TODO: ELIMINAR">
+  public static function obtenerXIdPago($idAlumno, $idPago) {
+    $clases = [];
+    $pagosClases = PagoClase::obtenerXIdPago($idPago);
+    foreach ($pagosClases as $pagoClase) {
+      try {
+        $clase = Clase::obtenerXId($idAlumno, $pagoClase->idClase);
+      } catch (\Exception $e) {
+        Log::error($e);
+        continue;
+      }
+      $clases[] = $clase;
+    }
+    return $clases;
   }
 
   public static function obtenerUltimaClase($idAlumno) {
@@ -147,39 +373,24 @@ class Clase extends Model {
     return $clases;
   }
 
-  public static function listarXAlumnoNUEVO($idAlumno, $numeroPeriodo = NULL)/* - */ {
-    $nombreTabla = Clase::nombreTabla();
-    $clases = Clase::listarBase()
-            ->where($nombreTabla . ".idAlumno", $idAlumno)
-            ->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
-    if (!is_null($numeroPeriodo)) {
-      $clases->where($nombreTabla . ".numeroPeriodo", $numeroPeriodo);
+  public static function confirmarProfesorAlumno($datos) {
+    if (Auth::user()->rol == RolesUsuario::Profesor) {
+      $nombreTabla = Clase::nombreTabla();
+      $idClase = Clase::listarXProfesor(Auth::user()->idEntidad)
+                      ->where($nombreTabla . ".idAlumno", $datos["idAlumno"])
+                      ->whereIn($nombreTabla . ".estado", [EstadosClase::Programada, EstadosClase::PendienteConfirmar])
+                      ->orderBy($nombreTabla . ".fechaInicio", "ASC")->lists($nombreTabla . ".id")->first();
+      if (isset($idClase) && $idClase != null) {
+        $fechaConfirmacion = Carbon::now()->toDateTimeString();
+        $clase = Clase::obtenerXId($datos["idAlumno"], $idClase);
+        $clase->estado = EstadosClase::ConfirmadaProfesorAlumno;
+        $clase->fechaConfirmacion = $fechaConfirmacion;
+        $clase->fechaUltimaActualizacion = $fechaConfirmacion;
+        $clase->save();
+
+        //TODO: actualizar duración de la clase confirmada y las clases restantes
+      }
     }
-
-    //Pago del alumno
-    $clases->leftJoin(PagoAlumno::nombreTabla() . " as relPagoAlumno", DB::raw("relPagoAlumno.idAlumno=" . $nombreTabla . ".idAlumno 
-                                                                                  AND relPagoAlumno.idPago IN (SELECT idPago
-                                                                                                                FROM " . PagoClase::nombreTabla() . "
-                                                                                                                WHERE idClase = " . $nombreTabla . ".id)"), DB::raw(""), DB::raw(""));
-    $clases->leftJoin(Pago::nombreTabla() . " as pagoAlumno", "pagoAlumno.id", "=", "relPagoAlumno.idPago");
-
-    //Pago al profesor
-    $clases->leftJoin(PagoProfesor::nombreTabla() . " as relPagoProfesor", DB::raw("relPagoProfesor.idProfesor=" . $nombreTabla . ".idProfesor 
-                                                                                      AND relPagoProfesor.idPago IN (SELECT idPago
-                                                                                                                      FROM " . PagoClase::nombreTabla() . "
-                                                                                                                      WHERE idClase = " . $nombreTabla . ".id)"), DB::raw(""), DB::raw(""));
-    $clases->leftJoin(Pago::nombreTabla() . " as pagoProfesor", "pagoProfesor.id", "=", "relPagoProfesor.idPago");
-
-    $clases->orderBy($nombreTabla . ".numeroPeriodo", "ASC")->orderBy($nombreTabla . ".fechaInicio", "ASC");
-    $clases->select(DB::raw(
-                    $nombreTabla . ".*, 
-                    entidadProfesor.nombre AS nombreProfesor, 
-                    entidadProfesor.apellido AS apellidoProfesor, 
-                    pagoAlumno.estado AS estadoPagoAlumno,
-                    pagoProfesor.estado AS estadoPagoProfesor,                    
-                    max(historial.id) AS idHistorial")
-    );
-    return $clases;
   }
 
   public static function listarXProfesor($idProfesor, $datos = NULL) {
@@ -213,59 +424,25 @@ class Clase extends Model {
                     ->select($nombreTabla . ".id", $nombreTabla . ".idAlumno", $nombreTabla . ".idProfesor", $nombreTabla . ".numeroPeriodo", $nombreTabla . ".duracion", $nombreTabla . ".estado", $nombreTabla . ".fechaInicio", $nombreTabla . ".fechaFin", $nombreTabla . ".fechaConfirmacion", $nombreTabla . ".fechaCancelacion", $nombreTabla . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioAlumno" : ".comentarioProfesor") . " AS comentarioEntidad", $nombreTabla . (Auth::user()->rol == RolesUsuario::Alumno ? ".comentarioParaAlumno" : ".comentarioParaProfesor") . " AS comentarioAdministrador", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor");
   }
 
+  public static function sincronizarEstados() {
+    $clasesProgramadas = Clase::listarXEstados(EstadosClase::Programada)->where("fechaFin", "<=", Carbon::now())->get();
+    foreach ($clasesProgramadas as $claseProgramada) {
+      $claseProgramada->estado = EstadosClase::PendienteConfirmar;
+      $claseProgramada->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+      $claseProgramada->save();
+    }
+  }
+
   public static function listarXEstados($estados) {
     return Clase::where("eliminado", 0)->whereIn("estado", (is_array($estados) ? $estados : [$estados]));
   }
 
-  public static function listarPeriodosXIdAlumno($idAlumno)/* - */ {
-    return Clase::select(DB::raw("numeroPeriodo, 
-                                  min(fechaInicio) AS fechaInicio, 
-                                  max(fechaFin) AS fechaFin, 
-                                  sum(duracion) AS horasTotal"))
-                    ->where("idAlumno", $idAlumno)
-                    ->where("eliminado", 0)
-                    ->groupBy("numeroPeriodo");
+  public static function listarIdsEntidadesXRangoFecha($fechaInicio, $fechaFin, $listarIdsProfesores = FALSE, $incluirClasesCanceladas = FALSE) {
+    $clases = Clase::listarXRangoFecha($fechaInicio, $fechaFin, $incluirClasesCanceladas);
+    return ($listarIdsProfesores ? $clases->groupBy("idProfesor")->lists("idProfesor") : $clases->groupBy("idAlumno")->lists("idAlumno"));
   }
 
-  public static function totalPeriodosXIdAlumno($idAlumno)/* - */ {
-    $sub = Clase::listarPeriodosXIdAlumno($idAlumno);
-    return DB::table(DB::raw("({$sub->toSql()}) as sub"))->mergeBindings($sub->getQuery())->count();
-  }
-
-  public static function calendario($datos) {
-    $nombreTabla = Clase::nombreTabla();
-    $fechaInicio = Carbon::createFromFormat("Y-m-d H:i:s", $datos["start"] . " 00:00:00");
-    $fechaFin = Carbon::createFromFormat("Y-m-d H:i:s", $datos["end"] . " 23:59:59");
-    $preClases = Clase::listarBase()
-            ->select($nombreTabla . ".*", "entidadAlumno.nombre AS nombreAlumno", "entidadAlumno.apellido AS apellidoAlumno", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor")
-            ->where($nombreTabla . ".fechaInicio", ">=", $fechaInicio)
-            ->where($nombreTabla . ".fechaFin", "<=", $fechaFin)
-            ->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
-    if (!(is_null($datos["idAlumno"]) && is_null($datos["idProfesor"]))) {
-      if ($datos["tipoEntidad"] !== "0") {
-        $preClases->where($nombreTabla . ".idProfesor", $datos["idProfesor"]);
-      } else {
-        $preClases->where($nombreTabla . ".idAlumno", $datos["idAlumno"]);
-      }
-    }
-    $clases = $preClases->get();
-    $eventos = [];
-    $estadosClase = EstadosClase::listar();
-    foreach ($clases as $clase) {
-      array_push($eventos, [
-          "id" => $clase->id,
-          "idAlumno" => $clase->idAlumno,
-          "idProfesor" => $clase->idProfesor,
-          "title" => "Clase " . $estadosClase[$clase->estado][0] . ((is_null($datos["idAlumno"]) && is_null($datos["idProfesor"])) ? "\n- Alumno: " . $clase->nombreAlumno . " " . $clase->apellidoAlumno . (isset($clase->idProfesor) && isset($clase->nombreProfesor) && $clase->nombreProfesor != "" ? "\n- Profesor: " . $clase->nombreProfesor . " " . $clase->apellidoProfesor : "") : ""),
-          "start" => Carbon::createFromFormat("Y-m-d H:i:s", $clase->fechaInicio)->format("Y-m-d H:i:s"),
-          "end" => Carbon::createFromFormat("Y-m-d H:i:s", $clase->fechaFin)->format("Y-m-d H:i:s"),
-          "backgroundColor" => $estadosClase[$clase->estado][2]
-      ]);
-    }
-    return $eventos;
-  }
-
-  public static function listarXRangoFecha($fechaInicio, $fechaFin, $incluirClasesCanceladas = FALSE) {
+  public static function listarXRangoFecha($fechaInicio, $fechaFin, $incluirClasesCanceladas = FALSE)/* - */ {
     $clases = Clase::where("eliminado", 0)->where(function ($q) use ($fechaInicio, $fechaFin) {
       $q->where(function ($q) use ($fechaInicio) {
         $q->where("fechaInicio", "<=", $fechaInicio)->where("fechaFin", ">=", $fechaInicio);
@@ -279,50 +456,6 @@ class Clase extends Model {
       $clases->where("estado", '!=', EstadosClase::Cancelada);
     }
     return $clases;
-  }
-
-  public static function listarIdsEntidadesXRangoFecha($fechaInicio, $fechaFin, $idsProfesores = FALSE, $incluirClasesCanceladas = FALSE) {
-    $clases = Clase::listarXRangoFecha($fechaInicio, $fechaFin, $incluirClasesCanceladas);
-    return ($idsProfesores ? $clases->groupBy("idProfesor")->lists("idProfesor") : $clases->groupBy("idAlumno")->lists("idAlumno"));
-  }
-
-  public static function listarIdsEntidadesXHorario($datosJsonHorario, $idsProfesores = FALSE, $incluirClasesCanceladas = FALSE) {
-    $idsEntidades = [];
-    $datosHorario = json_decode($datosJsonHorario);
-    foreach ($datosHorario as $horario) {
-      $dias = explode(",", $horario->dias);
-      $horas = $horario->horas;
-      foreach ($dias as $dia) {
-        foreach ($horas as $rangoHora) {
-          $rangoHora = explode("-", $rangoHora);
-
-          $diaSel = ((int) $dia != 7 ? ((int) $dia) + 1 : 1);
-          $fechaActual = Carbon::now();
-          $horaInicio = Carbon::createFromFormat("d/m/Y H:i:s", "01/01/1970 " . $rangoHora[0] . ":00")->subMinutes((int) Config::get("eah.rangoMinutosBusquedaHorarioDocente"))->toTimeString();
-          $horaFin = Carbon::createFromFormat("d/m/Y H:i:s", "01/01/1970 " . $rangoHora[1] . ":00")->addMinutes((int) Config::get("eah.rangoMinutosBusquedaHorarioDocente"))->toTimeString();
-
-          $clases = Clase::where("eliminado", 0)
-                  ->where(function ($q) use ($horaInicio, $horaFin) {
-                    $q->where(function ($q) use ($horaInicio) {
-                      $q->whereRaw("TIME(fechaInicio) <= '" . $horaInicio . "'")->whereRaw("TIME(fechaFin) >= '" . $horaInicio . "'");
-                    })->orWhere(function ($q) use ($horaFin) {
-                      $q->whereRaw("TIME(fechaInicio) <= '" . $horaFin . "'")->whereRaw("TIME(fechaFin) >= '" . $horaFin . "'");
-                    })->orWhere(function ($q) use ($horaInicio, $horaFin) {
-                      $q->whereRaw("TIME(fechaInicio) >= '" . $horaInicio . "'")->whereRaw("TIME(fechaFin) <= '" . $horaFin . "'");
-                    });
-                  })
-                  ->where("fechaInicio", ">=", $fechaActual)
-                  ->whereRaw("DAYOFWEEK(fechaInicio) = " . $diaSel)
-                  ->whereRaw("DAYOFWEEK(fechaFin) = " . $diaSel);
-          if (!$incluirClasesCanceladas) {
-            $clases->where("estado", '!=', EstadosClase::Cancelada);
-          }
-          $idsEntidadesHorario = ($idsProfesores ? $clases->groupBy("idProfesor")->lists("idProfesor") : $clases->groupBy("idAlumno")->lists("idAlumno"));
-          $idsEntidades = array_merge($idsEntidades, $idsEntidadesHorario->toArray());
-        }
-      }
-    }
-    return $idsEntidades;
   }
 
   public static function datosGrupo($idAlumno, $datos) {
@@ -425,8 +558,8 @@ class Clase extends Model {
 
   public static function reporte($datos) {
     $clases = Clase::where("eliminado", 0)
-            ->select((($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoMeses) ? DB::raw("MONTH(fechaInicio) AS mes") : (($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoAnhos) ? DB::raw("YEAR(fechaInicio) AS anho") : "fechaInicio")), "estado", DB::raw("count(id) AS total"))
-            ->groupBy((($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoMeses) ? DB::raw("MONTH(fechaInicio)") : (($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anho || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoAnhos) ? DB::raw("YEAR(fechaInicio)") : "fechaInicio")), "estado")
+            ->select((($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoMeses) ? DB::raw("MONTH(fechaInicio) AS mes") : (($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anio || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoAnios) ? DB::raw("YEAR(fechaInicio) AS anho") : "fechaInicio")), "estado", DB::raw("count(id) AS total"))
+            ->groupBy((($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoMeses) ? DB::raw("MONTH(fechaInicio)") : (($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anio || $datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoAnios) ? DB::raw("YEAR(fechaInicio)") : "fechaInicio")), "estado")
             ->orderBy("fechaInicio", "ASC");
     if (isset($datos["ids"]) && is_array($datos["ids"])) {
       return $clases->whereIn("id", $datos["ids"])->get();
@@ -435,67 +568,131 @@ class Clase extends Model {
     }
   }
 
+  public static function registrarXDatosPago($idAlumno, $idPago, $datos) {
+    $clasesGeneradas = Clase::generarXDatosPago($idAlumno, $datos);
+
+    for ($i = 0; $i < count($clasesGeneradas); $i++) {
+      if (!isset($clasesGeneradas[$i]["duracion"])) {
+        continue;
+      }
+      $datos["fechaInicio"] = $clasesGeneradas[$i]["fechaInicio"];
+      $datos["fechaFin"] = $clasesGeneradas[$i]["fechaFin"];
+      $datos["duracion"] = $clasesGeneradas[$i]["duracion"];
+      $datos["costoHora"] = $datos["costoXHoraClase"];
+      $datos["numeroPeriodo"] = $datos["periodoClases"];
+      $datos["notificar"] = 0;
+      $datos["estado"] = EstadosClase::Programada;
+      $datos["idPago"] = $idPago;
+
+      Clase::registrarActualizar($idAlumno, $datos);
+    }
+  }
+
   public static function generarXDatosPago($idAlumno, $datos) {
-    $duracionTotalSeg = 0;
     $clasesGeneradas = [];
 
-    $preHorasPagadas = ((float) $datos["monto"] / (float) $datos["costoHoraClase"]);
+    $preHorasPagadas = ((float) $datos["monto"] / (float) $datos["costoXHoraClase"]);
     $horasPagadas = ($preHorasPagadas - fmod($preHorasPagadas, 0.5));
+
     $fechaInicioClase = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaInicioClases"] . " 00:00:00");
     $horarioAlumno = Horario::obtenerXIdEntidad($idAlumno);
-    $montoRestanteOpcional = 0;
 
+    $duracionTotalSeg = 0;
     while ($duracionTotalSeg < ($horasPagadas * 3600)) {
       foreach ($horarioAlumno as $datHorarioAlumno) {
         if (($fechaInicioClase->dayOfWeek != 0 ? $fechaInicioClase->dayOfWeek : 7) == $datHorarioAlumno->numeroDiaSemana) {
           $fechaInicio = Carbon::createFromFormat("d/m/Y H:i:s", $fechaInicioClase->format("d/m/Y") . " " . $datHorarioAlumno->horaInicio);
-          $preFechaFin = Carbon::createFromFormat("d/m/Y H:i:s", $fechaInicioClase->format("d/m/Y") . " " . $datHorarioAlumno->horaFin);
 
+          $preFechaFin = Carbon::createFromFormat("d/m/Y H:i:s", $fechaInicioClase->format("d/m/Y") . " " . $datHorarioAlumno->horaFin);
           $tiempoAdicionalSeg = (($duracionTotalSeg + $preFechaFin->diffInSeconds($fechaInicio)) - ($horasPagadas * 3600));
           $fechaFin = (($tiempoAdicionalSeg > 0) ? $preFechaFin->subSeconds($tiempoAdicionalSeg) : $preFechaFin);
-          $duracion = $fechaFin->diffInSeconds($fechaInicio);
-          $clasesGeneradas[] = ["fechaInicio" => $fechaInicio, "fechaFin" => $fechaFin, "duracion" => $duracion, "tiempoAdicional" => ($tiempoAdicionalSeg > 0 ? $tiempoAdicionalSeg : 0)];
 
-          $montoRestanteOpcional += ($tiempoAdicionalSeg > 0 ? ((((float) $duracion) / 3600) * (float) $datos["costoHoraClase"]) : 0);
+          $duracion = $fechaFin->diffInSeconds($fechaInicio);
+          $clasesGeneradas[] = ["fechaInicio" => $fechaInicio, "fechaFin" => $fechaFin, "duracion" => $duracion];
+
           $duracionTotalSeg += $duracion;
         }
       }
       $fechaInicioClase = $fechaInicioClase->addDay();
     }
-    $clasesGeneradas["montoRestante"] = ($datos["monto"] - ($horasPagadas * (float) $datos["costoHoraClase"]));
-    $clasesGeneradas["montoRestanteOpcional"] = $montoRestanteOpcional;
-
-    $datosUltimaClase = Clase::obtenerUltimaClase($idAlumno);
-    if (!is_null($datosUltimaClase)) {
-      $idsDocentesDisponibles = Docente::listarIdsDisponiblesXDatosClasesGeneradas($clasesGeneradas);
-      if (in_array($datosUltimaClase->idProfesor, $idsDocentesDisponibles)) {
-        $clasesGeneradas["idProfesor"] = $datosUltimaClase->idProfesor;
-        $clasesGeneradas["nombreCompletoProfesor"] = $datosUltimaClase->nombreProfesor . " " . $datosUltimaClase->apellidoProfesor;
-      }
-    }
+    $clasesGeneradas["montoRestante"] = ($datos["monto"] - ($horasPagadas * (float) $datos["costoXHoraClase"]));
     return $clasesGeneradas;
   }
 
-  public static function registrarXDatosPago($idAlumno, $idPago, $datos) {
-    $datosClases = Clase::generarXDatosPago($idAlumno, $datos);
-    $datosNotificacionClases = json_decode($datos["datosNotificacionClases"]);
-
-    for ($i = 0; $i < count($datosClases); $i++) {
-      if (!isset($datosClases[$i]["duracion"])) {
-        continue;
+  public static function cancelar($idAlumno, $datos) {
+    $claseCancelada = Clase::obtenerXId($idAlumno, $datos["idClase"]);
+    if ($claseCancelada !== EstadosClase::Cancelada && $claseCancelada !== EstadosClase::Realizada) {
+      $claseCancelada->tipoCancelacion = $datos["tipoCancelacion"];
+      $claseCancelada->fechaCancelacion = Carbon::now()->toDateTimeString();
+      $claseCancelada->estado = EstadosClase::Cancelada;
+      if (isset($datos["idProfesor"]) && isset($datos["pagoProfesor"])) {
+        $claseCancelada->pagoTotalProfesor = $datos["pagoProfesor"];
       }
-      if ($datos["considerarClasesIncompletas"] == 1 || ((int) $datosClases[$i]["tiempoAdicional"]) == 0) {
-        $datos["duracion"] = $datosClases[$i]["duracion"];
-        $datos["costoHora"] = $datos["costoHoraClase"];
-        $datos["fechaInicio"] = $datosClases[$i]["fechaInicio"];
-        $datos["fechaFin"] = $datosClases[$i]["fechaFin"];
-        $datos["numeroPeriodo"] = $datos["periodoClases"];
-        $datos["notificar"] = (($datosNotificacionClases[$i]->notificar != "" && $datosNotificacionClases[$i]->notificar) ? 1 : 0);
+      $claseCancelada->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+      $claseCancelada->save();
+      Historial::eliminarXIdClase($datos["idClase"]);
+
+      if ($datos["reprogramarCancelacion"] == 1) {
+        unset($datos["idClase"]);
+        $datos["numeroPeriodo"] = $claseCancelada["numeroPeriodo"];
+        $datos["notificar"] = ((isset($claseCancelada["idHistorial"])) ? 1 : 0);
+        $datos["idClaseCancelada"] = $claseCancelada["id"];
         $datos["estado"] = EstadosClase::Programada;
-        $datos["idPago"] = $idPago;
-        Clase::registrarActualizar($idAlumno, $datos);
+        $claseReprogramada = Clase::registrarActualizar($idAlumno, $datos);
+        return $claseReprogramada->numeroPeriodo;
       }
     }
+    return $claseCancelada->numeroPeriodo;
+  }
+
+  public static function actualizarEstado($idAlumno, $datos) {
+    $clase = Clase::obtenerXId($idAlumno, $datos["idClase"]);
+    $clase->estado = $datos["estado"];
+    $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+    $clase->save();
+  }
+
+  public static function actualizarGrupo($idAlumno, $datos) {
+    $nroPeriodo = 1;
+    $clases = Clase::listar()->whereIn(Clase::nombreTabla() . ".id", $datos["idsClases"])->orderBy(Clase::nombreTabla() . ".fechaInicio")->get();
+    foreach ($clases as $clase) {
+      $claseSel = Clase::obtenerXId($idAlumno, $clase->id);
+      if (!is_null($claseSel) && $claseSel->estado != EstadosClase::Cancelada) {
+        $datosActualizar = [];
+        if ($datos["editarDatosGenerales"] == 1) {
+          $datosActualizar["numeroPeriodo"] = $datos["numeroPeriodo"];
+          $datosActualizar["estado"] = $datos["estado"];
+        }
+        if ($datos["editarDatosTiempo"] == 1) {
+          $fechaInicio = new Carbon($claseSel->fechaInicio);
+          $datosActualizar["fechaInicio"] = $fechaInicio->setTime(0, 0, 0)->addSeconds($datos["horaInicio"]);
+          $datosActualizar["fechaFin"] = clone $datosActualizar["fechaInicio"];
+          $datosActualizar["fechaFin"]->addSeconds($datos["duracion"]);
+          $datosActualizar["duracion"] = $datos["duracion"];
+        }
+
+        if (isset($datos["costoHora"])) {
+          $datosActualizar["costoHora"] = $datos["costoHora"];
+        }
+
+        if ($datos["editarDatosProfesor"] == 1) {
+          $idProfesor = $datos["idDocente"];
+          if (Postulante::verificarExistencia($datos["idDocente"])) {
+            $idProfesor = Postulante::registrarProfesor($datos["idDocente"]);
+          }
+          $datosActualizar["idProfesor"] = $idProfesor;
+          $datosActualizar["costoHoraProfesor"] = $datos["pagoXHoraProfesor"];
+        }
+
+        $claseSel->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+        $claseSel->update($datosActualizar);
+        $nroPeriodo = $claseSel->numeroPeriodo;
+        if ($datos["editarDatosPago"] == 1 && isset($datos["idPago"])) {
+          PagoClase::registrarActualizar($datos["idPago"], $clase->id, $idAlumno);
+        }
+      }
+    }
+    return $nroPeriodo;
   }
 
   public static function registrarActualizar($idAlumno, $datos) {
@@ -504,13 +701,15 @@ class Clase extends Model {
       $datos["fechaFin"] = clone $datos["fechaInicio"];
       $datos["fechaFin"]->addSeconds($datos["duracion"]);
     }
+
     $datos["idAlumno"] = $idAlumno;
+
     $idProfesor = $datos["idDocente"];
     if (Postulante::verificarExistencia($datos["idDocente"])) {
       $idProfesor = Postulante::registrarProfesor($datos["idDocente"]);
     }
     $datos["idProfesor"] = $idProfesor;
-    $datos["costoHoraProfesor"] = $datos["costoHoraDocente"];
+    $datos["costoHoraProfesor"] = $datos["pagoXHoraProfesor"];
 
     $notificar = ($datos["notificar"] == 1);
     $clase = ((isset($datos["idClase"])) ? Clase::obtenerXId($idAlumno, $datos["idClase"]) : NULL);
@@ -554,184 +753,21 @@ class Clase extends Model {
     return $clase;
   }
 
-  public static function actualizarGrupo($idAlumno, $datos) {
-    $nroPeriodo = 1;
-    $clases = Clase::listar()->whereIn(Clase::nombreTabla() . ".id", $datos["idsClases"])->orderBy(Clase::nombreTabla() . ".fechaInicio")->get();
-    foreach ($clases as $clase) {
-      $claseSel = Clase::obtenerXId($idAlumno, $clase->id);
-      if (!is_null($claseSel) && $claseSel->estado != EstadosClase::Cancelada) {
-        $datosActualizar = [];
-        if ($datos["editarDatosGenerales"] == 1) {
-          $datosActualizar["numeroPeriodo"] = $datos["numeroPeriodo"];
-          $datosActualizar["estado"] = $datos["estado"];
-        }
-        if ($datos["editarDatosTiempo"] == 1) {
-          $fechaInicio = new Carbon($claseSel->fechaInicio);
-          $datosActualizar["fechaInicio"] = $fechaInicio->setTime(0, 0, 0)->addSeconds($datos["horaInicio"]);
-          $datosActualizar["fechaFin"] = clone $datosActualizar["fechaInicio"];
-          $datosActualizar["fechaFin"]->addSeconds($datos["duracion"]);
-          $datosActualizar["duracion"] = $datos["duracion"];
-        }
-
-        if (isset($datos["costoHora"])) {
-          $datosActualizar["costoHora"] = $datos["costoHora"];
-        }
-
-        if ($datos["editarDatosProfesor"] == 1) {
-          $idProfesor = $datos["idDocente"];
-          if (Postulante::verificarExistencia($datos["idDocente"])) {
-            $idProfesor = Postulante::registrarProfesor($datos["idDocente"]);
-          }
-          $datosActualizar["idProfesor"] = $idProfesor;
-          $datosActualizar["costoHoraProfesor"] = $datos["costoHoraDocente"];
-        }
-
-        $claseSel->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
-        $claseSel->update($datosActualizar);
-        $nroPeriodo = $claseSel->numeroPeriodo;
-        if ($datos["editarDatosPago"] == 1 && isset($datos["idPago"])) {
-          PagoClase::registrarActualizar($datos["idPago"], $clase->id, $idAlumno);
-        }
-      }
-    }
-    return $nroPeriodo;
+  public static function obtenerXId($idAlumno, $id) {
+    $nombreTabla = Clase::nombreTabla();
+    return Clase::listarBase()
+                    ->select(DB::raw(
+                                    $nombreTabla . ".*, 
+                            entidadAlumno.nombre AS nombreAlumno, 
+                            entidadAlumno.apellido AS apellidoAlumno, 
+                            entidadProfesor.nombre AS nombreProfesor, 
+                            entidadProfesor.apellido AS apellidoProfesor, 
+                            max(pagoAlumno.id) AS idPago"))
+                    ->where($nombreTabla . ".idAlumno", $idAlumno)
+                    ->where($nombreTabla . ".id", $id)
+                    ->orderBy($nombreTabla . ".fechaInicio", "ASC")
+                    ->firstOrFail();
   }
 
-  public static function actualizarEstado($idAlumno, $datos) {
-    $clase = Clase::obtenerXId($idAlumno, $datos["idClase"]);
-    $clase->estado = $datos["estado"];
-    $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
-    $clase->save();
-  }
-
-  public static function actualizarEstadoNUEVO($id, $datos) {
-    $clase = Clase::obtenerXIdNUEVO($id);
-    $clase->estado = $datos["estado"];
-    $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
-    $clase->save();
-  }
-
-  public static function actualizarComentarios($datos) {
-    $tipo = $datos["tipo"];
-    $idClase = $datos["idClase"];
-    $idAlumno = $datos["idAlumno"];
-    $clase = Clase::ObtenerXId($idAlumno, $idClase);
-
-    switch ($tipo) {
-      case 1:
-        $clase->comentarioAlumno = $datos["comentario"];
-        break;
-      case 2:
-        $clase->comentarioProfesor = $datos["comentario"];
-        break;
-      case 3:
-        $clase->comentarioParaAlumno = $datos["comentario"];
-        break;
-      case 4:
-        $clase->comentarioParaProfesor = $datos["comentario"];
-        break;
-    }
-    $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
-    $clase->save();
-  }
-
-  public static function actualizarComentariosEntidad($datos) {
-    $clase = Clase::ObtenerXId($datos["idAlumno"], $datos["idClase"]);
-    if ($clase->idAlumno == Auth::user()->idEntidad || $clase->idProfesor == Auth::user()->idEntidad) {
-      $datos["tipo"] = (Auth::user()->rol == RolesUsuario::Alumno ? 1 : 2);
-      Clase::actualizarComentarios($datos);
-    }
-  }
-
-  public static function confirmarProfesorAlumno($datos) {
-    if (Auth::user()->rol == RolesUsuario::Profesor) {
-      $nombreTabla = Clase::nombreTabla();
-      $idClase = Clase::listarXProfesor(Auth::user()->idEntidad)
-                      ->where($nombreTabla . ".idAlumno", $datos["idAlumno"])
-                      ->whereIn($nombreTabla . ".estado", [EstadosClase::Programada, EstadosClase::PendienteConfirmar])
-                      ->orderBy($nombreTabla . ".fechaInicio", "ASC")->lists($nombreTabla . ".id")->first();
-      if (isset($idClase) && $idClase != null) {
-        $fechaConfirmacion = Carbon::now()->toDateTimeString();
-        $clase = Clase::obtenerXId($datos["idAlumno"], $idClase);
-        $clase->estado = EstadosClase::ConfirmadaProfesorAlumno;
-        $clase->fechaConfirmacion = $fechaConfirmacion;
-        $clase->fechaUltimaActualizacion = $fechaConfirmacion;
-        $clase->save();
-
-        //TODO: actualizar duración de la clase confirmada y las clases restantes
-      }
-    }
-  }
-
-  public static function cancelar($idAlumno, $datos) {
-    $claseCancelada = Clase::obtenerXId($idAlumno, $datos["idClase"]);
-    if ($claseCancelada !== EstadosClase::Cancelada && $claseCancelada !== EstadosClase::Realizada) {
-      $claseCancelada->tipoCancelacion = $datos["tipoCancelacion"];
-      $claseCancelada->fechaCancelacion = Carbon::now()->toDateTimeString();
-      $claseCancelada->estado = EstadosClase::Cancelada;
-      if (isset($datos["idProfesor"]) && isset($datos["pagoProfesor"])) {
-        $claseCancelada->pagoTotalProfesor = $datos["pagoProfesor"];
-      }
-      $claseCancelada->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
-      $claseCancelada->save();
-      Historial::eliminarXIdClase($datos["idClase"]);
-
-      if ($datos["reprogramarCancelacion"] == 1) {
-        unset($datos["idClase"]);
-        $datos["numeroPeriodo"] = $claseCancelada["numeroPeriodo"];
-        $datos["notificar"] = ((isset($claseCancelada["idHistorial"])) ? 1 : 0);
-        $datos["idClaseCancelada"] = $claseCancelada["id"];
-        $datos["estado"] = EstadosClase::Programada;
-        $claseReprogramada = Clase::registrarActualizar($idAlumno, $datos);
-        return $claseReprogramada->numeroPeriodo;
-      }
-    }
-    return $claseCancelada->numeroPeriodo;
-  }
-
-  public static function verificarExistencia($idAlumno, $id) {
-    try {
-      Clase::obtenerXId($idAlumno, $id);
-    } catch (\Exception $ex) {
-      return FALSE;
-    }
-    return TRUE;
-  }
-
-  public static function eliminadXIdPago($idAlumno, $idPago) {
-    $pagosClases = PagoClase::obtenerXIdPago($idPago);
-    foreach ($pagosClases as $pagoClase) {
-      try {
-        Clase::obtenerXId($idAlumno, $pagoClase->idClase);
-      } catch (\Exception $e) {
-        continue;
-      }
-      Clase::eliminar($idAlumno, $pagoClase->idClase);
-    }
-  }
-
-  public static function eliminadXIdAdlumno($idAlumno) {
-    $clases = Clase::where("eliminado", 0)->where("idAlumno", $idAlumno)->get();
-    foreach ($clases as $clase) {
-      Clase::eliminar($idAlumno, $clase->id);
-    }
-  }
-
-  public static function eliminar($idAlumno, $id) {
-    $clase = Clase::obtenerXId($idAlumno, $id);
-    $clase->eliminado = 1;
-    $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
-    $clase->save();
-    Historial::eliminarXIdClase($id);
-  }
-
-  public static function sincronizarEstados() {
-    $clasesProgramadas = Clase::listarXEstados(EstadosClase::Programada)->where("fechaFin", "<=", Carbon::now())->get();
-    foreach ($clasesProgramadas as $claseProgramada) {
-      $claseProgramada->estado = EstadosClase::PendienteConfirmar;
-      $claseProgramada->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
-      $claseProgramada->save();
-    }
-  }
-
+  // </editor-fold>
 }

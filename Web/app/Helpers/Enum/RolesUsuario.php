@@ -2,14 +2,14 @@
 
 namespace App\Helpers\Enum;
 
-class RolesUsuario {
+class RolesUsuario/* - */ {
 
   const Principal = "PRINCIPAL";
   const Secundario = "SECUNDARIO";
   const Alumno = "ALUMNO";
   const Profesor = "PROFESOR";
 
-  public static function listar() {
+  public static function listar()/* - */ {
     return [
         RolesUsuario::Principal => "Principal",
         RolesUsuario::Secundario => "Secundario",
@@ -18,14 +18,14 @@ class RolesUsuario {
     ];
   }
 
-  public static function listarDelSistema() {
+  public static function listarDelSistema()/* - */ {
     return [
         RolesUsuario::Principal => "Principal",
         RolesUsuario::Secundario => "Secundario"
     ];
   }
 
-  public static function listarExternos() {
+  public static function listarExternos()/* - */ {
     return [
         RolesUsuario::Alumno => ["Alumno", "Alumna"],
         RolesUsuario::Profesor => ["Profesor", "Profesora"]

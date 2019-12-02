@@ -14,7 +14,7 @@ class GenerarClasesRequest extends Request {
   protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["monto"] = ReglasValidacion::formatoDato($datos, "monto");
-    $datos["costoHoraClase"] = ReglasValidacion::formatoDato($datos, "costoHoraClase");
+    $datos["costoXHoraClase"] = ReglasValidacion::formatoDato($datos, "costoXHoraClase");
     $datos["fechaInicioClases"] = ReglasValidacion::formatoDato($datos, "fechaInicioClases");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
@@ -23,7 +23,7 @@ class GenerarClasesRequest extends Request {
   public function rules() {
     $reglasValidacion = [
         "monto" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
-        "costoHoraClase" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
+        "costoXHoraClase" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
         "fechaInicioClases" => "required|date_format:d/m/Y",
     ];
 

@@ -1,42 +1,6 @@
-@include("util.filtroBusqueda", ["idSeccion" => "sec-clase-filtros-busqueda", "incluirEstadosClase" => 0, "incluirEstadosPago" => 1])
+{{----}}
+<script src="{{ asset("assets/eah/js/modulos/profesor/clase/principal.js")}}"></script>  
 <div class="row">
-  <div class="col-sm-12">
-    <div id="sec-mensajes-clase"></div>
-    <div id="sec-clase-1">      
-      <div class="box-body">
-        <table id="tab-lista-clases" class="table table-bordered table-hover">
-          <thead>
-            <tr> 
-              <th>Seleccionar <input id="seleccionar-todas-clases-profesor" type="checkbox" /></th>  
-              <th>Alumno</th>    
-              <th>Fecha</th>
-              <th class="all">Estado</th>
-              <th>Duración</th>
-              <th>Pago por hora</th>
-            </tr>
-          </thead>
-          <tfoot>
-            <tr>
-              <th colspan="4"></th>
-              <th colspan="2"></th>
-            </tr>
-          </tfoot>
-        </table>  
-      </div>
-      <div id="sec-clase-11" style="display: none">   
-        <div class="box-body">
-          <a id="btn-registrar-pago-clase" type="button" class="btn btn-primary btn-sm">Registrar pago</a>
-        </div>                 
-      </div>
-    </div>    
-    <div id="sec-clase-2" style="display: none">
-      {{ Form::open(["url" => route("profesores.clases.pagos.registrar", ["id" => $idProfesor]), "id" => "formulario-pago-clase", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
-      @include("profesor.clase.formularioPago") 
-      {{ Form::close() }}
-    </div>   
-  </div>
-  <script>
-    var urlListarClases = "{{ route('profesores.clases.listar', ['id' => $idProfesor]) }}";
-  </script>
-  <script src="{{ asset("assets/eah/js/modulos/profesor/clase.js")}}"></script>
+  <div id="sec-clase-mensajes"></div>
+  @include("profesor.clase.lista")    
 </div>

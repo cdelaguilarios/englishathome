@@ -8,7 +8,7 @@
       $datosCv = ((count($cv) > 0 && $cv[0] != "") ? explode(":", $cv[0]) : []);
       @endphp       
       @if(count($datosCv) == 2)
-        @php ($rutaArchivo = route("archivos", ["nombre" => $datosCv[0] . "?docPer=1"]))
+        @php ($rutaArchivo = route("archivos", ["nombre" => $datosCv[0], "esDocumentoPersonal" => 1]))
         @if(strpos(@get_headers($rutaArchivo)[0],'200')!==false)
         <div class="ajax-file-upload-container">
           <div class="ajax-file-upload-statusbar" style="width: 400px;">
@@ -44,7 +44,7 @@
       $datosCertificadoInternacional = ((count($certificadoInternacional) > 0 && $certificadoInternacional[0] != "") ? explode(":", $certificadoInternacional[0]) : []);
       @endphp       
       @if(count($datosCertificadoInternacional) == 2)
-        @php ($rutaArchivo = route("archivos", ["nombre" => $datosCertificadoInternacional[0] . "?docPer=1"]))
+        @php ($rutaArchivo = route("archivos", ["nombre" => $datosCertificadoInternacional[0], "esDocumentoPersonal" => 1]))
         @if(strpos(@get_headers($rutaArchivo)[0],'200')!==false)
         <div class="ajax-file-upload-container">
           <div class="ajax-file-upload-statusbar" style="width: 400px;">
@@ -80,7 +80,7 @@
     $datosImagenDocumentoIdentidad = ((count($imagenDocumentoIdentidad) > 0 && $imagenDocumentoIdentidad[0] != "") ? explode(":", $imagenDocumentoIdentidad[0]) : []);
     @endphp       
     @if(count($datosImagenDocumentoIdentidad) == 2)
-      @php ($rutaArchivo = route("archivos", ["nombre" => $datosImagenDocumentoIdentidad[0] . "?docPer=1"]))
+      @php ($rutaArchivo = route("archivos", ["nombre" => $datosImagenDocumentoIdentidad[0], "esDocumentoPersonal" => 1]))
       @if(strpos(@get_headers($rutaArchivo)[0],'200')!==false)
       <div class="ajax-file-upload-container">
         <div class="ajax-file-upload-statusbar" style="width: 400px;">

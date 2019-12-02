@@ -2,25 +2,24 @@
 
 namespace App\Helpers\Enum;
 
-class TiposBusquedaFecha {
+class TiposBusquedaFecha/* - */ {
 
   const Dia = "DIA";
   const Mes = "MES";
-  const Anho = "ANHO";
+  const Anio = "ANIO";
   const RangoDias = "RANGO_DIAS";
   const RangoMeses = "RANGO_MESES";
-  const RangoAnhos = "RANGO_ANHOS";
+  const RangoAnios = "RANGO_ANIOS";
 
-  public static function listar() {
-    $tiposBusquedaFecha = [
+  public static function listar()/* - */ {
+    return [
         TiposBusquedaFecha::Dia => "Día",
         TiposBusquedaFecha::Mes => "Mes",
-        TiposBusquedaFecha::Anho => "Año",
+        TiposBusquedaFecha::Anio => "Año",
         TiposBusquedaFecha::RangoDias => "Rango de días",
         TiposBusquedaFecha::RangoMeses => "Rango de meses",
-        TiposBusquedaFecha::RangoAnhos => "Rango de años"
+        TiposBusquedaFecha::RangoAnios => "Rango de años"
     ];
-    return $tiposBusquedaFecha;
   }
 
 }

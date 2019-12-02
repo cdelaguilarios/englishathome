@@ -1,3 +1,4 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Ficha " . ($profesor->sexo == "F" ? "de la profesora" : "del profesor") . " " . $profesor->nombre . " " .  $profesor->apellido)
 
@@ -19,11 +20,10 @@
     a[href]:after { content: ""; }
   `)
   .appendTo('head');
-  window.print();
-  
-  setTimeout(function () {
+  window.onload = function() { 
+    window.print(); 
     $(window).one('mousemove', window.onafterprint);
-  }, 500);
+  }
 </script>
 @endif
 @endsection

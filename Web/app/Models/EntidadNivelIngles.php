@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class EntidadNivelIngles extends Model {
+class EntidadNivelIngles extends Model/* - */ {
 
   public $timestamps = false;
   protected $table = "entidadNivelIngles";
-  protected $fillable = ["idEntidad", "idNivelIngles"];
+  protected $fillable = [
+      "idEntidad",
+      "idNivelIngles"
+  ];
 
   public static function nombreTabla()/* - */ {
     $modeloEntidadNivelIngles = new EntidadNivelIngles();
@@ -21,9 +24,12 @@ class EntidadNivelIngles extends Model {
     return EntidadNivelIngles::where("idEntidad", $idEntidad)->first();
   }
 
-  public static function registrarActualizar($idEntidad, $idNivelIngles) {
+  public static function registrarActualizar($idEntidad, $idNivelIngles)/* - */ {
     EntidadNivelIngles::where("idEntidad", $idEntidad)->delete();
-    $entidadNivelIngles = new EntidadNivelIngles(["idEntidad" => $idEntidad, "idNivelIngles" => $idNivelIngles]);
+    $entidadNivelIngles = new EntidadNivelIngles([
+        "idEntidad" => $idEntidad,
+        "idNivelIngles" => $idNivelIngles
+    ]);
     $entidadNivelIngles->save();
   }
 

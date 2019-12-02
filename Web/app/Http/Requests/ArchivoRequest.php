@@ -5,13 +5,13 @@ namespace App\Http\Requests;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 
-class ArchivoRequest extends Request {
+class ArchivoRequest extends Request/* - */ {
 
-  public function authorize() {
+  public function authorize()/* - */ {
     return true;
   }
 
-  protected function getValidatorInstance() {
+  protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     $datos["idElemento"] = ReglasValidacion::formatoDato($datos, "idElemento");
     $datos["archivo"] = ReglasValidacion::formatoDato($datos, "archivo");
@@ -20,7 +20,7 @@ class ArchivoRequest extends Request {
     return parent::getValidatorInstance();
   }
 
-  public function rules() {
+  public function rules()/* - */ {
     switch ($this->method()) {
       case "GET":
       case "PUT":

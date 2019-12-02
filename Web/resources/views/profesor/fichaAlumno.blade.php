@@ -1,3 +1,4 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Ficha " . ($profesor->sexo == "F" ? "de la profesora" : "del profesor") . " " . $profesor->nombre . " " .  $profesor->apellido)
 
@@ -12,10 +13,17 @@
     $(window).off('mousemove', window.onafterprint);
     window.close();
   };
-  window.print();
-  setTimeout(function () {
+
+  const $patchedStyle = $('<style media="print">')
+  .text(`
+    img { max-width: none !important; }
+    a[href]:after { content: ""; }
+  `)
+  .appendTo('head');
+  window.onload = function() { 
+    window.print(); 
     $(window).one('mousemove', window.onafterprint);
-  }, 500);
+  }
 </script>
 @endif
 @endsection
@@ -41,6 +49,16 @@
     margin-bottom: 2px;
     border: 0;
     border-top: 1px solid #fff;
+  }
+  @media print {
+    html, body {
+      width: 210mm;
+      height: 297mm;        
+    }
+    .pagina-impresion {
+      margin: 0;
+      page-break-after: always;
+    }
   }
 </style>
 @endsection

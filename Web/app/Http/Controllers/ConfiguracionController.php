@@ -8,20 +8,20 @@ use App\Models\VariableSistema;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Configuracion\FormularioRequest;
 
-class ConfiguracionController extends Controller {
+class ConfiguracionController extends Controller/* - */ {
 
   protected $data = array();
 
-  public function __construct() {
+  public function __construct()/* - */ {
     $this->data["seccion"] = "configuracion";
   }
 
-  public function index() {
+  public function index()/* - */ {
     $this->data["variablesSistema"] = VariableSistema::listar();
     return view("configuracion.index", $this->data);
   }
 
-  public function actualizar(FormularioRequest $req) {
+  public function actualizar(FormularioRequest $req) /* - */{
     try {
       VariableSistema::actualizar($req->all());
       Mensajes::agregarMensajeExitoso("Actualización exitosa.");

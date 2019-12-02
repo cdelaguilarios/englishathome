@@ -1,16 +1,19 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Profesores")
 
 @section("section_script")
 <script>
-  var urlActualizarEstado = "{{ route('profesores.actualizar.estado', ['id' => 0]) }}";
-  var estados = {!! json_encode(App\Helpers\Enum\EstadosProfesor::listar()) !!};
   var urlActualizarHorario = "{{ route('profesores.actualizar.horario', ['id' => $profesor->idEntidad]) }}";
   var urlPerfil = "{{ route('profesores.perfil', ['id' => 0]) }}";
   var urlBuscar = "{{ route('profesores.buscar') }}";
+  
+  var estados = {!! json_encode(App\Helpers\Enum\EstadosProfesor::listar()) !!};
+  
   var idProfesor = "{{ $profesor->id}}";
   var nombreCompletoProfesor = "{{ $profesor->nombre . " " .  $profesor->apellido }}";</script>
-<script src="{{ asset("assets/eah/js/modulos/profesor/profesor.js") }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/profesor/perfil.js") }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/profesor/busqueda.js") }}"></script>
 @endsection
 
 @section("breadcrumb")
@@ -27,10 +30,12 @@
         @include("util.credencialesAcceso", ["entidad" => $profesor])
         @include("util.imagenPerfil", ["entidad" => $profesor])
         <h3 class="profile-username">Profesor{{ $profesor->sexo == "F" ? "a" : "" }} {{ $profesor->nombre . " " .  $profesor->apellido }}</h3>
-        <p class="text-muted">{{ $profesor->correoElectronico }}</p>
+        <p class="text-muted">
+          <a href="{{ route("correos", ["id" => $profesor->id])}}" target="_blank">{{ $profesor->correoElectronico }}</a>
+        </p>
         <p>
           @if(array_key_exists($profesor->estado, App\Helpers\Enum\EstadosProfesor::listarDisponibleCambio()))
-        <div class="sec-btn-editar-estado">
+        <div class="sec-btn-editar-estado" data-idselestados="sel-estados">
           <a href="javascript:void(0);" class="btn-editar-estado" data-id="{{ $profesor->id }}" data-estado="{{ $profesor->estado }}">
             <span class="label {{ App\Helpers\Enum\EstadosProfesor::listar()[$profesor->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosProfesor::listar()[$profesor->estado][0] }}</span>
           </a>
@@ -58,12 +63,36 @@
         @endforeach
         <hr>
         @endif
+        @if(isset($profesor->telefono))
+        <strong><i class="fa fa-phone margin-r-5"></i> Teléfono</strong>
+        <p class="text-muted">
+          {!! App\Helpers\Util::incluirEnlaceWhatsApp($profesor->telefono) !!}
+        </p>
+        <hr>
+        @endif
         <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
         <p class="text-muted">{{ $profesor->direccion }}{!! ((isset($profesor->numeroDepartamento) && $profesor->numeroDepartamento != "") ? "<br/>Depto./Int " . $profesor->numeroDepartamento : "") !!}{!! ((isset($profesor->referenciaDireccion) && $profesor->referenciaDireccion != "") ? " - " . $profesor->referenciaDireccion : "") !!}<br/>{{ $profesor->direccionUbicacion }}</p>
         <p class="text-muted">
           @include("util.ubicacionMapa", ["geoLatitud" => $profesor->geoLatitud, "geoLongitud" => $profesor->geoLongitud, "modo" => "visualizar"])
         </p>
-        <hr>        
+        <hr>     
+        @if (isset($profesor->audio) && !empty($profesor->audio))
+        <strong><i class="fa fa-volume-up margin-r-5"></i> Audio de presentación</strong>
+        <p class="text-muted">
+          <audio controls style="width: 100%;">
+            <source src="{{ route("archivos", ["nombre" => ($profesor->audio), "esAudio" => 1]) }}">
+            Tu explorador no soporta este elemento de audio
+          </audio>
+        </p>
+        <hr>   
+        @endif    
+        @if (!empty($profesor->comentarioAdministrador))
+        <strong><i class="fa fa-list-alt margin-r-5"></i> Comentarios</strong>
+        <p class="text-muted">
+          {!! $profesor->comentarioAdministrador !!}
+        </p>
+        <hr>   
+        @endif   
         @if(isset($profesor->numeroDocumento))
         <strong><i class="fa fa-user margin-r-5"></i> {{ (isset($profesor->idTipoDocumento) ? App\Models\TipoDocumento::listarSimple()[$profesor->idTipoDocumento] : "") }}</strong>
         <p class="text-muted">
@@ -71,14 +100,7 @@
         </p>
         <hr> 
         @endif
-        @if(isset($profesor->telefono))
-        <strong><i class="fa fa-phone margin-r-5"></i> Teléfono</strong>
-        <p class="text-muted">
-          {{ $profesor->telefono }}
-        </p>
-        <hr>
-        @endif
-        @if(isset($profesor->fechaNacimiento))
+        @if(isset($profesor->fechaNacimiento) && (int)\Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $profesor->fechaNacimiento)->format("Y") > 1900)
         <strong><i class="fa fa-birthday-cake margin-r-5"></i> Fecha de nacimiento</strong>
         <p class="text-muted">
           {{ \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $profesor->fechaNacimiento)->format("d/m/Y") }}
@@ -95,7 +117,6 @@
           <div class="col-sm-6">
             <a href="{{ route("profesores.crear")}}" class="btn btn-primary btn-clean">Nuevo profesor</a>                        
             <a href="{{ route("profesores.editar", $profesor->id)}}" class="btn btn-primary btn-clean">Editar datos</a>
-            <!--<a href="{{ route("profesores.descargar.ficha", $profesor->id)}}" class="btn btn-primary btn-clean">Descargar ficha</a>-->
             <a href="{{ route("profesores.ficha", $profesor->id)}}" target="_blank" class="btn btn-primary btn-clean">Descargar ficha</a>
             <a href="{{ route("profesores.ficha.alumno", $profesor->id)}}" target="_blank" class="btn btn-primary btn-clean">Descargar ficha para el alumno</a>
             <a href="{{ route("correos", ["id" => $profesor->id])}}" target="_blank" class="btn btn-primary btn-clean">Enviar correo</a>
@@ -129,16 +150,16 @@
           @include("util.historial", ["idEntidad" => $profesor->id, "nombreEntidad" => "profesor"]) 
         </div>
         <div id="pago" class="tab-pane">
-          @include("profesor.pago.principal", ["idProfesor" => $profesor->id])
+          @include("profesor.pago.principal")
         </div>
         <div id="clase" class="tab-pane">
-          @include("profesor.clase.principal", ["idProfesor" => $profesor->id])
+          @include("profesor.clase.principal")
         </div>
         <div id="calendario" class="tab-pane">
           @include("util.calendario", ["idEntidad" => $profesor->id, "esEntidadProfesor" => 1]) 
         </div>
         <div id="experiencia-laboral" class="tab-pane">
-          @include("docente.experienciaLaboral", ["docente" => $profesor]) 
+          @include("docente.util.experienciaLaboral", ["docente" => $profesor]) 
         </div>
         <div id="sec-comentarios-administrador" class="tab-pane">
           @include("util.comentariosAdministrador", ["idEntidad" => $profesor->id, "comentarioAdministrador" => $profesor->comentarioAdministrador]) 
@@ -171,6 +192,6 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosProfesor::listarDisponibleCambio(), null, ["id" => "sel-estados", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosProfesor::listarDisponibleCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('profesores.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosProfesor::listar())]) }}
 </div>
 @endsection

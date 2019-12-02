@@ -5,15 +5,15 @@ namespace App\Http\Requests\Configuracion;
 use App\Http\Requests\Request;
 use App\Models\VariableSistema;
 use App\Helpers\ReglasValidacion;
-use App\Helpers\Enum\TipoVariableConfiguracion;
+use App\Helpers\Enum\TiposVariableConfiguracion;
 
-class FormularioRequest extends Request {
+class FormularioRequest extends Request/* - */ {
 
-  public function authorize() {
+  public function authorize()/* - */ {
     return true;
   }
 
-  protected function getValidatorInstance() {
+  protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     $variablesSistema = VariableSistema::listar();
     foreach ($variablesSistema as $variableSistema) {
@@ -23,33 +23,33 @@ class FormularioRequest extends Request {
     return parent::getValidatorInstance();
   }
 
-  public function rules() {
+  public function rules()/* - */ {
     $datos = $this->all();
-    $variablesSistema = VariableSistema::listar();
-    $reglasValidacion = [];
 
+    $reglasValidacion = [];
+    $variablesSistema = VariableSistema::listar();
     foreach ($variablesSistema as $variableSistema) {
       switch ($variableSistema->tipo) {
-        case TipoVariableConfiguracion::Password: {
+        case TiposVariableConfiguracion::Password: {
             if ($datos[$variableSistema->llave] != NULL && $datos[$variableSistema->llave] != "") {
               $reglasValidacion[$variableSistema->llave] = "required|confirmed|max:255";
             }
             break;
           }
-        case TipoVariableConfiguracion::Correo: {
+        case TiposVariableConfiguracion::Correo: {
             if ($datos[$variableSistema->llave] != NULL && $datos[$variableSistema->llave] != "") {
               $reglasValidacion[$variableSistema->llave] = "required|email|max:255";
             }
             break;
           }
-        case TipoVariableConfiguracion::Texto: {
+        case TiposVariableConfiguracion::Texto: {
             if ($datos[$variableSistema->llave] != NULL && $datos[$variableSistema->llave] != "") {
               $reglasValidacion[$variableSistema->llave] = "required|max:255";
             }
             break;
           }
-        case TipoVariableConfiguracion::TextoArea:
-        case TipoVariableConfiguracion::TextoAreaEditor: {
+        case TiposVariableConfiguracion::TextoArea:
+        case TiposVariableConfiguracion::TextoAreaEditor: {
             if ($datos[$variableSistema->llave] != NULL && $datos[$variableSistema->llave] != "") {
               $reglasValidacion[$variableSistema->llave] = "required|max:8000";
             }

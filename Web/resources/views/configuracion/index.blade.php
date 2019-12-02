@@ -1,3 +1,4 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Configuración")
 
@@ -8,16 +9,16 @@
       ignore: ":hidden",
       rules: {
       @foreach($variablesSistema as $variableSistema)
-        @if ($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::Password)
+        @if ($variableSistema->tipo == App\Helpers\Enum\TiposVariableConfiguracion::Password)
           {{ $variableSistema->llave . "_confirmation" }}: {
             equalTo: "#{{ $variableSistema->llave }}"
           },
         @else
           {{ $variableSistema->llave }}: {
-            @if($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::Correo)
+            @if($variableSistema->tipo == App\Helpers\Enum\TiposVariableConfiguracion::Correo)
                 email: true,    
             @endif 
-            @if ($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::TextoAreaEditor)
+            @if ($variableSistema->tipo == App\Helpers\Enum\TiposVariableConfiguracion::TextoAreaEditor)
             validarCkEditor: true
             @else
             required: true
@@ -53,7 +54,7 @@
     });
   });  
   @foreach($variablesSistema as $variableSistema)
-    @if ($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::TextoAreaEditor)
+    @if ($variableSistema->tipo == App\Helpers\Enum\TiposVariableConfiguracion::TextoAreaEditor)
     CKEDITOR.replace("{{ $variableSistema->llave }}");
     @endif 
   @endForeach
@@ -76,7 +77,7 @@
       </div>
       <div class="box-body">
         @foreach($variablesSistema as $variableSistema)
-        @if($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::Password)        
+        @if($variableSistema->tipo == App\Helpers\Enum\TiposVariableConfiguracion::Password)        
         <div class="form-group">
           {{ Form::label($variableSistema->llave, $variableSistema->titulo . ": ", ["class" => "col-sm-3 control-label"]) }}
           <div class="col-sm-9">
@@ -96,11 +97,11 @@
           <div class="form-group">
             {{ Form::label($variableSistema->llave, $variableSistema->titulo . ": ", ["class" => "col-sm-3 control-label"]) }}
             <div class="col-sm-9">
-            @if($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::Correo)
+            @if($variableSistema->tipo == App\Helpers\Enum\TiposVariableConfiguracion::Correo)
               {{ Form::email($variableSistema->llave, Crypt::decrypt($variableSistema->valor), ["class" => "form-control", "maxlength" =>"255"]) }}
-            @elseif($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::Texto)
+            @elseif($variableSistema->tipo == App\Helpers\Enum\TiposVariableConfiguracion::Texto)
               {{ Form::text($variableSistema->llave, Crypt::decrypt($variableSistema->valor), ["class" => "form-control", "maxlength" =>"255"]) }}
-            @elseif($variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::TextoArea || $variableSistema->tipo == App\Helpers\Enum\TipoVariableConfiguracion::TextoAreaEditor)
+            @elseif($variableSistema->tipo == App\Helpers\Enum\TiposVariableConfiguracion::TextoArea || $variableSistema->tipo == App\Helpers\Enum\TiposVariableConfiguracion::TextoAreaEditor)
               {{ Form::textarea($variableSistema->llave, Crypt::decrypt($variableSistema->valor), ["class" => "form-control", "rows" => "2", "maxlength" =>"8000"]) }}
             @endif
             @if(isset($variableSistema->recomendacionesAdicionales) && $variableSistema->recomendacionesAdicionales != "")

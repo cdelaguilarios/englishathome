@@ -1,3 +1,4 @@
+{{----}}
 @if(count($errors) > 0)
 <div class="box-default">
   <div class="box-body contenedor-alerta">

@@ -11,7 +11,7 @@ class VariableSistema extends Model {
   protected $table = "variableSistema";
   protected $fillable = ["llave", "valor", "titulo", "recomendacionesAdicionales", "tipo"];
 
-  public static function listar() {
+  public static function listar()/* - */ {
     return VariableSistema::get();
   }
 
@@ -19,12 +19,12 @@ class VariableSistema extends Model {
     return VariableSistema::where("id", $id)->firstOrFail();
   }
 
-  public static function obtenerXLlave($llave) {
+  public static function obtenerXLlave($llave)/* - */ {
     $variable = VariableSistema::where("llave", $llave)->first();
     return (isset($variable) ? Crypt::decrypt($variable->valor) : "");
   }
 
-  public static function actualizar($datos) {
+  public static function actualizar($datos)/* - */ {
     $variablesSistema = VariableSistema::listar();
 
     foreach ($variablesSistema as $variableSistema) {

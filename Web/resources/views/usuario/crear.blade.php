@@ -1,8 +1,9 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Usuarios")
 
 @section("section_script")
-<script src="{{ asset("assets/eah/js/modulos/usuario.js")}}"></script>
+<script src="{{ asset("assets/eah/js/modulos/usuario/formulario.js")}}"></script>
 @endsection
 
 @section("breadcrumb")

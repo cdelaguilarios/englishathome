@@ -9,7 +9,7 @@ function  cargarSeccionClases() {
 
   //Común   
   registroHistorial = (typeof (registroHistorial) === "undefined" ? false : registroHistorial);
-  if (util.obtenerParametroUrlXNombre("sec") === "clase" && !registroHistorial) {
+  if (util.obtenerParametroUrlXNombre("seccion") === "clase" && !registroHistorial) {
     $("a[href='#clase']").trigger("click");
   }
   $("a[href='#clase']").click(function () {
@@ -61,7 +61,7 @@ function cargarListaClase() {
           }, className: "text-center", type: "monto"}
       ],
       initComplete: function (s, j) {
-        utilTablas.establecerBotonRecargaTabla("tab-lista-clases");
+        utilTablas.establecerBotonRecargaTabla("#tab-lista-clases");
       },
       footerCallback: function (r, d, s, e, di) {
         var api = this.api();
@@ -138,11 +138,11 @@ function cargarFormularioPagoClase() {
             f.submit();
           }
         } else {
-          agregarMensaje("advertencias", "Debe subir la imagen de por lo menos una ficha de conformidad.", true, "#sec-mensajes-clase");
+          mensajes.agregar("advertencias", "Debe subir la imagen de por lo menos una ficha de conformidad.", true, "#sec-mensajes-clase");
         }
       } else {
         $("#tab-lista-clases").find("input[type='checkbox']").trigger("change");
-        agregarMensaje("advertencias", "Debe seleccionar una o más clases.", true, "#sec-mensajes-clase");
+        mensajes.agregar("advertencias", "Debe seleccionar una o más clases.", true, "#sec-mensajes-clase");
       }
     },
     highlight: function () {
@@ -164,8 +164,8 @@ function cargarFormularioPagoClase() {
     onkeyup: false,
     onclick: false
   });
-  utilFechasHorarios.establecerCalendario("fecha-pago-clases", false, false, false);
-  incluirSeccionSubidaArchivos("documentos-verificacion-clases", {onSubmit: function () {
+  utilFechasHorarios.establecerCalendario($("#fecha-pago-clases"), false, false, false);
+  utilFormularios.incluirSeccionSubidaArchivos($("#documentos-verificacion-clases"), {onSubmit: function () {
       return true;
     }, acceptFiles: "image/*", uploadStr: "Subir archivo", maxFileCount: 20});
 

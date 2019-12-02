@@ -11,14 +11,15 @@ use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\SexosEntidad;
 
-class FormularioRequest extends Request {
+class FormularioRequest extends Request/* - */ {
 
-  public function authorize() {
+  public function authorize()/* - */ {
     return true;
   }
 
-  protected function getValidatorInstance() {
+  protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
+    
     $datos["telefono"] = ReglasValidacion::formatoDato($datos, "telefono");
     $datos["fechaNacimiento"] = ReglasValidacion::formatoDato($datos, "fechaNacimiento");
     $datos["sexo"] = ReglasValidacion::formatoDato($datos, "sexo", "");
@@ -47,7 +48,7 @@ class FormularioRequest extends Request {
     return parent::getValidatorInstance();
   }
 
-  public function rules() {
+  public function rules()/* - */ {
     $datos = $this->all();
 
     $reglasValidacion = [
@@ -88,8 +89,8 @@ class FormularioRequest extends Request {
     }
 
     if (!(Auth::guest())) {
-      $listaCursos = Curso::listarSimple();
       if (!is_null($datos["idCursos"])) {
+        $listaCursos = Curso::listarSimple();
         foreach ($datos["idCursos"] as $idCurso) {
           if (!array_key_exists($idCurso, $listaCursos->toArray())) {
             $reglasValidacion["cursosNoValido"] = "required";
@@ -99,7 +100,9 @@ class FormularioRequest extends Request {
       } else {
         $reglasValidacion["cursosNoValido"] = "required";
       }
-    } else if (isset($datos["correoElectronico"]) && Postulante::verificarExistenciaXCorreoElectronico($datos["correoElectronico"])) {
+    }
+
+    if (isset($datos["correoElectronico"]) && Postulante::verificarExistenciaXCorreoElectronico($datos["correoElectronico"])) {
       $reglasValidacion["correoElectronicoRegistradoNoValido"] = "required";
     }
 
@@ -112,9 +115,7 @@ class FormularioRequest extends Request {
       case "DELETE": {
           return [];
         }
-      case "POST": {
-          return $reglasValidacion;
-        }
+      case "POST":
       case "PUT":
       case "PATCH": {
           return $reglasValidacion;
@@ -123,15 +124,15 @@ class FormularioRequest extends Request {
     }
   }
 
-  public function messages() {
+  public function messages()/* - */ {
     return [
         "sexoNoValido.required" => "El sexo seleccionado no es válido.",
         "tipoDocumenoNoValido.required" => "El tipo de documento seleccionado no es válido.",
         "ubigeoNoValido.required" => "Los datos de dirección ingresados no son válidos.",
         "cursosNoValido.required" => "Uno o más de los cursos seleccionados no es válido.",
-        "horarioNoValido.required" => "El horario seleccionado no es válido.",
         "correoElectronicoRegistradoNoValido.required" => (Auth::guest() ? "The email entered has already been registered." : "El correo electrónico ingresado ya ha sido registrado."),
-        "audio.mimes" => (Auth::guest() ? "Invalid audio (valid formats: mp3, wav and ogg)." : "Por favor seleccione un audio válido (formatos válidos: mp3, wav y ogg).")
+        "audio.mimes" => (Auth::guest() ? "Invalid audio (valid formats: mp3, wav and ogg)." : "Por favor seleccione un audio válido (formatos válidos: mp3, wav y ogg)."),
+        "horarioNoValido.required" => "El horario seleccionado no es válido."
     ];
   }
 

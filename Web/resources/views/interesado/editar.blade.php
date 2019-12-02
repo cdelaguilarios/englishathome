@@ -1,3 +1,4 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Interesados")
 
@@ -5,10 +6,12 @@
 <script>
   var urlEditar = "{{ route('interesados.editar', ['id' => 0]) }}";
   var urlBuscar = "{{ route('interesados.buscar') }}";
+  
   var idInteresado = "{{ $interesado->id}}";
   var nombreCompletoInteresado = "{{ $interesado->nombre . " " .  $interesado->apellido }}";
 </script>
-<script src="{{ asset("assets/eah/js/modulos/interesado.js") }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/interesado/formulario.js") }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/interesado/busqueda.js") }}"></script>
 @endsection
 
 @section("breadcrumb")
@@ -28,8 +31,8 @@
             @if($interesado->estado != App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado)
             <button id="btn-registrar-alumno"  type="button" class="btn btn-primary"><i class="fa fa-mortar-board"></i> Registrar como alumno</button>
             @endif
-            <a href="{{ route("interesados.cotizar", ["id" => $interesado->idEntidad]) }}" type="button" class="btn btn-primary" ><i class="fa fa-dollar"></i> Enviar cotización</a>             
-            <button class="btn btn-primary" onclick="return copiarEnlaceFichaInscripcion('{{ route("alumnos.crear.externo", ["codigoVerificacion" => Crypt::encrypt($interesado->id)]) }}')">Enlace ficha de inscripción</button>
+            <a href="{{ route("interesados.cotizar", ["id" => $interesado->idEntidad]) }}" type="button" class="btn btn-primary" ><i class="fa fa-envelope"></i> Enviar cotización</a>             
+            <button class="btn btn-primary" onclick="return busquedaInteresado.copiarEnlaceFichaInscripcion('{{ route("alumnos.crear.externo", ["codigoVerificacion" => Crypt::encrypt($interesado->id)]) }}')">Enlace ficha de inscripción</button>
           </div>    
           <div class="col-sm-2">
             @if(isset($interesado->idInteresadoSiguiente))

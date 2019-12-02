@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class NivelIngles extends Model {
+class NivelIngles extends Model/* - */ {
 
   public $timestamps = false;
   protected $table = "nivelIngles";
@@ -16,7 +16,7 @@ class NivelIngles extends Model {
     return $nombreTabla;
   }
 
-  public static function listarSimple() {
+  public static function listarSimple()/* - */ {
     return NivelIngles::where("eliminado", 0)->lists("nombre", "id");
   }
 

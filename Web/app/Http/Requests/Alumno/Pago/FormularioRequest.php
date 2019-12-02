@@ -9,13 +9,13 @@ use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\EstadosPago;
 use App\Helpers\Enum\CuentasBancoPago;
 
-class FormularioRequest extends Request {
+class FormularioRequest extends Request/* - */ {
 
-  public function authorize() {
+  public function authorize()/* - */ {
     return true;
   }
 
-  protected function getValidatorInstance() {
+  protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     $datos["motivo"] = ReglasValidacion::formatoDato($datos, "motivo");
     $datos["cuenta"] = ReglasValidacion::formatoDato($datos, "cuenta");
@@ -24,28 +24,23 @@ class FormularioRequest extends Request {
     $datos["descripcion"] = ReglasValidacion::formatoDato($datos, "descripcion");
     $datos["imagenComprobante"] = ReglasValidacion::formatoDato($datos, "imagenComprobante");
     $datos["usarSaldoFavor"] = (isset($datos["usarSaldoFavor"]) ? 1 : 0);
-    $datos["costoHoraClase"] = ReglasValidacion::formatoDato($datos, "costoHoraClase");
-    $datos["fechaInicioClases"] = ReglasValidacion::formatoDato($datos, "fechaInicioClases");
+    $datos["costoXHoraClase"] = ReglasValidacion::formatoDato($datos, "costoXHoraClase");
     $datos["periodoClases"] = ReglasValidacion::formatoDato($datos, "periodoClases");
+    $datos["pagoXHoraProfesor"] = ReglasValidacion::formatoDato($datos, "pagoXHoraProfesor");
     $datos["idDocente"] = ReglasValidacion::formatoDato($datos, "idDocente");
-    $datos["saldoFavor"] = ReglasValidacion::formatoDato($datos, "saldoFavor", 0);
-    $datos["saldoFavorAdicional"] = ReglasValidacion::formatoDato($datos, "saldoFavorAdicional", 0);
-    $datos["considerarClasesIncompletas"] = (isset($datos["considerarClasesIncompletas"]) && $datos["considerarClasesIncompletas"] == "on" ? 1 : 0);
-    $datos["costoHoraDocente"] = ReglasValidacion::formatoDato($datos, "costoHoraDocente");
-    $datos["datosNotificacionClases"] = ReglasValidacion::formatoDato($datos, "datosNotificacionClases");
-    $datos["registrarSinGenerarClases"] = ReglasValidacion::formatoDato($datos, "registrarSinGenerarClases", 0);
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
 
-  public function rules() {
+  public function rules()/* - */ {
     $datos = $this->all();
 
     $reglasValidacion = [
+        "fecha" => "required|date_format:d/m/Y",
         "descripcion" => "max:255",
         "imagenComprobante" => "image",
         "monto" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
-        "fecha" => "required|date_format:d/m/Y"
+        "saldoFavor" => ["regex:" . ReglasValidacion::RegexDecimal]
     ];
 
     $listaMotivosPago = MotivosPago::listar();
@@ -65,22 +60,17 @@ class FormularioRequest extends Request {
 
     if ($datos["motivo"] == MotivosPago::Clases) {
       $reglasValidacion += [
-          "costoHoraClase" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
-          "fechaInicioClases" => "required|date_format:d/m/Y",
-          "periodoClases" => "required|numeric|digits_between :1,11|min:1",
-          "saldoFavor" => ["regex:" . ReglasValidacion::RegexDecimal]
+          "costoXHoraClase" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
+          "periodoClases" => "required|numeric|digits_between :1,11|min:1"
       ];
 
       if (!is_null($datos["idDocente"])) {
         $reglasValidacion += [
-            "costoHoraDocente" => ["required", "regex:" . ReglasValidacion::RegexDecimal]
+            "pagoXHoraProfesor" => ["required", "regex:" . ReglasValidacion::RegexDecimal]
         ];
         if (!Docente::verificarExistencia($datos["idDocente"])) {
           $reglasValidacion["docenteNoValido"] = "required";
         }
-      }
-      if (!ReglasValidacion::validarDatosNotificacionClasesPago($datos["datosNotificacionClases"])) {
-        $reglasValidacion["datosNotificacionClasesNoValido"] = "required";
       }
     }
 
@@ -89,9 +79,7 @@ class FormularioRequest extends Request {
       case "DELETE": {
           return [];
         }
-      case "POST": {
-          return $reglasValidacion;
-        }
+      case "POST":
       case "PUT":
       case "PATCH": {
           return $reglasValidacion;
@@ -100,13 +88,12 @@ class FormularioRequest extends Request {
     }
   }
 
-  public function messages() {
+  public function messages()/* - */ {
     return [
         "motivoNoValido.required" => "El motivo seleccionado del pago no es válido.",
         "cuentaNoValida.required" => "La cuenta de banco seleccionada del pago no es válida.",
         "estadoNoValido.required" => "El estado seleccionado del pago no es válido.",
-        "docenteNoValido.required" => "El docente seleccionado no es válido.",
-        "datosNotificacionClasesNoValido.required" => "Los datos de notificación de la clases seleccionadas no son válidas."
+        "docenteNoValido.required" => "El docente seleccionado no es válido."
     ];
   }
 

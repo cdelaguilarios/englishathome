@@ -1,3 +1,4 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Postulantes")
 
@@ -5,10 +6,12 @@
 <script>
   var urlEditar = "{{ route('postulantes.editar', ['id' => 0]) }}";
   var urlBuscar = "{{ route('postulantes.buscar') }}";
+  
   var idPostulante = "{{ $postulante->id}}";
   var nombreCompletoPostulante = "{{ $postulante->nombre . " " .  $postulante->apellido }}";
 </script>
-<script src="{{ asset("assets/eah/js/modulos/postulante.js") }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/postulante/formulario.js") }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/postulante/busqueda.js") }}"></script>
 @endsection
 
 @section("breadcrumb")

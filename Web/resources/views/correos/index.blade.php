@@ -1,11 +1,13 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Correos masivos")
 
 @section("section_script")
 <script>
+  var urlBuscarEntidades = "{{ route('correos.entidades') }}";
+  
   var tiposEntidades = {!!  json_encode(App\Helpers\Enum\TiposEntidad::listarTiposBase()) !!};
   var tipoEntidadInteresado = "{{ App\Helpers\Enum\TiposEntidad::Interesado }}";
-  var urlBuscarEntidades = "{{ route('correos.entidades') }}";
   @if(isset($entidad))
   var datosEntidadSel = { id: "{{ $entidad->id }}", text: "{{ $entidad->nombre . ' ' . $entidad->apellido . ' (' . $entidad->correoElectronico . ')' }}" };
   @endif
@@ -39,16 +41,8 @@
           <div class="col-sm-10">
             {{ Form::textarea("mensaje", null, ["class" => "form-control", "rows" => "5", "maxlength" =>"8000"]) }}
           </div>
-        </div>   
-        <div class="form-group">
-          {{ Form::label("adjuntos", "Adjuntos: ", ["class" => "col-sm-2 control-label"]) }}   
-          <div class="col-sm-10">
-            <div id="adjuntos">Subir</div>
-            {{ Form::hidden("nombresArchivosAdjuntos", "", ["id" => "nombres-archivos-adjuntos"]) }}
-            {{ Form::hidden("nombresOriginalesArchivosAdjuntos", "", ["id" => "nombres-originales-archivos-adjuntos"]) }}
-          </div>
-          <div class="clearfix"></div>
-        </div>         
+        </div>    
+        @include("util.archivosAdjuntos", ["adjuntos" => [(object)["idCampo" => "Adjuntos", "idHtml" => "adjuntos", "titulo" => "Archivos"]]])        
         <div class="form-group">
           {{ Form::label("tipo-entidad-correos", "Enviar a: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-3">

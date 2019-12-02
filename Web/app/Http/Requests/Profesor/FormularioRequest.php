@@ -12,13 +12,13 @@ use App\Helpers\Enum\SexosEntidad;
 
 class FormularioRequest extends Request {
 
-  public function authorize() {
+  public function authorize()/* - */ {
     return true;
   }
 
-  protected function getValidatorInstance() {
+  protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
-    
+
     $datos["telefono"] = ReglasValidacion::formatoDato($datos, "telefono");
     $datos["fechaNacimiento"] = ReglasValidacion::formatoDato($datos, "fechaNacimiento");
     $datos["sexo"] = ReglasValidacion::formatoDato($datos, "sexo", "");
@@ -34,19 +34,19 @@ class FormularioRequest extends Request {
     $datos["referenciaDireccion"] = ReglasValidacion::formatoDato($datos, "referenciaDireccion");
     $datos["geoLatitud"] = ReglasValidacion::formatoDato($datos, "geoLatitud");
     $datos["geoLongitud"] = ReglasValidacion::formatoDato($datos, "geoLongitud");
-    
+
     Util::preProcesarDocumentosDocente($datos);
-    
+
     $datos["idCursos"] = ReglasValidacion::formatoDato($datos, "idCursos");
-    $datos["horario"] = ReglasValidacion::formatoDato($datos, "horario");    
+    $datos["horario"] = ReglasValidacion::formatoDato($datos, "horario");
     $datos["audio"] = ReglasValidacion::formatoDato($datos, "audio");
-    
+
     $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
 
-  public function rules() {
+  public function rules()/* - */ {
     $datos = $this->all();
     $modoEdicion = ($this->method() == "PATCH");
     $idEntidad = $this->route('id');
@@ -82,8 +82,8 @@ class FormularioRequest extends Request {
       $reglasValidacion["ubigeoNoValido"] = "required";
     }
 
-    $listaCursos = Curso::listarSimple();
     if (!is_null($datos["idCursos"])) {
+      $listaCursos = Curso::listarSimple();
       foreach ($datos["idCursos"] as $idCurso) {
         if (!array_key_exists($idCurso, $listaCursos->toArray())) {
           $reglasValidacion["cursosNoValido"] = "required";
@@ -103,9 +103,7 @@ class FormularioRequest extends Request {
       case "DELETE": {
           return [];
         }
-      case "POST": {
-          return $reglasValidacion;
-        }
+      case "POST":
       case "PUT":
       case "PATCH": {
           return $reglasValidacion;
@@ -114,15 +112,15 @@ class FormularioRequest extends Request {
     }
   }
 
-  public function messages() {
+  public function messages()/* - */ {
     return [
         "correoElectronico.unique" => "El correo electrónico ingresado ya está siendo utilizado. Tomar en cuenta que el profesor utiliza su correo electrónico para acceder al sistema y este dato no puede ser igual al que utiliza un alumno o un usuario del sistema.",
         "sexoNoValido.required" => "El sexo seleccionado no es válido.",
         "tipoDocumenoNoValido.required" => "El tipo de documento seleccionado no es válido.",
         "ubigeoNoValido.required" => "Los datos de dirección ingresados no son válidos.",
         "cursosNoValido.required" => "Uno o más de los cursos seleccionados no es válido.",
-        "horarioNoValido.required" => "El horario seleccionado no es válido.",
-        "audio.mimes" => "Por favor seleccione un audio válido (formatos válidos: mp3, wav y ogg)."
+        "audio.mimes" => "Por favor seleccione un audio válido (formatos válidos: mp3, wav y ogg).",
+        "horarioNoValido.required" => "El horario seleccionado no es válido."
     ];
   }
 

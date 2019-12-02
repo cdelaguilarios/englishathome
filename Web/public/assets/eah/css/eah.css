@@ -115,6 +115,10 @@ div.dataTables_info{
   white-space: inherit;  
   font-size: 12px;
 }
+.text-green-disabled{
+  opacity: .65;
+  color: #00a65a !important;
+}
 
 @media (min-width: 992px){
   #mod-lista-clases .modal-lg{

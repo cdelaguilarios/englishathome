@@ -2,7 +2,7 @@
 
 namespace App\Helpers\Enum;
 
-class EstadosClase {
+class EstadosClase/* - */ {
 
   const Programada = "PROGRAMADA";
   const Cancelada = "CANCELADA";
@@ -31,7 +31,7 @@ class EstadosClase {
 
   public static function listarDisponibleCambio()/* - */ {
     $estadosBusqueda = EstadosClase::listarBusqueda();
-    $estadosDisponibleCambio = [EstadosClase::Programada, EstadosClase::PendienteConfirmar, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada];
+    $estadosDisponibleCambio = [EstadosClase::Programada, EstadosClase::PendienteConfirmar, EstadosClase::ConfirmadaProfesorAlumno];
     $estadosDisponibleCambioSel = [];
     foreach ($estadosBusqueda as $k => $v) {
       if (in_array($k, $estadosDisponibleCambio)) {

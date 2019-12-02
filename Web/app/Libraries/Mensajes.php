@@ -2,9 +2,9 @@
 
 namespace App\Libraries;
 
-class Mensajes {
+class Mensajes/* - */ {
 
-  private function obtenerMensaje($tipo = "exitosos") {
+  private function obtenerMensaje($tipo = "exitosos")/* - */ {
     $sessionActual = session("mensajes-" . $tipo);
     if (!isset($sessionActual)) {
       session(["mensajes-" . $tipo => array()]);
@@ -12,29 +12,29 @@ class Mensajes {
     return session("mensajes-" . $tipo);
   }
 
-  private function agregarMensaje($tipo, $mensaje) {
+  private function agregarMensaje($tipo, $mensaje)/* - */ {
     $mensajes = $this->obtenerMensaje($tipo);
     array_push($mensajes, $mensaje);
     session(["mensajes-" . $tipo => $mensajes]);
   }
 
-  public function agregarMensajeExitoso($mensaje) {
+  public function agregarMensajeExitoso($mensaje)/* - */ {
     $this->agregarMensaje("exitosos", $mensaje);
   }
 
-  public function agregarMensajeAdvertencia($mensaje) {
+  public function agregarMensajeAdvertencia($mensaje)/* - */ {
     $this->agregarMensaje("advertencias", $mensaje);
   }
 
-  public function agregarMensajeAlerta($mensaje) {
+  public function agregarMensajeAlerta($mensaje)/* - */ {
     $this->agregarMensaje("alertas", $mensaje);
   }
 
-  public function agregarMensajeError($mensaje) {
+  public function agregarMensajeError($mensaje)/* - */ {
     $this->agregarMensaje("errores", $mensaje);
   }
 
-  public function obtenerMensajes() {
+  public function obtenerMensajes()/* - */ {
     return [
         "exitosos" => $this->obtenerMensaje("exitosos"),
         "advertencias" => $this->obtenerMensaje("advertencias"),
@@ -42,7 +42,7 @@ class Mensajes {
         "errores" => $this->obtenerMensaje("errores")];
   }
 
-  public function limpiar() {
+  public function limpiar()/* - */ {
     session(["mensajes-exitosos" => array()]);
     session(["mensajes-advertencias" => array()]);
     session(["mensajes-alertas" => array()]);

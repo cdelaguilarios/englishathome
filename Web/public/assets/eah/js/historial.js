@@ -130,7 +130,7 @@ function cargarFormularioHistorial() {
     },
     submitHandler: function (f) {
       if (!($("#enviar-correo-evento-historial").is(":checked") || $("#enviar-correo-entidad-evento-historial").is(":checked") || $("#mostrar-perfil-evento-historial").is(":checked"))) {
-        agregarMensaje("advertencias", 'Por favor selecione por lo menos una de las siguientes opciones: "Enviar correo" (administrador o entidad) o "Mostrar en perfil"', true, "#sec-men-historial");
+        mensajes.agregar("advertencias", 'Por favor selecione por lo menos una de las siguientes opciones: "Enviar correo" (administrador o entidad) o "Mostrar en perfil"', true, "#sec-men-historial");
       } else if (confirm("¿Está seguro que desea registrar los datos de este evento?")) {
         $.blockUI({message: "<h4>Registrando datos...</h4>"});
         f.submit();
@@ -156,8 +156,8 @@ function cargarFormularioHistorial() {
     onclick: false
   });
   CKEDITOR.replace("mensaje-evento-historial");
-  utilFechasHorarios.establecerCalendario("fecha-notificacion-evento-historial", true, false);
-  incluirSeccionSubidaArchivos("adjuntos", {onSubmit: function () {
+  utilFechasHorarios.establecerCalendario($("#fecha-notificacion-evento-historial"), true, false);
+  utilFormularios.incluirSeccionSubidaArchivos($("#adjuntos"), {onSubmit: function () {
       return true;
     }, acceptFiles: "*", uploadStr: "Subir archivo", maxFileCount: 20});
 

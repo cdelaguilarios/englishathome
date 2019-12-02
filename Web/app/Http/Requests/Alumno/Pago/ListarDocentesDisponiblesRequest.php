@@ -16,12 +16,13 @@ class ListarDocentesDisponiblesRequest extends Request {
 
   protected function getValidatorInstance() {
     $datos = $this->all();
-    $datos["monto"] = ReglasValidacion::formatoDato($datos, "monto");
-    $datos["costoHoraClase"] = ReglasValidacion::formatoDato($datos, "costoHoraClase");
-    $datos["fechaInicioClases"] = ReglasValidacion::formatoDato($datos, "fechaInicioClases");
     $datos["tipoDocente"] = ReglasValidacion::formatoDato($datos, "tipoDocente");
     $datos["sexoDocente"] = ReglasValidacion::formatoDato($datos, "sexoDocente", "");
     $datos["idCursoDocente"] = ReglasValidacion::formatoDato($datos, "idCursoDocente", "");
+    
+    $datos["monto"] = ReglasValidacion::formatoDato($datos, "monto");
+    $datos["costoXHoraClase"] = ReglasValidacion::formatoDato($datos, "costoXHoraClase");
+    $datos["fechaInicioClases"] = ReglasValidacion::formatoDato($datos, "fechaInicioClases");    
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -30,7 +31,7 @@ class ListarDocentesDisponiblesRequest extends Request {
     $datos = $this->all();
     $reglasValidacion = [
         "monto" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
-        "costoHoraClase" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
+        "costoXHoraClase" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
         "fechaInicioClases" => "required|date_format:d/m/Y",
     ];
 

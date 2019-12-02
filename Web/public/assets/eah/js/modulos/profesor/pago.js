@@ -19,7 +19,7 @@ function cargarSeccionPagos() {
 
   //Común   
   registroHistorial = (typeof (registroHistorial) === "undefined" ? false : registroHistorial);
-  if (util.obtenerParametroUrlXNombre("sec") === "pago" && !registroHistorial) {
+  if (util.obtenerParametroUrlXNombre("seccion") === "pago" && !registroHistorial) {
     $("a[href='#pago']").trigger("click");
   }
   $("a[href='#pago']").click(function () {
@@ -70,7 +70,7 @@ function cargarListaPago() {
                 '<a href="javascript:void(0);" onclick="editarPago(' + d.id + ');" title="Editar datos del pago"><i class="fa fa-pencil"></i></a>' +
                 '</li>' +
                 '<li>' +
-                '<a href="javascript:void(0);" title="Eliminar pago" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?\', \'tab-lista-pagos\', false, function(){utilTablas.recargarDatosTabla(\'tab-lista-clases\');reiniciarHistorial();})" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' +
+                '<a href="javascript:void(0);" title="Eliminar pago" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?\', \'tab-lista-pagos\', false, function(){utilTablas.recargarDatosTabla($(\'#tab-lista-clases\'));reiniciarHistorial();})" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' +
                 '<i class="fa fa-trash"></i>' +
                 '</a>' +
                 '</li>' +
@@ -78,7 +78,7 @@ function cargarListaPago() {
           }, className: "text-center"}
       ],
       initComplete: function (s, j) {
-        utilTablas.establecerBotonRecargaTabla("tab-lista-pagos");
+        utilTablas.establecerBotonRecargaTabla($("#tab-lista-pagos"));
       },
       footerCallback: function (r, d, s, e, di) {
         var api = this.api();
@@ -110,9 +110,9 @@ function cargarListaPago() {
         util.llamadaAjax(urlActualizarEstadoPago, "POST", {"idPago": idpago, "idProfesor": idprofesor, "estado": $(this).val()}, true, undefined, undefined, function (de) {
           var rj = de.responseJSON;
           if (rj !== undefined && rj.mensaje !== undefined) {
-            agregarMensaje("errores", rj.mensaje, true);
+            mensajes.agregar("errores", rj.mensaje, true);
           } else if (rj !== undefined && rj[Object.keys(rj)[0]] !== undefined) {
-            agregarMensaje("errores", rj[Object.keys(rj)[0]][0], true);
+            mensajes.agregar("errores", rj[Object.keys(rj)[0]][0], true);
           }
           $("#tab-lista-pagos").DataTable().ajax.reload();
         });
@@ -165,7 +165,7 @@ function cargarFormularioPago() {
     onkeyup: false,
     onclick: false
   });
-  utilFechasHorarios.establecerCalendario("fecha-pago", false, false, false);
+  utilFechasHorarios.establecerCalendario($("#fecha-pago"), false, false, false);
 
   $("#btn-nuevo-pago").click(function () {
     limpiarCamposPago();
@@ -200,7 +200,7 @@ function cargarFormularioActualizarPago() {
           f.submit();
         }
       } else {
-        agregarMensaje("advertencias", "Debe subir la imagen de por lo menos una ficha de conformidad.", true, "#sec-mensajes-pago");
+        mensajes.agregar("advertencias", "Debe subir la imagen de por lo menos una ficha de conformidad.", true, "#sec-mensajes-pago");
       }
     },
     highlight: function () {
@@ -222,8 +222,8 @@ function cargarFormularioActualizarPago() {
     onkeyup: false,
     onclick: false
   });
-  utilFechasHorarios.establecerCalendario("fecha-actualizar-pago", false, false, false);
-  incluirSeccionSubidaArchivos("documentos-verificacion", {onSubmit: function () {
+  utilFechasHorarios.establecerCalendario($("#fecha-actualizar-pago"), false, false, false);
+  utilFormularios.incluirSeccionSubidaArchivos($("#documentos-verificacion"), {onSubmit: function () {
       return true;
     }, acceptFiles: "image/*", uploadStr: "Subir archivo", maxFileCount: 20});
 }
@@ -355,7 +355,7 @@ function obtenerDatosPago(idPago, funcionRetorno) {
         function (de) {
           $('body').unblock({
             onUnblock: function () {
-              agregarMensaje("errores", "Ocurrió un problema durante la carga de datos del pago seleccionado. Por favor inténtelo nuevamente.", true, "#sec-mensajes-pago");
+              mensajes.agregar("errores", "Ocurrió un problema durante la carga de datos del pago seleccionado. Por favor inténtelo nuevamente.", true, "#sec-mensajes-pago");
             }
           });
         }

@@ -7,23 +7,27 @@ use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\TiposEntidad;
 
-class FormularioCorreoRequest extends Request {
+class FormularioCorreoRequest extends Request/* - */ {
 
-  public function authorize() {
+  public function authorize()/* - */ {
     return true;
   }
 
-  protected function getValidatorInstance() {
+  protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     $datos["titulo"] = "";
     $datos["asunto"] = ReglasValidacion::formatoDato($datos, "asunto");
     $datos["mensaje"] = ReglasValidacion::formatoDato($datos, "mensaje");
+        
     $datos["nombresArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresArchivosAdjuntos");
     $datos["nombresOriginalesArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresOriginalesArchivosAdjuntos");
+    $datos["nombresArchivosAdjuntosEliminados"] = ReglasValidacion::formatoDato($datos, "nombresArchivosAdjuntosEliminados");
+    
     $datos["tipoEntidad"] = ReglasValidacion::formatoDato($datos, "tipoEntidad");    
     foreach(TiposEntidad::listarSeccionCorreos() as $estado => $v){
       $datos["estado" . $estado] = ReglasValidacion::formatoDato($datos, "estado" . $estado);      
     }    
+    
     $datos["idsEntidadesSeleccionadas"] = ReglasValidacion::formatoDato($datos, "idsEntidadesSeleccionadas");
     $datos["cursoInteres"] = ReglasValidacion::formatoDato($datos, "cursoInteres");
     $datos["idsEntidadesExcluidas"] = ReglasValidacion::formatoDato($datos, "idsEntidadesExcluidas", []);
@@ -32,7 +36,7 @@ class FormularioCorreoRequest extends Request {
     return parent::getValidatorInstance();
   }
 
-  public function rules() {
+  public function rules()/* - */ {
     $datos = $this->all();
     $reglasValidacion = [
         "asunto" => "required|max:255",
@@ -45,6 +49,7 @@ class FormularioCorreoRequest extends Request {
     } else if (is_null($datos["tipoEntidad"]) && is_null($datos["idsEntidadesSeleccionadas"]) && is_null($datos["correosAdicionales"])) {
       $reglasValidacion["correosNoValido"] = "required";
     }
+    
     $listaCursosInteres = Interesado::listarCursosInteres();
     if (!is_null($datos["tipoEntidad"]) && $datos["tipoEntidad"] == TiposEntidad::Interesado && !is_null($datos["cursoInteres"]) && !array_key_exists($datos["cursoInteres"], $listaCursosInteres->toArray())) {
       $reglasValidacion["cursoInteresNoValido"] = "required";
@@ -64,7 +69,7 @@ class FormularioCorreoRequest extends Request {
     }
   }
 
-  public function messages() {
+  public function messages()/* - */ {
     return [
         "tipoEntidadNoValida.required" => "El tipo de entidad seleccionada no es válida.",
         "correosNoValido.required" => "Debe seleccionar por lo menos una entidad o ingresar un correo adicional.",

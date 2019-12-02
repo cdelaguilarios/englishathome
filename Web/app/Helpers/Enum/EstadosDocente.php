@@ -2,14 +2,14 @@
 
 namespace App\Helpers\Enum;
 
-class EstadosDocente {
+class EstadosDocente/* - */ {
 
-  public static function listar() {
-    return EstadosPostulante::listar() + EstadosProfesor::listar();
+  public static function listar()/* - */ {
+    return EstadosProfesor::listar() + EstadosPostulante::listar();
   }
-  
-  public static function listarBusqueda() {
-    return EstadosPostulante::listarBusqueda() + EstadosProfesor::listarBusqueda();;
+
+  public static function listarBusqueda()/* - */ {
+    return EstadosProfesor::listarBusqueda() + EstadosPostulante::listarBusqueda();
   }
 
 }

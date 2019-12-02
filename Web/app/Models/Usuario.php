@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DB;
+use Log;
 use Auth;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\RolesUsuario;
@@ -27,15 +28,19 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
   protected $fillable = ["email", "rol"];
   protected $hidden = ["password", "remember_token"];
 
-  public static function nombreTabla() {
+  public static function nombreTabla()/* - */ {
     $modeloUsuario = new Usuario();
     $nombreTabla = $modeloUsuario->getTable();
     unset($modeloUsuario);
     return $nombreTabla;
   }
 
-  public static function listar($datos = NULL, $soloUsuariosDelSistema = FALSE) {
-    $usuarios = Usuario::leftJoin(Entidad::nombreTabla() . " as entidad", Usuario::nombreTabla() . ".idEntidad", "=", "entidad.id")->where("entidad.eliminado", 0)->groupBy("entidad.id")->distinct();
+  public static function listar($datos = NULL, $soloUsuariosDelSistema = FALSE)/* - */ {
+    $usuarios = Usuario::leftJoin(Entidad::nombreTabla() . " as entidad", Usuario::nombreTabla() . ".idEntidad", "=", "entidad.id")
+            ->where("entidad.eliminado", 0)
+            ->groupBy("entidad.id")
+            ->distinct();
+
     if (isset($datos["estado"])) {
       $usuarios->where("entidad.estado", $datos["estado"]);
     }
@@ -45,7 +50,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     return $usuarios;
   }
 
-  public static function listarBusqueda($terminoBus = NULL) {
+  public static function listarBusqueda($terminoBus = NULL)/* - */ {
     $alumnos = Usuario::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
     if (isset($terminoBus)) {
       $alumnos->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
@@ -53,8 +58,15 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     return $alumnos->lists("nombreCompleto", "entidad.id");
   }
 
-  public static function obtenerXId($id) {
-    return Usuario::listar()->where("entidad.id", $id)->firstOrFail();
+  public static function obtenerXId($id, $simple = TRUE)/* - */ {
+    $usuario = Usuario::listar()->where("entidad.id", $id)->firstOrFail();
+    
+    if (!$simple) {
+      $datosIdsAntSig = Entidad::ObtenerIdsAnteriorSiguienteXEntidad(TiposEntidad::Usuario, $usuario);
+      $usuario->idUsuarioAnterior = $datosIdsAntSig["idEntidadAnterior"];
+      $usuario->idUsuarioSiguiente = $datosIdsAntSig["idEntidadSiguiente"];
+    }
+    return $usuario;
   }
 
   public static function obtenerActual() {
@@ -68,7 +80,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     return session("usuarioActual");
   }
 
-  public static function registrar($req) {
+  public static function registrar($req)/* - */ {
     $datos = $req->all();
     $datos["correoElectronico"] = $datos["email"];
 
@@ -82,7 +94,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     return $idEntidad;
   }
 
-  public static function actualizar($id, $req) {
+  public static function actualizar($id, $req)/* - */ {
     $datos = $req->all();
     $datos["correoElectronico"] = $datos["email"];
 
@@ -90,7 +102,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     Entidad::actualizar($id, $datos, $entidad->tipo, (Auth::user()->rol == RolesUsuario::Principal ? $datos["estado"] : $entidad->estado));
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
 
-    $usuario = Usuario::obtenerXId($id);
+    $usuario = Usuario::obtenerXId($id, TRUE);
     if (isset($datos["password"]) && $datos["password"] != "") {
       $usuario->password = bcrypt($datos["password"]);
     }
@@ -108,14 +120,16 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     }
   }
 
-  public static function actualizarEstado($id, $estado) {
-    Usuario::obtenerXId($id);
+  public static function actualizarEstado($id, $estado)/* - */ {
+    Usuario::obtenerXId($id, TRUE);
     Entidad::actualizarEstado($id, $estado);
   }
 
-  public static function usuarioUnicoPrincipal($id) {
-    $datosUsuario = Usuario::listar()->where(Usuario::nombreTabla() . ".rol", RolesUsuario::Principal)->count();
-    if ($datosUsuario == 1) {
+  public static function esUnicoPrincipal($id)/* - */ {
+    $totalUsuariosPrincipales = Usuario::listar()
+            ->where(Usuario::nombreTabla() . ".rol", RolesUsuario::Principal)
+            ->count();
+    if ($totalUsuariosPrincipales > 1) {
       return FALSE;
     }
     $usuario = Usuario::obtenerXId($id);
@@ -124,7 +138,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
 
   public static function usuarioEliminado($id) {
     $entidad = Entidad::ObtenerXId($id);
-    return ($entidad->eliminado == 0);
+    return ($entidad->eliminado == 1);
   }
 
   public static function usuarioActivo($id) {
@@ -132,7 +146,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     return ($entidad->estado == EstadosUsuario::Activo);
   }
 
-  public static function eliminar($id) {
+  public static function eliminar($id)/* - */ {
     $usuario = Usuario::obtenerXId($id);
     Entidad::eliminar($id);
 
@@ -144,10 +158,11 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     $usuario->save();
   }
 
-  public static function verificarExistencia($id) {
+  public static function verificarExistencia($id)/* - */ {
     try {
       Usuario::obtenerXId($id);
-    } catch (\Exception $ex) {
+    } catch (\Exception $e) {
+      Log::error($e);
       return FALSE;
     }
     return TRUE;

@@ -6,17 +6,17 @@ use DB;
 use Log;
 use Illuminate\Database\Eloquent\Model;
 
-class Ubigeo extends Model {
+class Ubigeo extends Model/* - */ {
 
-  public static function listarDepartamentos() {
+  public static function listarDepartamentos()/* - */ {
     return DB::table("departamento")->orderBy("departamento")->lists("departamento", "codigo");
   }
 
-  public static function listarProvinciasXCodigoDepartamento($codigoDepartamento) {
+  public static function listarProvinciasXCodigoDepartamento($codigoDepartamento)/* - */ {
     return DB::table("provincia")->where("codigoDepartamento", $codigoDepartamento)->orderBy("provincia")->lists("provincia", "codigo");
   }
 
-  public static function listarDistritosXCodigoProvincia($codigoProvincia) {
+  public static function listarDistritosXCodigoProvincia($codigoProvincia)/* - */ {
     return DB::table("distrito")->where("codigoProvincia", $codigoProvincia)->orderBy("distrito")->lists("distrito", "codigo");
   }
 

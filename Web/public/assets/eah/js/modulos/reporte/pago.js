@@ -51,7 +51,7 @@ function cargarListaPagos() {
           }, className: "text-center", type: "monto"}
       ],
       initComplete: function (s, j) {
-        utilTablas.establecerBotonRecargaTabla("tab-lista");
+        utilTablas.establecerBotonRecargaTabla($("#tab-lista"));
       },
       footerCallback: function (r, d, s, e, di) {
         var api = this.api();

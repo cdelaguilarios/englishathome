@@ -7,13 +7,13 @@ use App\Models\Profesor;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 
-class DatosRequest extends Request {
+class DatosRequest extends Request/* - */ {
 
-  public function authorize() {
+  public function authorize()/* - */ {
     return true;
   }
 
-  protected function getValidatorInstance() {
+  protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     $datos["tipoEntidad"] = ReglasValidacion::formatoDato($datos, "tipoEntidad", "0");
     $datos["idAlumno"] = ReglasValidacion::formatoDato($datos, "idAlumno");
@@ -24,7 +24,7 @@ class DatosRequest extends Request {
     return parent::getValidatorInstance();
   }
 
-  public function rules() {
+  public function rules()/* - */ {
     $datos = $this->all();
 
     $reglasValidacion = [
@@ -32,14 +32,10 @@ class DatosRequest extends Request {
         "end" => "required|date_format:Y-m-d"
     ];
 
-    if (!(is_null($datos["idAlumno"]) && is_null($datos["idProfesor"]))) {
-      if ($datos["tipoEntidad"] !== "0") {
-        if (!Profesor::verificarExistencia($datos["idProfesor"])) {
-          $reglasValidacion["idProfesorNoValido"] = "required";
-        }
-      } else if (!Alumno::verificarExistencia($datos["idAlumno"])) {
-        $reglasValidacion["idAlumnoNoValido"] = "required";
-      }
+    if ($datos["tipoEntidad"] !== "0" && !is_null($datos["idProfesor"]) && !Profesor::verificarExistencia($datos["idProfesor"])) {
+      $reglasValidacion["idProfesorNoValido"] = "required";
+    } else if (!is_null($datos["idAlumno"]) && !Alumno::verificarExistencia($datos["idAlumno"])) {
+      $reglasValidacion["idAlumnoNoValido"] = "required";
     }
 
     switch ($this->method()) {
@@ -56,7 +52,7 @@ class DatosRequest extends Request {
     }
   }
 
-  public function messages() {
+  public function messages()/* - */ {
     return [
         "idProfesorNoValido.required" => "El profesor seleccionado no es válido.",
         "idAlumnoNoValido.required" => "El alumno seleccionado no es válido."

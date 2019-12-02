@@ -29,7 +29,7 @@ class FormularioGrupoRequest extends Request {
     $datos["costoHora"] = ReglasValidacion::formatoDato($datos, "costoHora");
     $datos["idPago"] = ReglasValidacion::formatoDato($datos, "idPago");
     $datos["idDocente"] = ReglasValidacion::formatoDato($datos, "idDocente");
-    $datos["costoHoraDocente"] = ReglasValidacion::formatoDato($datos, "costoHoraDocente");
+    $datos["pagoXHoraProfesor"] = ReglasValidacion::formatoDato($datos, "pagoXHoraProfesor");
     $datos["idsClases"] = ReglasValidacion::formatoDato($datos, "idsClases", []);
     if (!is_array($datos["idsClases"])) {
       $datos["idsClases"] = explode(",", $datos["idsClases"]);
@@ -45,7 +45,7 @@ class FormularioGrupoRequest extends Request {
         "horaInicio" => ($datos["editarDatosTiempo"] == 1 ? "required|" : "") . "numeric|between:" . ((int) Config::get("eah.minHorario") * 3600) . "," . ((int) Config::get("eah.maxHorario") * 3600),
         "duracion" => ($datos["editarDatosTiempo"] == 1 ? "required|" : "") . "numeric|between:" . ((int) Config::get("eah.minHorasClase") * 3600) . "," . ((int) Config::get("eah.maxHorasClase") * 3600),
         "costoHora" => [($datos["editarDatosPago"] == 1 ? "required" : ""), "regex:" . ReglasValidacion::RegexDecimal],
-        "costoHoraDocente" => ["regex:" . ReglasValidacion::RegexDecimal]
+        "pagoXHoraProfesor" => ["regex:" . ReglasValidacion::RegexDecimal]
     ];
 
     $estados = EstadosClase::listarDisponibleCambio();

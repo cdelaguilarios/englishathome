@@ -29,7 +29,7 @@ class FormularioRequest extends Request {
     $datos["costoHora"] = ReglasValidacion::formatoDato($datos, "costoHora");
     $datos["idPago"] = ReglasValidacion::formatoDato($datos, "idPago");
     $datos["idDocente"] = ReglasValidacion::formatoDato($datos, "idDocente");
-    $datos["costoHoraDocente"] = ReglasValidacion::formatoDato($datos, "costoHoraDocente");
+    $datos["pagoXHoraProfesor"] = ReglasValidacion::formatoDato($datos, "pagoXHoraProfesor");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -42,7 +42,7 @@ class FormularioRequest extends Request {
         "horaInicio" => "required|numeric|between:" . ((int) Config::get("eah.minHorario") * 3600) . "," . ((int) Config::get("eah.maxHorario") * 3600),
         "duracion" => "required|numeric|between:" . ((int) Config::get("eah.minHorasClase") * 3600) . "," . ((int) Config::get("eah.maxHorasClase") * 3600),
         "costoHora" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
-        "costoHoraDocente" => ["regex:" . ReglasValidacion::RegexDecimal]
+        "pagoXHoraProfesor" => ["regex:" . ReglasValidacion::RegexDecimal]
     ];
 
     if (!is_null($datos["idClase"]) && !Clase::verificarExistencia($datos["idAlumno"], $datos["idClase"])) {

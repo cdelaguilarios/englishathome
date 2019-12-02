@@ -1,20 +1,20 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Alumnos")
 
 @section("section_script")
 <script>
   var urlListar = "{{ route('alumnos.listar') }}";
-  var urlPerfil = "{{ route('alumnos.perfil', ['id' => 0]) }}";
   var urlEditar = "{{ route('alumnos.editar', ['id' => 0]) }}";
   var urlEliminar = "{{ route('alumnos.eliminar', ['id' => 0]) }}";
   var urlHorarioMultiple = "{{ route('horario.multiple') }}";
-  
+  var urlListarClases = "{{ route('alumnos.clases.listar', ['id' => 0]) }}";
+
   var estados = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listar()) !!};
   var estadosDisponibleCambio = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listarDisponibleCambio()) !!};
-  var estadoCuotaProgramada = "{{ App\Helpers\Enum\EstadosAlumno::CuotaProgramada }}";
 </script>
+<script src="{{ asset("assets/eah/js/modulos/util/horario.js") }}"></script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/lista.js") }}"></script>
-<script src="{{ asset("assets/eah/js/horario.js") }}"></script>
 @endsection
 
 @section("breadcrumb")
@@ -55,7 +55,7 @@
               <th>Avance de clases</th>  
               <th>Curso</th>    
               <th>Estado/Nivel</th>
-              <th>Pago acumulado</th>
+              <th>Último pago</th>
               <th>Fecha de registro</th>
               <th class="all">Opciones</th>
             </tr>
@@ -74,8 +74,10 @@
         </button>
         <h4 class="modal-title">Lista de clases</h4>
       </div>
-      <div class="modal-body">        
-        @include("util.listaClases")
+      <div class="modal-body">   
+        <div class="row">     
+          @include("util.listaClases")
+        </div>
       </div>
     </div>
   </div>

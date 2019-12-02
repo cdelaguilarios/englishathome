@@ -1,13 +1,15 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Buscar docentes disponibles")
 
 @section("section_script")
 <script>
   var urlListar = "{{ route('docentes.disponibles.listar') }}";
-  var tipoDocenteProfesor = "{{ App\Helpers\Enum\TiposEntidad::Profesor }}";
+  
   var estados = {!! json_encode(App\Helpers\Enum\EstadosDocente::listar()) !!};
+  var tipoDocenteProfesor = "{{ App\Helpers\Enum\TiposEntidad::Profesor }}";
 </script>
-<script src="{{ asset("assets/eah/js/modulos/docente.js") }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/docente/listaDisponibles.js") }}"></script>
 @endsection
 
 @section("breadcrumb")
@@ -59,7 +61,7 @@
         <h3 class="box-title">Lista de docentes disponibles</h3>
       </div>         
       <div class="box-body">
-        <table id="tab-lista" class="table table-bordered table-hover">
+        <table id="tab-lista-docentes-disponibles" class="table table-bordered table-hover">
           <thead>
             <tr>
               <th>Nombre completo</th>     

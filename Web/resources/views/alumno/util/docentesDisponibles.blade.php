@@ -1,5 +1,12 @@
-<div id="mod-docentes-disponibles-{{ $seccion }}" class="modal" data-keyboard="false" data-backdrop="static">
-  <div class="modal-dialog">
+{{----}}
+<script>
+  var urlListar = "{{ route('docentes.disponibles.listar') }}";
+  
+  var tipoDocenteProfesor = "{{ App\Helpers\Enum\TiposEntidad::Profesor }}";
+</script>
+<script src="{{ asset("assets/eah/js/modulos/alumno/util/docentesDisponibles.js")}}"></script>     
+<div id="mod-docentes-disponibles-{{ $idSeccion }}" class="modal" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -15,21 +22,23 @@
         </div>
         <div class="box-body">
           <div class="row">
-            {{ Form::label("tipo-docente-disponible-" . $seccion, "Tipo: ", ["class" => "col-sm-2 control-label"]) }}
-            <div class="col-sm-4">
-              {{ Form::select("tipoDocenteDisponible" . $seccion, App\Helpers\Enum\TiposEntidad::listarTiposDocente(), null, ["id" => "tipo-docente-disponible-" . $seccion, "class" => "form-control"]) }}
+            {{ Form::label("tipo-docente-disponible-" . $idSeccion, "Tipo: ", ["class" => "col-sm-1 control-label"]) }}
+            <div class="col-sm-5">
+              {{ Form::select("tipoDocenteDisponible" . $idSeccion, App\Helpers\Enum\TiposEntidad::listarTiposDocente(), null, ["id" => "tipo-docente-disponible-" . $idSeccion, "class" => "form-control"]) }}
+            </div> 
+            {{ Form::label("estado-docente-disponible-" . $idSeccion, "Estado: ", ["class" => "col-sm-1 control-label"]) }}
+            <div class="col-sm-5">
+              {{ Form::select("estadoDocenteDisponible" . $idSeccion, App\Helpers\Enum\EstadosDocente::listarBusqueda(), null, ["id" => "estado-docente-disponible-" . $idSeccion, "placeholder" => "Todos", "class" => "form-control"]) }}
             </div> 
           </div>
           <div class="row">
-            {{ Form::label("sexo-docente-disponible-" . $seccion, "Sexo: ", ["class" => "col-sm-2 control-label"]) }}
-            <div class="col-sm-4">
-              {{ Form::select("sexoDocenteDisponible" . $seccion, App\Helpers\Enum\SexosEntidad::listar(), null, ["id" => "sexo-docente-disponible-" . $seccion, "placeholder" => "Todos", "class" => "form-control"]) }}
+            {{ Form::label("sexo-docente-disponible-" . $idSeccion, "Sexo: ", ["class" => "col-sm-1 control-label"]) }}
+            <div class="col-sm-5">
+              {{ Form::select("sexoDocenteDisponible" . $idSeccion, App\Helpers\Enum\SexosEntidad::listar(), null, ["id" => "sexo-docente-disponible-" . $idSeccion, "placeholder" => "Todos", "class" => "form-control"]) }}
             </div> 
-          </div>
-          <div class="row">
-            {{ Form::label("id-curso-docente-disponible-" . $seccion, "Curso: ", ["class" => "col-sm-2 control-label"]) }}
-            <div class="col-sm-10">
-              {{ Form::select("idCursoDocenteDisponible" . $seccion, App\Models\Curso::listarSimple(FALSE), $idCurso, ["id" => "id-curso-docente-disponible-" . $seccion, "placeholder" => "Todos", "class" => "form-control"]) }}
+            {{ Form::label("id-curso-docente-disponible-" . $idSeccion, "Curso: ", ["class" => "col-sm-1 control-label"]) }}
+            <div class="col-sm-5">
+              {{ Form::select("idCursoDocenteDisponible" . $idSeccion, App\Models\Curso::listarSimple(), $idCurso, ["id" => "id-curso-docente-disponible-" . $idSeccion, "placeholder" => "Todos", "class" => "form-control"]) }}
             </div> 
           </div>
         </div><br/>
@@ -40,10 +49,10 @@
         </div>
         <div class="row box-body">
           <div class="col-sm-12">
-            <table id="tab-lista-docentes-{{ strtolower($seccion) }}" class="table table-bordered sub-table">
+            <table id="tab-lista-docentes-{{ strtolower($idSeccion) }}" class="table table-bordered sub-table">
               <thead>
                 <tr>
-                  <th>Profesor/Postulante</th>
+                  <th>Docente</th>
                   <th>Estado</th>
                   <th class="all text-center">Elegir</th>
                 </tr>
@@ -53,7 +62,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button id="btn-confirmar-docente-disponible-{{ $seccion }}" type="button" class="btn btn-success btn-sm">Confirmar</button>
+        <button id="btn-confirmar-docente-disponible-{{ $idSeccion }}" type="button" class="btn btn-success btn-sm">Confirmar</button>
       </div>
     </div>
   </div>

@@ -52,13 +52,12 @@ return [
             'prefix' => '',
         ],
 
-	/* <aq:dev> */
         'mysql' => [
             'driver' => 'mysql',
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'carlos_eah_bkp_19042019'),
-            'username' => env('DB_USERNAME', 'root'),
+            'host' => env('DB_HOST', ''),
+            'port' => env('DB_PORT', ''),
+            'database' => env('DB_DATABASE', ''),
+            'username' => env('DB_USERNAME', ''),
             'password' => env('DB_PASSWORD', ''),
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
@@ -66,21 +65,6 @@ return [
             'strict' => false,
             'engine' => null,
         ],
-        /* </aq:dev> */
-
-        /* <aq:stapro>
-          'mysql' => [
-          'driver'    => 'mysql',
-          'host'      => env('DB_HOST', '{db_host}'),
-          'database'  => env('DB_DATABASE', '{db_name}'),
-          'username'  => env('DB_USERNAME', '{db_user}'),
-          'password'  => env('DB_PASSWORD', '{db_password}'),
-          'charset'   => 'utf8',
-          'collation' => 'utf8_unicode_ci',
-          'prefix'    => '',
-          'strict'    => false,
-          ],
-          </aq:stapro> */
 
         'pgsql' => [
             'driver' => 'pgsql',

@@ -51,20 +51,22 @@ class HistorialController extends Controller {
   // </editor-fold>
   // <editor-fold desc="Correos masivos">
 
-  public function correos() {
+  public function correos()/* - */ {
+    $this->data["seccion"] = "correos";
+    
     try {
       $idEntidad = Input::get("id");
       if (isset($idEntidad)) {
         $this->data["entidad"] = Entidad::ObtenerXId($idEntidad);
       }
     } catch (\Exception $e) {
-      Log::error($e->getMessage());
+      Log::error($e);
     }
-    $this->data["seccion"] = "correos";
+    
     return view("correos.index", $this->data);
   }
 
-  public function listarEntidades(BusquedaEntidadRequest $req) {
+  public function listarEntidades(BusquedaEntidadRequest $req)/* - */ {
     return response()->json(Entidad::buscar($req->all()), 200);
   }
 

@@ -1,3 +1,4 @@
+{{----}}
 <div class="row">
   <div class="col-sm-12">
     <div class="{{ ((isset($modo) && $modo == "registrar") ? "box box-info" : "") }}">
@@ -55,12 +56,18 @@
           @else
           <div class="col-sm-2">
             {{ App\Helpers\Enum\EstadosInteresado::listar()[$interesado->estado][0] }}
-            @if($interesado->estado == App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado)
+            @if(in_array($interesado->estado, [App\Helpers\Enum\EstadosInteresado::FichaCompleta, App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado]))
             <a href="{{ route("interesados.perfil.alumno", ["id" => $interesado->id]) }}" title="Ver perfil del alumno" target="_blank" class="btn-perfil-alumno-interesado"><i class="fa fa-eye"></i></a>
             @endif
           </div>
           @endif
         </div>
+        <div class="form-group">  
+          {{ Form::label("origen", "Origen: ", ["class" => "col-sm-2 control-label"]) }}
+          <div class="col-sm-3">
+            {{ Form::select("origen", App\Helpers\Enum\OrigenesInteresado::listar(), (isset($interesado) ? $interesado->origen : App\Helpers\Enum\OrigenesInteresado::Web), ["class" => "form-control"]) }}
+          </div>
+        </div>        
         <div class="form-group">  
           {{ Form::label("costo-hora-clase", "Costo por hora de clase (*): ", ["class" => "col-sm-2 control-label"]) }}   
           <div class="col-sm-3">
@@ -68,7 +75,7 @@
               <span class="input-group-addon">
                 <b>S/.</b>
               </span>
-              {{ Form::text("costoHoraClase", (isset($interesado->costoHoraClase) ? number_format($interesado->costoHoraClase, 2, ".", ",") : null), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
+              {{ Form::text("costoXHoraClase", (isset($interesado->costoXHoraClase) ? number_format($interesado->costoXHoraClase, 2, ".", ",") : null), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
             </div>
           </div> 
         </div>

@@ -1,3 +1,4 @@
+{{----}}
 <div class="row">
   <div class="col-sm-12">
     <div id="wiz-registro-postulante" class="box box-info wizard" data-initialize="wizard">
@@ -115,8 +116,6 @@
               <b>Sugerimos seleccionar la ubicación exacta en el mapa de la dirección del postulante.</b>
             </div>
             @endif
-            {{ Form::hidden("geoLatitud", null) }} 
-            {{ Form::hidden("geoLongitud", null) }} 
           </div>
         </div>               
         <div id="sec-wiz-postulante-3" class="step-pane sample-pane alert" data-step="3">  
@@ -147,7 +146,11 @@
               {{ Form::textarea("ensayo", null, ["class" => "form-control", "rows" => "4", "maxlength" =>"1000"]) }}
             </div>              
           </div>
-          @include("util.documentosPersonalesDocente", ["docente" => (isset($postulante) ? $postulante : null)]) 
+          @include("util.archivosAdjuntos", ["adjuntos" => [
+          (object)["idCampo" => "DocumentoPersonalCv", "idHtml" => "documento-personal-cv", "titulo" => "CV", "archivosRegistrados" => (isset($postulante) ? $postulante->cv : null), "mensajeReferencia" => null, "cantidadMaximaArchivos" => 1],
+          (object)["idCampo" => "DocumentoPersonalCertificadoInternacional", "idHtml" => "documento-personal-certificado-internacional", "titulo" => (Auth::guest() ? "International Certificate" : "Certificado internacional"), "archivosRegistrados" => (isset($postulante) ? $postulante->certificadoInternacional : null), "mensajeReferencia" => null, "cantidadMaximaArchivos" => 1],
+          (object)["idCampo" => "DocumentoPersonalImagenDocumentoIdentidad", "idHtml" => "documento-personal-imagen-documento-identidad", "titulo" => (Auth::guest() ? "ID Card image" : "Imagen del documento de identidad"), "archivosRegistrados" => (isset($postulante) ? $postulante->imagenDocumentoIdentidad : null), "mensajeReferencia" => null, "cantidadMaximaArchivos" => 1]
+          ]]) 
         </div>             
         <div id="sec-wiz-postulante-4" class="step-pane sample-pane alert" data-step="4">              
           @if(!(Auth::guest()))      
@@ -158,12 +161,12 @@
             {{ Form::label("curso-interes", "Cursos (*): ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-10">
               @foreach($cursos as $id => $nombre)                  
-                <div class="checkbox">
-                  <label class="checkbox-custom" data-initialize="checkbox">
-                    {{ Form::label("curso-" . $id, $nombre, ["class" => "checkbox-label"]) }}
-                    {{ Form::checkbox("idCursos[]", $id, (isset($postulante) && !is_null($postulante->cursos) && $postulante->cursos->contains('idCurso', $id)), ["id" => "curso-" . $id]) }}
-                  </label>
-                </div>
+              <div class="checkbox">
+                <label class="checkbox-custom" data-initialize="checkbox">
+                  {{ Form::label("curso-" . $id, $nombre, ["class" => "checkbox-label"]) }}
+                  {{ Form::checkbox("idCursos[]", $id, (isset($postulante) && !is_null($postulante->cursos) && $postulante->cursos->contains('idCurso', $id)), ["id" => "curso-" . $id]) }}
+                </label>
+              </div>
               @endforeach
             </div>               
           </div>
@@ -204,7 +207,7 @@
           <div class="form-group">
             <div class="col-sm-offset-1 col-sm-10">
               <audio controls>
-                <source src="{{ route("archivos", ["nombre" => ($postulante->audio), "audio" => 1]) }}">
+                <source src="{{ route("archivos", ["nombre" => ($postulante->audio), "esAudio" => 1]) }}">
                 Tu explorador no soporta este elemento de audio
               </audio>
             </div>            
@@ -221,7 +224,7 @@
               @if(!(isset($modo) && $modo == "registrar"))
               <button id="btn-guardar-secundario" type="submit" class="btn btn-primary pull-right">Guardar datos</button>  
               @endif
-              <button id="btn-guardar" type="button" class="btn btn-primary btn-next pull-right" data-last="{{ (Auth::guest() ? "Save" : ((isset($modo) && $modo == "registrar") ? "Registrar datos" : "Guardar datos")) }}">
+              <button id="btn-guardar" type="button" class="btn btn-primary btn-next pull-right" data-last="{{ (Auth::guest() ? "Save" : ((isset($modo) && $modo == "registrar") ? "Registrar" : "Guardar")) }}">
                 {{ (Auth::guest() ? "Next" : "Siguiente") }}
               </button>
               <button type="button" class="btn btn-default btn-prev pull-right">
@@ -230,7 +233,6 @@
             </div>
           </div>
         </div>                
-        {{ Form::hidden("modoEditarRegistrar", 1) }} 
         {{ Form::hidden("modoEditar", ((isset($modo) && $modo == "registrar") ? 0: 1)) }} 
       </div>
     </div>       

@@ -1,3 +1,4 @@
+{{----}}
 {{--*/ $mensajes = Mensajes::obtenerMensajes() /*--}}  
 <div class="box-default">
   <div class="box-body contenedor-alerta" tabindex="1">

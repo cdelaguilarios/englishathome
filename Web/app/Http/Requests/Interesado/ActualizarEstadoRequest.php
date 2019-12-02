@@ -6,26 +6,27 @@ use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\EstadosInteresado;
 
-class ActualizarEstadoRequest extends Request {
+class ActualizarEstadoRequest extends Request/* - */ {
 
-  public function authorize() {
+  public function authorize()/* - */ {
     return true;
   }
 
-  protected function getValidatorInstance() {
+  protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
 
-  public function rules() {
+  public function rules()/* - */ {
     $datos = $this->all();
     $reglasValidacion = [];
-    
+
     $estados = EstadosInteresado::listarDisponibleCambio();
-    if (!array_key_exists($datos["estado"], $estados))
+    if (!array_key_exists($datos["estado"], $estados)) {
       $reglasValidacion["estadoNoValido"] = "required";
+    }
 
     switch ($this->method()) {
       case "GET":
@@ -41,7 +42,7 @@ class ActualizarEstadoRequest extends Request {
     }
   }
 
-  public function messages() {
+  public function messages()/* - */ {
     return [
         "estadoNoValido.required" => "El estado seleccionado no es válido."
     ];

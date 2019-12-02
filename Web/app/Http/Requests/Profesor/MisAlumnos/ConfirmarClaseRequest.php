@@ -7,17 +7,17 @@ use App\Models\Alumno;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 
-class ConfirmarClaseRequest extends Request {
+class ConfirmarClaseRequest extends Request/* - */ {
 
-  public function authorize() {
+  public function authorize()/* - */ {
     return true;
   }
 
-  protected function getValidatorInstance() {
+  protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     $datos["duracion"] = ReglasValidacion::formatoDato($datos, "duracion");
-    $datos["comentario"] = ReglasValidacion::formatoDato($datos, "comentario");
     $datos["codigoVerificacion"] = ReglasValidacion::formatoDato($datos, "codigoVerificacion");
+    $datos["comentario"] = ReglasValidacion::formatoDato($datos, "comentario");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -54,7 +54,7 @@ class ConfirmarClaseRequest extends Request {
     }
   }
 
-  public function messages() {
+  public function messages()/* - */ {
     return [
         "alumnoNoValido.required" => "El alumno seleccionado no es válido.",
         "codigoVerificacionNoValido.required" => "El código de verificación del alumno no es válido."

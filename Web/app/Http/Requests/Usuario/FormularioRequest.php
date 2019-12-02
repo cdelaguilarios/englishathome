@@ -8,13 +8,13 @@ use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\RolesUsuario;
 use App\Helpers\Enum\EstadosUsuario;
 
-class FormularioRequest extends Request {
+class FormularioRequest extends Request/* - */ {
 
-  public function authorize() {
+  public function authorize()/* - */ {
     return true;
   }
 
-  protected function getValidatorInstance() {
+  protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     $datos["id"] = ReglasValidacion::formatoDato($datos, "id", 0);
     $datos["nombre"] = ReglasValidacion::formatoDato($datos, "nombre", "");
@@ -27,7 +27,7 @@ class FormularioRequest extends Request {
     return parent::getValidatorInstance();
   }
 
-  public function rules() {
+  public function rules()/* - */ {
     $datos = $this->all();
     $modoEdicion = ($this->method() == "PATCH");
     $idUsuario = $datos["id"];
@@ -45,10 +45,12 @@ class FormularioRequest extends Request {
     if (!array_key_exists($datos["rol"], $roles)) {
       $reglasValidacion["rolNoValido"] = "required";
     }
+    
     $estados = EstadosUsuario::listar(TRUE);
     if (!array_key_exists($datos["estado"], $estados)) {
       $reglasValidacion["estadoNoValido"] = "required";
     }
+    
     if (!$modoEdicion || (!is_null($datos["password"]) && $datos["password"] != "")) {
       $reglasValidacion["password"] = "required|confirmed|min:6|max:30";
     }
@@ -58,9 +60,7 @@ class FormularioRequest extends Request {
       case "DELETE": {
           return [];
         }
-      case "POST": {
-          return $reglasValidacion;
-        }
+      case "POST":
       case "PUT":
       case "PATCH": {
           return $reglasValidacion;
@@ -69,7 +69,7 @@ class FormularioRequest extends Request {
     }
   }
 
-  public function messages() {
+  public function messages()/* - */ {
     return [
         "email.unique" => "El correo electrónico ingresado ya está siendo utilizado.",
         "rolNoValido.required" => "El rol seleccionado no es válido.",

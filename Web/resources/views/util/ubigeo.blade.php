@@ -1,3 +1,10 @@
+{{----}}
+<script>
+  var urlListarDepartamentos = "{{ route('ubigeo.listarDepartamentos') }}";
+  var urlListarProvincias = "{{ route('ubigeo.listarProvincias', ['codigoDepartamento' => 0]) }}";
+  var urlListarDistritos = "{{ route('ubigeo.listarDistritos', ['codigoProvincia' => 0]) }}";
+</script>
+<script src="{{ asset("assets/eah/js/modulos/util/ubigeo.js")}}"></script>
 <div class="form-group">
   {{ Form::label("codigo-departamento", ((isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()) ? "Ubication" : "Ubicación") . ": ", ["class" => "col-sm-2 control-label"]) }}
   <div class="col-sm-3">
@@ -11,9 +18,3 @@
   </div>
 </div>
 {{ Form::hidden("codigoUbigeo") }} 
-<script>
-  var urlListarDepartamentos = "{{ route('ubigeo.listarDepartamentos') }}";
-  var urlListarProvincias = "{{ route('ubigeo.listarProvincias', ['codigoDepartamento' => 0]) }}";
-  var urlListarDistritos = "{{ route('ubigeo.listarDistritos', ['codigoProvincia' => 0]) }}";
-</script>
-<script src="{{ asset("assets/eah/js/ubigeo.js")}}"></script>

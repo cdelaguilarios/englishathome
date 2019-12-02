@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class EntidadCurso extends Model {
+class EntidadCurso extends Model/* |-| */ {
 
   public $timestamps = false;
   protected $table = "entidadCurso";
-  protected $fillable = ["idEntidad", "idCurso"];
+  protected $fillable = [
+      "idEntidad",
+      "idCurso"
+  ];
 
   public static function nombreTabla()/* - */ {
     $modeloEntidadCurso = new EntidadCurso();
@@ -18,13 +21,14 @@ class EntidadCurso extends Model {
   }
 
   public static function obtenerXIdEntidad($idEntidad, $soloPrimerCurso = TRUE)/* - */ {
-    $entidadCursos = EntidadCurso::where("idEntidad", $idEntidad)->select("idCurso")->get();
+    $entidadCursos = EntidadCurso::select("idCurso")->where("idEntidad", $idEntidad)->get();
     return (count($entidadCursos) > 0 ? ($soloPrimerCurso ? $entidadCursos[0] : $entidadCursos) : NULL);
   }
 
-  public static function registrarActualizar($idEntidad, $idCursos) {
+  public static function registrarActualizar($idEntidad, $idCursos)/* - */ {
     if (isset($idCursos)) {
       EntidadCurso::where("idEntidad", $idEntidad)->delete();
+
       $idCursosSel = (is_array($idCursos) ? $idCursos : [$idCursos]);
       foreach ($idCursosSel as $idCurso) {
         $entidadCurso = new EntidadCurso([

@@ -2,7 +2,7 @@
 
 namespace App\Helpers\Enum;
 
-class CuentasBancoPago {
+class CuentasBancoPago/* - */ {
 
   const Bcp = "BCP";
   const Interbank = "INTERBANK";
@@ -11,7 +11,7 @@ class CuentasBancoPago {
   const Empresarial = "EMPRESARIAL";
   const Efectivo = "EFECTIVO";
 
-  public static function listar() {
+  public static function listar()/* - */ {
     return [
         CuentasBancoPago::Bcp => "BCP",
         CuentasBancoPago::Interbank => "Interbank",

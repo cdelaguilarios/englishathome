@@ -8,13 +8,13 @@ use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\TiposEntidad;
 
-class ActualizarCredencialesAccesoRequest extends Request {
+class ActualizarCredencialesAccesoRequest extends Request/* - */ {
 
-  public function authorize() {
+  public function authorize()/* - */ {
     return true;
   }
 
-  protected function getValidatorInstance() {
+  protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     $datos["id"] = ReglasValidacion::formatoDato($datos, "id", 0);
     $datos["password"] = ReglasValidacion::formatoDato($datos, "password");
@@ -23,11 +23,10 @@ class ActualizarCredencialesAccesoRequest extends Request {
     return parent::getValidatorInstance();
   }
 
-  public function rules() {
+  public function rules()/* - */ {
     $datos = $this->all();
     $idEntidad = $datos["id"];
     
-
     $reglasValidacion = [
         "email" => "required|email|max:245|unique:" . Usuario::nombreTabla() . ",email," . $idEntidad . ",idEntidad",
         "password" => "confirmed|min:6|max:30",
@@ -53,7 +52,7 @@ class ActualizarCredencialesAccesoRequest extends Request {
     }
   }
 
-  public function messages() {
+  public function messages()/* - */ {
     return [
         "email.unique" => "El correo electrónico ingresado ya está siendo utilizado.",
         "tipoEntidadNoValido.required" => "El tipo de entidad no es válido."

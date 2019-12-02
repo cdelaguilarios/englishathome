@@ -1,4 +1,4 @@
-@extends("layouts.masterAlumnoProfesor")
+@extends("externo.layouts.master")
 @section("titulo", "Clases")
 
 @section("section_script")

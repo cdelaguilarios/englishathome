@@ -1,19 +1,22 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Interesados")
 
 @section("section_script")
 <script>
   var urlListar = "{{ route('interesados.listar') }}";
+  var urlPerfilAlumnoInteresado = "{{ route('interesados.perfil.alumno', ['id' => 0]) }}";
   var urlEditar = "{{ route('interesados.editar', ['id' => 0]) }}";
   var urlCotizar = "{{ route('interesados.cotizar', ['id' => 0]) }}";
   var urlEliminar = "{{ route('interesados.eliminar', ['id' => 0]) }}";
-  var urlPerfilAlumnoInteresado = "{{ route('interesados.perfil.alumno', ['id' => 0]) }}";
   
   var estados = {!! json_encode(App\Helpers\Enum\EstadosInteresado::listar()) !!};
+  var origenes = {!! json_encode(App\Helpers\Enum\OrigenesInteresado::listar()) !!};
   var estadosDisponibleCambio = {!! json_encode(App\Helpers\Enum\EstadosInteresado::listarDisponibleCambio()) !!};
+  var estadoFichaCompleta = "{{ App\Helpers\Enum\EstadosInteresado::FichaCompleta }}";
   var estadoAlumnoRegistrado = "{{ App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado }}";
 </script>
-<script src="{{ asset("assets/eah/js/modulos/interesado.js") }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/interesado/lista.js") }}"></script>
 @endsection
 
 @section("breadcrumb")
@@ -31,7 +34,7 @@
         <div class="form-group">          
           {{ Form::label("bus-estado", "Estado: ", ["class" => "col-sm-1 control-label"]) }}
           <div class="col-sm-3">
-            {{ Form::select("estado", App\Helpers\Enum\EstadosInteresado::listarBusqueda(), App\Helpers\Enum\EstadosInteresado::PendienteInformacion, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos", "data-idtabla" => "tab-lista"]) }}
+            {{ Form::select("estado", App\Helpers\Enum\EstadosInteresado::listarBusqueda(), App\Helpers\Enum\EstadosInteresado::PendienteInformacion, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos", "data-idtabla" => "tab-lista-interesados"]) }}
           </div>
         </div> 
       </div>
@@ -46,7 +49,7 @@
         <a href="{{ route("interesados.crear")}}" class="btn btn-primary btn-clean">Nuevo interesado</a>   
       </div>         
       <div class="box-body">
-        <table id="tab-lista" class="table table-bordered table-hover">
+        <table id="tab-lista-interesados" class="table table-bordered table-hover">
           <thead>
             <tr>
               <th>N°</th> 

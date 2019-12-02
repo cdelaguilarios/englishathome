@@ -5,13 +5,13 @@ namespace App\Http\Requests;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 
-class ActualizarHorarioRequest extends Request {
+class ActualizarHorarioRequest extends Request/* - */ {
 
-  public function authorize() {
+  public function authorize()/* - */ {
     return true;
   }
 
-  protected function getValidatorInstance() {
+  protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     $datos["horario"] = ReglasValidacion::formatoDato($datos, "horario");
     $this->getInputSource()->replace($datos);
@@ -22,7 +22,7 @@ class ActualizarHorarioRequest extends Request {
     $datos = $this->all();
     $reglasValidacion = [];
     
-    if (!ReglasValidacion::validarHorario($datos["horario"])) {
+    if (!ReglasValidacion::validarHorario($datos["horario"]))/* - */ {
       $reglasValidacion["horarioNoValido"] = "required";
     }
 
@@ -40,7 +40,7 @@ class ActualizarHorarioRequest extends Request {
     }
   }
 
-  public function messages() {
+  public function messages()/* - */ {
     return [
         "horarioNoValido.required" => "El horario seleccionado no es válido."
     ];

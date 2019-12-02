@@ -42,7 +42,7 @@ function cargarLista() {
           }, className: "text-center"}
       ],
       initComplete: function (s, j) {
-        utilTablas.establecerBotonRecargaTabla("tab-lista");
+        utilTablas.establecerBotonRecargaTabla($("#tab-lista"));
       }
     });
   }

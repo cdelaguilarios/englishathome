@@ -1,5 +1,7 @@
+{{----}}
+<script type="text/javascript" src="{{ asset("assets/eah/js/modulos/util/imagenPerfil.js") }}"></script>
 <a id="btn-editar-imagen-perfil" href="javascript:void(0);" title="Editar imagen de perfil">
-  <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($entidad->imagenPerfil) && $entidad->imagenPerfil != "" ? $entidad->imagenPerfil : "-"), "tip" => ($entidad->sexo == "F" ? "f" : "m")]) }}" alt="Alumn{{ $entidad->sexo == "F" ? "a" : "o" }} {{ $entidad->nombre . " " .  $entidad->apellido }}">
+  <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($entidad->imagenPerfil) && $entidad->imagenPerfil != "" ? $entidad->imagenPerfil : "-"), "sexoEntidad" => ($entidad->sexo == "F" ? "f" : "m")]) }}" alt="{{ $entidad->nombre . " " .  $entidad->apellido }}">
 </a>
 <div id="mod-editar-imagen-perfil" class="modal" data-keyboard="false" style="text-align: initial">
   <div class="modal-dialog">
@@ -12,7 +14,7 @@
       </div>
       {{ Form::open(["url" => route("entidades.actualizar.imagen.perfil", ["id" => $entidad->id]), "id" => "formulario-editar-imagen-perfil", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
       <div class="modal-body">
-        <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($entidad->imagenPerfil) && $entidad->imagenPerfil != "" ? $entidad->imagenPerfil : "-"), "tip" => ($entidad->sexo == "F" ? "f" : "m")]) }}" alt="Alumn{{ $entidad->sexo == "F" ? "a" : "o" }} {{ $entidad->nombre . " " .  $entidad->apellido }}">
+        <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($entidad->imagenPerfil) && $entidad->imagenPerfil != "" ? $entidad->imagenPerfil : "-"), "sexoEntidad" => ($entidad->sexo == "F" ? "f" : "m")]) }}" alt="Alumn{{ $entidad->sexo == "F" ? "a" : "o" }} {{ $entidad->nombre . " " .  $entidad->apellido }}">
         <div class="row">
           <div class="col-sm-12">
             <div class="box-body">
@@ -33,4 +35,3 @@
     </div>
   </div>
 </div>
-<script type="text/javascript" src="{{ asset("assets/eah/js/imagenPerfil.js") }}"></script>

@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use DB;
+use Log;
 use Auth;
 use Crypt;
 use Carbon\Carbon;
+use App\Helpers\Enum\MotivosPago;
+use App\Helpers\Enum\EstadosPago;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\EstadosClase;
 use App\Helpers\Enum\EstadosAlumno;
@@ -17,7 +20,19 @@ class Alumno extends Model {
   public $timestamps = false;
   protected $primaryKey = "idEntidad";
   protected $table = "alumno";
-  protected $fillable = ["inglesLugarEstudio", "inglesPracticaComo", "inglesObjetivo", "conComputadora", "conInternet", "conPlumonPizarra", "conAmbienteClase", "numeroHorasClase", "fechaInicioClase", "comentarioAdicional", "costoHoraClase"];
+  protected $fillable = [
+      "inglesLugarEstudio",
+      "inglesPracticaComo",
+      "inglesObjetivo",
+      "conComputadora",
+      "conInternet",
+      "conPlumonPizarra",
+      "conAmbienteClase",
+      "numeroHorasClase",
+      "fechaInicioClase",
+      "comentarioAdicional",
+      "costoXHoraClase"
+  ];
 
   public static function nombreTabla()/* - */ {
     $modeloAlumno = new Alumno();
@@ -26,150 +41,200 @@ class Alumno extends Model {
     return $nombreTabla;
   }
 
-  public static function listar($datos = NULL, $simple = TRUE)/* - */ {
-    $alumnos = Alumno::leftJoin(Entidad::nombreTabla() . " as entidad", Alumno::nombreTabla() . ".idEntidad", "=", "entidad.id")
+  public static function listarBase($estado = NULL)/* - */ {
+    $alumnos = Alumno::leftJoin(Entidad::nombreTabla() . " AS entidad", Alumno::nombreTabla() . ".idEntidad", "=", "entidad.id")
             ->where("entidad.eliminado", 0)
             ->groupBy("entidad.id")
             ->distinct();
 
-    if (isset($datos["estado"])) {
-      if ($datos["estado"] == EstadosAlumno::Activo) {
-        $alumnos->where(function ($q) use($datos) {
-          $q->where("entidad.estado", $datos["estado"])->orWhere('entidad.estado', EstadosAlumno::CuotaProgramada);
+    if (isset($estado)) {
+      if ($estado == EstadosAlumno::Activo) {
+        $alumnos->where(function ($q) use($estado) {
+          $q->where("entidad.estado", $estado)->orWhere('entidad.estado', EstadosAlumno::PeriodoConcluido);
         });
       } else {
-        $alumnos->where("entidad.estado", $datos["estado"]);
+        $alumnos->where("entidad.estado", $estado);
       }
     }
 
-    if (!$simple) {
-      $nombreTablaClase = Clase::nombreTabla();
-
-      //Datos de la última clase
-      //TODO: La última clase puede determinarse por la fecha de confirmación. Revisar.
-      $alumnos->leftJoin($nombreTablaClase . " as ultimaClase", function ($q) use ($nombreTablaClase) {
-        $q->on("ultimaClase.idAlumno", "=", "entidad.id")
-                ->on("ultimaClase.id", "=", DB::raw("(SELECT id 
-                                                        FROM " . $nombreTablaClase . "
-                                                        WHERE idAlumno = entidad.id AND eliminado=0 
-                                                        ORDER BY fechaFin DESC 
-                                                        LIMIT 1)"));
-      });
-
-      //Datos del profesor de la próxima clase
-      $alumnos->leftJoin(Entidad::nombreTabla() . " as profesorProximaClase", function ($q) use ($nombreTablaClase) {
-        $q->on("profesorProximaClase.id", "=", DB::raw("(SELECT idProfesor 
-                                                          FROM " . $nombreTablaClase . " 
-                                                          WHERE idAlumno = entidad.id AND fechaInicio >= '" . Carbon::now() . "' AND eliminado=0 
-                                                          ORDER BY fechaFin ASC 
-                                                          LIMIT 1)"))
-                ->where("profesorProximaClase.eliminado", "=", 0);
-      });
-      $alumnos->leftJoin("distrito as distritoProfesor", function ($q) {
-        $q->on("distritoProfesor.codigo", "=", "profesorProximaClase.codigoUbigeo");
-      });
-
-      //Nivel de inglés
-      $alumnos->leftJoin(NivelIngles::nombreTabla() . " as nivelIngles", function ($q) {
-        $q->on("nivelIngles.id", "=", DB::raw("(SELECT idNivelIngles 
-                                                  FROM " . EntidadNivelIngles::nombreTabla() . " 
-                                                  WHERE idEntidad = entidad.id)"))
-                ->where("nivelIngles.activo", "=", 1)
-                ->where("nivelIngles.eliminado", "=", 0);
-      });
-
-      //Otros datos
-      $alumnos->join(EntidadCurso::nombreTabla() . " as entidadCurso", function ($q) {
-        $q->on("entidadCurso.idEntidad", "=", "entidad.id");
-      });
-      $alumnos->join(Curso::nombreTabla() . " as curso", function ($q) {
-        $q->on("curso.id", "=", "entidadCurso.idCurso");
-      });
-      $alumnos->leftJoin("distrito as distritoAlumno", function ($q) {
-        $q->on("distritoAlumno.codigo", "=", "entidad.codigoUbigeo");
-      });
-      //TODO: Revisar si el totalClases y duracionTotalClases son correctos
-      $alumnos->select(DB::raw(
-                      Alumno::nombreTabla() . ".*, 
-                      entidad.*, 
-                      ultimaClase.fechaFin as fechaUltimaClase, 
-                      (SELECT COUNT(*) 
-                        FROM " . $nombreTablaClase . " 
-                        WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')
-                      ) AS totalClases, 
-                      (SELECT SUM(duracion) 
-                        FROM " . $nombreTablaClase . " 
-                        WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')
-                      ) AS duracionTotalClases, 
-                      (SELECT SUM(duracion) 
-                        FROM " . $nombreTablaClase . " 
-                        WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "') AND estado IN('" . EstadosClase::Realizada . "','" . EstadosClase::ConfirmadaProfesorAlumno . "')
-                      ) AS duracionTotalClasesRealizadas, 
-                      (SELECT SUM(duracion)*100/(SELECT SUM(duracion) 
-                                                  FROM " . $nombreTablaClase . " 
-                                                  WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')) 
-                        FROM " . $nombreTablaClase . "
-                        WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "') AND estado IN('" . EstadosClase::Realizada . "','" . EstadosClase::ConfirmadaProfesorAlumno . "')
-                      ) AS porcentajeAvanceClases, 
-                      GROUP_CONCAT(curso.nombre SEPARATOR ', ') as curso, 
-                      distritoAlumno.distrito as distritoAlumno, 
-                      profesorProximaClase.id as idProfesor, 
-                      profesorProximaClase.nombre as nombreProfesor, 
-                      profesorProximaClase.apellido as apellidoProfesor, 
-                      distritoProfesor.distrito as distritoProfesor, 
-                      nivelIngles.nombre as nivelIngles, 
-                      (SELECT COUNT(*) 
-                        FROM " . PagoAlumno::nombreTabla() . " 
-                        WHERE idAlumno = entidad.id
-                      ) AS totalPagos, 
-                      (SELECT SUM(monto) 
-                        FROM " . Pago::nombreTabla() . " 
-                        WHERE id IN (SELECT idPago 
-                                      FROM " . PagoAlumno::nombreTabla() . " 
-                                      WHERE idAlumno = entidad.id) 
-                          AND eliminado = 0
-                      ) AS pagoAcumulado")
-      );
-    }
     return $alumnos;
   }
 
-  public static function listarBusqueda($terminoBus = NULL) {
-    $alumnos = Alumno::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
+  public static function listar($estado)/* - */ {
+    $alumnos = Alumno::listarBase($estado);
+
+    //Datos de la última clase realizada
+    $nombreTablaClase = Clase::nombreTabla();
+    $alumnos->leftJoin($nombreTablaClase . " AS ultimaClase", function ($q) use ($nombreTablaClase) {
+      $q->on("ultimaClase.idAlumno", "=", "entidad.id")
+              ->on("ultimaClase.id", "=", DB::raw("(SELECT id 
+                                                        FROM " . $nombreTablaClase . "
+                                                        WHERE idAlumno = entidad.id 
+                                                          AND estado IN ('" . EstadosClase::Realizada . "','" . EstadosClase::ConfirmadaProfesorAlumno . "')
+                                                          AND eliminado=0 
+                                                        ORDER BY fechaConfirmacion DESC 
+                                                        LIMIT 1)"));
+    });
+
+    //Datos del último pago por clases
+    $nombreTablaPago = Pago::nombreTabla();
+    $alumnos->leftJoin($nombreTablaPago . " AS ultimoPago", function ($q) use ($nombreTablaPago) {
+      $nombreTablaPagoAlumno = PagoAlumno::nombreTabla();
+      $q->on("ultimoPago.id", "=", DB::raw("(SELECT id 
+                                                        FROM " . $nombreTablaPago . "
+                                                        WHERE id IN (SELECT idPago FROM " . $nombreTablaPagoAlumno . " WHERE idAlumno = entidad.id)
+                                                          AND motivo = '" . MotivosPago::Clases . "'
+                                                          AND estado = '" . EstadosPago::Realizado . "'
+                                                          AND eliminado = 0
+                                                        ORDER BY fechaRegistro DESC 
+                                                        LIMIT 1)"));
+    });
+
+    //Clases asociadas al último pago por clases
+    $alumnos->leftJoin($nombreTablaClase . " AS claseXUltimoPago", function ($q) {
+      $nombreTablaPagoClase = PagoClase::nombreTabla();
+      $q->on("claseXUltimoPago.id", "IN", DB::raw("(SELECT idClase 
+                                                      FROM " . $nombreTablaPagoClase . "
+                                                      WHERE idPago = ultimoPago.id)"))
+              ->whereIn("claseXUltimoPago.estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada])
+              ->where("claseXUltimoPago.eliminado", "=", 0);
+    });
+
+    //Datos del profesor asociado al último pago por clases
+    $alumnos->leftJoin(Entidad::nombreTabla() . " AS profesor", function ($q) {
+      $q->on("profesor.id", "=", "ultimoPago.idProfesorClases")
+              ->where("profesor.eliminado", "=", 0);
+    });
+    $alumnos->leftJoin("distrito AS distritoProfesor", function ($q) {
+      $q->on("distritoProfesor.codigo", "=", "profesor.codigoUbigeo");
+    });
+
+    //Otros datos
+    $alumnos->leftJoin(NivelIngles::nombreTabla() . " AS nivelIngles", function ($q) {
+      $q->on("nivelIngles.id", "=", DB::raw("(SELECT idNivelIngles 
+                                                  FROM " . EntidadNivelIngles::nombreTabla() . " 
+                                                  WHERE idEntidad = entidad.id)"))
+              ->where("nivelIngles.activo", "=", 1)
+              ->where("nivelIngles.eliminado", "=", 0);
+    });
+    $alumnos->join(EntidadCurso::nombreTabla() . " AS entidadCurso", function ($q) {
+      $q->on("entidadCurso.idEntidad", "=", "entidad.id");
+    });
+    $alumnos->join(Curso::nombreTabla() . " AS curso", function ($q) {
+      $q->on("curso.id", "=", "entidadCurso.idCurso");
+    });
+    $alumnos->leftJoin("distrito AS distritoAlumno", function ($q) {
+      $q->on("distritoAlumno.codigo", "=", "entidad.codigoUbigeo");
+    });
+
+    $alumnos->select(DB::raw(
+                    Alumno::nombreTabla() . ".*, 
+                      entidad.*, 
+                      distritoAlumno.distrito AS distritoAlumno,          
+                      curso.nombre AS curso, 
+                      nivelIngles.nombre AS nivelIngles,              
+                      profesor.id AS idProfesor, 
+                      profesor.nombre AS nombreProfesor, 
+                      profesor.apellido AS apellidoProfesor, 
+                      distritoProfesor.distrito AS distritoProfesor, 
+                      ultimaClase.fechaFin AS ultimaClaseFechaFin, 
+                      ultimaClase.fechaConfirmacion AS ultimaClaseFechaConfirmacion, 
+                      (CASE WHEN ultimaClase.fechaConfirmacion IS NOT NULL
+                        THEN ultimaClase.fechaConfirmacion
+                        ELSE ultimaClase.fechaFin
+                      END) AS ultimaClaseFecha,
+                      ultimoPago.monto AS ultimoPagoMonto,
+                      ultimoPago.saldoFavor AS ultimoPagoSaldoFavor,
+                      ultimoPago.costoXHoraClase AS ultimoPagoCostoXHoraClase,
+                      (CASE WHEN IFNULL(ultimoPago.costoXHoraClase, 0) > 0 
+			THEN ((IFNULL(ultimoPago.monto, 0) - IFNULL(ultimoPago.saldoFavor, 0)) * 3600 / (ultimoPago.costoXHoraClase))
+                        ELSE 0
+                      END) AS ultimoPagoDuracionTotalXClases,
+                      SUM(claseXUltimoPago.duracion) AS ultimoPagoDuracionTotalXClasesRealizadas,
+                      (IFNULL(ultimoPago.monto, 0) - IFNULL(ultimoPago.saldoFavor, 0)) AS ultimoPagoMontoTotalXClases,
+                      ((SUM(claseXUltimoPago.duracion)/3600) * (SUM(claseXUltimoPago.costoHora)/COUNT(*))) AS ultimoPagoMontoTotalXClasesRealizadas")
+    );
+
+    return DB::table(DB::raw("({$alumnos->toSql()}) AS T"))
+                    ->mergeBindings($alumnos->getQuery())
+                    ->select(DB::raw(
+                                    "T.*,
+                                      (CASE WHEN ultimoPagoDuracionTotalXClases > ultimoPagoDuracionTotalXClasesRealizadas 
+                                        THEN ultimoPagoDuracionTotalXClases - ultimoPagoDuracionTotalXClasesRealizadas
+                                        ELSE 0
+                                      END) AS ultimoPagoDuracionTotalXClasesPendientes,
+                                      (CASE WHEN ultimoPagoDuracionTotalXClases < ultimoPagoDuracionTotalXClasesRealizadas 
+                                        THEN ultimoPagoDuracionTotalXClasesRealizadas - ultimoPagoDuracionTotalXClases
+                                        ELSE 0
+                                      END) AS ultimoPagoDuracionTotalXClasesNoPagadas,
+                                      (ultimoPagoDuracionTotalXClasesRealizadas*100/ultimoPagoDuracionTotalXClases) AS ultimoPagoPorcentajeAvanceXClases,
+                                      (CASE WHEN ultimoPagoMontoTotalXClases > ultimoPagoMontoTotalXClasesRealizadas 
+                                        THEN ultimoPagoMontoTotalXClases - ultimoPagoMontoTotalXClasesRealizadas
+                                        ELSE 0
+                                      END) AS ultimoPagoMontoTotalXClasesPendientes,
+                                      (CASE WHEN ultimoPagoMontoTotalXClases < ultimoPagoMontoTotalXClasesRealizadas 
+                                        THEN ultimoPagoMontoTotalXClasesRealizadas - ultimoPagoMontoTotalXClases
+                                        ELSE 0
+                                      END) AS ultimoPagoMontoTotalXClasesNoPagadas")
+    );
+  }
+
+  public static function listarBusqueda($terminoBus = NULL)/* - */ {
+    $alumnos = Alumno::listarBase()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
     if (isset($terminoBus)) {
       $alumnos->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
     }
     return $alumnos->lists("nombreCompleto", "entidad.id");
   }
 
-  public static function obtenerXId($id, $simple = FALSE) {
-    $alumno = Alumno::listar()->where("entidad.id", $id)->firstOrFail();
+  public static function obtenerXId($id, $simple = FALSE)/* - */ {
+    $alumno = Alumno::listarBase()->where("entidad.id", $id)->firstOrFail();
 
     if (!$simple) {
-      $entidadNivelIngles = EntidadNivelIngles::obtenerXIdEntidad($id);
-      $entidadCurso = EntidadCurso::obtenerXIdEntidad($id);
-
-      $alumno->interesadoRelacionado = Interesado::obtenerXIdAlumno($id);
       $alumno->horario = Horario::obtenerJsonXIdEntidad($id);
-      $alumno->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($alumno->codigoUbigeo);
-      $alumno->numeroPeriodos = Clase::totalPeriodosXIdAlumno($id);
-      $alumno->idNivelIngles = (isset($entidadNivelIngles) ? $entidadNivelIngles->idNivelIngles : NULL);
+
+      $entidadCurso = EntidadCurso::obtenerXIdEntidad($id);
       $alumno->idCurso = (isset($entidadCurso) ? $entidadCurso->idCurso : NULL);
-      $alumno->proximaClase = Clase::obtenerProximaClaseXIdAlumno($id);
-      if (isset($alumno->proximaClase)) {
-        $datosPago = PagoAlumno::obtenerXClase($id, $alumno->proximaClase->id);
-        $alumno->proximaClase->tiempos = (isset($datosPago) ? PagoAlumno::obtenerTiemposClasesXId($id, $datosPago->id) : NULL);
+      $alumno->ultimoPago = PagoAlumno::obtenerUltimoXClases($id); //TODO: el último pago por clases debe ser el último que tiene clases pendientes
+      $alumno->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($alumno->codigoUbigeo);
+      $alumno->interesadoRelacionado = Interesado::obtenerXIdAlumno($id);
+
+      $entidadNivelIngles = EntidadNivelIngles::obtenerXIdEntidad($id);
+      $alumno->idNivelIngles = (isset($entidadNivelIngles) ? $entidadNivelIngles->idNivelIngles : NULL);
+
+      $alumno->numeroPeriodos = Clase::totalPeriodosXIdAlumno($id);
+
+      $datosIdsAntSig = Entidad::ObtenerIdsAnteriorSiguienteXEntidad(TiposEntidad::Alumno, $alumno);
+      $alumno->idAlumnoAnterior = $datosIdsAntSig["idEntidadAnterior"];
+      $alumno->idAlumnoSiguiente = $datosIdsAntSig["idEntidadSiguiente"];
+
+      //TODO: simplificar ya que en la función Profesor::obtenerAlumno() es muy parecida
+      $ultimoPago = NULL;
+      $duracionTotalXClases = 0;
+      $duracionTotalXClasesRealizadas = 0;
+      $duracionTotalXClasesPendientes = 0;
+      $pagos = Pago::listarNUEVO()->where("pagoAlumno.idAlumno", $id);
+      if ($pagos->count() > 0) {
+        $ultimoPago = $pagos->first();
+        $pagosXClasesVigentes = Pago::listarNUEVO(TRUE)->where("pagoAlumno.idAlumno", $id);
+
+        if ($pagosXClasesVigentes->count() > 0) {
+          $ultimoPago = $pagosXClasesVigentes->first();
+          $preHorasPagadas = ((float) $ultimoPago->monto / (float) $ultimoPago->costoXHoraClase);
+          $horasPagadas = ($preHorasPagadas - fmod($preHorasPagadas, 0.5));
+
+          $duracionTotalXClases += $horasPagadas * 3600;
+          $duracionTotalXClasesRealizadas += (isset($ultimoPago->duracionXClasesRealizadas) ? $ultimoPago->duracionXClasesRealizadas : 0);
+          $duracionTotalXClasesPendientes += ($duracionTotalXClases > $duracionTotalXClasesRealizadas ? $duracionTotalXClases - $duracionTotalXClasesRealizadas : 0);
+        }
       }
-      $alumno->profesorProximaClase = (isset($alumno->proximaClase) && Profesor::verificarExistencia($alumno->proximaClase->idProfesor) ? Profesor::obtenerXId($alumno->proximaClase->idProfesor) : NULL);
-      $idAlumnoAnterior = Alumno::listar()->select("entidad.id")->where("entidad.id", "<", $id)->where("entidad.estado", $alumno->estado)->orderBy("entidad.id", "DESC")->first();
-      $idAlumnoSiguiente = Alumno::listar()->select("entidad.id")->where("entidad.id", ">", $id)->where("entidad.estado", $alumno->estado)->first();
-      $alumno->idAlumnoAnterior = (isset($idAlumnoAnterior) ? $idAlumnoAnterior->id : NULL);
-      $alumno->idAlumnoSiguiente = (isset($idAlumnoSiguiente) ? $idAlumnoSiguiente->id : NULL);
+      $alumno->duracionTotalXClasesPendientes = $duracionTotalXClasesPendientes;
+      //-----
     }
     return $alumno;
   }
 
-  public static function registrar($req) {
+  public static function registrar($req)/* - */ {
     $datos = $req->all();
     if (isset($datos["fechaNacimiento"])) {
       $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
@@ -195,7 +260,7 @@ class Alumno extends Model {
     return $idEntidad;
   }
 
-  public static function registrarExterno($req) {
+  public static function registrarExterno($req)/* - */ {
     $datos = $req->all();
     $interesado = Interesado::obtenerXId(Crypt::decrypt($datos["codigoVerificacion"]), TRUE);
     if ($interesado->idEntidad == $datos["idInteresado"] && Interesado::obtenerIdAlumno($datos["idInteresado"]) == 0) {
@@ -204,7 +269,7 @@ class Alumno extends Model {
     }
   }
 
-  public static function actualizar($id, $req) {
+  public static function actualizar($id, $req)/* - */ {
     $datos = $req->all();
     if (isset($datos["fechaNacimiento"])) {
       $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
@@ -231,38 +296,41 @@ class Alumno extends Model {
     Entidad::actualizarEstado($id, $estado);
   }
 
-  public static function actualizarHorario($id, $horario) {
+  public static function actualizarHorario($id, $horario)/* - */ {
     Alumno::obtenerXId($id, TRUE);
     Horario::registrarActualizar($id, $horario);
   }
 
-  public static function eliminar($id) {
+  public static function eliminar($id)/* - */ {
     Alumno::obtenerXId($id, TRUE);
     Entidad::eliminar($id);
-    Clase::eliminadXIdAdlumno($id);
+    Clase::eliminadXIdAdlumno($id); //TODO: Todas las funciones de clase y pagos se tienen que revisar bien
   }
 
   public static function sincronizarEstados() {
-    Clase::sincronizarEstados();
-    $alumnos = Alumno::listar()
-            ->whereIn("entidad.id", Clase::where("eliminado", 0)->groupBy("idAlumno")->lists("idAlumno"))//TODO:Cambiar
-            ->whereNotIn("entidad.id", Clase::listarXEstados([EstadosClase::Programada, EstadosClase::PendienteConfirmar])->groupBy("idAlumno")->lists("idAlumno"))
-            ->whereNotIn("entidad.estado", [EstadosAlumno::PorConfirmar, EstadosAlumno::StandBy, EstadosAlumno::Inactivo])
-            ->get();
-    foreach ($alumnos as $alumno) {
+    //TODO: corregir
+    /* Clase::sincronizarEstados();
+      $alumnos = Alumno::listarBase()
+      ->whereIn("entidad.id", Clase::where("eliminado", 0)->groupBy("idAlumno")->lists("idAlumno"))//TODO:Cambiar
+      ->whereNotIn("entidad.id", Clase::listarXEstados([EstadosClase::Programada, EstadosClase::PendienteConfirmar])->groupBy("idAlumno")->lists("idAlumno"))
+      ->whereNotIn("entidad.estado", [EstadosAlumno::PorConfirmar, EstadosAlumno::StandBy, EstadosAlumno::Inactivo])
+      ->get();
+      foreach ($alumnos as $alumno) {
       Alumno::actualizarEstado($alumno->idEntidad, EstadosAlumno::CuotaProgramada);
-    }
+      } */
   }
 
-  public static function verificarExistencia($id) {
+  public static function verificarExistencia($id)/* - */ {
     try {
       Alumno::obtenerXId($id, TRUE);
-    } catch (\Exception $ex) {
+    } catch (\Exception $e) {
+      Log::error($e);
       return FALSE;
     }
     return TRUE;
   }
 
+  // <editor-fold desc="TODO: ELIMINAR">
   //REPORTE
   public static function listarCampos() {
     return [
@@ -276,7 +344,7 @@ class Alumno extends Model {
         "numeroHorasClase" => ["titulo" => "Número de horas por clase"],
         "fechaInicioClase" => ["titulo" => "Fecha de inicio de clases"],
         "comentarioAdicional" => ["titulo" => "Comentario adicional"],
-        "costoHoraClase" => ["titulo" => "Costo por hora de clase"]
+        "costoXHoraClase" => ["titulo" => "Costo por hora de clase"]
     ];
   }
 
@@ -284,4 +352,5 @@ class Alumno extends Model {
     return [];
   }
 
+  // </editor-fold>
 }

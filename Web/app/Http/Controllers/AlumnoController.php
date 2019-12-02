@@ -2,20 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use PDF;
 use Log;
 use Crypt;
 use Input;
-use Storage;
 use Mensajes;
 use Datatables;
-use App\Models\Pago;
 use App\Models\Clase;
 use App\Models\Alumno;
 use App\Models\Docente;
+use App\Models\Profesor;
 use App\Models\PagoAlumno;
 use App\Models\Interesado;
-use App\Helpers\Enum\EstadosClase;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Alumno\BusquedaRequest;
 use App\Http\Requests\ActualizarHorarioRequest;
@@ -28,16 +25,9 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class AlumnoController extends Controller {
 
   protected $data = array();
-  protected $rutasArchivosEliminar = array();
 
   public function __construct()/* - */ {
     $this->data["seccion"] = "alumnos";
-  }
-
-  public function __destruct() {
-    foreach ($this->rutasArchivosEliminar as $rutaArchivoEliminar) {
-      file_exists($rutaArchivoEliminar) ? unlink($rutaArchivoEliminar) : FALSE;
-    }
   }
 
   // <editor-fold desc="Alumno">
@@ -45,62 +35,44 @@ class AlumnoController extends Controller {
     return view("alumno.lista", $this->data);
   }
 
-  public function listar(BusquedaRequest $req)/* - */  {
-    return Datatables::of(Alumno::listar($req->all(), FALSE))->filterColumn("entidad.nombre", function($q, $k) {
-              $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"])
-                      ->orWhereRaw('distritoAlumno.distrito like ?', ["%{$k}%"])
-                      ->orWhereRaw('CONCAT(profesorProximaClase.nombre, " ", profesorProximaClase.apellido) like ?', ["%{$k}%"])
-                      ->orWhereRaw('distritoProfesor.distrito like ?', ["%{$k}%"]);
-            })->filterColumn("porcentajeAvanceClases", function($q, $k) {
-              $q->whereRaw("(SELECT COUNT(*) 
-                              FROM " . Clase::nombreTabla() . " 
-                              WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')) like ?", ["%{$k}%"])
-                      ->orWhereRaw("(SELECT SUM(duracion) 
-                                      FROM " . Clase::nombreTabla() . " 
-                                      WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "'))/ 3600 like ?", ["%{$k}%"])
-                      ->orWhereRaw("(SELECT SUM(duracion) 
-                                      FROM " . Clase::nombreTabla() . " 
-                                      WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')AND estado IN('" . EstadosClase::Realizada . "','" . EstadosClase::ConfirmadaProfesorAlumno . "'))/ 3600 like ?", ["%{$k}%"])
-                      ->orWhereRaw("(SELECT SUM(duracion)*100/(SELECT SUM(duracion) 
-                                                                 FROM " . Clase::nombreTabla() . " 
-                                                                 WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')) 
-                                      FROM " . Clase::nombreTabla() . " 
-                                      WHERE idAlumno = entidad.id AND eliminado = 0 AND estado NOT IN('" . EstadosClase::Cancelada . "')AND estado IN('" . EstadosClase::Realizada . "','" . EstadosClase::ConfirmadaProfesorAlumno . "')) like ?", ["%{$k}%"]);
-            })->filterColumn("curso", function($q, $k) {
-              $q->whereRaw("curso.nombre like ?", ["%{$k}%"]);
-            })->filterColumn("entidad.estado", function($q, $k) {
-              $q->whereRaw("entidad.estado like ?", ["%{$k}%"])
-                      ->orWhereRaw('nivelIngles.nombre like ?', ["%{$k}%"]);
-            })->filterColumn("totalPagos", function($q, $k) {
-              $q->whereRaw("(SELECT COUNT(*) 
-                              FROM " . PagoAlumno::nombreTabla() . " 
-                              WHERE idAlumno = entidad.id) like ?", ["%{$k}%"])
-                      ->orWhereRaw("(SELECT SUM(monto) 
-                                      FROM " . Pago::nombreTabla() . " 
-                                      WHERE id IN (SELECT idPago 
-                                                    FROM " . PagoAlumno::nombreTabla() . " 
-                                                    WHERE idAlumno = entidad.id) AND eliminado = 0) like ?", ["%{$k}%"]);
-            })->filterColumn("entidad.fechaRegistro", function($q, $k) {
-              $q->whereRaw("DATE_FORMAT(entidad.fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"])
+  public function listar(BusquedaRequest $req)/* - */ {
+    $datos = $req->all();
+    return Datatables::of(Alumno::listar($datos["estado"]))->filterColumn("nombre", function($q, $k) {
+              $q->whereRaw('CONCAT(nombre, " ", apellido) like ?', ["%{$k}%"])
+                      ->orWhereRaw('telefono like ?', ["%{$k}%"])
+                      ->orWhereRaw('distritoAlumno like ?', ["%{$k}%"])
+                      ->orWhereRaw('CONCAT(nombreProfesor, " ", apellidoProfesor) like ?', ["%{$k}%"])
+                      ->orWhereRaw('distritoProfesor like ?', ["%{$k}%"]);
+            })->filterColumn("ultimoPagoPorcentajeAvanceXClases", function($q, $k) {
+              $q->whereRaw("(ultimoPagoDuracionTotalXClasesRealizadas*100/ultimoPagoDuracionTotalXClases) like ?", ["%{$k}%"])
+                      ->orWhereRaw("SEC_TO_TIME(ultimoPagoDuracionTotalXClases) like ?", ["%{$k}%"])
+                      ->orWhereRaw("SEC_TO_TIME(ultimoPagoDuracionTotalXClasesRealizadas) like ?", ["%{$k}%"])
+                      ->orWhereRaw("DATE_FORMAT(ultimaClaseFecha, '%d/%m/%Y') like ?", ["%{$k}%"]);
+            })->filterColumn("estado", function($q, $k) {
+              $q->whereRaw("estado like ?", ["%{$k}%"])
+                      ->orWhereRaw('nivelIngles like ?', ["%{$k}%"]);
+            })->filterColumn("fechaRegistro", function($q, $k) {
+              $q->whereRaw("DATE_FORMAT(fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"])
                       ->orWhereRaw("DATE_FORMAT(fechaInicioClase, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
             })->make(true);
   }
 
-  public function buscar() {
+  public function buscar()/* - */ {
     $termino = Input::get("termino");
-    $alumnos = Alumno::listarBusqueda($termino["term"]);
+
     $alumnosPro = [];
+    $alumnos = Alumno::listarBusqueda($termino["term"]);
     foreach ($alumnos as $id => $nombreCompleto) {
       $alumnosPro[] = ['id' => $id, 'text' => $nombreCompleto];
     }
     return \Response::json(["results" => $alumnosPro]);
   }
 
-  public function crear() {
+  public function crear()/* - */ {
     return view("alumno.crear", $this->data);
   }
 
-  public function registrar(FormularioRequest $req) {
+  public function registrar(FormularioRequest $req)/* - */ {
     try {
       $idAlumno = Alumno::registrar($req);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
@@ -112,7 +84,7 @@ class AlumnoController extends Controller {
     }
   }
 
-  public function crearExterno($codigoVerificacion) {
+  public function crearExterno($codigoVerificacion)/* - */ {
     try {
       $nuevoRegistro = Input::get("nr");
       $this->data["nuevoRegistro"] = (isset($nuevoRegistro));
@@ -126,7 +98,7 @@ class AlumnoController extends Controller {
     }
   }
 
-  public function registrarExterno(FormularioRequest $req) {
+  public function registrarExterno(FormularioRequest $req)/* - */ {
     try {
       $datos = $req->all();
       Alumno::registrarExterno($req);
@@ -137,7 +109,7 @@ class AlumnoController extends Controller {
     return redirect(route("alumnos.crear.externo", ["codigoVerificacion" => $datos["codigoVerificacion"], "nr" => 1]));
   }
 
-  public function perfil($id) {
+  public function perfil($id)/* - */ {
     try {
       $this->data["alumno"] = Alumno::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
@@ -148,7 +120,7 @@ class AlumnoController extends Controller {
     return view("alumno.perfil", $this->data);
   }
 
-  public function ficha($id) {
+  public function ficha($id)/* - */ {
     try {
       $this->data["vistaImpresion"] = TRUE;
       $this->data["impresionDirecta"] = TRUE;
@@ -161,31 +133,7 @@ class AlumnoController extends Controller {
     return view("alumno.ficha", $this->data);
   }
 
-  public function descargarFicha($id) {
-    try {
-      $alumno = Alumno::obtenerXId($id);
-      $this->data["vistaImpresion"] = TRUE;
-      $this->data["alumno"] = $alumno;
-      $pdf = PDF::loadView("alumno.ficha", $this->data);
-      $rutaBaseAlmacenamiento = Storage::disk("local")->getDriver()->getAdapter()->getPathPrefix();
-      $nombrePdf = str_replace(["á", "é", "í", "ó", "ú"], ["a", "e", "i", "o", "u"], "Ficha " . ($alumno->sexo == "F" ? "de la alumna" : "del alumno" ) . " " . mb_strtolower($alumno->nombre . " " . $alumno->apellido) . ".pdf");
-      $this->rutasArchivosEliminar[] = $rutaBaseAlmacenamiento . $nombrePdf;
-      $datosPdf = $pdf->setOption("margin-top", "30mm")
-              ->setOption("dpi", 108)->setOption("page-size", "A4")
-              ->setOption("viewport-size", "1280x1024")
-              ->setOption("footer-font-size", "8")
-              ->setOption("footer-left", "English at home " . date("Y") . " - Ficha " . ($alumno->sexo == "F" ? "de la alumna" : "del alumno" ) . " " . $alumno->nombre . " " . $alumno->apellido)
-              ->setOption("footer-right", '"Pag. [page] de [topage]"')
-              ->save($rutaBaseAlmacenamiento . $nombrePdf, true);
-    } catch (\Exception $e) {
-      Log::error($e);
-      Mensajes::agregarMensajeError("Ocurrió un problema durante la descarga de la ficha del alumno(a).");
-      return redirect(route("alumnos"));
-    }
-    return $datosPdf->download($nombrePdf);
-  }
-
-  public function editar($id) {
+  public function editar($id)/* - */ {
     try {
       $this->data["alumno"] = Alumno::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
@@ -196,7 +144,7 @@ class AlumnoController extends Controller {
     return view("alumno.editar", $this->data);
   }
 
-  public function actualizar($id, FormularioRequest $req) {
+  public function actualizar($id, FormularioRequest $req)/* - */ {
     try {
       Alumno::actualizar($id, $req);
       Mensajes::agregarMensajeExitoso("Actualización exitosa.");
@@ -213,12 +161,12 @@ class AlumnoController extends Controller {
       Alumno::actualizarEstado($id, $datos["estado"]);
     } catch (\Exception $e) {
       Log::error($e);
-      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
+      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 500);
     }
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function actualizarHorario($id, ActualizarHorarioRequest $req) {
+  public function actualizarHorario($id, ActualizarHorarioRequest $req)/* - */ {
     try {
       $datos = $req->all();
       Alumno::actualizarHorario($id, $datos["horario"]);
@@ -229,7 +177,7 @@ class AlumnoController extends Controller {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function eliminar($id) {
+  public function eliminar($id)/* - */ {
     try {
       Alumno::eliminar($id);
     } catch (\Exception $e) {
@@ -241,17 +189,79 @@ class AlumnoController extends Controller {
 
   // </editor-fold>
   // <editor-fold desc="Pagos">
-  public function listarPagos($id) {
-    return Datatables::of(PagoAlumno::listar($id))->filterColumn("pago.fecha", function($q, $k) {
-              $q->whereRaw("DATE_FORMAT(pago.fecha, '%d/%m/%Y') like ?", ["%{$k}%"]);
-            })->filterColumn("pago.fecha", function($q, $k) {
-              $q->whereRaw("DATE_FORMAT(pago.fecha, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
+  public function listarPagos($id)/* - */ {
+    return Datatables::of(PagoAlumno::listar($id))->filterColumn("id", function($q, $k) {
+              $q->whereRaw("id like ?", ["%{$k}%"])
+                      ->orWhereRaw("motivo like ?", ["%{$k}%"])
+                      ->orWhereRaw("cuenta like ?", ["%{$k}%"])
+                      ->orWhereRaw("costoXHoraClase like ?", ["%{$k}%"]);
+            })->filterColumn("fecha", function($q, $k) {
+              $q->whereRaw("DATE_FORMAT(fecha, '%d/%m/%Y') like ?", ["%{$k}%"])
+                      ->orWhereRaw("DATE_FORMAT(fecha, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
+            })->filterColumn("monto", function($q, $k) {
+              $q->whereRaw("monto like ?", ["%{$k}%"])
+                      //Duración total por clases realizadas y canceladas
+                      ->orWhereRaw("SEC_TO_TIME(duracionTotalXClasesRealizadas) like ?", ["%{$k}%"])
+                      //Monto total por clases realizadas
+                      ->orWhereRaw("montoTotalXClasesRealizadas like ?", ["%{$k}%"])
+                      //Duración total por clases pendientes
+                      ->orWhereRaw("SEC_TO_TIME(CASE WHEN duracionTotalXClases > (duracionTotalXClasesRealizadas + duracionTotalXClasesCanceladas) 
+                                        THEN duracionTotalXClases - (duracionTotalXClasesRealizadas + duracionTotalXClasesCanceladas)
+                                        ELSE 0
+                                      END) like ?", ["%{$k}%"])
+                      //Monto total por clases pendientes
+                      ->orWhereRaw("(CASE WHEN montoTotalXClases > (montoTotalXClasesRealizadas + montoTotalXClasesCanceladas) 
+                                        THEN montoTotalXClases - (montoTotalXClasesRealizadas + montoTotalXClasesCanceladas)
+                                        ELSE 0
+                                      END) like ?", ["%{$k}%"])
+                      //Duración total por clases no pagadas
+                      ->orWhereRaw("SEC_TO_TIME(CASE WHEN duracionTotalXClases < (duracionTotalXClasesRealizadas + duracionTotalXClasesCanceladas) 
+                                        THEN  duracionTotalXClasesRealizadas + duracionTotalXClasesCanceladas - duracionTotalXClases
+                                        ELSE 0
+                                      END) like ?", ["%{$k}%"])
+                      //Monto total por clases no pagadas
+                      ->orWhereRaw("(CASE WHEN montoTotalXClases < (montoTotalXClasesRealizadas + montoTotalXClasesCanceladas) 
+                                        THEN montoTotalXClasesRealizadas + montoTotalXClasesCanceladas - montoTotalXClases
+                                        ELSE 0
+                                      END) like ?", ["%{$k}%"])
+                      //Duración total por clases
+                      ->orWhereRaw("SEC_TO_TIME(duracionTotalXClases) like ?", ["%{$k}%"])
+                      //Monto total por clases
+                      ->orWhereRaw("montoTotalXClases like ?", ["%{$k}%"])
+                      //Saldo a favor
+                      ->orWhereRaw("saldoFavor like ?", ["%{$k}%"]);
             })->make(true);
   }
 
-  public function actualizarEstadoPago($id, PagoRequest\ActualizarEstadoRequest $req) {
+  public function registrarPago($id, PagoRequest\FormularioRequest $req)/* - */ {
     try {
-      PagoAlumno::actualizarEstado($id, $req->all());
+      PagoAlumno::registrarActualizar($id, $req);
+      Mensajes::agregarMensajeExitoso("Registro exitoso.");
+    } catch (\Exception $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
+    }
+    return redirect(route("alumnos.perfil", ["id" => $id, "seccion" => "pago"]));
+  }
+
+  public function actualizarPago($id, PagoRequest\FormularioRequest $req)/* - */ {
+    try {
+      PagoAlumno::registrarActualizar($id, $req);
+      Mensajes::agregarMensajeExitoso("Actualización exitosa.");
+    } catch (\Exception $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");
+    }
+    return redirect(route("alumnos.perfil", ["id" => $id, "seccion" => "pago"]));
+  }
+
+  public function obtenerDatosPago($id, $idPago)/* - */ {
+    return response()->json(PagoAlumno::obtenerXId($id, $idPago), 200);
+  }
+
+  public function actualizarEstadoPago($id, $idPago, PagoRequest\ActualizarEstadoRequest $req)/* - */ {
+    try {
+      PagoAlumno::actualizarEstado($id, $idPago, $req->all());
     } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
@@ -259,46 +269,7 @@ class AlumnoController extends Controller {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function generarClasesXPago($id, PagoRequest\GenerarClasesRequest $req) {
-    return response()->json(Clase::generarXDatosPago($id, $req->all()), 200);
-  }
-
-  public function listarDocentesDisponiblesXPago($id, PagoRequest\ListarDocentesDisponiblesRequest $req) {
-    return Datatables::of(Docente::listarDisponiblesXDatosPago($id, $req->all()))
-                    ->filterColumn("nombreCompleto", function($q, $k) {
-                      $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
-                    })->filterColumn('estado', function($q, $k) {
-              $q->whereRaw('entidad.estado like ?', ["%{$k}%"]);
-            })->make(true);
-  }
-
-  public function registrarPago($id, PagoRequest\FormularioRequest $req) {
-    try {
-      PagoAlumno::registrar($id, $req);
-      Mensajes::agregarMensajeExitoso("Registro exitoso.");
-    } catch (\Exception $e) {
-      Log::error($e);
-      Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
-    }
-    return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "pago"]));
-  }
-
-  public function actualizarPago($id, PagoRequest\FormularioActualizarRequest $req) {
-    try {
-      PagoAlumno::actualizar($id, $req);
-      Mensajes::agregarMensajeExitoso("Actualización exitosa.");
-    } catch (\Exception $e) {
-      Log::error($e);
-      Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");
-    }
-    return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "pago"]));
-  }
-
-  public function datosPago($id, $idPago) {
-    return response()->json(PagoAlumno::obtenerXId($id, $idPago), 200);
-  }
-
-  public function eliminarPago($id, $idPago) {
+  public function eliminarPago($id, $idPago)/* - */ {
     try {
       PagoAlumno::eliminar($id, $idPago);
     } catch (\Exception $e) {
@@ -310,21 +281,74 @@ class AlumnoController extends Controller {
 
   // </editor-fold>
   // <editor-fold desc="Clases">
+  public function listarClases($id)/* - */ {
+    return Datatables::of(Clase::listarXAlumnoNUEVO($id))
+                    ->filterColumn("fechaConfirmacion", function($q, $k) {
+                      $q->whereRaw('numeroPeriodo like ?', ["%{$k}%"])
+                      ->orWhereRaw("DATE_FORMAT((CASE WHEN fechaConfirmacion IS NULL 
+                                                  THEN fechaFin 
+                                                  ELSE fechaConfirmacion 
+                                                END), '%d/%m/%Y') like ?", ["%{$k}%"])
+                      ->orWhereRaw("DATE_FORMAT(fechaInicio, '%H:%i') like ?", ["%{$k}%"])
+                      ->orWhereRaw("DATE_FORMAT(fechaFin, '%H:%i') like ?", ["%{$k}%"])
+                      ->orWhereRaw('SEC_TO_TIME(duracion) like ?', ["%{$k}%"])
+                      ->orWhereRaw('CONCAT(entidadProfesor.nombre, " ", entidadProfesor.apellido) like ?', ["%{$k}%"])
+                      ->orWhereRaw('pagoAlumno.id like ?', ["%{$k}%"]);
+                    })
+                    ->filterColumn("comentarioAlumno", function($q, $k) {
+                      $q->whereRaw('comentarioAlumno like ?', ["%{$k}%"])
+                      ->orWhereRaw('comentarioProfesor like ?', ["%{$k}%"])
+                      ->orWhereRaw('comentarioParaAlumno like ?', ["%{$k}%"])
+                      ->orWhereRaw('comentarioParaProfesor like ?', ["%{$k}%"]);
+                    })->make(true);
+  }
+
+  public function confirmarClase($id, ClaseRequest\ConfirmarClaseRequest $req)/* - */ {
+    $datos = $req->all();
+    $datos["comentario"] = "";
+    Profesor::confirmarClase($datos["idProfesor"], $id, $datos);
+    Mensajes::agregarMensajeExitoso("Confirmación exitosa.");
+    try {
+      
+    } catch (\Exception $e) {
+      Log::error($e->getMessage());
+      Mensajes::agregarMensajeError("Ocurrió un problema durante la confirmación de la clase. Por favor inténtelo nuevamente.");
+    }
+    return redirect(route("alumnos.perfil", ["id" => $id, "seccion" => "clase"]));
+  }
+
+  public function eliminarClase($id, $idClase)/* - */ {
+    try {
+      Clase::eliminar($id, $idClase);
+    } catch (\Exception $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "No se pudo eliminar el registro de datos de la clase seleccionada."], 400);
+    }
+    return response()->json(["mensaje" => "Eliminación exitosa", "id" => $idClase], 200);
+  }
+
+  public function descargarLista($id) {
+    try {
+      $this->data["vistaImpresion"] = TRUE;
+      $this->data["impresionDirecta"] = TRUE;
+      $this->data["alumno"] = Alumno::obtenerXId($id);
+      $this->data["clases"] = Clase::listarXAlumnoNUEVO($id);
+    } catch (ModelNotFoundException $e) {
+      Log::error($e);
+      Mensajes::agregarMensajeError("No se encontraron datos del alumno seleccionado. Es posible que haya sido eliminado.");
+      return redirect(route("alumnos"));
+    }
+    return view("alumno.clase.descargarLista", $this->data);
+  }
+
+  // </editor-fold>
+  // <editor-fold desc="TODO: ELIMINAR">
   public function listarPeriodosClases($id) {
     return Datatables::of(Clase::listarPeriodosXIdAlumno($id))->make(true);
   }
 
   public function listarClasesXPeriodo($id, $numeroPeriodo) {
     return response()->json(Clase::listarXAlumno($id, $numeroPeriodo), 200);
-  }
-
-  public function listarClases($id) {
-    return Datatables::of(Clase::listarXAlumnoNUEVO($id))
-                    ->filterColumn("fechaInicio", function($q, $k) {
-                      $q->whereRaw('fechaInicio like ?', ["%{$k}%"])
-                      ->orWhereRaw('duracion like ?', ["%{$k}%"])
-                      ->orWhereRaw('CONCAT(' . (Auth::user()->rol == RolesUsuario::Alumno ? 'entidadProfesor.nombre, " ", entidadProfesor.apellido' : 'entidadAlumno.nombre, " ", entidadAlumno.apellido') . ') like ?', ["%{$k}%"]);
-                    })->make(true);
   }
 
   public function actualizarEstadoClase($id, ClaseRequest\ActualizarEstadoRequest $req) {
@@ -355,7 +379,7 @@ class AlumnoController extends Controller {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro/actualización de datos. Por favor inténtelo nuevamente.");
     }
-    return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "clase", "nrp" => $datosClase["numeroPeriodo"]]));
+    return redirect(route("alumnos.perfil", ["id" => $id, "seccion" => "clase", "nrp" => $datosClase["numeroPeriodo"]]));
   }
 
   public function actualizarClasesGrupo($id, ClaseRequest\FormularioGrupoRequest $req) {
@@ -367,17 +391,7 @@ class AlumnoController extends Controller {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");
     }
-    return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "clase", "nrp" => $nroPeriodo]));
-  }
-
-  public function actualizarComentariosClase(ClaseRequest\ActualizarComentariosRequest $req) {
-    try {
-      Clase::actualizarComentarios($req->all());
-    } catch (\Exception $e) {
-      Log::error($e);
-      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
-    }
-    return response()->json(["mensaje" => "Actualización exitosa."], 200);
+    return redirect(route("alumnos.perfil", ["id" => $id, "seccion" => "clase", "nrp" => $nroPeriodo]));
   }
 
   public function cancelarClase($id, ClaseRequest\CancelarRequest $req) {
@@ -389,11 +403,11 @@ class AlumnoController extends Controller {
       Log::error($e);
       Mensajes::agregarMensajeError("No se pudo cancelar la clase seleccionada.");
     }
-    return redirect(route("alumnos.perfil", ["id" => $id, "sec" => "clase", "nrp" => $nroPeriodo]));
+    return redirect(route("alumnos.perfil", ["id" => $id, "seccion" => "clase", "nrp" => $nroPeriodo]));
   }
 
   public function datosClase($id, $idClase) {
-    return response()->json(Clase::obtenerXId($id, $idClase, TRUE), 200);
+    return response()->json(Clase::obtenerXId($id, $idClase), 200);
   }
 
   public function datosClasesGrupo($id, ClaseRequest\DatosGrupoRequest $req) {
@@ -402,31 +416,6 @@ class AlumnoController extends Controller {
 
   public function totalClasesXHorario($id, ClaseRequest\TotalHorarioRequest $req) {
     return response()->json(Clase::totalXHorario($id, $req->all()), 200);
-  }
-
-  public function descargarLista($id) {
-
-    try {
-      $this->data["vistaImpresion"] = TRUE;
-      $this->data["impresionDirecta"] = TRUE;
-      $this->data["alumno"] = Alumno::obtenerXId($id);
-      $this->data["clases"] = Clase::listarXAlumno($id);
-    } catch (ModelNotFoundException $e) {
-      Log::error($e);
-      Mensajes::agregarMensajeError("No se encontraron datos del alumno seleccionado. Es posible que haya sido eliminado.");
-      return redirect(route("alumnos"));
-    }
-    return view("alumno.clase.descargarLista", $this->data);
-  }
-
-  public function eliminarClase($id, $idClase) {
-    try {
-      Clase::eliminar($id, $idClase);
-    } catch (\Exception $e) {
-      Log::error($e);
-      return response()->json(["mensaje" => "No se pudo eliminar el registro de datos de la clase seleccionada."], 400);
-    }
-    return response()->json(["mensaje" => "Eliminación exitosa", "id" => $idClase], 200);
   }
 
   // </editor-fold>

@@ -15,20 +15,20 @@ use App\Http\Requests\Postulante\FormularioRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Requests\Postulante\ActualizarEstadoRequest;
 
-class PostulanteController extends Controller {
+class PostulanteController extends Controller/* - */ {
 
   protected $data = array();
 
-  public function __construct() {
+  public function __construct()/* - */ {
     $this->data["seccion"] = "docentes";
     $this->data["subSeccion"] = "postulantes";
   }
 
-  public function index() {
+  public function index()/* - */ {
     return view("postulante.lista", $this->data);
   }
 
-  public function listar(BusquedaRequest $req) {
+  public function listar(BusquedaRequest $req)/* - */ {
     return Datatables::of(Postulante::listar($req->all()))->filterColumn("entidad.nombre", function($q, $k) {
               $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
             })->filterColumn("entidad.fechaRegistro", function($q, $k) {
@@ -36,25 +36,26 @@ class PostulanteController extends Controller {
             })->make(true);
   }
 
-  public function buscar() {
+  public function buscar()/* - */ {
     $termino = Input::get("termino");
-    $postulantes = Postulante::listarBusqueda($termino["term"]);
+    
     $postulantesPro = [];
+    $postulantes = Postulante::listarBusqueda($termino["term"]);
     foreach ($postulantes as $id => $nombreCompleto) {
       $postulantesPro[] = ['id' => $id, 'text' => $nombreCompleto];
     }
     return \Response::json(["results" => $postulantesPro]);
   }
 
-  public function crear() {
+  public function crear()/* - */ {
     return view("postulante.crear", $this->data);
   }
 
-  public function registrar(FormularioRequest $req) {
+  public function registrar(FormularioRequest $req)/* - */ {
     try {
-      Postulante::registrar($req);
+      $idPostulante = Postulante::registrar($req);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
-      return redirect(route("postulantes"));
+      return redirect(route("postulantes.perfil", ["id" => $idPostulante]));
     } catch (\Exception $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
@@ -62,7 +63,7 @@ class PostulanteController extends Controller {
     }
   }
 
-  public function perfil($id) {
+  public function perfil($id)/* - */ {
     try {
       $this->data["postulante"] = Postulante::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
@@ -73,7 +74,7 @@ class PostulanteController extends Controller {
     return view("postulante.perfil", $this->data);
   }
 
-  public function crearExterno() {
+  public function crearExterno()/* - */ {
     Auth::logout();
     $nuevoRegistro = Input::get("nr");
     $this->data["nuevoRegistro"] = (isset($nuevoRegistro));
@@ -81,7 +82,7 @@ class PostulanteController extends Controller {
     return view("postulante.crear", $this->data);
   }
 
-  public function registrarExterno(FormularioRequest $req) {
+  public function registrarExterno(FormularioRequest $req)/* - */ {
     try {
       Postulante::registrar($req);
     } catch (\Exception $e) {
@@ -91,7 +92,7 @@ class PostulanteController extends Controller {
     return redirect(route("postulantes.crear.externo", ["nr" => 1]));
   }
 
-  public function editar($id) {
+  public function editar($id)/* - */  {
     try {
       $this->data["postulante"] = Postulante::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
@@ -102,10 +103,11 @@ class PostulanteController extends Controller {
     return view("postulante.editar", $this->data);
   }
 
-  public function actualizar($id, FormularioRequest $req) {
+  public function actualizar($id, FormularioRequest $req)/* - */ {
     try {
       $datos = $req->all();
       Postulante::actualizar($id, $req);
+      
       if ($datos["registrarComoProfesor"] == 1) {
         Postulante::registrarProfesor($id);
         Mensajes::agregarMensajeExitoso("El postulante seleccionado ha sido registrado como nuevo profesor.");
@@ -120,7 +122,7 @@ class PostulanteController extends Controller {
     return redirect(route("postulantes.editar", ["id" => $id]));
   }
 
-  public function actualizarEstado($id, ActualizarEstadoRequest $req) {
+  public function actualizarEstado($id, ActualizarEstadoRequest $req)/* - */ {
     try {
       $datos = $req->all();
       Postulante::actualizarEstado($id, $datos["estado"]);
@@ -131,7 +133,7 @@ class PostulanteController extends Controller {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function actualizarHorario($id, ActualizarHorarioRequest $req) {
+  public function actualizarHorario($id, ActualizarHorarioRequest $req)/* - */ {
     try {
       $datos = $req->all();
       Postulante::actualizarHorario($id, $datos["horario"]);
@@ -142,7 +144,7 @@ class PostulanteController extends Controller {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function perfilProfesor($id) {
+  public function perfilProfesor($id)/* - */ {
     try {
       $idProfesor = Postulante::obtenerIdProfesor($id);
       return redirect($idProfesor > 0 ? route("profesores.perfil", ["id" => $idProfesor]) : route("postulantes"));
@@ -153,7 +155,7 @@ class PostulanteController extends Controller {
     }
   }
 
-  public function eliminar($id) {
+  public function eliminar($id)/* - */ {
     try {
       Postulante::eliminar($id);
     } catch (\Exception $e) {

@@ -10,7 +10,7 @@ $(document).ready(function () {
   urlBuscar = (typeof (urlBuscar) === "undefined" ? "" : urlBuscar);
   idProfesor = (typeof (idProfesor) === "undefined" ? "" : idProfesor);
   nombreCompletoProfesor = (typeof (nombreCompletoProfesor) === "undefined" ? "" : nombreCompletoProfesor);
-  establecerListaBusqueda("#sel-profesor", urlBuscar);
+  utilBusqueda.establecerListaBusqueda($("#sel-profesor"), urlBuscar);
   $("#sel-profesor").empty().append('<option value="' + idProfesor + '">' + nombreCompletoProfesor + '</option>').val(idProfesor);
   $("#sel-profesor").change(function () {
     if ($(this).data("seccion") === "perfil" && urlPerfil !== "" && $(this).val() !== this.options[this.selectedIndex].innerHTML)
@@ -78,7 +78,7 @@ function cargarLista() {
           }, className: "text-center"}
       ],
       initComplete: function (s, j) {
-        utilTablas.establecerBotonRecargaTabla("tab-lista");
+        utilTablas.establecerBotonRecargaTabla($("#tab-lista"));
       }
     });
   }
@@ -147,7 +147,7 @@ function cargarFormulario() {
           f.submit();
         }
       } else {
-        agregarMensaje("advertencias", "Debe ingresar un horario disponible", true, "#sec-men-alerta-horario");
+        mensajes.agregar("advertencias", "Debe ingresar un horario disponible", true, "#sec-men-alerta-horario");
       }
     },
     highlight: function () {
@@ -175,17 +175,17 @@ function cargarFormulario() {
     onclick: false
   });
   if ($("input[name='modoEditarRegistrar']").val() === "1") {
-    establecerWizard("profesor", ($("input[name='modoEditar']").length > 0 && $("input[name='modoEditar']").val() === "1"));
+    utilFormularios.establecerWizard("profesor", ($("input[name='modoEditar']").length > 0 && $("input[name='modoEditar']").val() === "1"));
 
     var fechaNacimiento = $("#fecha-nacimiento").val();
-    utilFechasHorarios.establecerCalendario("fecha-nacimiento", false, true, false);
+    utilFechasHorarios.establecerCalendario($("#fecha-nacimiento"), false, true, false);
     if (fechaNacimiento !== "") {
       var datFechaNacimiento = fechaNacimiento.split("/");
       $("#fecha-nacimiento").datepicker("setDate", (new Date(datFechaNacimiento[1] + "/" + datFechaNacimiento[0] + "/" + datFechaNacimiento[2])));
     }
 
-    $("#direccion").focusout(verificarDatosBusquedaMapa);
-    $("input[name='codigoUbigeo']").change(verificarDatosBusquedaMapa);
+    $("#direccion").focusout(ubicacionMapa.verificarDatosBusquedaMapa);
+    $("input[name='codigoUbigeo']").change(ubicacionMapa.verificarDatosBusquedaMapa);
   } else {
     $("input[name='horario']").change(function () {
       if (urlActualizarHorario !== "" && $(this).val() !== "") {
@@ -194,7 +194,7 @@ function cargarFormulario() {
             function (d) {
               $("body").unblock({
                 onUnblock: function () {
-                  agregarMensaje("exitosos", "Actualización de horario exitosa.", true);
+                  mensajes.agregar("exitosos", "Actualización de horario exitosa.", true);
                 }
               });
             },
@@ -203,7 +203,7 @@ function cargarFormulario() {
             function (de) {
               $("body").unblock({
                 onUnblock: function () {
-                  agregarMensaje("errores", "Ocurrió un problema durante la actualización del horario del profesor. Por favor inténtelo nuevamente.", true);
+                  mensajes.agregar("errores", "Ocurrió un problema durante la actualización del horario del profesor. Por favor inténtelo nuevamente.", true);
                 }
               });
             }
@@ -220,12 +220,12 @@ function  cargarSeccionComentariosPerfil() {
         if (confirm("¿Está seguro que desea guardar los cambios de estos datos?")) {
           $.blockUI({message: "<h4>Guardando...</h4>"});
           CKEDITOR.instances["comentarios-perfil"].updateElement();
-          var datos = procesarDatosFormulario(f);
+          var datos = utilFormularios.procesarDatos(f);
           util.llamadaAjax($(f).attr("action"), "POST", datos, true,
               function (d) {
                 $("body").unblock({
                   onUnblock: function () {
-                    agregarMensaje("exitosos", d["mensaje"], true);
+                    mensajes.agregar("exitosos", d["mensaje"], true);
                   }
                 });
               },
@@ -234,7 +234,7 @@ function  cargarSeccionComentariosPerfil() {
               function (de) {
                 $("body").unblock({
                   onUnblock: function () {
-                    agregarMensaje("errores", de["responseJSON"]["mensaje"], true);
+                    mensajes.agregar("errores", de["responseJSON"]["mensaje"], true);
                   }
                 });
               }

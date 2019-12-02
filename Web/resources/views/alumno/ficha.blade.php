@@ -1,3 +1,4 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Ficha " . ($alumno->sexo == "F" ? "de la alumna" : "del alumno") . " " . $alumno->nombre . " " .  $alumno->apellido)
 
@@ -89,14 +90,14 @@
           <p class="text-muted">{!! App\Models\Curso::listarSimple(FALSE)[$alumno->idCurso] !!}</p>
           <hr> 
           @endif 
-          @if(isset($alumno->profesorProximaClase)) 
+          @if(isset($alumno->ultimoPago) && isset($alumno->ultimoPago->idProfesor)) 
           <strong><i class="fa fa-fw flaticon-teach"></i> Profesor</strong>
-          <p class="text-muted">{{ $alumno->profesorProximaClase->nombre . " " .  $alumno->profesorProximaClase->apellido }}<br>(Pago por hora de clase: <b>{{ number_format($alumno->proximaClase->costoHoraProfesor, 2, ".", ",") }}</b>)</p>
+          <p class="text-muted">{{ $alumno->ultimoPago->nombreProfesor . " " .  $alumno->ultimoPago->apellidoProfesor }}<br>(Pago por hora de clase: <b>{{ number_format($alumno->ultimoPago->pagoXHoraProfesor, 2, ".", ",") }}</b>)</p>
           <hr> 
           @endif
-          @if(isset($alumno->proximaClase) && isset($alumno->proximaClase->tiempos))
+          @if(isset($alumno->ultimoPago))
           <strong><i class="fa fa-fw fa-clock-o"></i> Total de horas pagadas</strong>
-          <p class="text-muted">{{ App\Helpers\Util::formatoHora($alumno->proximaClase->tiempos->duracionTotal) }}</p>
+          <p class="text-muted">{{ App\Helpers\Util::formatoHora($alumno->ultimoPago->duracionTotalXClases) }}</p>
           <hr> 
           @endif
           <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>

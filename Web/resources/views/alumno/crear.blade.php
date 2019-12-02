@@ -1,3 +1,4 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Alumnos")
 
@@ -25,7 +26,7 @@
 @endif
 
 @section("section_script")
-<script src="{{ asset("assets/eah/js/modulos/alumno/alumno.js") }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/alumno/formulario.js") }}"></script>
 @endsection
 
 @section("breadcrumb")
@@ -35,7 +36,7 @@
 
 @section("content") 
 @include("partials/errors")
-@if(isset($vistaExterna) && $vistaExterna && isset($interesado) && $interesado->estado == App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado)
+@if(isset($vistaExterna) && $vistaExterna && isset($interesado) && in_array($interesado->estado, [App\Helpers\Enum\EstadosInteresado::FichaCompleta, App\Helpers\Enum\EstadosInteresado::AlumnoRegistrado]))
 <div class="row text-center">
   <h4>
     @if(isset($nuevoRegistro) && $nuevoRegistro)

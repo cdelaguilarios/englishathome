@@ -1,17 +1,20 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Postulantes")
 
 @section("section_script")
 <script>
-  var urlActualizarEstado = "{{ route('postulantes.actualizar.estado', ['id' => 0]) }}";
-  var estados = {!! json_encode(App\Helpers\Enum\EstadosPostulante::listar()) !!};
   var urlActualizarHorario = "{{ route('postulantes.actualizar.horario', ['id' => $postulante->idEntidad]) }}";
   var urlPerfil = "{{ route('postulantes.perfil', ['id' => 0]) }}";
   var urlBuscar = "{{ route('postulantes.buscar') }}";
+  
+  var estados = {!! json_encode(App\Helpers\Enum\EstadosPostulante::listar()) !!};
+  
   var idPostulante = "{{ $postulante->id}}";
   var nombreCompletoPostulante = "{{ $postulante->nombre . " " .  $postulante->apellido }}";
 </script>
-<script src="{{ asset("assets/eah/js/modulos/postulante.js") }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/postulante/perfil.js") }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/postulante/busqueda.js") }}"></script>
 @endsection
 
 @section("breadcrumb")
@@ -27,10 +30,12 @@
       <div class="box-body box-profile">
         @include("util.imagenPerfil", ["entidad" => $postulante])
         <h3 class="profile-username">Postulante {{ $postulante->nombre . " " .  $postulante->apellido }}</h3>
-        <p class="text-muted">{{ $postulante->correoElectronico }}</p>
+        <p class="text-muted">
+          <a href="{{ route("correos", ["id" => $postulante->id])}}" target="_blank">{{ $postulante->correoElectronico }}</a>
+        </p>
         <p>
         @if(array_key_exists($postulante->estado, App\Helpers\Enum\EstadosPostulante::listarDisponibleCambio()))
-        <div class="sec-btn-editar-estado">
+        <div class="sec-btn-editar-estado" data-idselestados="sel-estados">
           <a href="javascript:void(0);" class="btn-editar-estado" data-id="{{ $postulante->id }}" data-estado="{{ $postulante->estado }}">
             <span class="label {{ App\Helpers\Enum\EstadosPostulante::listar()[$postulante->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosPostulante::listar()[$postulante->estado][0] }}</span>
           </a>
@@ -61,6 +66,13 @@
         @endforeach
         <hr>
         @endif
+        @if(isset($postulante->telefono))
+        <strong><i class="fa fa-phone margin-r-5"></i> Teléfono</strong>
+        <p class="text-muted">
+          {!! App\Helpers\Util::incluirEnlaceWhatsApp($postulante->telefono) !!}
+        </p>
+        <hr>
+        @endif
         <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
         <p class="text-muted">{{ $postulante->direccion }}{!! ((isset($postulante->numeroDepartamento) && $postulante->numeroDepartamento != "") ? "<br/>Depto./Int " . $postulante->numeroDepartamento : "") !!}{!! ((isset($postulante->referenciaDireccion) && $postulante->referenciaDireccion != "") ? " - " . $postulante->referenciaDireccion : "") !!}<br/>{{ $postulante->direccionUbicacion }}</p>
         <p class="text-muted">
@@ -71,15 +83,17 @@
         <strong><i class="fa fa-volume-up margin-r-5"></i> Audio de presentación</strong>
         <p class="text-muted">
           <audio controls style="width: 100%;">
-            <source src="{{ route("archivos", ["nombre" => ($postulante->audio), "audio" => 1]) }}">
+            <source src="{{ route("archivos", ["nombre" => ($postulante->audio), "esAudio" => 1]) }}">
             Tu explorador no soporta este elemento de audio
           </audio>
+        </p>
         <hr>   
         @endif 
         @if (!empty($postulante->comentarioAdministrador))
         <strong><i class="fa fa-list-alt margin-r-5"></i> Comentarios</strong>
         <p class="text-muted">
-          {{ strip_tags($postulante->comentarioAdministrador) }}
+          {!! $postulante->comentarioAdministrador !!}
+        </p>
         <hr>   
         @endif        
         @if(isset($postulante->numeroDocumento))
@@ -88,13 +102,6 @@
           {{ $postulante->numeroDocumento }}
         </p>
         <hr> 
-        @endif
-        @if(isset($postulante->telefono))
-        <strong><i class="fa fa-phone margin-r-5"></i> Teléfono</strong>
-        <p class="text-muted">
-          {{ $postulante->telefono }}
-        </p>
-        <hr>
         @endif
         @if(isset($postulante->fechaNacimiento))
         <strong><i class="fa fa-birthday-cake margin-r-5"></i> Fecha de nacimiento</strong>
@@ -140,7 +147,7 @@
           @include("util.historial", ["idEntidad" => $postulante->id, "nombreEntidad" => "postulante"]) 
         </div>
         <div id="experiencia-laboral" class="tab-pane">
-          @include("docente.experienciaLaboral", ["docente" => $postulante]) 
+          @include("docente.util.experienciaLaboral", ["docente" => $postulante]) 
         </div>
         <div id="sec-comentarios-administrador" class="tab-pane">
           @include("util.comentariosAdministrador", ["idEntidad" => $postulante->id, "comentarioAdministrador" => $postulante->comentarioAdministrador]) 
@@ -150,6 +157,6 @@
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosPostulante::listarDisponibleCambio(), null, ["id" => "sel-estados", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosPostulante::listarDisponibleCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('postulantes.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosPostulante::listar())]) }}
 </div>
 @endsection

@@ -2,7 +2,7 @@
 
 namespace App\Helpers\Enum;
 
-class EstadosPostulante {
+class EstadosPostulante/* - */ {
 
   const Registrado = "REGISTRADO";
   const RegistradoExterno = "REGISTRADO-EXTERNO";
@@ -11,7 +11,7 @@ class EstadosPostulante {
   const ProfesorRegistrado = "PROFESOR-REGISTRADO";
   const Vetado = "VETADO";
 
-  public static function listar() {
+  public static function listar()/* - */ {
     return [
         EstadosPostulante::Registrado => ["Registrado", "label-primary"],
         EstadosPostulante::RegistradoExterno => ["Registrado externo", "label-primary"],
@@ -22,7 +22,7 @@ class EstadosPostulante {
     ];
   }
 
-  public static function listarBusqueda() {
+  public static function listarBusqueda()/* - */ {
     $estados = EstadosPostulante::listar();
     $estadosBusqueda = [];
     foreach ($estados as $k => $v) {
@@ -31,9 +31,16 @@ class EstadosPostulante {
     return $estadosBusqueda;
   }
 
-  public static function listarDisponibleCambio() {
+  public static function listarDisponibleCambio()/* - */ {
     $estadosBusqueda = EstadosPostulante::listarBusqueda();
-    $estadosDisponibleCambio = [EstadosPostulante::Registrado, EstadosPostulante::RegistradoExterno, EstadosPostulante::Activo, EstadosPostulante::Inactivo, EstadosPostulante::Vetado];
+    $estadosDisponibleCambio = [
+        EstadosPostulante::Registrado,
+        EstadosPostulante::RegistradoExterno,
+        EstadosPostulante::Activo,
+        EstadosPostulante::Inactivo,
+        EstadosPostulante::Vetado
+    ];
+
     $estadosDisponibleCambioSel = [];
     foreach ($estadosBusqueda as $k => $v) {
       if (in_array($k, $estadosDisponibleCambio)) {

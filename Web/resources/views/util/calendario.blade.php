@@ -1,6 +1,14 @@
+{{----}}
+<script>
+  var urlCalendario = "{{ route('calendario.datos') }}";
+  
+  var urlBuscarAlumnos = "{{ route('alumnos.buscar') }}";
+  var urlBuscarProfesores = "{{ route('profesores.buscar') }}";
+</script>
+<script src="{{ asset("assets/eah/js/modulos/util/calendario.js")}}"></script>
 <div class="row">
   <div class="col-sm-12">
-    <div class="{{ (isset($incluirClaseBox) ? "box box-info" : "") }}">
+    <div class="{{ (isset($paginaIndependiente) ? "box box-info" : "") }}">
       <div id="sec-men-calendario"></div>
       <div class="box-header">
         <h3 class="box-title">Filtros de búsquedad</h3> 
@@ -17,7 +25,7 @@
             </div>
           </div>
         </div>
-        @if(isset($incluirListasBusqueda) && $incluirListasBusqueda == 1)
+        @if(isset($paginaIndependiente))
         <div class="form-group">          
           {{ Form::label("bus-tipo-filtro-calendario", "Tipo de filtro: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-3">
@@ -51,15 +59,9 @@
 </div>
 <div class="row">
   <div class="col-sm-12">
-    <div class="{{ (isset($incluirClaseBox) ? "box box-info" : "") }}">
+    <div class="{{ (isset($paginaIndependiente) ? "box box-info" : "") }}">
       <div id="sec-calendario"></div> 
     </div>
   </div>
 </div>
 @include("util.datosClase") 
-<script>
-  var urlCalendario = "{{ route('calendario.datos') }}";
-  var urlBuscarAlumnos = "{{ route('alumnos.buscar') }}";
-  var urlBuscarProfesores = "{{ route('profesores.buscar') }}";
-</script>
-<script src="{{ asset("assets/eah/js/calendario.js")}}"></script>

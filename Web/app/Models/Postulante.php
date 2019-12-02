@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DB;
+use Log;
 use Auth;
 use Carbon\Carbon;
 use App\Helpers\Enum\TiposEntidad;
@@ -19,27 +20,29 @@ class Postulante extends Model {
   protected $table = "postulante";
   protected $fillable = ["ultimosTrabajos", "experienciaOtrosIdiomas", "descripcionPropia", "ensayo", "cv", "certificadoInternacional", "imagenDocumentoIdentidad", "audio"];
 
-  public static function nombreTabla() {
+  public static function nombreTabla()/* - */ {
     $modeloPostulante = new Postulante();
     $nombreTabla = $modeloPostulante->getTable();
     unset($modeloPostulante);
     return $nombreTabla;
   }
 
-  public static function listar($datos = NULL) {
+  public static function listar($datos = NULL)/* - */ {
     $nombreTabla = Postulante::nombreTabla();
-    $postulantes = Postulante::select($nombreTabla . ".*", "entidad.*", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))
-                    ->leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
-                    ->leftJoin(EntidadCurso::nombreTabla() . " as entidadCurso", $nombreTabla . ".idEntidad", "=", "entidadCurso.idEntidad")
-                    ->where("entidad.eliminado", 0)->groupBy("entidad.id")->distinct();
+    $postulantes = Postulante::leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
+            ->leftJoin(EntidadCurso::nombreTabla() . " as entidadCurso", $nombreTabla . ".idEntidad", "=", "entidadCurso.idEntidad")
+            ->select($nombreTabla . ".*", "entidad.*", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))
+            ->where("entidad.eliminado", 0)
+            ->groupBy("entidad.id")
+            ->distinct();
 
     if (isset($datos["estado"])) {
       $postulantes->where("entidad.estado", $datos["estado"]);
     }
     return $postulantes;
   }
-  
-  public static function listarBusqueda($terminoBus = NULL) {
+
+  public static function listarBusqueda($terminoBus = NULL)/* - */ {
     $alumnos = Postulante::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
     if (isset($terminoBus)) {
       $alumnos->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
@@ -47,21 +50,22 @@ class Postulante extends Model {
     return $alumnos->lists("nombreCompleto", "entidad.id");
   }
 
-  public static function obtenerXId($id, $simple = FALSE) {
+  public static function obtenerXId($id, $simple = FALSE)/* - */ {
     $postulante = Postulante::listar()->where("entidad.id", $id)->firstOrFail();
+
     if (!$simple) {
       $postulante->horario = Horario::obtenerJsonXIdEntidad($id);
       $postulante->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($postulante->codigoUbigeo);
       $postulante->cursos = EntidadCurso::obtenerXIdEntidad($id, FALSE);
-      $idPostulanteAnterior = Postulante::listar()->select("entidad.id")->where("entidad.id", "<", $id)->where("entidad.estado", $postulante->estado)->orderBy("entidad.id", "DESC")->first();
-      $idPostulanteSiguiente = Postulante::listar()->select("entidad.id")->where("entidad.id", ">", $id)->where("entidad.estado", $postulante->estado)->first();
-      $postulante->idPostulanteAnterior = (isset($idPostulanteAnterior) ? $idPostulanteAnterior->id : NULL);
-      $postulante->idPostulanteSiguiente = (isset($idPostulanteSiguiente) ? $idPostulanteSiguiente->id : NULL);
+
+      $datosIdsAntSig = Entidad::ObtenerIdsAnteriorSiguienteXEntidad(TiposEntidad::Postulante, $postulante);
+      $postulante->idPostulanteAnterior = $datosIdsAntSig["idEntidadAnterior"];
+      $postulante->idPostulanteSiguiente = $datosIdsAntSig["idEntidadSiguiente"];
     }
     return $postulante;
   }
 
-  public static function registrar($req) {
+  public static function registrar($req)/* - */ {
     $datos = $req->all();
     if (isset($datos["fechaNacimiento"])) {
       $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
@@ -73,9 +77,10 @@ class Postulante extends Model {
       EntidadCurso::registrarActualizar($idEntidad, $datos["idCursos"]);
     }
     Horario::registrarActualizar($idEntidad, $datos["horario"]);
-    $datos["cv"] = Archivo::procesarArchivosSubidos("", $datos, 1, "nombreDocumentoCv", "nombreOriginalDocumentoCv", "nombreDocumentoCvEliminado");
-    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidos("", $datos, 1, "nombreDocumentoCertificadoInternacional", "nombreOriginalDocumentoCertificadoInternacional", "nombreDocumentoCertificadoInternacionalEliminado");
-    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidos("", $datos, 1, "nombreImagenDocumentoIdentidad", "nombreOriginalImagenDocumentoIdentidad", "nombreImagenDocumentoIdentidadEliminado");
+
+    $datos["cv"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 1, "DocumentoPersonalCv");
+    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 1, "DocumentoPersonalCertificadoInternacional");
+    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 1, "DocumentoPersonalImagenDocumentoIdentidad");
 
     $postulante = new Postulante($datos);
     $postulante->idEntidad = $idEntidad;
@@ -91,11 +96,12 @@ class Postulante extends Model {
     return $idEntidad;
   }
 
-  public static function actualizar($id, $req) {
+  public static function actualizar($id, $req)/* - */ {
     $datos = $req->all();
     if (isset($datos["fechaNacimiento"])) {
       $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
     }
+    
     Entidad::actualizar($id, $datos, TiposEntidad::Postulante, $datos["estado"]);
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($id, $datos["idCursos"]);
@@ -103,24 +109,24 @@ class Postulante extends Model {
     Docente::registrarActualizarAudio($id, $req->file("audio"));
     unset($datos["audio"]);
 
-    $postulante = Postulante::obtenerXId($id, TRUE);
-    $datos["cv"] = Archivo::procesarArchivosSubidos($postulante->cv, $datos, 1, "nombreDocumentoCv", "nombreOriginalDocumentoCv", "nombreDocumentoCvEliminado");
-    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidos($postulante->certificadoInternacional, $datos, 1, "nombreDocumentoCertificadoInternacional", "nombreOriginalDocumentoCertificadoInternacional", "nombreDocumentoCertificadoInternacionalEliminado");
-    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidos($postulante->imagenDocumentoIdentidad, $datos, 1, "nombreImagenDocumentoIdentidad", "nombreOriginalImagenDocumentoIdentidad", "nombreImagenDocumentoIdentidadEliminado");
+    $postulante = Postulante::obtenerXId($id, TRUE);    
+    $datos["cv"] = Archivo::procesarArchivosSubidosNUEVO($postulante->cv, $datos, 1, "DocumentoPersonalCv");
+    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidosNUEVO($postulante->certificadoInternacional, $datos, 1, "DocumentoPersonalCertificadoInternacional");
+    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidosNUEVO($postulante->imagenDocumentoIdentidad, $datos, 1, "DocumentoPersonalImagenDocumentoIdentidad");
     $postulante->update($datos);
   }
 
-  public static function actualizarEstado($id, $estado) {
+  public static function actualizarEstado($id, $estado)/* - */ {
     Postulante::obtenerXId($id, TRUE);
     Entidad::actualizarEstado($id, $estado);
   }
 
-  public static function actualizarHorario($id, $horario) {
+  public static function actualizarHorario($id, $horario)/* - */ {
     Postulante::obtenerXId($id, TRUE);
     Horario::registrarActualizar($id, $horario);
   }
 
-  public static function obtenerIdProfesor($id) {
+  public static function obtenerIdProfesor($id)/* - */ {
     Postulante::obtenerXId($id, TRUE);
     $relacionEntidad = RelacionEntidad::obtenerXIdEntidadB($id);
     return ((count($relacionEntidad) > 0) ? $relacionEntidad[0]->idEntidadA : 0);
@@ -173,7 +179,7 @@ class Postulante extends Model {
     return $idProfesor;
   }
 
-  public static function eliminar($id) {
+  public static function eliminar($id)/* - */ {
     Postulante::obtenerXId($id, TRUE);
     Entidad::eliminar($id);
   }
@@ -181,7 +187,8 @@ class Postulante extends Model {
   public static function verificarExistencia($id) {
     try {
       Postulante::obtenerXId($id, TRUE);
-    } catch (\Exception $ex) {
+    } catch (\Exception $e) {
+      Log::error($e);
       return FALSE;
     }
     return TRUE;

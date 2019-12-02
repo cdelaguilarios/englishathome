@@ -6,13 +6,13 @@ function verificarJqueryDocumentosPersonalesDocente() {
 function  cargarSeccionDocumentosPersonalesDocente() {
   formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
 
-  incluirSeccionSubidaArchivos("documento-personal-cv", {onSubmit: function () {
+  utilFormularios.incluirSeccionSubidaArchivos($("#documento-personal-cv"), {onSubmit: function () {
       return true;
     }, acceptFiles: "*", uploadStr: (formularioExternoPostulante ? "Upload file" : "Subir archivo"), maxFileCount: 1});
-  incluirSeccionSubidaArchivos("documento-personal-certificado-internacional", {onSubmit: function () {
+  utilFormularios.incluirSeccionSubidaArchivos($("#documento-personal-certificado-internacional"), {onSubmit: function () {
       return true;
     }, acceptFiles: "*", uploadStr: (formularioExternoPostulante ? "Upload file" : "Subir archivo"), maxFileCount: 1});
-  incluirSeccionSubidaArchivos("documento-personal-imagen-documento-identidad", {onSubmit: function () {
+  utilFormularios.incluirSeccionSubidaArchivos($("#documento-personal-imagen-documento-identidad"), {onSubmit: function () {
       return true;
     }, acceptFiles: "*", uploadStr: (formularioExternoPostulante ? "Upload file" : "Subir archivo"), maxFileCount: 1});
 }

@@ -1,17 +1,21 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Alumnos")
 
 @section("section_script")
 <script>
-  var urlActualizarEstado = "{{ route('alumnos.actualizar.estado', ['id' => 0]) }}";
-  var estados = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listar()) !!};
-  var estadosProfesor = {!! json_encode(App\Helpers\Enum\EstadosProfesor::listar()) !!};
   var urlActualizarHorario = "{{ route('alumnos.actualizar.horario', ['id' => $alumno->idEntidad]) }}";
   var urlPerfil = "{{ route('alumnos.perfil', ['id' => 0]) }}";
   var urlBuscar = "{{ route('alumnos.buscar') }}";
+  
+  var estados = {!! json_encode(App\Helpers\Enum\EstadosAlumno::listar()) !!};
+  var estadosProfesor = {!! json_encode(App\Helpers\Enum\EstadosProfesor::listar()) !!};
+  
   var idAlumno = "{{ $alumno->id}}";
-  var nombreCompletoAlumno = "{{ $alumno->nombre . " " .  $alumno->apellido }}";</script>
-<script src="{{ asset("assets/eah/js/modulos/alumno/alumno.js") }}"></script>
+  var nombreCompletoAlumno = "{{ $alumno->nombre . " " .  $alumno->apellido }}";
+</script>
+<script src="{{ asset("assets/eah/js/modulos/alumno/perfil.js") }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/alumno/busqueda.js") }}"></script>
 @endsection
 
 @section("breadcrumb")
@@ -28,10 +32,12 @@
         @include("util.credencialesAcceso", ["entidad" => $alumno])
         @include("util.imagenPerfil", ["entidad" => $alumno])
         <h3 class="profile-username">Alumn{{ $alumno->sexo == "F" ? "a" : "o" }} {{ $alumno->nombre . " " .  $alumno->apellido }}</h3>
-        <p class="text-muted">{{ $alumno->correoElectronico }}</p>
+        <p class="text-muted">
+          <a href="{{ route("correos", ["id" => $alumno->id])}}" target="_blank">{{ $alumno->correoElectronico }}</a>
+        </p>
         <p>
         @if(array_key_exists($alumno->estado, App\Helpers\Enum\EstadosAlumno::listarDisponibleCambio()))
-        <div class="sec-btn-editar-estado">
+        <div class="sec-btn-editar-estado" data-idselestados="sel-estados">
           <a href="javascript:void(0);" class="btn-editar-estado" data-id="{{ $alumno->id }}" data-estado="{{ $alumno->estado }}">
             <span class="label {{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][1] }} btn-estado">{{ App\Helpers\Enum\EstadosAlumno::listar()[$alumno->estado][0] }}</span>
           </a>
@@ -47,7 +53,7 @@
         <h3 class="box-title">Datos principales {{ $alumno->sexo == "F" ? "de la alumna" : "del alumno" }}</h3>
       </div>
       <div class="box-body">
-        <strong><i class="fa fa-fw fa-calendar"></i> Horario</strong>
+        <strong><i class="fa fa-fw fa-calendar"></i> Horario de referencia</strong>
         <p class="text-muted">
           @include("util.horario", ["horario" => $alumno->horario, "modo" => "visualizar"])
         </p>
@@ -57,33 +63,33 @@
         <p class="text-muted">{{ App\Models\Curso::listarSimple(FALSE)[$alumno->idCurso] }}</p>
         <hr> 
         @endif 
-        @if(isset($alumno->profesorProximaClase)) 
+        @if(isset($alumno->ultimoPago) && isset($alumno->ultimoPago->idProfesor)) 
         <strong><i class="fa flaticon-teach"></i> Profesor</strong>
         <p class="text-muted">
-          <a href="{{ route("profesores.perfil", ["id" => $alumno->profesorProximaClase->idEntidad]) }}" target="_blank">
-            {{ $alumno->profesorProximaClase->nombre . " " .  $alumno->profesorProximaClase->apellido }}
-          </a><br>(Pago por hora de clase: <b>{{ number_format($alumno->proximaClase->costoHoraProfesor, 2, ".", ",") }}</b>)
+          <a href="{{ route("profesores.perfil", ["id" => $alumno->ultimoPago->idProfesor]) }}" target="_blank">
+            {{ $alumno->ultimoPago->nombreProfesor . " " .  $alumno->ultimoPago->apellidoProfesor }}
+          </a><br>(Pago por hora de clase: <b>{{ number_format($alumno->ultimoPago->pagoXHoraProfesor, 2, ".", ",") }}</b>)
         </p>
         <hr> 
         @endif
-        @if(isset($alumno->fechaInicioClase))
+        @if(isset($alumno->fechaInicioClase) && (int)\Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaInicioClase)->format("Y") > 1900)
         <strong><i class="fa fa-calendar-check-o margin-r-5"></i> Fecha de inicio de clases</strong>
         <p class="text-muted">
           {{ \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaInicioClase)->format("d/m/Y") }}
         </p>
         <hr>    
         @endif
-        @if(isset($alumno->proximaClase) && isset($alumno->proximaClase->tiempos))
-        <strong><i class="fa fa-clock-o margin-r-5"></i> Total de horas pagadas</strong>
+        @if(isset($alumno->ultimoPago))
+        <strong><i class="fa fa-clock-o margin-r-5"></i> Bolsa de horas</strong>
         <p class="text-muted">
-          {{ App\Helpers\Util::formatoHora($alumno->proximaClase->tiempos->duracionTotal) }}
+          {{ App\Helpers\Util::formatoHora($alumno->ultimoPago->duracionTotalXClases) }}
         </p>
         <hr>    
         @endif
         @if(isset($alumno->telefono))
         <strong><i class="fa fa-phone margin-r-5"></i> Teléfono</strong>
         <p class="text-muted">
-          {{ $alumno->telefono }}
+          {!! App\Helpers\Util::incluirEnlaceWhatsApp($alumno->telefono) !!}
         </p>
         <hr>
         @endif
@@ -135,7 +141,7 @@
         </p>
         <hr>
         @endif
-        @if(isset($alumno->fechaNacimiento))
+        @if(isset($alumno->fechaNacimiento) && (int)\Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaNacimiento)->format("Y") > 1900)
         <strong><i class="fa fa-birthday-cake margin-r-5"></i> Fecha de nacimiento</strong>
         <p class="text-muted">
           {{ \Carbon\Carbon::createFromFormat("Y-m-d H:i:s", $alumno->fechaNacimiento)->format("d/m/Y") }}
@@ -152,7 +158,6 @@
           <div class="col-sm-6">
             <a href="{{ route("alumnos.crear")}}" class="btn btn-primary btn-clean">Nuevo alumno</a>          
             <a href="{{ route("alumnos.editar", $alumno->id)}}" class="btn btn-primary btn-clean">Editar datos</a>
-            <!--<a href="{{ route("alumnos.descargar.ficha", $alumno->id)}}" class="btn btn-primary btn-clean">Descargar ficha</a>-->
             <a href="{{ route("alumnos.ficha", $alumno->id)}}" target="_blank" class="btn btn-primary btn-clean">Descargar ficha</a>
             <a href="{{ route("correos", ["id" => $alumno->id])}}" target="_blank" class="btn btn-primary btn-clean">Enviar correo</a>
           </div>      
@@ -183,35 +188,22 @@
           @include("util.historial", ["idEntidad" => $alumno->id, "nombreEntidad" => "alumno"]) 
         </div>
         <div id="pago" class="tab-pane">
-          @if($alumno->horario != "[]")
-          @include("alumno.pago.principal", ["idAlumno" => $alumno->id, "fechaInicioClase" => $alumno->fechaInicioClase, "costoHoraClase" => $alumno->costoHoraClase, "numeroPeriodos" => $alumno->numeroPeriodos, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : null)]) 
-          @else
-          Debe establecer un horario para el  alumn{{ $alumno->sexo == "F" ? "a" : "o" }}.
-          @endif
+          @include("alumno.pago.principal")         
         </div>
         <div id="clase" class="tab-pane">
-          @if($alumno->horario != "[]")
-          @include("alumno.clase.principal", ["idAlumno" => $alumno->id, "costoHoraClase" => $alumno->costoHoraClase, "idCurso" => (isset($alumno->idCurso) ? $alumno->idCurso : null)])
-          @else
-          Debe establecer un horario para el  alumn{{ $alumno->sexo == "F" ? "a" : "o" }}.
-          @endif
+          @include("alumno.clase.principal")
         </div>
         <div id="calendario" class="tab-pane">
-          @if($alumno->horario != "[]")
           @include("util.calendario", ["idEntidad" => $alumno->id]) 
-          @else
-          Debe establecer un horario para el  alumn{{ $alumno->sexo == "F" ? "a" : "o" }}.
-          @endif
         </div>
         <div id="sec-comentarios-administrador" class="tab-pane">
           @include("util.comentariosAdministrador", ["idEntidad" => $alumno->id, "comentarioAdministrador" => $alumno->comentarioAdministrador]) 
-        </div>
-        @include("alumno.pago.datos") 
+        </div> 
       </div>
     </div>
   </div>
 </div>
 <div style="display: none">
-  {{ Form::select("", App\Helpers\Enum\EstadosAlumno::listarDisponibleCambio(), null, ["id" => "sel-estados", "class" => "form-control"]) }}
+  {{ Form::select("", App\Helpers\Enum\EstadosAlumno::listarDisponibleCambio(), null, ["id" => "sel-estados", "class" => "form-control", "data-urlactualizar" => route('alumnos.actualizar.estado', ['id' => 0]), "data-estados" => json_encode(App\Helpers\Enum\EstadosAlumno::listar())]) }}
 </div>
 @endsection

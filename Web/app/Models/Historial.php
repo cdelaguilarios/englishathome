@@ -43,7 +43,7 @@ class Historial extends Model {
                     ->distinct();
   }
 
-  public static function obtenerXId($id) {
+  public static function obtenerXId($id)/* - */ {
     return Historial::where("id", $id)->where("eliminado", 0)->firstOrFail();
   }
 
@@ -91,12 +91,12 @@ class Historial extends Model {
     $registros->update(["revisado" => 1]);
   }
 
-  public static function registrar($datos) {
+  public static function registrar($datos)/* - */  {
     $idEntidadesSel = (is_array($datos["idEntidades"]) ? $datos["idEntidades"] : [$datos["idEntidades"]]);
     if (count($idEntidadesSel) > 0) {
       $datos["fechaNotificacion"] = (isset($datos["fechaNotificacion"]) && !(isset($datos["notificarInmediatamente"]) && $datos["notificarInmediatamente"] == 1) ? $datos["fechaNotificacion"] : Carbon::now()->toDateTimeString());
       $datos["tipo"] = (isset($datos["tipo"]) ? $datos["tipo"] : TiposHistorial::Notificacion);
-      $datos["adjuntos"] = Archivo::procesarArchivosSubidos("", $datos, 20, "nombresArchivosAdjuntos", "nombresOriginalesArchivosAdjuntos");
+      $datos["adjuntos"] = Archivo::procesarArchivosSubidos("", $datos, 20, "nombresArchivosAdjuntos", "nombresOriginalesArchivosAdjuntos");//TODO: Revisar
 
       $historial = new Historial($datos);
       $historial->fechaRegistro = Carbon::now()->toDateTimeString();
@@ -105,21 +105,22 @@ class Historial extends Model {
     }
   }
 
-  public static function actualizar($id, $datos) {
+  public static function actualizar($id, $datos)/* - */ {
     $idEntidadesSel = (is_array($datos["idEntidades"]) ? $datos["idEntidades"] : [$datos["idEntidades"]]);
     if (count($idEntidadesSel) > 0) {
       if (isset($datos["fechaNotificacion"])) {
         $datos["fechaNotificacion"] = (!(isset($datos["notificarInmediatamente"]) && $datos["notificarInmediatamente"] == 1) ? $datos["fechaNotificacion"] : Carbon::now()->toDateTimeString());
       }
+      
       $historial = Historial::obtenerXId($id);
-      $datos["adjuntos"] = Archivo::procesarArchivosSubidos($historial->adjuntos, $datos, 20, "nombresArchivosAdjuntos", "nombresOriginalesArchivosAdjuntos", "nombresArchivosAdjuntosEliminados");
+      $datos["adjuntos"] = Archivo::procesarArchivosSubidos($historial->adjuntos, $datos, 20, "nombresArchivosAdjuntos", "nombresOriginalesArchivosAdjuntos", "nombresArchivosAdjuntosEliminados");//TODO: Revisar
       $historial->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
       $historial->update($datos);
       Historial::registrarActualizarEntidadHistorial($historial["id"], $idEntidadesSel, (isset($historial["enviarCorreo"]) && ((int) $historial["enviarCorreo"] == 1)));
     }
   }
 
-  public static function eliminarXIdClase($idClase) {
+  public static function eliminarXIdClase($idClase)/* - */ {
     $historiales = Historial::where("eliminado", 0)->where("idClase", $idClase)->get();
     foreach ($historiales as $historial) {
       $historial->eliminado = 1;
@@ -148,7 +149,7 @@ class Historial extends Model {
         }
         $entidades = $preEntidades->get();
       } else {
-        $entidades = Entidad::listar($datos["tipoEntidad"], $datos["estado" . $datos["tipoEntidad"]], $idsEntidadesExcluidas);
+        $entidades = Entidad::listar($datos["tipoEntidad"], $datos["estado" . $datos["tipoEntidad"]], $idsEntidadesExcluidas)->get();
       }
       foreach ($entidades as $entidad) {
         $historial = new Historial($datos + ["idEntidadDestinataria" => $entidad->id]);
@@ -275,7 +276,7 @@ class Historial extends Model {
     $historial->claseTextoColorIcono = (array_key_exists($historial->tipo, $tiposNotificacion) ? $tiposNotificacion[$historial->tipo][3] : TiposHistorial::ClaseTextoColorIconoDefecto);
   }
 
-  private static function registrarActualizarEntidadHistorial($idHistorial, $idEntidades, $incluirObservadores = FALSE) {
+  private static function registrarActualizarEntidadHistorial($idHistorial, $idEntidades, $incluirObservadores = FALSE)/* - */  {
     EntidadHistorial::where("idHistorial", $idHistorial)->delete();
     foreach ($idEntidades as $idEntidad) {
       if (!is_null($idEntidad)) {
@@ -285,7 +286,7 @@ class Historial extends Model {
     }
 
     if ($incluirObservadores) {
-      $entidadesUsuarios = Entidad::listar(TiposEntidad::Usuario);
+      $entidadesUsuarios = Entidad::listar(TiposEntidad::Usuario)->get();
       foreach ($entidadesUsuarios as $entidadUsuario) {
         $entidadHitorial = new EntidadHistorial([ "idEntidad" => $entidadUsuario->id, "idHistorial" => $idHistorial, "esObservador" => 1]);
         $entidadHitorial->save();

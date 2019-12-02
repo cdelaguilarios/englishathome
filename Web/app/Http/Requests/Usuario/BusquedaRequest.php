@@ -6,20 +6,20 @@ use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\EstadosUsuario;
 
-class BusquedaRequest extends Request {
+class BusquedaRequest extends Request/* - */ {
 
-  public function authorize() {
+  public function authorize()/* - */ {
     return true;
   }
 
-  protected function getValidatorInstance() {
+  protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
 
-  public function rules() {
+  public function rules()/* - */ {
     $datos = $this->all();
     $reglasValidacion = [];
 
@@ -42,7 +42,7 @@ class BusquedaRequest extends Request {
     }
   }
 
-  public function messages() {
+  public function messages()/* - */ {
     return [
         "estadoNoValido.required" => "El estado seleccionado no es válido."
     ];

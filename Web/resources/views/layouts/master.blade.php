@@ -88,13 +88,13 @@
 
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
-              @include("notificacion.widget") 
+              {{--@include("notificacion.widget")--}} 
               <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   @if ($usuarioActual->imagenPerfil == "null" || empty($usuarioActual->imagenPerfil))
                   <img src="{{ asset("assets/eah/img/perfil-imagen.png")}}" class="user-image" />
                   @else
-                  <img src="{{ route("archivos", ["nombre" => (isset($usuarioActual->imagenPerfil) && $usuarioActual->imagenPerfil != "" ? $usuarioActual->imagenPerfil : "-"), "tip" => ($usuarioActual->sexo == "F" ? "f" : "m")]) }}" class="user-image"/>  
+                  <img src="{{ route("archivos", ["nombre" => (isset($usuarioActual->imagenPerfil) && $usuarioActual->imagenPerfil != "" ? $usuarioActual->imagenPerfil : "-"), "sexoEntidad" => ($usuarioActual->sexo == "F" ? "f" : "m")]) }}" class="user-image"/>  
                   @endif
                   <span class="hidden-xs">{!! ucwords(mb_strtolower($usuarioActual->nombre)) !!} {!! ucwords(mb_strtolower($usuarioActual->apellido)) !!}</span>
                 </a>
@@ -104,7 +104,7 @@
                     @if ($usuarioActual->imagenPerfil == "null" || empty($usuarioActual->imagenPerfil))
                     <img src="{{ asset("assets/eah/img/perfil-imagen.png") }}" class="img-circle" />
                     @else
-                    <img src="{{ route("archivos", ["nombre" => (isset($usuarioActual->imagenPerfil) && $usuarioActual->imagenPerfil != "" ? $usuarioActual->imagenPerfil : "-"), "tip" => ($usuarioActual->sexo == "F" ? "f" : "m")]) }}" class="img-circle"/>                    
+                    <img src="{{ route("archivos", ["nombre" => (isset($usuarioActual->imagenPerfil) && $usuarioActual->imagenPerfil != "" ? $usuarioActual->imagenPerfil : "-"), "sexoEntidad" => ($usuarioActual->sexo == "F" ? "f" : "m")]) }}" class="img-circle"/>                    
                     @endif
                     <p>
                       {!! ucwords(mb_strtolower($usuarioActual->nombre)) !!} {!! ucwords(mb_strtolower($usuarioActual->apellido)) !!}
@@ -149,9 +149,12 @@
                 <li class="{{ ((isset($subSeccion) && $subSeccion == "profesores") ? "active" : "") }}">
                   <a href="{{ route("profesores")}}"><i class="fa flaticon-teacher-with-stick"></i> <span>Profesores</span></a>
                 </li>
-                <li class="{{ ((isset($subSeccion) && $subSeccion == "disponibles") ? "active" : "") }}">
-                  <a href="{{ route("docentes.disponibles")}}"><i class="fa fa-search"></i> <span>Buscar disponibles</span></a>
+                <li class="{{ ((isset($subSeccion) && $subSeccion == "pagos") ? "active" : "") }}">
+                  <a href="{{ route("docentes.pagosXClases")}}"><i class="fa fa-money"></i> <span>Pagos por clases</span></a>
                 </li>
+                {{--<li class="{{ ((isset($subSeccion) && $subSeccion == "disponibles") ? "active" : "") }}">
+                  <a href="{{ route("docentes.disponibles")}}"><i class="fa fa-search"></i> <span>Buscar disponibles</span></a>
+                </li>--}}
               </ul>
             </li> 
             <li class="{{ ((isset($seccion) && $seccion == "cursos") ? "active" : "") }}">
@@ -160,7 +163,7 @@
             <li class="{{ ((isset($seccion) && $seccion == "calendario") ? "active" : "") }}">
               <a href="{{ route("calendario")}}"><i class="fa fa-calendar"></i> <span>Calendario</span></a>
             </li>
-            <li class="{{ ((isset($seccion) && $seccion == "reportes") ? "active" : "") }} treeview">
+            {{--<li class="{{ ((isset($seccion) && $seccion == "reportes") ? "active" : "") }} treeview">
               <a href="javascript:void(0);">
                 <i class="fa fa-bar-chart"></i> <span>Reportes</span>
                 <span class="pull-right-container">
@@ -178,7 +181,7 @@
                   <a href="{{ route("reporte.pagos")}}"><i class="fa fa-line-chart"></i> Reporte de pagos</a>
                 </li>
               </ul>
-            </li> 
+            </li>--}}
             <li class="{{ ((isset($seccion) && $seccion == "correos") ? "active" : "") }}">
               <a href="{{ route("correos")}}"><i class="fa fa-envelope"></i> <span>Correos masivos</span></a>
             </li>           
@@ -250,30 +253,33 @@
     <script src="{{ asset("assets/plugins/fullcalendar/locale/es.js") }}"></script>
     <script src="//www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-var urlBase = "{{ url('/') }}";
-var urlBaseImagen = "{{ route('archivos', ['nombre' => '[RUTA_IMAGEN]']) }}";
-var urlArchivos = "{{ route('archivos', ['nombre' => '0']) }}";
-var urlRegistrarArchivo = "{{ route('archivos.reqistrar') }}";
-var urlEliminarArchivo = "{{ route('archivos.eliminar') }}";
-var minHorasClase = "{{ $minHorasClase }}";
-var maxHorasClase = "{{ $maxHorasClase }}";
-var minHorario = "{{ $minHorario }}";
-var maxHorario = "{{ $maxHorario}}";
-var urlPerfilProfesor = "{{ route('profesores.perfil', ['id' => 0]) }}";
-var urlEditarPostulante = "{{ route('postulantes.editar', ['id' => 0]) }}";
-var urlPerfilAlumno = "{{ route('alumnos.perfil', ['id' => 0]) }}";
-var estadosPago = {!!  json_encode(App\Helpers\Enum\EstadosPago::listar()) !!};
-var urlDatosClase = "{{ route('alumnos.clases.datos', ['id' => '[ID_ALUMNO]', 'idClase' => 0]) }}";
-var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
-var formularioExternoPostulante = {{ ((isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()) ? "true" : "false") }};
-var maxTamanhoSubida = {{ Config::get("eah.maxTamanhoSubida") }};
+      var urlBase = "{{ url('/') }}";
+      var urlBaseImagen = "{{ route('archivos', ['nombre' => '[RUTA_IMAGEN]']) }}";
+      var urlArchivos = "{{ route('archivos', ['nombre' => '0']) }}";
+      var urlRegistrarArchivo = "{{ route('archivos.reqistrar') }}";
+      var urlEliminarArchivo = "{{ route('archivos.eliminar') }}";
+      var urlPerfilAlumno = "{{ route('alumnos.perfil', ['id' => 0]) }}";
+      var urlPerfilProfesor = "{{ route('profesores.perfil', ['id' => 0]) }}";
+      var urlEditarPostulante = "{{ route('postulantes.editar', ['id' => 0]) }}";
+      var urlPerfilPostulante = "{{ route('postulantes.perfil', ['id' => 0]) }}";
+      var urlDatosClase = "{{ route('alumnos.clases.datos', ['id' => '[ID_ALUMNO]', 'idClase' => 0]) }}";
+      
+      var minHorasClase = "{{ $minHorasClase }}";
+      var maxHorasClase = "{{ $maxHorasClase }}";
+      var minHorario = "{{ $minHorario }}";
+      var maxHorario = "{{ $maxHorario}}";
+      var estadosPago = {!!  json_encode(App\Helpers\Enum\EstadosPago::listar()) !!};
+      var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
+      var formularioExternoPostulante = {{ ((isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()) ? "true" : "false") }};
+      var maxTamanhoArchivoSubida = {{ Config::get("eah.maxTamanhoArchivoSubida") }};
+      var estadosDocente = {!! json_encode(App\Helpers\Enum\EstadosDocente::listar()) !!};  
     </script>
     <script src="{{ asset("assets/eah/js/util.js") }}"></script>
     <script src="{{ asset("assets/eah/js/mensajes.js") }}"></script>   
     @else
     <script type="text/javascript">
-var minHorario = "{{ $minHorario }}";
-var maxHorario = "{{ $maxHorario}}";
+      var minHorario = "{{ $minHorario }}";
+      var maxHorario = "{{ $maxHorario}}";
     </script>
     @endif
     @yield("section_script") 

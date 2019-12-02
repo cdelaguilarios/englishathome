@@ -49,10 +49,12 @@ class ProfileComposer {
       ];
       Cache::put("datosExtrasVistas", $datosExtrasVistas, 120);
     }
-    foreach ($datosExtrasVistas as $k => $v)
+    foreach ($datosExtrasVistas as $k => $v) {
       $view->with($k, $v);
-    if (!(Auth::guest()))
+    }
+    if (!(Auth::guest())) {
       $view->with("usuarioActual", Usuario::obtenerActual());
+    }
   }
 
 }

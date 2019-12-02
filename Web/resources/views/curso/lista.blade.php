@@ -1,3 +1,4 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Cursos")
 
@@ -7,7 +8,7 @@
   var urlEditar = "{{ route('cursos.editar', ['id' => 0]) }}";
   var urlEliminar = "{{ route('cursos.eliminar', ['id' => 0]) }}";
 </script>
-<script src="{{ asset("assets/eah/js/modulos/curso.js")}}"></script>
+<script src="{{ asset("assets/eah/js/modulos/curso/lista.js")}}"></script>
 @endsection
 
 @section("breadcrumb")
@@ -23,9 +24,10 @@
         <a href="{{ route("cursos.crear")}}" class="btn btn-primary btn-clean">Nuevo curso</a>  
       </div>         
       <div class="box-body">
-        <table id="tab-lista" class="table table-bordered table-hover">
+        <table id="tab-lista-cursos" class="table table-bordered table-hover">
           <thead>
             <tr>
+              <th>N°</th> 
               <th>Nombre</th> 
               <th>Descripción</th>  
               <th>Activo</th>    

@@ -1,8 +1,9 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Interesados")
 
 @section("section_script")
-<script src="{{ asset("assets/eah/js/modulos/interesado.js") }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/interesado/formulario.js") }}"></script>
 @endsection
 
 @section("breadcrumb")

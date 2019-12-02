@@ -79,8 +79,8 @@ function cargarLista() {
           }, className: "text-center"}
       ],
       initComplete: function (s, j) {
-        utilTablas.establecerBotonRecargaTabla("tab-lista");
-        utilTablas.establecerCabecerasBusquedaTabla("tab-lista");
+        utilTablas.establecerBotonRecargaTabla($("#tab-lista"));
+        utilTablas.establecerCabecerasBusquedaTabla($("#tab-lista"));
       }
     });
   }
@@ -93,7 +93,7 @@ function cargarCajaBusqueda() {
   nombreCompletoInteresado = (typeof (nombreCompletoInteresado) === "undefined" ? "" : nombreCompletoInteresado);
 
   if (urlBuscar !== "" && idInteresado !== "" && nombreCompletoInteresado !== "") {
-    establecerListaBusqueda("#sel-interesado", urlBuscar);
+    utilBusqueda.establecerListaBusqueda($("#sel-interesado"), urlBuscar);
     $("#sel-interesado").empty().append('<option value="' + idInteresado + '">' + nombreCompletoInteresado + '</option>').val(idInteresado);
     $("#sel-interesado").change(function () {
       if ($(this).data("seccion") === "cotizar" && urlCotizar !== "" && $(this).val() !== this.options[this.selectedIndex].innerHTML)
@@ -126,7 +126,7 @@ function cargarFormulario() {
       idCurso: {
         required: true
       },
-      costoHoraClase: {
+      costoXHoraClase: {
         required: true,
         validarDecimal: true
       }
@@ -210,7 +210,7 @@ function cargarFormularioCotizacion() {
       notasAdicionales: {
         validarCkEditor: true
       },
-      costoHoraClase: {
+      costoXHoraClase: {
         required: true,
         validarDecimal: true
       },
@@ -224,12 +224,12 @@ function cargarFormularioCotizacion() {
         $("#mod-correo-cotizacion-prueba").modal("hide");
         $.blockUI({message: "<h4>Enviando cotización...</h4>"});
         if ($("#correo-cotizacion-prueba").val() !== "") {
-          var datos = procesarDatosFormulario(f);
+          var datos = utilFormularios.procesarDatos(f);
           util.llamadaAjax($(f).attr("action"), "POST", datos, true,
                   function (d) {
                     $("body").unblock({
                       onUnblock: function () {
-                        agregarMensaje("exitosos", "Cotización enviada.", true);
+                        mensajes.agregar("exitosos", "Cotización enviada.", true);
                       }
                     });
                   },
@@ -238,7 +238,7 @@ function cargarFormularioCotizacion() {
                   function (de) {
                     $("body").unblock({
                       onUnblock: function () {
-                        agregarMensaje("errores", "Ocurrió un problema durante el envio de la cotización. Por favor inténtelo nuevamente.", true);
+                        mensajes.agregar("errores", "Ocurrió un problema durante el envio de la cotización. Por favor inténtelo nuevamente.", true);
                       }
                     });
                   }
@@ -320,7 +320,7 @@ function cargarFormularioCotizacion() {
       return false;
     $("#mod-correo-cotizacion-prueba").modal("show");
   });
-  incluirSeccionSubidaArchivos("adjuntos", {onSubmit: function () {
+  utilFormularios.incluirSeccionSubidaArchivos($("#adjuntos"), {onSubmit: function () {
       return true;
     }, acceptFiles: "*", uploadStr: "Subir archivo"});
 }

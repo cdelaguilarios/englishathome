@@ -6,9 +6,9 @@ use Log;
 use App\Models\Ubigeo;
 use App\Http\Controllers\Controller;
 
-class UbigeoController extends Controller {
+class UbigeoController extends Controller/* - */ {
 
-  public function listarDepartamentos() {
+  public function listarDepartamentos()/* - */ {
     try {
       $departamentos = Ubigeo::listarDepartamentos();
     } catch (\Exception $e) {
@@ -18,7 +18,7 @@ class UbigeoController extends Controller {
     return response()->json(["elementosUbigeo" => $departamentos], 200);
   }
 
-  public function listarProvincias($codigoDepartamento) {
+  public function listarProvincias($codigoDepartamento)/* - */ {
     try {
       $provincias = Ubigeo::listarProvinciasXCodigoDepartamento($codigoDepartamento);
     } catch (\Exception $e) {
@@ -28,7 +28,7 @@ class UbigeoController extends Controller {
     return response()->json(["elementosUbigeo" => $provincias], 200);
   }
 
-  public function listarDistritos($codigoProvincia) {
+  public function listarDistritos($codigoProvincia)/* - */ {
     try {
       $distritos = Ubigeo::listarDistritosXCodigoProvincia($codigoProvincia);
     } catch (\Exception $e) {

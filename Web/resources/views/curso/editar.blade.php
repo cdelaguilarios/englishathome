@@ -1,3 +1,4 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Cursos")
 
@@ -5,7 +6,7 @@
 <script>
   var urlEditar = "{{ route('cursos.editar', ['id' => 0]) }}";
 </script>
-<script src="{{ asset("assets/eah/js/modulos/curso.js")}}"></script>
+<script src="{{ asset("assets/eah/js/modulos/curso/formulario.js")}}"></script>
 @endsection
 
 @section("breadcrumb")

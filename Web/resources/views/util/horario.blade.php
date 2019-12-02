@@ -1,3 +1,5 @@
+{{----}}
+<script type="text/javascript" src="{{ asset("assets/eah/js/modulos/util/horario.js")}}"></script>
 @if(isset($modo) && $modo == "visualizar")
 <div id="sec-perfil-horario">  
   <div id="sec-info-horario"></div>
@@ -52,7 +54,7 @@
       <div id="sec-instrucciones-horario" style="display:none;">
         <div class="modal-body">
           <div class="row">
-            <div class="col-sm-12">- {{ ((isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()) ? "Click on a start time then on an end time, all the boxes within that time range will be selected." : "Haz click sobre una hora de inicio luego sobre una hora de fin, todas las casillas dentro de ese rango de horario quedaran seleccionadas.") }}</div>
+            <div class="col-sm-12">- {{ ((isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()) ? "Click on a start time then on an end time, all the boxes within that time range will be selected." : "Haz click sobre una hora de inicio luego sobre una hora de fin, todas las casillas dentro de ese rango de horario quedarán seleccionadas.") }}</div>
             <div class="col-sm-12">
               <img src="{{ asset("assets/eah/img/instrucciones-horario-disponible-1.gif")}}"/>
             </div>
@@ -70,4 +72,3 @@
   </div>
 </div>
 @endif
-<script type="text/javascript" src="{{ asset("assets/eah/js/horario.js")}}"></script>

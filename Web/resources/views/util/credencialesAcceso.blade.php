@@ -1,4 +1,10 @@
-<span class="pull-right"><a id="btn-editar-credenciales-acceso" href="javascript:void(0);" title="Editar credenciales de acceso al sistema"><i class="fa fa-fw fa-user-secret"></i><i class="fa fa-fw fa-lock"></i></a></span>
+{{----}}
+<script type="text/javascript" src="{{ asset("assets/eah/js/modulos/util/credencialesAcceso.js") }}"></script>
+<div class="pull-right">
+  <a id="btn-editar-credenciales-acceso" href="javascript:void(0);" title="Editar credenciales de acceso al sistema">
+    <i class="fa fa-fw fa-user-secret"></i><i class="fa fa-fw fa-lock"></i>
+  </a>
+</div>
 <div id="mod-editar-credenciales-acceso" class="modal" data-keyboard="false" style="text-align: initial">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -35,7 +41,7 @@
               <div class="form-group">
                 <div class="col-sm-4">
                   {{ Form::label("codigoVerificacionClases", "Código de verificación ", ["class" => "control-label"]) }}
-                  <a href="javascript:void(0)" onclick="mostrarOcultarCodigoVerificacionClases(this)" title="Ver código de verificación"><i class="fa fa-eye"></i></a>
+                  <a href="javascript:void(0)" onclick="utilAlumno.mostrarOcultarCodigoVerificacionClases(this)" title="Ver código de verificación"><i class="fa fa-eye"></i></a>
                   <label>:</label>
                 </div>
                 <div class="col-sm-8">
@@ -56,4 +62,4 @@
     </div>
   </div>
 </div>
-<script type="text/javascript" src="{{ asset("assets/eah/js/credencialesAcceso.js") }}"></script>
+<div class="clearfix"></div>

@@ -1,3 +1,4 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Postulantes")
 
@@ -25,7 +26,7 @@
 @endif
 
 @section("section_script")
-<script src="{{ asset("assets/eah/js/modulos/postulante.js") }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/postulante/formulario.js") }}"></script>
 @endsection
 
 @section("breadcrumb")

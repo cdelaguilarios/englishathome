@@ -70,7 +70,7 @@ var seccionPaso2 = new function () {
   };
   this.preOcultar = function (solicitudSiguiente) {
     if (solicitudSiguiente && !$(this.contenedor).find("input[name='campos']:checked").length) {
-      agregarMensaje("advertencias", "Debe seleccionar por lo menos un campo.", true, "#sec-mensajes-alerta", true);
+      mensajes.agregar("advertencias", "Debe seleccionar por lo menos un campo.", true, "#sec-mensajes-alerta", true);
       return false;
     }
     return true;
@@ -429,8 +429,8 @@ var seccionPaso4 = new function () {
     $(this.contenedor).find(idSeccion).on('change', "#" + idSelTipo, function () {
       ($(this).val() !== "BETWEEN" ? $("#" + idFiltroFechaFin).hide() : $("#" + idFiltroFechaFin).show());
     });
-    utilFechasHorarios.establecerCalendario(idFiltroFechaIni);
-    utilFechasHorarios.establecerCalendario(idFiltroFechaFin);
+    utilFechasHorarios.establecerCalendario($("#" + idFiltroFechaIni));
+    utilFechasHorarios.establecerCalendario($("#" + idFiltroFechaFin));
 
     $("#" + idFiltroFechaIni).rules("add", {
       validarFecha: true
@@ -527,7 +527,7 @@ var seccionPaso4 = new function () {
           '<select id="' + idFiltro + '" name="' + idFiltro + '[]" class="form-control" multiple="multiple" style="width: 100%"></select>' +
           '</div>' +
           '</div>');
-      establecerListaBusqueda("#" + idFiltro, motor.entidades[entidad][4]);
+      utilBusqueda.establecerListaBusqueda($("#" + idFiltro), motor.entidades[entidad][4]);
       //$("#" + idFiltro).rules("add", "required");
 
       if (datosCamposSel) {
@@ -746,7 +746,7 @@ var util = new function () {
           function () {
             $("body").unblock({
               onUnblock: function () {
-                agregarMensaje("errores", "Ocurrió un problema durante la obtención de campos por favor intente nuevamente.", true, "#sec-mensajes-alerta", true);
+                mensajes.agregar("errores", "Ocurrió un problema durante la obtención de campos por favor intente nuevamente.", true, "#sec-mensajes-alerta", true);
               }
             });
           }

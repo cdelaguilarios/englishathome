@@ -1,3 +1,4 @@
+{{----}}
 <div class="row">
   <div class="col-sm-12">
     <div id="wiz-registro-alumno" class="box box-info wizard" data-initialize="wizard">
@@ -8,7 +9,7 @@
             <span class="chevron"></span>
           </li>
           <li data-step="2">
-            <span class="badge">2</span>Datos de dirección
+            <span class="badge">2</span>Datos de ubicación
             <span class="chevron"></span>
           </li>
           <li data-step="3">
@@ -16,7 +17,7 @@
             <span class="chevron"></span>
           </li>
           <li data-step="4">
-            <span class="badge">4</span>Datos del curso
+            <span class="badge">4</span>Datos para las clases
             <span class="chevron"></span>
           </li>
         </ul>
@@ -36,13 +37,13 @@
             </div>
           </div>  
           <div class="form-group">
-            {{ Form::label("telefono", "Teléfono" . ((Auth::guest()) ? " (*)" : "") . ": ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("telefono", "Teléfono" . (Auth::guest() ? " (*)" : "") . ": ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3">
               {{ Form::text("telefono", (isset($interesado) ? $interesado->telefono : null), ["class" => "form-control", "maxlength" =>"30"]) }}
             </div>
           </div>                 
           <div class="form-group">
-            {{ Form::label("fecha-nacimiento", "Fecha nacimiento" . ((Auth::guest()) ? " (*)" : "") . ": ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("fecha-nacimiento", "Fecha nacimiento" . (Auth::guest() ? " (*)" : "") . ": ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3">
               <div class="input-group date">
                 <div class="input-group-addon">
@@ -57,7 +58,7 @@
             </div>
           </div>            
           <div class="form-group">
-            {{ Form::label("numeroDocumento", "Doc. de identidad" . ((Auth::guest()) ? " (*)" : "") . ": ", ["class" => "col-sm-2 control-label"]) }}
+            {{ Form::label("numeroDocumento", "Doc. de identidad" . (Auth::guest() ? " (*)" : "") . ": ", ["class" => "col-sm-2 control-label"]) }}
             <div class="col-sm-3" style="display:none">
               {{ Form::select("idTipoDocumento", App\Models\TipoDocumento::listarSimple(), null, ["class" => "form-control"]) }}
             </div>
@@ -113,8 +114,6 @@
             <div class="col-sm-10 col-sm-offset-2">
               <b>Sugerimos seleccionar la ubicación exacta en el mapa del lugar donde se realizarán las clases.</b>
             </div>
-            {{ Form::hidden("geoLatitud", null) }} 
-            {{ Form::hidden("geoLongitud", null) }} 
           </div>
         </div>
         <div id="sec-wiz-alumno-3" class="step-pane sample-pane alert" data-step="3">
@@ -145,7 +144,7 @@
         </div>                
         <div id="sec-wiz-alumno-4" class="step-pane sample-pane alert" data-step="4">
           <div class="form-group">
-            <h4>En casa o en su oficina usted cuenta con:</h4>
+            <h4>En casa u oficina {{ (isset($vistaExterna) && $vistaExterna ? "usted" : "el alumno") }} cuenta con:</h4>
           </div>
           <div class="form-group">
             <div class="col-sm-3 col-sm-offset-1">
@@ -206,7 +205,7 @@
               </div>
             </div>
             @if(isset($interesado))
-            {{ Form::hidden("costoHoraClase", (isset($interesado->costoHoraClase) && !is_null($interesado->costoHoraClase) ? $interesado->costoHoraClase : 0)) }} 
+            {{ Form::hidden("costoXHoraClase", (isset($interesado->costoXHoraClase) && !is_null($interesado->costoXHoraClase) ? $interesado->costoXHoraClase : 0)) }} 
             @elseif(!Auth::guest())
             {{ Form::label("costo-hora-clase", "Costo hora de clase (*): ", ["class" => "col-sm-3 control-label"]) }}
             <div class="col-sm-2">
@@ -214,7 +213,7 @@
                 <span class="input-group-addon">
                   <b>S/.</b>
                 </span>
-                {{ Form::text("costoHoraClase", (isset($alumno) ? number_format($alumno->costoHoraClase, 2, '.', ',') : null), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
+                {{ Form::text("costoXHoraClase", (isset($alumno) ? number_format($alumno->costoXHoraClase, 2, '.', ',') : null), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
               </div>
             </div>
             @endif 
@@ -259,8 +258,7 @@
             </div>
           </div>
         </div>                
-        {{ Form::hidden("usuarioNoLogueado", ((Auth::guest()) ? 1 : 0)) }}
-        {{ Form::hidden("modoEditarRegistrar", 1) }} 
+        {{ Form::hidden("usuarioNoLogueado", (Auth::guest() ? 1 : 0)) }}
         {{ Form::hidden("modoEditar", ((isset($modo) && $modo == "registrar") ? 0: 1)) }} 
         {{ Form::hidden("idInteresado", (isset($interesado) ? $interesado->idEntidad : null)) }}  
         {{ Form::hidden("codigoVerificacion", (isset($codigoVerificacion) ? $codigoVerificacion : null)) }}

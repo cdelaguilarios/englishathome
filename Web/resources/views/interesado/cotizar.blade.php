@@ -1,3 +1,4 @@
+{{----}}
 @extends("layouts.master")
 @section("titulo", "Interesados")
 
@@ -9,7 +10,8 @@
   var idInteresado = "{{ $interesado->id}}";
   var nombreCompletoInteresado = "{{ $interesado->nombre . " " .  $interesado->apellido }}";
 </script>
-<script src="{{ asset("assets/eah/js/modulos/interesado.js")}}"></script>
+<script src="{{ asset("assets/eah/js/modulos/interesado/cotizacion.js") }}"></script>
+<script src="{{ asset("assets/eah/js/modulos/interesado/busqueda.js") }}"></script>
 @endsection
 
 @section("breadcrumb")
@@ -27,7 +29,7 @@
           <div class="col-sm-7">
             <a href="{{ route("interesados.crear")}}" class="btn btn-primary btn-clean">Nuevo interesado</a>
             <a href="{{ route("interesados.editar", ["id" => $interesado->idEntidad]) }}" type="button" class="btn btn-primary" ><i class="fa flaticon-questioning"></i> Ver datos del interesado</a>             
-            <button class="btn btn-primary" onclick="return copiarEnlaceFichaInscripcion('{{ route("alumnos.crear.externo", ["codigoVerificacion" => Crypt::encrypt($interesado->id)]) }}')">Enlace ficha de inscripción</button>
+            <button class="btn btn-primary" onclick="return busquedaInteresado.copiarEnlaceFichaInscripcion('{{ route("alumnos.crear.externo", ["codigoVerificacion" => Crypt::encrypt($interesado->id)]) }}')">Enlace ficha de inscripción</button>
           </div>         
           <div class="col-sm-2">
             @if(isset($interesado->idInteresadoSiguiente))
@@ -86,69 +88,18 @@
       <div class="form-group">
         {{ Form::label("id-curso", "Curso de interes: ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-4">
-          {{ Form::select("idCurso", App\Models\Curso::listarSimple(FALSE), $interesado->idCurso, ["id" => "id-curso", "class" => "form-control"]) }}
+          {{ Form::select("idCurso", App\Models\Curso::listarSimple(), $interesado->idCurso, ["id" => "id-curso", "class" => "form-control"]) }}
         </div>  
         <div id="sec-imagen-curso" class="col-sm-6"></div>     
-        {{ Form::hidden("imagenCurso") }}
+        {{ Form::hidden("rutaImagenCurso") }}
       </div>
       <div class="form-group">
-        {{ Form::label("texto-introductorio", "Texto introductorio (*): ", ["class" => "col-sm-2 control-label"]) }}
+        {{ Form::label("contenido-correo", "Contenido correo (*): ", ["class" => "col-sm-2 control-label"]) }}
         <div class="col-sm-10">
-          {{ Form::textarea("textoIntroductorio", null, ["id" => "texto-introductorio", "class" => "form-control", "rows" => "10", "maxlength" =>"8000"]) }}
+          {{ Form::textarea("contenidoCorreo", null, ["id" => "contenido-correo", "class" => "form-control", "rows" => "10", "maxlength" =>"8000"]) }}
         </div>                                        
-      </div>
-      <div class="form-group">
-        {{ Form::label("descripcion-curso", "Descripción curso (*): ", ["class" => "col-sm-2 control-label"]) }}
-        <div class="col-sm-10">
-          {{ Form::textarea("descripcionCurso", null, ["id" => "descripcion-curso", "class" => "form-control", "rows" => "10", "maxlength" =>"8000"]) }}
-        </div>                                        
-      </div>
-      <div class="form-group">
-        {{ Form::label("modulos", "Módulos (*): ", ["class" => "col-sm-2 control-label"]) }}
-        <div class="col-sm-10">
-          {{ Form::textarea("modulos", null, ["id" => "modulos", "class" => "form-control", "rows" => "10", "maxlength" =>"8000"]) }}
-        </div>                                        
-      </div>
-      <div class="form-group">
-        {{ Form::label("metodologia", "Metodología (*): ", ["class" => "col-sm-2 control-label"]) }}
-        <div class="col-sm-10">
-          {{ Form::textarea("metodologia", null, ["id" => "metodologia", "class" => "form-control", "rows" => "10", "maxlength" =>"8000"]) }}
-        </div>                                        
-      </div>
-      <div class="form-group">
-        {{ Form::label("curso-incluye", "Curso incluye (*): ", ["class" => "col-sm-2 control-label"]) }}
-        <div class="col-sm-10">
-          {{ Form::textarea("cursoIncluye", null, ["id" => "curso-incluye", "class" => "form-control", "rows" => "10", "maxlength" =>"8000"]) }}
-        </div>                                        
-      </div>
-      <div class="form-group">
-        {{ Form::label("inversion", "Inversión (*): ", ["class" => "col-sm-2 control-label"]) }}
-        <div class="col-sm-10 sec-inversion">
-          {{ Form::textarea("inversion", null, ["id" => "inversion", "class" => "form-control", "rows" => "10", "maxlength" =>"8000"]) }}
-        </div>                                        
-      </div>
-      <div id="sec-inversion-cuotas" class="form-group">
-        {{ Form::label("inversion-cuotas", "Inversión en cuotas (*): ", ["class" => "col-sm-2 control-label"]) }}  
-        @include("util.calculadoraInversionCuotas") 
-        <div class="col-sm-10 col-sm-offset-2 sec-inversion">
-          {{ Form::textarea("inversionCuotas", null, ["id" => "inversion-cuotas", "class" => "form-control", "rows" => "10", "maxlength" =>"8000"]) }}
-        </div> 
-      </div>   
-      <div class="form-group">  
-        {{ Form::label("notas-adicionales", "Notas adicionales (*): ", ["class" => "col-sm-2 control-label"]) }}   
-        <div class="col-sm-10">
-          {{ Form::textarea("notasAdicionales", null, ["id" => "notas-adicionales", "class" => "form-control", "rows" => "10", "maxlength" =>"8000"]) }}
-        </div> 
-      </div> 
-      <div class="form-group">
-        {{ Form::label("adjuntos", "Adjuntos: ", ["class" => "col-sm-2 control-label"]) }}   
-        <div class="col-sm-10">
-          <div id="adjuntos">Subir</div>
-          {{ Form::hidden("nombresArchivosAdjuntos", "", ["id" => "nombres-archivos-adjuntos"]) }}
-          {{ Form::hidden("nombresOriginalesArchivosAdjuntos", "", ["id" => "nombres-originales-archivos-adjuntos"]) }}
-        </div>
-        <div class="clearfix"></div>
-      </div>
+      </div>  
+      @include("util.archivosAdjuntos", ["adjuntos" => [(object)["idCampo" => "Adjuntos", "idHtml" => "adjuntos", "titulo" => "Adjuntos"]]]) 
       <div class="form-group">  
         {{ Form::label("costo-hora-clase", "Costo por hora de clase (*): ", ["class" => "col-sm-2 control-label"]) }}   
         <div class="col-sm-3">
@@ -156,24 +107,10 @@
             <span class="input-group-addon">
               <b>S/.</b>
             </span>
-            {{ Form::text("costoHoraClase", (isset($interesado->costoHoraClase) ? number_format($interesado->costoHoraClase, 2, ".", ",") : null), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
+            {{ Form::text("costoXHoraClase", (isset($interesado->costoXHoraClase) ? number_format($interesado->costoXHoraClase, 2, ".", ",") : null), ["id" => "costo-hora-clase", "class" => "form-control", "maxlength" =>"19"]) }}
           </div>
         </div>
-        <div class="col-sm-7">
-          <div class="checkbox">
-            <label class="checkbox-custom" data-initialize="checkbox">
-              {{ Form::label("cuentaBancoEmpresarial", "Cuenta de banco empresarial", ["class" => "checkbox-label"]) }}
-              {{ Form::checkbox("cuentaBancoEmpresarial", null, FALSE) }}
-            </label>
-          </div>
-        </div> 
       </div> 
-      <div class="form-group">     
-        <div class="col-sm-10 col-sm-offset-2">
-          <h4>Nota importante</h4>
-          <span>Estos contenidos serán mostrados en base al estilo actual del correo de cotización es por eso que sugerimos enviar una cotización de prueba para verificar que la información contenida en dicho correo sea debidamente mostrada.</span>
-        </div>                                        
-      </div>
     </div>
     <div>    
       <div class="form-group">
