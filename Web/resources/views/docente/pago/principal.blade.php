@@ -1,12 +1,12 @@
 @extends("layouts.master")
-@section("titulo", "Profesores - Pagos")
+@section("titulo", "Pagos a profesores")
 
 @section("section_script")
 <script src="{{ asset("assets/eah/js/modulos/docente/pago/principal.js")}}"></script>    
 @endsection
 
 @section("breadcrumb")
-<li class="active">Profesores - Pagos</li>
+<li class="active">Pagos a profesores</li>
 @endsection
 
 @section("content")

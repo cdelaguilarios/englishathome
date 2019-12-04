@@ -108,15 +108,15 @@ class Pago extends Model {
     return Pago::obtenerXId($id);
   }
 
-  private static function registrarActualizarImagenes($id, $request)/* - */ {
-    if (!isset($request)) {
+  private static function registrarActualizarImagenes($id, $req)/* - */ {
+    if (!isset($req)) {
       return;
     }
     $pago = Pago::obtenerXId($id);
     $imagenesComprobante = (isset($pago->imagenesComprobante) ? $pago->imagenesComprobante : "");
     $nombreImagenComprobante = explode(",", $imagenesComprobante)[0];
 
-    $nuevaImagenComprobante = $request->file("imagenComprobante");
+    $nuevaImagenComprobante = $req->file("imagenComprobante");
     if (isset($nuevaImagenComprobante) && $nuevaImagenComprobante != "") {
       $nombreNuevaImagenComprobante = Archivo::registrar($pago["id"] . "_icp_", $nuevaImagenComprobante);
       if ($nombreImagenComprobante != "") {

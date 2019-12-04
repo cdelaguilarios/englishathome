@@ -38,35 +38,35 @@ class Util {
     }
   }
 
-  public static function aplicarFiltrosBusquedaXFechas($nombreTabla, &$elementos, $nombreCampoFecha, $datos)/* - */ {
-    if (isset($datos["tipoBusquedaFecha"])) {
+  public static function aplicarFiltrosBusquedaXFechas(&$elementos, $nombreTabla, $nombreCampoFecha, $datosFiltros)/* - */ {
+    if (isset($datosFiltros["tipoBusquedaFecha"])) {
       $fechaBusIni = new Carbon('first day of this month');
       $fechaBusFin = new Carbon('last day of this month');
 
-      if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Dia && isset($datos["fechaDia"])) {
-        $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaDia"] . " 00:00:00");
-        $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaDia"] . " 23:59:59");
-      } else if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes && isset($datos["fechaMes"])) {
-        $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", "01/" . $datos["fechaMes"] . " 00:00:00");
-        $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", "01/" . $datos["fechaMes"] . " 23:59:59");
+      if ($datosFiltros["tipoBusquedaFecha"] == TiposBusquedaFecha::Dia && isset($datosFiltros["fechaDia"])) {
+        $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", $datosFiltros["fechaDia"] . " 00:00:00");
+        $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", $datosFiltros["fechaDia"] . " 23:59:59");
+      } else if ($datosFiltros["tipoBusquedaFecha"] == TiposBusquedaFecha::Mes && isset($datosFiltros["fechaMes"])) {
+        $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", "01/" . $datosFiltros["fechaMes"] . " 00:00:00");
+        $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", "01/" . $datosFiltros["fechaMes"] . " 23:59:59");
         $fechaBusFin->addMonth();
         $fechaBusFin->day = 0;
-      } else if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::Anio && isset($datos["fechaAnio"])) {
-        $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", "01/01/" . $datos["fechaAnio"] . " 00:00:00");
-        $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", "01/12/" . $datos["fechaAnio"] . " 23:59:59");
+      } else if ($datosFiltros["tipoBusquedaFecha"] == TiposBusquedaFecha::Anio && isset($datosFiltros["fechaAnio"])) {
+        $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", "01/01/" . $datosFiltros["fechaAnio"] . " 00:00:00");
+        $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", "01/12/" . $datosFiltros["fechaAnio"] . " 23:59:59");
         $fechaBusFin->addMonth();
         $fechaBusFin->day = 0;
-      } else if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoDias && isset($datos["fechaDiaInicio"]) && isset($datos["fechaDiaFin"])) {
-        $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaDiaInicio"] . " 00:00:00");
-        $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaDiaFin"] . " 23:59:59");
-      } else if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoMeses && isset($datos["fechaMesInicio"])) {
-        $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", "01/" . $datos["fechaMesInicio"] . " 00:00:00");
-        $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", "01/" . (isset($datos["fechaMesFin"]) ? $datos["fechaMesFin"] : $datos["fechaMesInicio"]) . " 23:59:59");
+      } else if ($datosFiltros["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoDias && isset($datosFiltros["fechaDiaInicio"]) && isset($datosFiltros["fechaDiaFin"])) {
+        $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", $datosFiltros["fechaDiaInicio"] . " 00:00:00");
+        $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", $datosFiltros["fechaDiaFin"] . " 23:59:59");
+      } else if ($datosFiltros["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoMeses && isset($datosFiltros["fechaMesInicio"])) {
+        $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", "01/" . $datosFiltros["fechaMesInicio"] . " 00:00:00");
+        $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", "01/" . (isset($datosFiltros["fechaMesFin"]) ? $datosFiltros["fechaMesFin"] : $datosFiltros["fechaMesInicio"]) . " 23:59:59");
         $fechaBusFin->addMonth();
         $fechaBusFin->day = 0;
-      } else if ($datos["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoAnios && isset($datos["fechaAnioInicio"])) {
-        $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", "01/01/" . $datos["fechaAnioInicio"] . " 00:00:00");
-        $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", "01/12/" . (isset($datos["fechaAnioFin"]) ? $datos["fechaAnioFin"] : $datos["fechaAnioInicio"]) . " 23:59:59");
+      } else if ($datosFiltros["tipoBusquedaFecha"] == TiposBusquedaFecha::RangoAnios && isset($datosFiltros["fechaAnioInicio"])) {
+        $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", "01/01/" . $datosFiltros["fechaAnioInicio"] . " 00:00:00");
+        $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", "01/12/" . (isset($datosFiltros["fechaAnioFin"]) ? $datosFiltros["fechaAnioFin"] : $datosFiltros["fechaAnioInicio"]) . " 23:59:59");
         $fechaBusFin->addMonth();
         $fechaBusFin->day = 0;
       }

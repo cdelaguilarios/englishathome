@@ -39,16 +39,24 @@ class Profesor extends Model {
   public static function listar($datos = NULL)/* - */ {
     $nombreTabla = Profesor::nombreTabla();
     $profesores = Profesor::leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
-            ->leftJoin(EntidadCurso::nombreTabla() . " as entidadCurso", $nombreTabla . ".idEntidad", "=", "entidadCurso.idEntidad")
-            ->select($nombreTabla . ".*", "entidad.*", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))
+            ->leftJoin(EntidadCurso::nombreTabla() . " as entidadCurso", $nombreTabla . ".idEntidad", "=", "entidadCurso.idEntidad")  
+            ->leftJoin(EntidadCuentaBancaria::nombreTabla() . " as cuentaBancaria", $nombreTabla . ".idEntidad", "=", "cuentaBancaria.idEntidad")
             ->where("entidad.eliminado", 0)
             ->groupBy("entidad.id")
-            ->distinct();
+            ->distinct();   
 
     if (isset($datos["estado"])) {
       $profesores->where("entidad.estado", $datos["estado"]);
     }
-    return $profesores;
+    
+    return $profesores->select(DB::raw(
+                        $nombreTabla . ".*, 
+                        entidad.*, 
+                        GROUP_CONCAT(
+                          DISTINCT CONCAT(cuentaBancaria.banco, '|', cuentaBancaria.numeroCuenta) 
+                          SEPARATOR ';'
+                        ) AS cuentasBancarias,
+                        CONCAT(entidad.nombre, ' ', entidad.apellido) AS nombreCompleto"));
   }
 
   public static function listarBusqueda($terminoBus = NULL)/* - */ {
@@ -66,6 +74,7 @@ class Profesor extends Model {
       $profesor->horario = Horario::obtenerJsonXIdEntidad($id);
       $profesor->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($profesor->codigoUbigeo);
       $profesor->cursos = EntidadCurso::obtenerXIdEntidad($id, FALSE);
+      $profesor->cuentasBancarias = EntidadCuentaBancaria::obtenerXIdEntidad($id);
 
       $datosIdsAntSig = Entidad::ObtenerIdsAnteriorSiguienteXEntidad(TiposEntidad::Profesor, $profesor);
       $profesor->idProfesorAnterior = $datosIdsAntSig["idEntidadAnterior"];
@@ -84,7 +93,8 @@ class Profesor extends Model {
     Entidad::registrarActualizarImagenPerfil($idEntidad, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($idEntidad, $datos["idCursos"]);
     Horario::registrarActualizar($idEntidad, $datos["horario"]);
-
+    EntidadCuentaBancaria::registrarActualizar($idEntidad, $datos["cuentasBancarias"]);
+    
     $datos["cv"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 1, "DocumentoPersonalCv");
     $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 1, "DocumentoPersonalCertificadoInternacional");
     $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 1, "DocumentoPersonalImagenDocumentoIdentidad");
@@ -114,6 +124,7 @@ class Profesor extends Model {
     Horario::registrarActualizar($id, $datos["horario"]);
     Docente::registrarActualizarAudio($id, $req->file("audio"));
     unset($datos["audio"]);
+    EntidadCuentaBancaria::registrarActualizar($id, $datos["cuentasBancarias"]);
 
     $profesor = Profesor::obtenerXId($id, TRUE);
     $datos["cv"] = Archivo::procesarArchivosSubidosNUEVO($profesor->cv, $datos, 1, "DocumentoPersonalCv");

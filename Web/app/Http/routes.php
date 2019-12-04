@@ -173,7 +173,8 @@ Route::group(["middleware" => "auth"], function() {
     Route::get("docentes/pagosXClases", ["uses" => "DocenteController@pagosXClases", "as" => "docentes.pagosXClases"]);//--
     Route::post("docentes/pagosXClases/listar", ["uses" => "DocenteController@listarPagosXClases", "as" => "docentes.pagosXClases.listar"]);//--    
     Route::post("docente/{id}/pagosXClases/listarDetalle", ["uses" => "DocenteController@listarPagosXClasesDetalle", "as" => "docentes.pagosXClases.listarDetalle"]);//--  
-    Route::post("docentes/pagoXClases/registrar", ["uses" => "DocenteController@registrarPagoXClases", "as" => "docentes.pagosXClases.registrar"]);//--    
+    Route::post("docentes/pagoXClases/registrarActualizar", ["uses" => "DocenteController@registrarActualizarPagoXClases", "as" => "docentes.pagosXClases.registrarActualizar"]);//--    
+    Route::delete("docente/{id}/pago/{idPago}/eliminar", ["uses" => "DocenteController@eliminarPagoXClases", "as" => "docentes.pagosXClases.eliminar"]);//--
     Route::patch("docente/{id}/actualizarExperienciaLaboral", ["uses" => "DocenteController@actualizarExperienciaLaboral", "as" => "docentes.actualizar.experiencia.laboral"]);//--
     // </editor-fold>
     // <editor-fold desc="Usuarios">

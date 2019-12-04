@@ -24,11 +24,14 @@ class EstadosPago/* - */ {
     ];
   }
 
-  public static function listarBusqueda()/* - */ {
+  public static function listarBusqueda($incluirConsumido = TRUE)/* - */ {
     $estados = EstadosPago::listar();
     
     $estadosBusqueda = [];
     foreach ($estados as $k => $v) {
+      if(!$incluirConsumido && $k == EstadosPago::Consumido){
+        continue;
+      }
       $estadosBusqueda[$k] = $v[0];
     }
     return $estadosBusqueda;

@@ -17,7 +17,7 @@ class ListarXClasesRequest extends Request/* - */ {
   protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     $datos["estadoPago"] = ReglasValidacion::formatoDato($datos, "estadoPago");    
-    Util::preProcesarFiltrosBusquedaXFechas($datos);
+    Util::preProcesarFiltrosBusquedaXFechas($datos);    
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -35,7 +35,6 @@ class ListarXClasesRequest extends Request/* - */ {
     if (!array_key_exists($datos["tipoBusquedaFecha"], $listaTiposBusquedaFecha)) {
       $reglasValidacion["tipoBusquedaFechaNoValido"] = "required";
     }
-
     switch ($this->method()) {
       case "GET":
       case "DELETE":

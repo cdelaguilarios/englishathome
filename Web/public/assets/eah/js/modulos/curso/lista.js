@@ -20,6 +20,7 @@ listaCursos = (function ()/* - */ {
             d._token = $("meta[name=_token]").attr("content");
           }
         },
+        dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" + "<'row'<'col-sm-12'i>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
         autoWidth: false,
         responsive: true,
         order: [[1, "desc"]],

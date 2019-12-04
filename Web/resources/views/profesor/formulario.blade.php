@@ -84,7 +84,8 @@
               </a>
             </div>
             @endif
-          </div>          
+          </div>
+          @include("util.cuentasBancarias", ["cuentasBancarias" => (isset($profesor) ? $profesor->cuentasBancarias : NULL)]) 
         </div>
         <div id="sec-wiz-profesor-2" class="step-pane sample-pane alert" data-step="2">
           @include("util.ubigeo")  

@@ -49,8 +49,11 @@ class Clase extends Model {
 
   public static function listarBase($incluirSoloRealizadas = FALSE)/* - */ {
     $nombreTablaClase = Clase::nombreTabla();
+    $nombreTablaPago = Pago::nombreTabla();
     $nombreTablaEntidad = Entidad::nombreTabla();
     $nombreTablaPagoClase = PagoClase::nombreTabla();
+    $nombreTablaPagoAlumno = PagoAlumno::nombreTabla();
+    $nombreTablaPagoProfesor = PagoProfesor::nombreTabla();
 
     $clases = Clase::
             //Datos del alumno
@@ -59,13 +62,13 @@ class Clase extends Model {
               ->on("entidadAlumno.eliminado", "=", DB::raw("0"));
             })
             //Pago del alumno asociado
-            ->leftJoin(PagoAlumno::nombreTabla() . " AS relPagoAlumno", function ($q) use ($nombreTablaClase, $nombreTablaPagoClase) {
+            ->leftJoin($nombreTablaPagoAlumno . " AS relPagoAlumno", function ($q) use ($nombreTablaClase, $nombreTablaPagoClase) {
               $q->on("relPagoAlumno.idPago", "IN", DB::raw("(SELECT idPago 
                                                       FROM " . $nombreTablaPagoClase . "
                                                       WHERE idClase = " . $nombreTablaClase . ".id)"))
               ->on("relPagoAlumno.idAlumno", "=", $nombreTablaClase . ".idAlumno");
             })
-            ->leftJoin(Pago::nombreTabla() . " as pagoAlumno", "pagoAlumno.id", "=", "relPagoAlumno.idPago")
+            ->leftJoin($nombreTablaPago . " as pagoAlumno", "pagoAlumno.id", "=", "relPagoAlumno.idPago")
 
             //Datos del profesor
             ->leftJoin($nombreTablaEntidad . " as entidadProfesor", function ($q) use($nombreTablaClase) {
@@ -73,14 +76,15 @@ class Clase extends Model {
               ->on("entidadProfesor.eliminado", "=", DB::raw("0"));
             })
             //Pago al profesor asociado
-            ->leftJoin(PagoProfesor::nombreTabla() . " AS relPagoProfesor", function ($q) use ($nombreTablaClase, $nombreTablaPagoClase) {
+            ->leftJoin($nombreTablaPagoProfesor . " AS relPagoProfesor", function ($q) use ($nombreTablaClase, $nombreTablaPagoClase) {
               $q->on("relPagoProfesor.idPago", "IN", DB::raw("(SELECT idPago 
                                                         FROM " . $nombreTablaPagoClase . "
                                                         WHERE idClase = " . $nombreTablaClase . ".id)"))
               ->on("relPagoProfesor.idProfesor", "=", $nombreTablaClase . ".idProfesor");
             })
-            ->leftJoin(Pago::nombreTabla() . " as pagoProfesor", "pagoProfesor.id", "=", "relPagoProfesor.idPago")
-            ->where($nombreTablaClase . ".eliminado", DB::raw("0"))
+            ->leftJoin($nombreTablaPago . " as pagoProfesor", "pagoProfesor.id", "=", "relPagoProfesor.idPago")
+            ->where($nombreTablaClase . ".eliminado", DB::raw("0"))                    
+            ->groupBy($nombreTablaClase . ".id")
             ->distinct();
     if ($incluirSoloRealizadas) {
       $clases->whereIn($nombreTablaClase . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);

@@ -7,9 +7,9 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
-          <h4 class="modal-title">Nuevo pago para el profesor(a)</h4>
+          <h4 class="modal-title">Editar pago al profesor(a)</h4>
         </div>
-        {{ Form::open(["url" => route("docentes.pagosXClases.registrar"), "id" => "formulario-pago", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
+        {{ Form::open(["url" => route("docentes.pagosXClases.registrarActualizar"), "id" => "formulario-pago", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
         <div class="modal-body">
           <div class="row">
             <div class="col-sm-12">
@@ -37,7 +37,7 @@
                     {{ Form::text("descripcion", null, ["id" => "descripcion-pago", "class" => "form-control", "maxlength" =>"255"]) }}
                   </div>
                 </div> 
-                @include("util.archivosAdjuntos", ["adjuntos" => [(object)["idCampo" => "ImagenComprobante", "idHtml" => "imagen-comprobante", "titulo" => "Imagen de comprobante", "archivosRegistrados" => null, "mensajeReferencia" => null, "cantidadMaximaArchivos" => 1]]]) 
+                @include("util.archivosAdjuntos", ["adjuntos" => [(object)["idCampo" => "ImagenesComprobantes", "idHtml" => "imagenes-comprobantes", "titulo" => "Imágenes comprobantes", "archivosRegistrados" => null, "mensajeReferencia" => null, "cantidadMaximaArchivos" => 5, "soloImagenes" => true]]]) 
                 <div class="form-group">
                   {{ Form::label("monto-pago", "Monto total (*): ", ["class" => "col-sm-2 control-label"]) }}
                   <div class="col-sm-4">
@@ -48,6 +48,7 @@
                       {{ Form::text("monto", null, ["id" => "monto-pago", "class" => "form-control", "disabled" =>""]) }}
                     </div>
                   </div>
+                  {{ Form::hidden("idPago") }}
                   {{ Form::hidden("idProfesor") }}
                 </div>        
                 <div class="form-group">
@@ -60,7 +61,7 @@
           </div>
         </div>
         <div class="modal-footer">         
-          <button type="submit" class="btn btn-success">Registrar pago</button>
+          <button type="submit" class="btn btn-success">Guardar cambios</button>
         </div>
         {{ Form::close() }}
       </div>

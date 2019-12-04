@@ -25,7 +25,7 @@
             <div class="ajax-file-upload-statusbar" style="width: 400px;">
               <div class="ajax-file-upload-filename">
                 @if(getimagesize($rutaArchivo))
-                <a href="{{ $rutaArchivo }}" target="_blank"><img src="{{ $rutaArchivo }}" alt="{{ $datosArchivoReg[1] }}" width="300" /></a>
+                <a href="{{ $rutaArchivo }}" target="_blank"><img src="{{ $rutaArchivo }}" alt="{{ $datosArchivoReg[1] }}" width="200" /></a>
                 @else
                 <a href="{{ $rutaArchivo }}" download="{{ $datosArchivoReg[1] }}">{{ $datosArchivoReg[1] }}</a>
                 @endif

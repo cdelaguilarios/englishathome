@@ -1,12 +1,13 @@
 {{----}}
 <script>
   var urlListarPagos = "{{ route('alumnos.pagos.listar', ['id' => $alumno->id]) }}";
-          var urlEliminarPago = "{{ route('alumnos.pagos.eliminar', ['id' => $alumno->id, 'idPago' => 0]) }}";
-          var estadosPagoDisponibleCambio = {!! json_encode(App\Helpers\Enum\EstadosPago::listarDisponibleCambio()) !!};
-          var estadoPagoCosumido = "{{ App\Helpers\Enum\EstadosPago::Consumido }}";
-          var motivosPago = {!!  json_encode(App\Helpers\Enum\MotivosPago::listar()) !!};
-          var motivoPagoClases = "{{ App\Helpers\Enum\MotivosPago::Clases }}";
-          var cuentasBanco = {!! json_encode(App\Helpers\Enum\CuentasBancoPago::listar()) !!};</script>
+  var urlEliminarPago = "{{ route('alumnos.pagos.eliminar', ['id' => $alumno->id, 'idPago' => 0]) }}";
+  var estadosPagoDisponibleCambio = {!! json_encode(App\Helpers\Enum\EstadosPago::listarDisponibleCambio()) !!};
+  var estadoPagoCosumido = "{{ App\Helpers\Enum\EstadosPago::Consumido }}";
+  var motivosPago = {!!  json_encode(App\Helpers\Enum\MotivosPago::listar()) !!};
+  var motivoPagoClases = "{{ App\Helpers\Enum\MotivosPago::Clases }}";
+  var cuentasBanco = {!! json_encode(App\Helpers\Enum\CuentasBancoPago::listar()) !!};
+</script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/pago/lista.js")}}"></script>
 <div id="sec-pago-lista" style="display: none">
   <div class="box-header"> 

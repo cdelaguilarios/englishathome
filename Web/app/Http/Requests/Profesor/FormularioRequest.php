@@ -25,6 +25,7 @@ class FormularioRequest extends Request {
     $datos["idTipoDocumento"] = ReglasValidacion::formatoDato($datos, "idTipoDocumento");
     $datos["numeroDocumento"] = ReglasValidacion::formatoDato($datos, "numeroDocumento");
     $datos["imagenPerfil"] = ReglasValidacion::formatoDato($datos, "imagenPerfil");
+    $datos["cuentasBancarias"] = ReglasValidacion::formatoDato($datos, "cuentasBancarias");
 
     $datos["codigoDepartamento"] = ReglasValidacion::formatoDato($datos, "codigoDepartamento");
     $datos["codigoProvincia"] = ReglasValidacion::formatoDato($datos, "codigoProvincia");

@@ -11,10 +11,12 @@ listaPagosDocente = (function ()/* - */ {
     urlListarPagosXClases = (typeof (urlListarPagosXClases) === "undefined" ? "" : urlListarPagosXClases);
     urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
     urlPerfilAlumno = (typeof (urlPerfilAlumno) === "undefined" ? "" : urlPerfilAlumno);
+    urlEliminarPagoXClases = (typeof (urlEliminarPagoXClases) === "undefined" ? "" : urlEliminarPagoXClases);
 
+    estados = (typeof (estados) === "undefined" ? "" : estados);
     estadoPagoRealizado = (typeof (estadoPagoRealizado) === "undefined" ? "" : estadoPagoRealizado);
 
-    if (urlListarPagosXClases !== "" && urlPerfilProfesor !== "" && urlPerfilAlumno !== "" && estadoPagoRealizado !== "") {
+    if (urlListarPagosXClases !== "" && urlPerfilProfesor !== "" && urlPerfilAlumno !== "" && urlEliminarPagoXClases !== "" && estados !== "" && estadoPagoRealizado !== "") {
       tablaPagos = $("#tab-lista-pagos").DataTable({
         processing: true,
         serverSide: true,
@@ -23,24 +25,38 @@ listaPagosDocente = (function ()/* - */ {
           type: "POST",
           data: function (d) {
             d._token = $("meta[name=_token]").attr("content");
-            d.estadoPago = $("#bus-estado-pago").val();
+            d.estadoPago = $("#bus-estado").val();
             $.extend(d, filtrosBusquedaFechas.obtenerDatos());
           }
         },
+        dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" + "<'row'<'col-sm-12'i>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
         autoWidth: false,
         responsive: true,
         order: [[5, "desc"]],
+        rowId: 'idPago',
         columns: [
           {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
               return m.row + m.settings._iDisplayStart + 1;
             }, "className": "text-center not-mobile"},
           {data: "profesor", name: "profesor", render: function (e, t, d, m) {
-              return '<a href="' + (urlPerfilProfesor.replace("/0", "/" + d.idProfesor)) + '" target="_blank">' + d.profesor + '</a>';
+              var cuentasBancariasProfesor = '';
+              if (d.cuentasBancariasProfesor !== null && d.cuentasBancariasProfesor !== "") {
+                var cuentasBancarias = d.cuentasBancariasProfesor.split(";");
+                for (var i = 0; i < cuentasBancarias.length; i++) {
+                  var datosCuentaBancaria = cuentasBancarias[i].split("|");
+                  if (datosCuentaBancaria.length === 2) {
+                    cuentasBancariasProfesor += '</br><span class="text-info"><i class="fa fa-money"></i> ' + datosCuentaBancaria[0] + ' ' + datosCuentaBancaria[1] + '</span>';
+                  }
+                }
+              }
+
+              return '<a href="' + (urlPerfilProfesor.replace("/0", "/" + d.idProfesor)) + '" target="_blank">' + d.profesor + '</a>'
+                      + (cuentasBancariasProfesor !== "" ? cuentasBancariasProfesor : '');
             }},
           {data: "numeroTotalClases", name: "numeroTotalClases", "searchable": false, className: "text-center", render: function (e, t, d, m) {
               return '<div class="clearfix">' +
                       '<span>' + d.numeroTotalClases + '</span>' +
-                      '<a href="javascript:void(0);" onclick="listaPagosDocente.cargarListaDetalle(this);" title="Ver lista de clases" class="btn-ver-lista-clases">' +
+                      '<a href="javascript:void(0);" onclick="listaPagosDocente.cargarListaClases(this);" title="Ver lista de clases" class="btn-ver-lista-clases">' +
                       '<i class="fa fa-eye"></i>' +
                       '</a>' +
                       '</div>';
@@ -54,10 +70,23 @@ listaPagosDocente = (function ()/* - */ {
           {data: "montoTotalXClases", name: "montoTotalXClases", "searchable": false, render: function (e, t, d, m) {
               return 'S/. ' + util.redondear(d.montoTotalXClases, 2);
             }, className: "text-center", type: "monto"},
-          {data: "idProfesor", name: "clase.idProfesor", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
-              return ($("#bus-estado-pago").val() === estadoPagoRealizado ?
-                      '<span class="label label-success btn-estado">Pagado</span>' :
-                      '<a href="javascript:void(0);" onclick="listaPagosDocente.cargarFormulario(this);" type="button" class="btn btn-success btn-sm">Pagar</a>');
+          {data: "estadoPago", name: "estadoPago", render: function (e, t, d, m) {
+              return '<span class="label ' + estados[d.estadoPago][1] + ' btn-estado">' + estados[d.estadoPago][0] + '</span>'
+                      + (d.fechaPago !== null && d.fechaPago !== "" ? '<div class="clearfix"><span class="text-info">(Fecha pago: ' + utilFechasHorarios.formatoFecha(d.fechaPago) + ')</span></div>' : '');
+            }, "className": "text-center not-mobile"},
+          {data: "idProfesor", name: "clase.idProfesor", orderable: false, "searchable": false, width: "10%", render: function (e, t, d, m) {
+              return (d.estadoPago === estadoPagoRealizado ?
+                      '<ul class="buttons">' +
+                      '<li>' +
+                      '<a href="javascript:void(0);" onclick="listaPagosDocente.editarPagoXClases(this);" title="Editar datos del pago"><i class="fa fa-pencil"></i></a>' +
+                      '</li>' +
+                      '<li>' +
+                      '<a href="javascript:void(0);" title="Eliminar pago" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?\', \'tab-lista-pagos\', false, null, true)" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPagoXClases.replace("/0", "/" + d.idProfesor).replace("/-1", "/" + d.idPago))) + '">' +
+                      '<i class="fa fa-trash"></i>' +
+                      '</a>' +
+                      '</li>' +
+                      '</ul>' :
+                      '<a href="javascript:void(0);" onclick="listaPagosDocente.registrarPagoXClases(this);" type="button" class="btn btn-success btn-sm">Pagar</a>');
             }, className: "text-center"}
         ],
         initComplete: function (s, j) {
@@ -99,10 +128,14 @@ listaPagosDocente = (function ()/* - */ {
       var funcionCambio = function () {
         reCargar();
       };
-      $("#bus-estado-pago").change(funcionCambio);
       filtrosBusquedaFechas.cargar(funcionCambio);
-
+      filtrosBusquedaFechas.actualizarTitulo("Fecha de clases (*): ");
     }
+  }
+  function obtenerDatos(elemento) {
+    var tr = $(elemento).closest("tr");
+    var fila = tablaPagos.row(tr);
+    return fila.data();
   }
 
   //Público
@@ -115,8 +148,8 @@ listaPagosDocente = (function ()/* - */ {
     $("#tab-lista-pagos").DataTable().ajax.reload();
   }
 
-  var tablasDetalles = [];
-  function cargarListaDetalle(elemento) {
+  var tablasClases = [];
+  function cargarListaClases(elemento) {
     var tr = $(elemento).closest("tr");
     var fila = tablaPagos.row(tr);
 
@@ -132,7 +165,7 @@ listaPagosDocente = (function ()/* - */ {
       var datosPago = fila.data();
       $(elemento).html('<i class="fa fa-eye-slash"></i>');
 
-      var idTabla = "tab-lista-clases-profesor-" + datosPago.idProfesor;
+      var idTabla = "tab-lista-clases-profesor-" + datosPago.idProfesor + (datosPago.idPago !== null ? "-" + datosPago.idPago : "");
       fila.child('<table id="' + idTabla + '" class="table table-bordered table-hover">' +
               '<thead>' +
               '<tr>' +
@@ -156,7 +189,7 @@ listaPagosDocente = (function ()/* - */ {
 
       $(tr).addClass('shown');
       var procesarTodoEnServidor = (datosPago.numeroTotalClases > 200);
-      tablasDetalles[idTabla] = $("#" + idTabla).DataTable({
+      tablasClases[idTabla] = $("#" + idTabla).DataTable({
         processing: true,
         serverSide: procesarTodoEnServidor,
         ajax: {
@@ -164,7 +197,7 @@ listaPagosDocente = (function ()/* - */ {
           type: "POST",
           data: function (d) {
             d._token = $("meta[name=_token]").attr("content");
-            d.estadoPago = $("#bus-estado-pago").val();
+            d.estadoPago = $("#bus-estado").val();
             $.extend(d, filtrosBusquedaFechas.obtenerDatos());
           }
         },
@@ -221,22 +254,26 @@ listaPagosDocente = (function ()/* - */ {
         }
       });
 
-      tablasDetalles[idTabla].on('order.dt search.dt', function () {
-        tablasDetalles[idTabla].column(0, {search: 'applied', order: 'applied'}).nodes().each(function (c, i) {
+      tablasClases[idTabla].on('order.dt search.dt', function () {
+        tablasClases[idTabla].column(0, {search: 'applied', order: 'applied'}).nodes().each(function (c, i) {
           c.innerHTML = i + 1;
         });
       }).draw();
     }
   }
-  function cargarFormulario(elemento) {
-    var tr = $(elemento).closest("tr");
-    var fila = tablaPagos.row(tr);
-    var datosPago = fila.data();
-    formularioPagoDocente.mostrar(datosPago);
+
+  //Pagos
+  function registrarPagoXClases(elemento) {
+    var datosPago = obtenerDatos(elemento);
+    formularioPagoDocente.registrar(datosPago);
+  }
+  function editarPagoXClases(elemento) {
+    var datosPago = obtenerDatos(elemento);
+    formularioPagoDocente.editar(datosPago);
   }
   function obtenerDatosFiltrosBusqueda() {
     var d = {};
-    d.estadoPago = $("#bus-estado-pago").val();
+    d.estadoPago = $("#bus-estado").val();
     $.extend(d, filtrosBusquedaFechas.obtenerDatos());
     return d;
   }
@@ -244,8 +281,9 @@ listaPagosDocente = (function ()/* - */ {
   return {
     mostrar: mostrar,
     reCargar: reCargar,
-    cargarListaDetalle: cargarListaDetalle,
-    cargarFormulario: cargarFormulario,
+    cargarListaClases: cargarListaClases,
+    registrarPagoXClases: registrarPagoXClases,
+    editarPagoXClases: editarPagoXClases,
     obtenerDatosFiltrosBusqueda: obtenerDatosFiltrosBusqueda
   };
 }());

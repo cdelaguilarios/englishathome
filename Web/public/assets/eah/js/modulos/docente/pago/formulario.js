@@ -2,11 +2,11 @@ var formularioPagoDocente = {};
 formularioPagoDocente = (function ()/* - */ {
   window.addEventListener("load", esperarCargaJquery, false);
   function esperarCargaJquery()/* - */ {
-    ((window.jQuery && jQuery.ui) ? cargarFormulario() : window.setTimeout(esperarCargaJquery, 100));
+    ((window.jQuery && jQuery.ui) ? cargar() : window.setTimeout(esperarCargaJquery, 100));
   }
 
   //Privado  
-  function cargarFormulario() {
+  function cargar() {
     $("#formulario-pago").validate({
       rules: {
         fecha: {
@@ -15,19 +15,16 @@ formularioPagoDocente = (function ()/* - */ {
         }
       },
       submitHandler: function (f) {
-        if (confirm("¿Está seguro que desea registrar los datos de este pago?")) {
+        var idPago = $("#formulario-pago").find("input[name='idPago']").val();
+        if (confirm("¿Está seguro que desea " + (idPago !== "" ? "actualizar los datos de este pago" : "realizar este pago") + "?")) {
           $("#mod-pago").modal("hide");
-          $.blockUI({message: "<h4>Registrando datos...</h4>"});
+          $.blockUI({message: "<h4>Guardando cambios...</h4>"});
 
           var datos = utilFormularios.procesarDatos(f);
           $.extend(datos, listaPagosDocente.obtenerDatosFiltrosBusqueda());
           util.llamadaAjax($(f).attr("action"), "POST", datos, true,
                   function (d) {
-                    $("body").unblock({
-                      onUnblock: function () {
-                        mensajes.agregar("exitosos", "Pago registrado.", true);
-                      }
-                    });
+                    $("body").unblock();
                   },
                   function (d) {
                     listaPagosDocente.reCargar();
@@ -81,20 +78,49 @@ formularioPagoDocente = (function ()/* - */ {
         }
       }
     });
+    archivosAdjuntos.limpiarCampos($("#formulario-pago"), "ImagenesComprobantes");
     $("#fecha-pago").datepicker("setDate", "today");
     $("form .help-block-error").remove();
   }
 
-  //Público
-  function mostrar(datosIniciales)/* - */ {
+  function establecerDatos(datos) {
     limpiarCampos();
-    $("#mod-pago").find(".modal-title").html("Nuevo pago para el profesor(a) " + datosIniciales.profesor);
-    $("#formulario-pago").find("input[name='idProfesor']").val(datosIniciales.idProfesor);
-    $("#formulario-pago").find("input[name='monto']").val(util.redondear(datosIniciales.montoTotalXClases, 2));
+    $("#formulario-pago").find("input[name='idPago']").val("");
+    $("#formulario-pago").find("input[name='idProfesor']").val(datos.idProfesor);
+    $("#formulario-pago").find("input[name='monto']").val(util.redondear(datos.montoTotalXClases, 2));
+
+    if (datos.idPago !== null) {
+      $("#formulario-pago").find("input[name='idPago']").val(datos.idPago);
+      $("#descripcion-pago").val(datos.descripcionPago);
+
+      var datFecha = utilFechasHorarios.formatoFecha(datos.fechaPago).split("/");
+      $("#fecha-pago").datepicker("setDate", (new Date(datFecha[1] + "/" + datFecha[0] + "/" + datFecha[2])));
+
+      if (datos.imagenesComprobantePago !== null && datos.imagenesComprobantePago !== "") {
+        var imagenes = datos.imagenesComprobantePago.split(",");
+        for (var i = 0; i < imagenes.length; i++) {
+          var datosImagen = imagenes[i].split(":");
+          if (datosImagen.length === 2) {
+            archivosAdjuntos.agregar("imagenes-comprobantes", datosImagen[0], datosImagen[1], true);
+          }
+        }
+      }
+    }
+  }
+
+  //Público
+  function registrar(datos)/* - */ {
+    establecerDatos(datos);
+    $("#formulario-pago").submit();
+  }
+  function editar(datos)/* - */ {
+    establecerDatos(datos);
+    $("#mod-pago").find(".modal-title").html("Pago al profesor(a) " + datos.profesor);
     $("#mod-pago").modal("show");
   }
 
   return {
-    mostrar: mostrar
+    registrar: registrar,
+    editar: editar
   };
 }());

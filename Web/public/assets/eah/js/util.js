@@ -380,7 +380,7 @@ utilTablas = (function ()/* - */ {
       }
     });
   }
-  function eliminarElemento(elemento, mensajePrevio, idTabla, noRecargarTabla, funcionCompletado)/* - */ {
+  function eliminarElemento(elemento, mensajePrevio, idTabla, noRecargarTabla, funcionCompletado, excluirMensajeConfirmacion)/* - */ {
     mensajePrevio = (mensajePrevio !== undefined && mensajePrevio !== null && mensajePrevio.trim() !== "" ? mensajePrevio : "¿Está seguro que desea eliminar este elemento?");
     if (confirm(mensajePrevio)) {
       util.llamadaAjax($(elemento).data("urleliminar"), "DELETE", {}, true,
@@ -389,12 +389,14 @@ utilTablas = (function ()/* - */ {
                   var eleEli = $("#" + idTabla).find("a[data-id='" + d["id"] + "']").closest("tr");
                   eleEli.remove();
                 }
-                mensajes.agregar("exitosos", d["mensaje"], true);
+                if (!excluirMensajeConfirmacion) {
+                  mensajes.agregar("exitosos", d["mensaje"], true);
+                }
               },
               function (d) {
                 if (idTabla !== undefined && idTabla !== null && !noRecargarTabla)
                   $("#" + idTabla).DataTable().ajax.reload();
-                if (funcionCompletado !== undefined)
+                if (funcionCompletado)
                   funcionCompletado(d);
               },
               function (de) {
@@ -627,7 +629,7 @@ utilFormularios = (function () {
         datIni.extErrorStr = "Extensión permitidas: ";
         datIni.sizeErrorStr = "Tamaño máximo: ";
       }
-      $(elemento).uploadFile($.extend(true, {}, datIni, datosAdicionales));
+      return $(elemento).uploadFile($.extend(true, {}, datIni, datosAdicionales));
     }
   }
 
@@ -770,13 +772,16 @@ String.prototype.reemplazarDatosTexto = function (datos, valores) {
 
 String.prototype.replaceAll = function (search, replacement) {
   var target = this;
-  return target.replace(new RegExp(search, 'g'), replacement);
+  return target.replace(new RegExp(escapeRegExp(search), 'g'), replacement);
 };
+function escapeRegExp(str) {
+    return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+}
 
 function incluirEnlaceWhatsApp(numero) {
   var regexp = new RegExp(/^[0-9]+$/);
   var numeroFinal = (numero !== undefined && numero !== null ? numero.trim().replaceAll(" ", "").replace("+", "") : "");
-  
+
   if (numeroFinal !== "" && numeroFinal.length >= 9 && regexp.test(numeroFinal)) {
     numeroFinal = (numeroFinal.length !== 9 ? numeroFinal : "51" + numeroFinal);
     return '<a href="https://wa.me/' + numeroFinal + '" target="_blank">' + numero + '</a>';

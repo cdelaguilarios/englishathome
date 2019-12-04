@@ -114,41 +114,55 @@ class PagoProfesor extends Model {
   // <editor-fold desc="Pagos por clases">
   public static function listarXClasesBase($datos) {
     $nombreTablaClase = Clase::nombreTabla();
-    $nombreTablaPagoClase = PagoClase::nombreTabla();
-    $nombreTablaPagoProfesor = PagoProfesor::nombreTabla();
 
     $clases = Clase::listarBase(TRUE);
-
-    $queryIdClasesPagadasAProfesores = "SELECT idClase 
-                                          FROM " . $nombreTablaPagoClase . " 
-                                          WHERE idPago IN (SELECT idPago FROM " . $nombreTablaPagoProfesor . ")";
+    $clases->leftJoin(EntidadCuentaBancaria::nombreTabla() . " as cuentaBancariaProfesor", $nombreTablaClase . ".idProfesor", "=", "cuentaBancariaProfesor.idEntidad");
     if ($datos["estadoPago"] == EstadosPago::Realizado) {
-      $clases->whereRaw($nombreTablaClase . ".id IN (" . $queryIdClasesPagadasAProfesores . ")");
-    } else {
-      $clases->whereRaw($nombreTablaClase . ".id NOT IN (" . $queryIdClasesPagadasAProfesores . ")");
+      $clases->whereRaw("pagoProfesor.id IS NOT NULL");
+    } else if ($datos["estadoPago"] == EstadosPago::Pendiente) {
+      $clases->whereRaw("pagoProfesor.id IS NULL");
     }
-    Util::aplicarFiltrosBusquedaXFechas($nombreTablaClase, $clases, "fechaConfirmacion", $datos);
-    
+    $clases->whereNotNull("entidadProfesor.id");
+    Util::aplicarFiltrosBusquedaXFechas($clases, $nombreTablaClase, "fechaConfirmacion", $datos);
+
     return $clases->select(DB::raw(
-                            $nombreTablaClase . ".*,                            
+                            "pagoProfesor.id AS idPago,
+                            pagoProfesor.fecha AS fechaPago,
+                            pagoProfesor.descripcion AS descripcionPago,
+                            pagoProfesor.imagenesComprobante AS imagenesComprobantePago,
+                            (CASE WHEN pagoProfesor.id IS NULL 
+                              THEN '" . EstadosPago::Pendiente . "'
+                              ELSE '" . EstadosPago::Realizado . "'
+                            END) AS estadoPago,"
+                            . $nombreTablaClase . ".*,                            
                             CONCAT(entidadAlumno.nombre, ' ', entidadAlumno.apellido) AS alumno, 
-                            CONCAT(entidadProfesor.nombre, ' ', entidadProfesor.apellido) AS profesor")
+                            CONCAT(entidadProfesor.nombre, ' ', entidadProfesor.apellido) AS profesor,
+                            GROUP_CONCAT(
+                              DISTINCT CONCAT(cuentaBancariaProfesor.banco, '|', cuentaBancariaProfesor.numeroCuenta) 
+                              SEPARATOR ';'
+                            ) AS cuentasBancariasProfesor")
     );
   }
 
-  public static function listarXClases($datos)/* - */ {    
+  public static function listarXClases($datos)/* - */ {
     $clases = PagoProfesor::listarXClasesBase($datos);
+
     return DB::table(DB::raw("({$clases->toSql()}) AS T"))
                     ->mergeBindings($clases->getQuery())
                     ->select(DB::raw(
-                                    "T.idProfesor,
+                                    "T.idPago,
+                                     T.fechaPago,
+                                     T.descripcionPago,
+                                     T.imagenesComprobantePago,
+                                     T.estadoPago,
+                                     T.idProfesor, 
                                      T.profesor, 
-                                    COUNT(T.id) AS 'numeroTotalClases',
-                                    SUM(T.duracion) AS 'duracionTotalClases',
-                                    SUM(T.costoHoraProfesor * (T.duracion/3600))/SUM(T.duracion/3600) AS 'costoHoraPromedioProfesor',
-                                    SUM(T.costoHoraProfesor * (T.duracion/3600)) AS 'montoTotalXClases',
-                                    '" . $datos["estadoPago"] . "' AS 'estado'")
-    )->groupBy("T.idProfesor");
+                                     T.cuentasBancariasProfesor, 
+                                     COUNT(T.id) AS numeroTotalClases,
+                                     SUM(T.duracion) AS duracionTotalClases,
+                                     SUM(T.costoHoraProfesor * (T.duracion/3600))/SUM(T.duracion/3600) AS costoHoraPromedioProfesor,
+                                     SUM(T.costoHoraProfesor * (T.duracion/3600)) AS montoTotalXClases")
+                    )->groupBy("T.idPago", "T.idProfesor");
   }
 
   public static function listarXClasesDetalle($idProfesor, $datos) {
@@ -157,37 +171,43 @@ class PagoProfesor extends Model {
                     ->mergeBindings($clases->getQuery())
                     ->select(DB::raw(
                                     "T.*,
-                                    (T.costoHoraProfesor * (T.duracion/3600)) AS 'pagoTotalFinalProfesor'")
-    )->where("T.idProfesor", $idProfesor);
+                                    (T.costoHoraProfesor * (T.duracion/3600)) AS pagoTotalFinalProfesor")
+                    )->where("T.idProfesor", $idProfesor);
   }
 
-  public static function registrarXClases($idProfesor, $req)/* - */ {
+  public static function registrarActualizarXClases($idProfesor, $req)/* - */ {
     $datos = $req->all();
 
-    $nombreTablaClase = Clase::nombreTabla();
-    $datosPago = PagoProfesor::listarXClases($datos)->where($nombreTablaClase . ".idProfesor", $idProfesor)->first();
-    if ($datosPago != null) {
-      $clases = PagoProfesor::listarXClasesDetalle($idProfesor, $datos)->get();
-
-      $imagenComprobante = Archivo::procesarArchivosSubidosNUEVO("", $datos, 1, "ImagenComprobante");
-      $datos["imagenesComprobante"] = explode(":", $imagenComprobante)[0];     
+    $datosPagoIni = PagoProfesor::listarXClases($datos)->where("idProfesor", $idProfesor)->first();
+    if ($datosPagoIni != null) {
       $datos["motivo"] = MotivosPago::Clases;
-      $datos["monto"] = $datosPago->montoTotalXClases;
-      $datosPago = Pago::registrar($datos, EstadosPago::Realizado, $req);
+      $datos["monto"] = $datosPagoIni->montoTotalXClases;
 
-      $pagoProfesor = new PagoProfesor([
-          "idPago" => $datosPago["id"],
-          "idProfesor" => $idProfesor
-      ]);
-      $pagoProfesor->save();
-
-      foreach ($clases as $clase) {
-        $pagoClase = new PagoClase([
+      if (!(isset($datos["idPago"]) && $datos["idPago"] != "")) {
+        //Registro
+        $datos["imagenesComprobante"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 5, "ImagenesComprobantes");
+        $datosPago = Pago::registrar($datos, EstadosPago::Realizado, null);
+        $pagoProfesor = new PagoProfesor([
             "idPago" => $datosPago["id"],
-            "idClase" => $clase->id
+            "idProfesor" => $idProfesor
         ]);
-        $pagoClase->save();
+        $pagoProfesor->save();
+
+        $clases = PagoProfesor::listarXClasesDetalle($idProfesor, $datos)->get();
+        foreach ($clases as $clase) {
+          $pagoClase = new PagoClase([
+              "idPago" => $datosPago["id"],
+              "idClase" => $clase->id
+          ]);
+          $pagoClase->save();
+        }
+      } else {
+        //Actualización
+        $pago = Pago::obtenerXId($datos["idPago"]);
+        $datos["imagenesComprobante"] = Archivo::procesarArchivosSubidosNUEVO($pago->imagenesComprobante, $datos, 5, "ImagenesComprobantes");
+        $datosPago = Pago::actualizar($datos["idPago"], $datos, null);
       }
+
       PagoProfesor::registrarActualizarEvento($idProfesor, $datosPago);
     }
   }
@@ -207,7 +227,7 @@ class PagoProfesor extends Model {
   public static function eliminar($idProfesor, $id)/* - */ {
     if (PagoProfesor::verificarExistencia($idProfesor, $id)) {
       Pago::eliminar($id);
-      //TODO: Falta eliminar el PagoProfesor
+      PagoProfesor::where("idProfesor", $idProfesor)->where("idPago", $id)->delete();
     }
   }
 

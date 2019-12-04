@@ -207,7 +207,8 @@ class PagoAlumno extends Model {
     if (!PagoAlumno::verificarExistencia($idAlumno, $id)) {
       Clase::eliminadXIdPago($idAlumno, $id);
       Pago::eliminar($id);
-      //TODO: Falta eliminar el PagoAlumno
+      PagoAlumno::where("idAlumno", $idAlumno)->where("idPago", $id)->delete();
+      //TODO: Falta validar
     }
   }
 

@@ -30,6 +30,10 @@ filtrosBusquedaFechas = (function ()/* - */ {
       $("#filtro-busqueda-fechas-tipo").trigger("change");
     }
   }
+  
+  function actualizarTitulo(titulo){
+    $("#lbl-filtro-busqueda-fechas-tipo").html(titulo);
+  }
 
   function obtenerDatos()/* - */ {
     var datos = {};
@@ -49,6 +53,7 @@ filtrosBusquedaFechas = (function ()/* - */ {
 
   return {
     cargar: cargar,
+    actualizarTitulo: actualizarTitulo,
     obtenerDatos: obtenerDatos
   };
 }());

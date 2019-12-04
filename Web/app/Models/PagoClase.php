@@ -31,6 +31,16 @@ class PagoClase extends Model {
                 ->from(with(new PagoAlumno)->getTable())
                 ->where("idAlumno", $idAlumnoProfesor);
               })->delete();
+      $clase = Clase::obtenerXId($idAlumnoProfesor, $idClase);
+      $pago = Pago::obtenerXId($idPago);
+
+      $pagoClase = new PagoClase([
+          "idPago" => $idPago,
+          "idClase" => $idClase,
+          "duracionCubierta" => $clase->duracion,
+          "costoXHoraClase" => $pago->costoXHoraClase
+      ]);
+      $pagoClase->save();
     } else {
       PagoClase::where("idClase", $idClase)
               ->whereIn("idPago", function($q) use ($idAlumnoProfesor) {
@@ -38,9 +48,12 @@ class PagoClase extends Model {
                 ->from(with(new PagoProfesor)->getTable())
                 ->where("idProfesor", $idAlumnoProfesor);
               })->delete();
+      $pagoClase = new PagoClase([
+          "idPago" => $idPago,
+          "idClase" => $idClase
+      ]);
+      $pagoClase->save();
     }
-    $pagoClase = new PagoClase(["idPago" => $idPago, "idClase" => $idClase]);
-    $pagoClase->save();
   }
 
   public static function totalXProfesor($idClase) {

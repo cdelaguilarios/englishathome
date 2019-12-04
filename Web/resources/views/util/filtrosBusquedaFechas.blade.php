@@ -1,7 +1,7 @@
 {{----}}
 <script src="{{ asset("assets/eah/js/modulos/util/filtrosBusquedaFechas.js")}}"></script>
 <div class="form-group">      
-  {{ Form::label("filtro-busqueda-fechas-tipo", "Fecha: ", ["class" => "col-sm-1 control-label"]) }} 
+  {{ Form::label("filtro-busqueda-fechas-tipo", "Fecha: ", ["id" => "lbl-filtro-busqueda-fechas-tipo", "class" => "col-sm-2 control-label"]) }} 
   <div class="col-sm-3">
     {{ Form::select('tipoBusquedaFecha', App\Helpers\Enum\TiposBusquedaFecha::listar(), App\Helpers\Enum\TiposBusquedaFecha::Mes, ["id" => "filtro-busqueda-fechas-tipo", "class" => "form-control"]) }}
   </div>

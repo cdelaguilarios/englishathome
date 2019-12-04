@@ -43,37 +43,46 @@ class DocenteController extends Controller/* - */ {
   }
 
   public function listarPagosXClases(PagoRequest\ListarXClasesRequest $req)/* - */ {
-    return Datatables::of(PagoProfesor::listarXClases($req->all()))->filterColumn("profesor", function($q, $k) {
-              $q->whereRaw("CONCAT(entidadProfesor.nombre, ' ', entidadProfesor.apellido) like ?", ["%{$k}%"]);
-            })->make(true);
+    return Datatables::of(PagoProfesor::listarXClases($req->all()))
+                    ->filterColumn("estadoPago", function($q, $k) {
+                      $q->whereRaw("estadoPago like ?", ["%{$k}%"])
+                      ->orWhereRaw("DATE_FORMAT(fechaPago, '%d/%m/%Y') like ?", ["%{$k}%"]);
+                    })->make(true);
   }
 
   public function listarPagosXClasesDetalle($id, PagoRequest\ListarXClasesRequest $req)/* - */ {
     $nombreTablaClase = Clase::nombreTabla();
     return Datatables::of(PagoProfesor::listarXClasesDetalle($id, $req->all()))
-                    ->filterColumn("alumno", function($q, $k) {
-                      $q->whereRaw("CONCAT(entidadAlumno.nombre, ' ', entidadAlumno.apellido) like ?", ["%{$k}%"]);
-                    })
                     ->filterColumn("fechaConfirmacion", function($q, $k) use($nombreTablaClase) {
                       $q->whereRaw("DATE_FORMAT(" . $nombreTablaClase . ".fechaConfirmacion, '%d/%m/%Y') like ?", ["%{$k}%"]);
                     })
                     ->filterColumn("duracion", function($q, $k) use($nombreTablaClase) {
                       $q->whereRaw("SEC_TO_TIME(" . $nombreTablaClase . ".duracion) like ?", ["%{$k}%"]);
                     })
-                    ->filterColumn("pagoTotalFinalProfesor", function($q, $k) use($nombreTablaClase) {
-                      $q->whereRaw("(" . $nombreTablaClase . ".costoHoraProfesor * (" . $nombreTablaClase . ".duracion/3600)) like ?", ["%{$k}%"]);
+                    ->filterColumn("pagoTotalFinalProfesor", function($q, $k) {
+                      $q->whereRaw("(T.costoHoraProfesor * (T.duracion/3600)) like ?", ["%{$k}%"]);
                     })->make(true);
   }
 
-  public function registrarPagoXClases(PagoRequest\FormularioRequest $req)/* - */ {
-      $datos = $req->all();
-      PagoProfesor::registrarXClases($datos["idProfesor"], $req);
+  public function registrarActualizarPagoXClases(PagoRequest\FormularioRequest $req)/* - */ {
     try {
+      $datos = $req->all();
+      PagoProfesor::registrarActualizarXClases($datos["idProfesor"], $req);
     } catch (\Exception $e) {
       Log::error($e);
-      return response()->json(["mensaje" => "Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente."], 500);
+      return response()->json(["mensaje" => "Ocurrió un problema durante " . (isset($datos["idPago"]) ? "la actualización" : "el registro") . " de datos. Por favor inténtelo nuevamente."], 500);
     }
-    return response()->json(["mensaje" => "Registro exitoso."], 200);
+    return response()->json(["mensaje" => (isset($datos["idPago"]) ? "Actualización exitosa." : "Registro exitoso.")], 200);
+  }
+
+  public function eliminarPagoXClases($id, $idPago)/* - */ {
+    try {
+      PagoProfesor::eliminar($id, $idPago);
+    } catch (\Exception $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "No se pudo eliminar el registro de datos del pago seleccionado."], 400);
+    }
+    return response()->json(["mensaje" => "Eliminación exitosa.", "id" => $idPago], 200);
   }
 
   public function actualizarExperienciaLaboral($id, FormularioExperienciaLaboralRequest $req)/* - */ {
