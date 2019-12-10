@@ -15,7 +15,7 @@ listaAlumnos = (function ()/* - */ {
     estados = (typeof (estados) === "undefined" ? "" : estados);
     estadosDisponibleCambio = (typeof (estadosDisponibleCambio) === "undefined" ? "" : estadosDisponibleCambio);
 
-    if (urlListar !== "" && urlPerfilAlumno !== "" && urlEditar !== "" && urlEliminar !== "" && urlPerfilProfesor !== "" && urlListarClases !== "" && estados !== "" && estadosDisponibleCambio !== "" ) {
+    if (urlListar !== "" && urlPerfilAlumno !== "" && urlEditar !== "" && urlEliminar !== "" && urlPerfilProfesor !== "" && urlListarClases !== "" && estados !== "" && estadosDisponibleCambio !== "") {
       $("#tab-lista-alumnos").DataTable({
         processing: true,
         serverSide: true,
@@ -46,30 +46,30 @@ listaAlumnos = (function ()/* - */ {
                               (d.distritoProfesor ? '<br/><span class="text-info"><i class="fa fa-street-view"></i> ' + util.letraCapital(d.distritoProfesor) + '</span>' : '')
                               : '');
             }},
-          {data: "ultimoPagoPorcentajeAvanceXClases", name: "ultimoPagoPorcentajeAvanceXClases", width: "20%", render: function (e, t, d, m) {
-              if (d.ultimoPagoDuracionTotalXClases) {
+          {data: "porcentajeAvanceXClases", name: "porcentajeAvanceXClases", width: "20%", render: function (e, t, d, m) {
+              if (d.duracionTotalXClases && parseInt(d.numeroPagosXBolsaHoras)) {
                 var ultimaClaseFecha = utilFechasHorarios.formatoFecha(d.ultimaClaseFecha);
 
                 return '<div class="clearfix">' +
-                        '<span class="pull-left">Bolsa de ' + utilFechasHorarios.formatoHora(d.ultimoPagoDuracionTotalXClases) + ' hora(s) </span>' +
+                        '<span class="pull-left">Bolsa de ' + utilFechasHorarios.formatoHora(d.duracionTotalXClases) + ' hora(s) </span>' +
                         '<a href="javascript:void(0);" onclick="listaAlumnos.abrirModalListaClases(' + d.idEntidad + ');" title="Ver lista de clases" class="btn-ver-lista-clases">' +
                         '<i class="fa fa-eye"></i>' +
                         '</a>' +
-                        '<small class="pull-right">' + util.redondear(d.ultimoPagoPorcentajeAvanceXClases, 2) + ' %</small>' +
+                        '<small class="pull-right">' + util.redondear(d.porcentajeAvanceXClases, 2) + ' %</small>' +
                         '</div>' +
                         '<div class="progress xs">' +
-                        '<div class="progress-bar progress-bar-green" style="width: ' + d.ultimoPagoPorcentajeAvanceXClases + '%;"></div>' +
+                        '<div class="progress-bar progress-bar-green" style="width: ' + d.porcentajeAvanceXClases + '%;"></div>' +
                         '</div>' +
                         '<div class="clearfix">' +
                         '<span class="pull-left">' +
                         '<span class="text-green" data-toggle="tooltip" title="" data-original-title="Horas realizadas">' +
-                        '<i class="fa fa-clock-o"></i> ' + utilFechasHorarios.formatoHora(d.ultimoPagoDuracionTotalXClasesRealizadas) +
-                        '</span>  de  <span class="text-info" data-toggle="tooltip" title="" data-original-title="Horas programadas"><i class="fa fa-clock-o"></i> ' + utilFechasHorarios.formatoHora(d.ultimoPagoDuracionTotalXClases) + '</span>' +
+                        '<i class="fa fa-clock-o"></i> ' + utilFechasHorarios.formatoHora(d.duracionTotalXClasesRealizadas) +
+                        '</span>  de  <span class="text-info" data-toggle="tooltip" title="" data-original-title="Horas programadas"><i class="fa fa-clock-o"></i> ' + utilFechasHorarios.formatoHora(d.duracionTotalXClases) + '</span>' +
                         '</span>' +
                         '</div>' +
                         (ultimaClaseFecha !== "" ? '<div class="clearfix"><br/><small class="pull-left">Última clase: ' + ultimaClaseFecha + '</small></div>' : '');
               } else {
-                return 'Sin clases registradas';
+                return 'Sin bolsa de horas';
               }
             }, "className": "not-mobile"},
           {data: "curso", name: "curso", render: function (e, t, d, m) {
@@ -90,8 +90,8 @@ listaAlumnos = (function ()/* - */ {
               }
               return estado + (d.nivelIngles !== null && d.nivelIngles !== "" ? '<span class="text-info">(Nivel ' + d.nivelIngles + ')</span>' : '');
             }, "className": "text-center not-mobile"},
-          {data: "ultimoPagoMonto", name: "ultimoPagoMonto", width: "10%", render: function (e, t, d, m) {
-              return (d.ultimoPagoMonto !== null && d.ultimoPagoMonto !== "" && d.ultimoPagoMonto > 0 ? 'S/. ' + util.redondear(d.ultimoPagoMonto, 2) : '');
+          {data: "montoTotalPagosXBolsaHoras", name: "montoTotalPagosXBolsaHoras", width: "10%", render: function (e, t, d, m) {
+              return (d.montoTotalPagosXBolsaHoras !== null && d.montoTotalPagosXBolsaHoras !== "" && d.montoTotalPagosXBolsaHoras > 0 ? 'S/. ' + util.redondear(d.montoTotalPagosXBolsaHoras, 2) + '<br/><span class="text-info">(' + d.numeroPagosXBolsaHoras + ' pago' + (d.numeroPagosXBolsaHoras === 1 ? '' : 's') + ')</span>' : '');
             }, "className": "text-center not-mobile"},
           {data: "fechaRegistro", name: "fechaRegistro", width: "12%", render: function (e, t, d, m) {
               var fechaInicioClases = utilFechasHorarios.formatoFecha(d.fechaInicioClase);

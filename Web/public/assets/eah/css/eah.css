@@ -262,7 +262,7 @@ textarea{
   margin: 0;
   float: left;
 }
-#sec-perfil-horario .btn{
+#sec-perfil-horario .btn, #btn-seleccionar-profesor-actual{
   margin-left: 20px;
 }
 [id*='sec-info-horario'] ul{

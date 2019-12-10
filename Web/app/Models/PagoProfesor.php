@@ -66,7 +66,7 @@ class PagoProfesor extends Model {
   public static function obtenerXId($idProfesor, $id)/* - */ {
     $datosPago = PagoProfesor::listar($idProfesor)->where("id", $id)->first();
     if (!isset($datosPago)) {
-      throw ModelNotFoundException;
+      throw new ModelNotFoundException;
     }
     return $datosPago;
   }
@@ -126,52 +126,51 @@ class PagoProfesor extends Model {
     Util::aplicarFiltrosBusquedaXFechas($clases, $nombreTablaClase, "fechaConfirmacion", $datos);
 
     return $clases->select(DB::raw(
-                            "pagoProfesor.id AS idPago,
-                            pagoProfesor.fecha AS fechaPago,
-                            pagoProfesor.descripcion AS descripcionPago,
-                            pagoProfesor.imagenesComprobante AS imagenesComprobantePago,
-                            (CASE WHEN pagoProfesor.id IS NULL 
-                              THEN '" . EstadosPago::Pendiente . "'
-                              ELSE '" . EstadosPago::Realizado . "'
-                            END) AS estadoPago,"
-                            . $nombreTablaClase . ".*,                            
+                            $nombreTablaClase . ".*, 
                             CONCAT(entidadAlumno.nombre, ' ', entidadAlumno.apellido) AS alumno, 
                             CONCAT(entidadProfesor.nombre, ' ', entidadProfesor.apellido) AS profesor,
                             GROUP_CONCAT(
                               DISTINCT CONCAT(cuentaBancariaProfesor.banco, '|', cuentaBancariaProfesor.numeroCuenta) 
                               SEPARATOR ';'
-                            ) AS cuentasBancariasProfesor")
+                            ) AS cuentasBancariasProfesor,
+                            pagoProfesor.id AS idPagoProfesor,
+                            pagoProfesor.fecha AS fechaPagoProfesor,
+                            pagoProfesor.descripcion AS descripcionPagoProfesor,
+                            pagoProfesor.imagenesComprobante AS imagenesComprobantePagoProfesor,
+                            (CASE WHEN pagoProfesor.id IS NULL 
+                              THEN '" . EstadosPago::Pendiente . "'
+                              ELSE '" . EstadosPago::Realizado . "'
+                            END) AS estadoPagoProfesor,  
+                            SUM(pagoAlumno.pagoXHoraProfesor * pagoClaseAlumno.duracionCubierta/3600) AS pagoTotalAlProfesor,
+                            SUM(pagoAlumno.pagoXHoraProfesor)/COUNT(pagoAlumno.id) AS pagoPromedioXHoraProfesor")
     );
   }
 
   public static function listarXClases($datos)/* - */ {
     $clases = PagoProfesor::listarXClasesBase($datos);
-
     return DB::table(DB::raw("({$clases->toSql()}) AS T"))
                     ->mergeBindings($clases->getQuery())
                     ->select(DB::raw(
-                                    "T.idPago,
-                                     T.fechaPago,
-                                     T.descripcionPago,
-                                     T.imagenesComprobantePago,
-                                     T.estadoPago,
+                                    "T.idPagoProfesor,
+                                     T.fechaPagoProfesor,
+                                     T.descripcionPagoProfesor,
+                                     T.imagenesComprobantePagoProfesor,
+                                     T.estadoPagoProfesor,
                                      T.idProfesor, 
                                      T.profesor, 
                                      T.cuentasBancariasProfesor, 
                                      COUNT(T.id) AS numeroTotalClases,
                                      SUM(T.duracion) AS duracionTotalClases,
-                                     SUM(T.costoHoraProfesor * (T.duracion/3600))/SUM(T.duracion/3600) AS costoHoraPromedioProfesor,
-                                     SUM(T.costoHoraProfesor * (T.duracion/3600)) AS montoTotalXClases")
-                    )->groupBy("T.idPago", "T.idProfesor");
+                                     SUM(T.pagoTotalAlProfesor)/SUM(T.duracion/3600) AS pagoPromedioXHoraProfesor,
+                                     SUM(T.pagoTotalAlProfesor) AS montoTotalXClases")
+                    )->groupBy("T.idPagoProfesor", "T.idProfesor");
   }
 
   public static function listarXClasesDetalle($idProfesor, $datos) {
     $clases = PagoProfesor::listarXClasesBase($datos);
     return DB::table(DB::raw("({$clases->toSql()}) AS T"))
                     ->mergeBindings($clases->getQuery())
-                    ->select(DB::raw(
-                                    "T.*,
-                                    (T.costoHoraProfesor * (T.duracion/3600)) AS pagoTotalFinalProfesor")
+                    ->select(DB::raw("T.*")
                     )->where("T.idProfesor", $idProfesor);
   }
 
@@ -227,7 +226,6 @@ class PagoProfesor extends Model {
   public static function eliminar($idProfesor, $id)/* - */ {
     if (PagoProfesor::verificarExistencia($idProfesor, $id)) {
       Pago::eliminar($id);
-      PagoProfesor::where("idProfesor", $idProfesor)->where("idPago", $id)->delete();
     }
   }
 

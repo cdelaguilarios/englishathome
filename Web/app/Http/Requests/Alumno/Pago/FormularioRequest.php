@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Alumno\Pago;
 
-use App\Models\Docente;
 use App\Http\Requests\Request;
 use App\Helpers\Enum\MotivosPago;
 use App\Helpers\ReglasValidacion;
@@ -18,16 +17,15 @@ class FormularioRequest extends Request/* - */ {
   protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     $datos["motivo"] = ReglasValidacion::formatoDato($datos, "motivo");
-    $datos["cuenta"] = ReglasValidacion::formatoDato($datos, "cuenta");
     $datos["fecha"] = ReglasValidacion::formatoDato($datos, "fecha");
+    $datos["cuenta"] = ReglasValidacion::formatoDato($datos, "cuenta");
     $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $datos["descripcion"] = ReglasValidacion::formatoDato($datos, "descripcion");
     $datos["imagenComprobante"] = ReglasValidacion::formatoDato($datos, "imagenComprobante");
     $datos["usarSaldoFavor"] = (isset($datos["usarSaldoFavor"]) ? 1 : 0);
-    $datos["costoXHoraClase"] = ReglasValidacion::formatoDato($datos, "costoXHoraClase");
     $datos["periodoClases"] = ReglasValidacion::formatoDato($datos, "periodoClases");
+    $datos["costoXHoraClase"] = ReglasValidacion::formatoDato($datos, "costoXHoraClase");
     $datos["pagoXHoraProfesor"] = ReglasValidacion::formatoDato($datos, "pagoXHoraProfesor");
-    $datos["idDocente"] = ReglasValidacion::formatoDato($datos, "idDocente");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
@@ -60,18 +58,10 @@ class FormularioRequest extends Request/* - */ {
 
     if ($datos["motivo"] == MotivosPago::Clases) {
       $reglasValidacion += [
+          "periodoClases" => "required|numeric|digits_between :1,11|min:1",
           "costoXHoraClase" => ["required", "regex:" . ReglasValidacion::RegexDecimal],
-          "periodoClases" => "required|numeric|digits_between :1,11|min:1"
+          "pagoXHoraProfesor" => ["required", "regex:" . ReglasValidacion::RegexDecimal]
       ];
-
-      if (!is_null($datos["idDocente"])) {
-        $reglasValidacion += [
-            "pagoXHoraProfesor" => ["required", "regex:" . ReglasValidacion::RegexDecimal]
-        ];
-        if (!Docente::verificarExistencia($datos["idDocente"])) {
-          $reglasValidacion["docenteNoValido"] = "required";
-        }
-      }
     }
 
     switch ($this->method()) {
@@ -92,8 +82,7 @@ class FormularioRequest extends Request/* - */ {
     return [
         "motivoNoValido.required" => "El motivo seleccionado del pago no es válido.",
         "cuentaNoValida.required" => "La cuenta de banco seleccionada del pago no es válida.",
-        "estadoNoValido.required" => "El estado seleccionado del pago no es válido.",
-        "docenteNoValido.required" => "El docente seleccionado no es válido."
+        "estadoNoValido.required" => "El estado seleccionado del pago no es válido."
     ];
   }
 

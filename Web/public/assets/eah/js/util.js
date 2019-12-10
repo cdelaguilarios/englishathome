@@ -732,6 +732,7 @@ function obtenerDatosClase(idAlumno, idClase, funcionRetorno) {
   }
 }
 function verDatosClase(idAlumno, idClase) {
+  //TODO: Falta verificar
   estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
   urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
   if (estadosClase !== "" && urlPerfilProfesor !== "") {
@@ -746,13 +747,13 @@ function verDatosClase(idAlumno, idClase) {
       }
       $("#dat-fecha-clase").html(utilFechasHorarios.formatoFecha(d.fechaInicio) + ' - De ' + utilFechasHorarios.formatoFecha(d.fechaInicio, false, true) + ' a ' + utilFechasHorarios.formatoFecha(d.fechaFin, false, true));
       $("#dat-alumno-clase").html('<i class="fa fa-mortar-board"></i> <b>' + d.nombreAlumno + ' ' + d.apellidoAlumno + '</b> <a href=' + (urlPerfilAlumno.replace('/0', '/' + d.idAlumno)) + ' title="Ver perfil del alumno" target="_blank"><i class="fa fa-eye"></i></a>');
-      $("#dat-costo-hora-clase").html('S/. ' + util.redondear(d.costoHora, 2));
+      $("#dat-costo-hora-clase").html('S/. ' + util.redondear(d.costoPromedioXHoraClase, 2));
       $("#dat-codigo-pago-clase").html(d.idPago);
       $("#sec-dat-profesor-clase").hide();
       if (d.idProfesor !== null && d.nombreProfesor !== null && d.nombreProfesor !== '') {
         $("#sec-dat-profesor-clase").show();
         $("#dat-profesor-clase").html('<i class="fa flaticon-teach"></i> <b>' + d.nombreProfesor + ' ' + d.apellidoProfesor + '</b> <a href=' + (urlPerfilProfesor.replace('/0', '/' + d.idProfesor)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>');
-        $("#dat-pago-hora-profesor-clase").html('S/. ' + util.redondear(d.costoHoraProfesor, 2));
+        $("#dat-pago-hora-profesor-clase").html('S/. ' + util.redondear(d.pagoPromedioXHoraProfesor, 2));
       }
       $("#mod-datos-clase").modal("show");
     });

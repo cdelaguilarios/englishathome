@@ -1,3 +1,6 @@
+<script type="text/javascript">
+  var duracionTotalXClasesPendientes = parseInt("{{ $alumno->duracionTotalXClasesPendientes }}") / 3600;
+</script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/clase/formularioConfirmarClase.js")}}"></script>
 <button type="button" class="btn btn-success pull-right" data-toggle="modal" data-target="#mod-confirmar-clase">
   Confirmar clase
@@ -20,9 +23,9 @@
                 <div class="form-group">
                   {{ Form::label("", "Profesor: ", ["class" => "col-sm-3 control-label"]) }}
                   <div class="col-sm-9">
-                    {{ Form::text("", $alumno->ultimoPago->nombreProfesor . " " .  $alumno->ultimoPago->apellidoProfesor, ["class" => "form-control", "disabled" =>""]) }}
+                    {{ Form::text("", $alumno->profesorActual->nombre . " " .  $alumno->profesorActual->apellido, ["class" => "form-control", "disabled" =>""]) }}
                   </div>
-                  {{ Form::hidden("idProfesor", $alumno->ultimoPago->idProfesor) }}
+                  {{ Form::hidden("idProfesor", $alumno->profesorActual->id) }}
                 </div>
                 <div class="form-group"> 
                   {{ Form::label("fecha-clase", "Fecha (*): ", ["class" => "col-sm-3 control-label"]) }}

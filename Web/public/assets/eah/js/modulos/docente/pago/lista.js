@@ -2,12 +2,12 @@ var listaPagosDocente = {};
 listaPagosDocente = (function ()/* - */ {
   window.addEventListener("load", esperarCargaJquery, false);
   function esperarCargaJquery()/* - */ {
-    ((window.jQuery && jQuery.ui) ? cargarLista() : window.setTimeout(esperarCargaJquery, 100));
+    ((window.jQuery && jQuery.ui) ? cargar() : window.setTimeout(esperarCargaJquery, 100));
   }
 
   //Privado  
   var tablaPagos = null;
-  function cargarLista()/* - */ {
+  function cargar()/* - */ {
     urlListarPagosXClases = (typeof (urlListarPagosXClases) === "undefined" ? "" : urlListarPagosXClases);
     urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
     urlPerfilAlumno = (typeof (urlPerfilAlumno) === "undefined" ? "" : urlPerfilAlumno);
@@ -33,7 +33,7 @@ listaPagosDocente = (function ()/* - */ {
         autoWidth: false,
         responsive: true,
         order: [[5, "desc"]],
-        rowId: 'idPago',
+        rowId: 'idPagoProfesor',
         columns: [
           {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
               return m.row + m.settings._iDisplayStart + 1;
@@ -56,7 +56,7 @@ listaPagosDocente = (function ()/* - */ {
           {data: "numeroTotalClases", name: "numeroTotalClases", "searchable": false, className: "text-center", render: function (e, t, d, m) {
               return '<div class="clearfix">' +
                       '<span>' + d.numeroTotalClases + '</span>' +
-                      '<a href="javascript:void(0);" onclick="listaPagosDocente.cargarListaClases(this);" title="Ver lista de clases" class="btn-ver-lista-clases">' +
+                      '<a href="javascript:void(0);" onclick="listaPagosDocente.cargarClases(this);" title="Ver lista de clases" class="btn-ver-lista-clases">' +
                       '<i class="fa fa-eye"></i>' +
                       '</a>' +
                       '</div>';
@@ -64,24 +64,24 @@ listaPagosDocente = (function ()/* - */ {
           {data: "duracionTotalClases", name: "duracionTotalClases", "searchable": false, render: function (e, t, d, m) {
               return utilFechasHorarios.formatoHora(d.duracionTotalClases);
             }, className: "text-center"},
-          {data: "costoHoraPromedioProfesor", name: "costoHoraPromedioProfesor", "searchable": false, render: function (e, t, d, m) {
-              return 'S/. ' + util.redondear(d.costoHoraPromedioProfesor, 2);
+          {data: "pagoPromedioXHoraProfesor", name: "pagoPromedioXHoraProfesor", "searchable": false, render: function (e, t, d, m) {
+              return 'S/. ' + util.redondear(d.pagoPromedioXHoraProfesor, 2);
             }, className: "text-center", type: "monto"},
           {data: "montoTotalXClases", name: "montoTotalXClases", "searchable": false, render: function (e, t, d, m) {
               return 'S/. ' + util.redondear(d.montoTotalXClases, 2);
             }, className: "text-center", type: "monto"},
-          {data: "estadoPago", name: "estadoPago", render: function (e, t, d, m) {
-              return '<span class="label ' + estados[d.estadoPago][1] + ' btn-estado">' + estados[d.estadoPago][0] + '</span>'
-                      + (d.fechaPago !== null && d.fechaPago !== "" ? '<div class="clearfix"><span class="text-info">(Fecha pago: ' + utilFechasHorarios.formatoFecha(d.fechaPago) + ')</span></div>' : '');
+          {data: "estadoPagoProfesor", name: "estadoPagoProfesor", render: function (e, t, d, m) {
+              return '<span class="label ' + estados[d.estadoPagoProfesor][1] + ' btn-estado">' + estados[d.estadoPagoProfesor][0] + '</span>'
+                      + (d.fechaPagoProfesor !== null && d.fechaPagoProfesor !== "" ? '<div class="clearfix"><span class="text-info">(Fecha pago: ' + utilFechasHorarios.formatoFecha(d.fechaPagoProfesor) + ')</span></div>' : '');
             }, "className": "text-center not-mobile"},
           {data: "idProfesor", name: "clase.idProfesor", orderable: false, "searchable": false, width: "10%", render: function (e, t, d, m) {
-              return (d.estadoPago === estadoPagoRealizado ?
+              return (d.estadoPagoProfesor === estadoPagoRealizado ?
                       '<ul class="buttons">' +
                       '<li>' +
                       '<a href="javascript:void(0);" onclick="listaPagosDocente.editarPagoXClases(this);" title="Editar datos del pago"><i class="fa fa-pencil"></i></a>' +
                       '</li>' +
                       '<li>' +
-                      '<a href="javascript:void(0);" title="Eliminar pago" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?\', \'tab-lista-pagos\', false, null, true)" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPagoXClases.replace("/0", "/" + d.idProfesor).replace("/-1", "/" + d.idPago))) + '">' +
+                      '<a href="javascript:void(0);" title="Eliminar pago" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?\', \'tab-lista-pagos\', false, null, true)" data-id="" data-urleliminar="' + ((urlEliminarPagoXClases.replace("/0", "/" + d.idProfesor).replace("/-1", "/" + d.idPagoProfesor))) + '">' +
                       '<i class="fa fa-trash"></i>' +
                       '</a>' +
                       '</li>' +
@@ -149,7 +149,7 @@ listaPagosDocente = (function ()/* - */ {
   }
 
   var tablasClases = [];
-  function cargarListaClases(elemento) {
+  function cargarClases(elemento) {
     var tr = $(elemento).closest("tr");
     var fila = tablaPagos.row(tr);
 
@@ -165,7 +165,7 @@ listaPagosDocente = (function ()/* - */ {
       var datosPago = fila.data();
       $(elemento).html('<i class="fa fa-eye-slash"></i>');
 
-      var idTabla = "tab-lista-clases-profesor-" + datosPago.idProfesor + (datosPago.idPago !== null ? "-" + datosPago.idPago : "");
+      var idTabla = "tab-lista-clases-profesor-" + datosPago.idProfesor + (datosPago.idPagoProfesor !== null ? "-" + datosPago.idPagoProfesor : "");
       fila.child('<table id="' + idTabla + '" class="table table-bordered table-hover">' +
               '<thead>' +
               '<tr>' +
@@ -219,11 +219,11 @@ listaPagosDocente = (function ()/* - */ {
           {data: "duracion", name: "duracion", render: function (e, t, d, m) {
               return utilFechasHorarios.formatoHora(d.duracion);
             }, className: "text-center"},
-          {data: "costoHoraProfesor", name: "costoHoraProfesor", render: function (e, t, d, m) {
-              return 'S/. ' + util.redondear(d.costoHoraProfesor, 2);
+          {data: "pagoPromedioXHoraProfesor", name: "pagoPromedioXHoraProfesor", render: function (e, t, d, m) {
+              return 'S/. ' + util.redondear(d.pagoPromedioXHoraProfesor, 2);
             }, className: "text-center", type: (procesarTodoEnServidor ? "" : "monto")},
-          {data: "pagoTotalFinalProfesor", name: "pagoTotalFinalProfesor", render: function (e, t, d, m) {
-              return 'S/. ' + util.redondear(d.pagoTotalFinalProfesor, 2);
+          {data: "pagoTotalAlProfesor", name: "pagoTotalAlProfesor", render: function (e, t, d, m) {
+              return 'S/. ' + util.redondear(d.pagoTotalAlProfesor, 2);
             }, className: "text-center", type: (procesarTodoEnServidor ? "" : "monto")}
         ],
         initComplete: function (s, j) {
@@ -238,11 +238,11 @@ listaPagosDocente = (function ()/* - */ {
           var montoTotal = 0, montoTotalPagina = 0;
           $("#" + idTabla).DataTable().rows({filter: 'applied'}).data().each(function (datosPago) {
             duracionTotal += parseFloat(datosPago.duracion);
-            montoTotal += parseFloat(datosPago.pagoTotalFinalProfesor);
+            montoTotal += parseFloat(datosPago.pagoTotalAlProfesor);
           });
           $("#" + idTabla).DataTable().rows({page: 'current'}).data().each(function (datosPago) {
             duracionTotalPagina += parseFloat(datosPago.duracion);
-            montoTotalPagina += parseFloat(datosPago.pagoTotalFinalProfesor);
+            montoTotalPagina += parseFloat(datosPago.pagoTotalAlProfesor);
           });
 
           $(api.column(3).footer()).html("Total de la página " + utilFechasHorarios.formatoHora(duracionTotalPagina) +
@@ -265,11 +265,11 @@ listaPagosDocente = (function ()/* - */ {
   //Pagos
   function registrarPagoXClases(elemento) {
     var datosPago = obtenerDatos(elemento);
-    formularioPagoDocente.registrar(datosPago);
+    crearEditarPagoDocente.registrar(datosPago);
   }
   function editarPagoXClases(elemento) {
     var datosPago = obtenerDatos(elemento);
-    formularioPagoDocente.editar(datosPago);
+    crearEditarPagoDocente.editar(datosPago);
   }
   function obtenerDatosFiltrosBusqueda() {
     var d = {};
@@ -281,7 +281,7 @@ listaPagosDocente = (function ()/* - */ {
   return {
     mostrar: mostrar,
     reCargar: reCargar,
-    cargarListaClases: cargarListaClases,
+    cargarClases: cargarClases,
     registrarPagoXClases: registrarPagoXClases,
     editarPagoXClases: editarPagoXClases,
     obtenerDatosFiltrosBusqueda: obtenerDatosFiltrosBusqueda

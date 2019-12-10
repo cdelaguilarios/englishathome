@@ -1,3 +1,6 @@
+<script type="text/javascript">
+  var duracionTotalXClasesPendientes = parseInt("{{ $alumno->duracionTotalXClasesPendientes }}") / 3600;
+</script>
 <script src="{{ asset("assets/eah/js/modulosExternos/profesor/formularioConfirmarClase.js")}}"></script>
 <div class="row">
   <div class="col-sm-12">
@@ -17,8 +20,8 @@
                 <div class="box-body">
                   <div class="form-group">
                     {{ Form::label("duracion", "Duracion: ", ["class" => "col-sm-4 control-label"]) }}
-                    {{ Form::label("", 1, ["id" => "sec-duracion", "class" => "col-sm-1 control-label"]) }}
-                    <div id="sec-cambio-duracion" class="col-sm-3" style="display: none">
+                    {{ Form::label("", ($alumno->duracionTotalXClasesPendientes/3600 >= 2 && $minHorasClase <= 1 ? 2 : $minHorasClase), ["id" => "sec-duracion", "class" => "col-sm-1 control-label"]) }}
+                    <div id="sec-cambio-duracion" class="col-sm-4" style="display: none">
                       <div class="input-group date">
                         <div class="input-group-addon">
                           <i class="fa  fa-clock-o"></i>

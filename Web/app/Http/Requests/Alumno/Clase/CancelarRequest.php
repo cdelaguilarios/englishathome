@@ -46,7 +46,7 @@ class CancelarRequest extends Request {
     if (!array_key_exists($datos["tipoCancelacion"], $listaTiposCancelacion)) {
       $reglasValidacion["tipoCancelacionNoValido"] = "required";
     }
-    if (!Clase::verificarExistencia($datos["idAlumno"], $datos["idClase"])) {
+    if (!Clase::verificarExistencia($datos["idClase"], $datos["idAlumno"])) {
       $reglasValidacion["claseNoValida"] = "required";
     }
 

@@ -11,8 +11,7 @@ class PagoClase extends Model {
   protected $fillable = [
       "idPago",
       "idClase",
-      "duracionCubierta",
-      "costoXHoraClase"
+      "duracionCubierta"
   ];
 
   public static function nombreTabla()/* - */ {
@@ -22,7 +21,25 @@ class PagoClase extends Model {
     return $nombreTabla;
   }
 
-  public static function registrarActualizar($idPago, $idClase, $idAlumnoProfesor, $esPagoAlumno = TRUE)/* - */ {
+
+  public static function totalXProfesor($idClase) {
+    $nombreTabla = PagoClase::nombreTabla();
+    return PagoClase::leftJoin(PagoProfesor::nombreTabla() . " as pagoProfesor", $nombreTabla . ".idPago", "=", "pagoProfesor.idPago")
+                    ->whereNotNull("pagoProfesor.idProfesor")
+                    ->where($nombreTabla . ".idClase", $idClase)->count();
+  }
+
+  public static function obtenerXIdClase($idClase) {
+    return PagoClase::where("idClase", $idClase)->get();
+  }
+
+  public static function obtenerXIdPago($idPago)/* - */ {
+    return PagoClase::where("idPago", $idPago)->get();
+  }
+  
+  
+  // <editor-fold desc="TODO: ELIMINAR">
+  public static function registrarActualizar($idPago, $idClase, $idAlumnoProfesor, $esPagoAlumno = TRUE) {
     //TODO: solo se llama una vez, debe eliminarse esta función previa verificación
     if ($esPagoAlumno) {
       PagoClase::where("idClase", $idClase)
@@ -37,8 +54,7 @@ class PagoClase extends Model {
       $pagoClase = new PagoClase([
           "idPago" => $idPago,
           "idClase" => $idClase,
-          "duracionCubierta" => $clase->duracion,
-          "costoXHoraClase" => $pago->costoXHoraClase
+          "duracionCubierta" => $clase->duracion
       ]);
       $pagoClase->save();
     } else {
@@ -56,23 +72,9 @@ class PagoClase extends Model {
     }
   }
 
-  public static function totalXProfesor($idClase) {
-    $nombreTabla = PagoClase::nombreTabla();
-    return PagoClase::leftJoin(PagoProfesor::nombreTabla() . " as pagoProfesor", $nombreTabla . ".idPago", "=", "pagoProfesor.idPago")
-                    ->whereNotNull("pagoProfesor.idProfesor")
-                    ->where($nombreTabla . ".idClase", $idClase)->count();
-  }
-
-  public static function obtenerXIdClase($idClase) {
-    return PagoClase::where("idClase", $idClase)->get();
-  }
-
-  public static function obtenerXIdPago($idPago)/* - */ {
-    return PagoClase::where("idPago", $idPago)->get();
-  }
-
   public static function eliminarXIdPago($idPago) {
     PagoClase::where("idPago", $idPago)->delete();
   }
+  // </editor-fold>
 
 }

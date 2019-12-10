@@ -90,14 +90,14 @@
           <p class="text-muted">{!! App\Models\Curso::listarSimple(FALSE)[$alumno->idCurso] !!}</p>
           <hr> 
           @endif 
-          @if(isset($alumno->ultimoPago) && isset($alumno->ultimoPago->idProfesor)) 
+          @if(isset($alumno->profesorActual)) 
           <strong><i class="fa fa-fw flaticon-teach"></i> Profesor</strong>
-          <p class="text-muted">{{ $alumno->ultimoPago->nombreProfesor . " " .  $alumno->ultimoPago->apellidoProfesor }}<br>(Pago por hora de clase: <b>{{ number_format($alumno->ultimoPago->pagoXHoraProfesor, 2, ".", ",") }}</b>)</p>
+          <p class="text-muted">{{ $alumno->profesorActual->nombre . " " .  $alumno->profesorActual->apellido }}</p>
           <hr> 
           @endif
-          @if(isset($alumno->ultimoPago))
+          @if(isset($alumno->duracionTotalXClases) && $alumno->duracionTotalXClases > 0)
           <strong><i class="fa fa-fw fa-clock-o"></i> Total de horas pagadas</strong>
-          <p class="text-muted">{{ App\Helpers\Util::formatoHora($alumno->ultimoPago->duracionTotalXClases) }}</p>
+          <p class="text-muted">{{ App\Helpers\Util::formatoHora($alumno->duracionTotalXClases) }}</p>
           <hr> 
           @endif
           <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>

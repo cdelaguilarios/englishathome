@@ -28,7 +28,15 @@ archivosAdjuntos = (function ()/* - */ {
   }
 
   //Público
-  function agregar(idHtml, nombreArchivo, nombreArchivoOriginal, esImagen)/* - */ {
+  function limpiarCampos(formulario, idCampo)/* - */ {
+    objAdjuntos[idCampo].reset();
+
+    $(".ajax-file-upload-container").html("");
+    $(formulario).find("input[name^='nombresArchivos']").val("");
+    $(formulario).find("input[name^='nombresOriginalesArchivos']").val("");
+    $(formulario).find("input[name*='Eliminados']").val("");
+  }
+  function agregar(formulario, idHtml, nombreArchivo, nombreArchivoOriginal, esImagen)/* - */ {
     var urlArchivo = urlArchivos.replace("/0", "/" + nombreArchivo);
     var htmlElemento = '<div class="ajax-file-upload-container">' +
             '<div class="ajax-file-upload-statusbar" style="width: 400px;">' +
@@ -42,19 +50,11 @@ archivosAdjuntos = (function ()/* - */ {
             '<div class="ajax-file-upload-red" onclick="archivosAdjuntos.eliminar(this, \'' + idHtml + '\', \'' + nombreArchivo + '\')">' + (formularioExternoPostulante ? "Delete" : "Eliminar") + '</div>' +
             '</div>' +
             '</div>';
-    $("#" + idHtml).after(htmlElemento);
+    $(formulario).find("#" + idHtml).after(htmlElemento);
   }
-  function eliminar(elemento, idElementoSec, nombreArchivo)/* - */ {
-    $("#nombres-archivos-" + idElementoSec + "-eliminados").val(nombreArchivo + "," + $("#nombres-archivos-" + idElementoSec + "-eliminados").val());
+  function eliminar(elemento, idHtml, nombreArchivo)/* - */ {
+    $("#nombres-archivos-" + idHtml + "-eliminados").val(nombreArchivo + "," + $("#nombres-archivos-" + idHtml + "-eliminados").val());
     $(elemento).closest(".ajax-file-upload-container").remove();
-  }
-  function limpiarCampos(formulario, idCampo)/* - */ {
-    objAdjuntos[idCampo].reset();
-    
-    $(".ajax-file-upload-container").html("");
-    $(formulario).find("input[name^='nombresArchivos']").val("");
-    $(formulario).find("input[name^='nombresOriginalesArchivos']").val("");
-    $(formulario).find("input[name*='Eliminados']").val("");
   }
 
   return {

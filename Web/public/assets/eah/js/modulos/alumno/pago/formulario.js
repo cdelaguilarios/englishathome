@@ -1,8 +1,28 @@
 var formularioPagoAlumno = {};
 formularioPagoAlumno = (function () {
   //Privado
-  function cargarFormulario(idSeccion) {
-    $("#formulario-pago-" + idSeccion).validate({
+  function limpiarCampos(formulario) {
+    $(formulario).find(":input, select").each(function (i, e) {
+      if (e.name !== "estado" && e.name !== "fecha" && e.name !== "costoXHoraClase" && e.name !== "periodoClases" && e.name !== "_token" && e.type !== "hidden") {
+        if ($(e).is("select")) {
+          $(e).prop("selectedIndex", 0);
+        } else if ($(e).is(":checkbox")) {
+          $(e).attr("checked", false);
+          $(e).closest("label").removeClass("checked");
+        } else {
+          e.value = "";
+        }
+      }
+    });
+    archivosAdjuntos.limpiarCampos(formulario, "ImagenesComprobantes");
+    $(formulario).find("input[name='fecha']").datepicker("setDate", "today");
+    $("form .help-block-error").remove();
+  }
+
+  //Público
+  var saldoFavorTotal = 0;
+  function cargar(formulario) {
+    $(formulario).validate({
       ignore: ":hidden",
       rules: {
         fecha: {
@@ -30,11 +50,32 @@ formularioPagoAlumno = (function () {
         }
       },
       submitHandler: function (f) {
-        if (confirm("¿Está seguro que desea " +
-                ($("#formulario-pago-" + idSeccion).find("input[name='seccionActualizar']").val() === "1" ? "actualizar" : "registrar") +
-                " los datos de este pago?")) {
-          $.blockUI({message: "<h4>Registrando datos...</h4>"});
-          f.submit();
+        var idPago = $(formulario).find("input[name='idPago']").val();
+        if (confirm("¿Está seguro que desea " + (idPago !== "" ? "actualizar" : "registrar") + " los datos de este pago?")) {
+          $.blockUI({message: "<h4>Guardando cambios...</h4>"});
+
+          var datos = utilFormularios.procesarDatos(f);
+          util.llamadaAjax($(f).attr("action"), "POST", datos, true,
+                  function (d) {
+                    $("body").unblock();
+                  },
+                  function (d) {
+                    listaPagosAlumno.mostrar();
+                    listaPagosAlumno.reCargar();
+                  },
+                  function (de) {
+                    var rj = de.responseJSON;
+                    $("body").unblock({
+                      onUnblock: function () {
+                        if (rj !== undefined && rj.mensaje !== undefined) {
+                          mensajes.agregar("errores", rj.mensaje, true, "#sec-pago-mensajes");
+                        } else if (rj !== undefined && rj[Object.keys(rj)[0]] !== undefined) {
+                          mensajes.agregar("errores", rj[Object.keys(rj)[0]][0], true, "#sec-pago-mensajes");
+                        }
+                      }
+                    });
+                  }
+          );
         }
       },
       highlight: function () {
@@ -56,105 +97,82 @@ formularioPagoAlumno = (function () {
       onkeyup: false,
       onclick: false
     });
-
-    utilFechasHorarios.establecerCalendario($("#fecha-pago-" + idSeccion), false, false, false);
-    $("#motivo-pago-" + idSeccion).change(function () {
+    utilFechasHorarios.establecerCalendario($(formulario).find("input[name='fecha']"), false, false, false);
+    $(formulario).find("select[name='motivo']").change(function () {
       if ($(this)[0].selectedIndex !== 0) {
-        $("#sec-pago-datos-clases-" + idSeccion).hide();
+        $(formulario).find("#sec-pago-datos-clases").hide();
       } else {
-        $("#sec-pago-datos-clases-" + idSeccion).show();
+        $(formulario).find("#sec-pago-datos-clases").show();
       }
     });
 
-    $("#monto-pago-" + idSeccion).change(function () {
+    $(formulario).find("input[name='monto']").change(function () {
       if (!$(this).valid()) {
-        $("#usar-saldo-favor-pago-" + idSeccion).attr("checked", false);
-        $("#usar-saldo-favor-pago-" + idSeccion).closest("label").removeClass("checked");
+        $(formulario).find("#pago-usar-saldo-favor").attr("checked", false);
+        $(formulario).find("#pago-usar-saldo-favor").closest("label").removeClass("checked");
       }
     });
-    $("#usar-saldo-favor-pago-" + idSeccion).click(function (e) {
-      if ($("#monto-pago-" + idSeccion).valid() && saldoFavorTotal > 0) {
-        var seleccionado = $("#usar-saldo-favor-pago-" + idSeccion).closest("label").hasClass("checked");
+    $(formulario).find("#pago-usar-saldo-favor").click(function (e) {
+      if ($(formulario).find("input[name='monto']").valid() && saldoFavorTotal > 0) {
+        var seleccionado = $(formulario).find("#pago-usar-saldo-favor").closest("label").hasClass("checked");
 
-        $("#monto-pago-" + idSeccion).val(util.redondear(parseFloat($("#monto-pago-" + idSeccion).val()) + saldoFavorTotal * (seleccionado ? -1 : 1), 2));
+        $(formulario).find("input[name='monto']").val(util.redondear(parseFloat($(formulario).find("input[name='monto']").val()) + saldoFavorTotal * (seleccionado ? -1 : 1), 2));
 
         $(this).attr("checked", !seleccionado);
         if (seleccionado) {
-          $("#usar-saldo-favor-pago-" + idSeccion).closest("label").removeClass("checked");
+          $(formulario).find("#pago-usar-saldo-favor").closest("label").removeClass("checked");
         } else {
-          $("#usar-saldo-favor-pago-" + idSeccion).closest("label").addClass("checked");
+          $(formulario).find("#pago-usar-saldo-favor").closest("label").addClass("checked");
         }
       } else {
         e.stopPropagation();
         return false;
       }
     });
-
-    $("#btn-cargar-docentes-disponibles-pago-" + idSeccion).click(function () {
-      var camposFormularioPago = $("#formulario-pago-" + idSeccion).find(":input, select").not(":hidden, input[name='pagoXHoraProfesor']");
-      if (!camposFormularioPago.valid()) {
-        return false;
-      }
-
-      docentesDisponibles.cargar("pago-" + idSeccion, function () {
-        return $("#formulario-pago-" + idSeccion).serializeArray();
-      }, function (datosDocente) {
-        establecerDocente(idSeccion, datosDocente);
-      });
-    });
-    $("#btn-cancelar-pago-" + idSeccion).click(function () {
-      listaPagosAlumno.mostrar();
-    });
   }
-  function limpiarCampos(idSeccion, soloCamposDocente) {
-    $("#formulario-pago-" + idSeccion).find("input[name='idDocente']").val("");
-    $("#nombre-docente-pago-" + idSeccion).html("");
+  function establecerDatos(formulario, datos) {
+    limpiarCampos(formulario);
 
-    if (!soloCamposDocente) {
-      $("#formulario-pago-" + idSeccion).find(":input, select").each(function (i, e) {
-        if (e.name !== "fecha" && e.name !== "costoXHoraClase" && e.name !== "periodoClases" && e.name !== "_token" && e.type !== "hidden") {
-          if ($(e).is("select")) {
-            $(e).prop("selectedIndex", 0);
-          } else if ($(e).is(":checkbox")) {
-            $(e).attr("checked", false);
-            $(e).closest("label").removeClass("checked");
-          } else {
-            e.value = "";
+    $(formulario).find("input[name='idPago']").val("");
+    if (saldoFavorTotal > 0) {
+      $(formulario).find("#lbl-pago-usar-saldo-favor").text("Utilizar saldo a favor total (S/. " + util.redondear(saldoFavorTotal, 2) + ")");
+      $(formulario).find("#sec-pago-saldo-favor").show();
+    }
+    $(formulario).find("#sec-pago-datos-clases").show();
+
+    urlArchivos = (typeof (urlArchivos) === "undefined" ? "" : urlArchivos);
+    motivoPagoXClases = (typeof (motivoPagoXClases) === "undefined" ? "" : motivoPagoXClases);
+    if (datos && urlArchivos !== "") {
+      $(formulario).find("input[name='idPago']").val(datos.id);
+      $(formulario).find("select[name='motivo']").val(datos.motivo);
+      $(formulario).find("select[name='cuenta']").val(datos.cuenta);
+      $(formulario).find("select[name='estado']").val(datos.estado);
+      $(formulario).find("input[name='descripcion']").val(datos.descripcion);
+      $(formulario).find("input[name='monto']").val(util.redondear(datos.monto, 2));
+
+      var datFecha = utilFechasHorarios.formatoFecha(datos.fecha).split("/");
+      $(formulario).find("input[name='fecha']").datepicker("setDate", (new Date(datFecha[1] + "/" + datFecha[0] + "/" + datFecha[2])));
+
+      if (datos.imagenesComprobante !== null && datos.imagenesComprobante !== "") {
+        var imagenes = datos.imagenesComprobante.split(",");
+        for (var i = 0; i < imagenes.length; i++) {
+          if (imagenes[i].trim() !== "") {
+            var datosImagen = imagenes[i].split(":");
+            archivosAdjuntos.agregar(formulario, "imagenes-comprobantes", datosImagen[0], datosImagen[datosImagen.length === 2 ? 1 : 0], true);
           }
         }
-      });
-      $("#fecha-pago-" + idSeccion).datepicker("setDate", "today");
-      $("form .help-block-error").remove();
+      }
+
+      if (datos.motivo === motivoPagoXClases) {
+        $(formulario).find("input[name='costoXHoraClase']").val(util.redondear(datos.costoXHoraClase, 2));
+        $(formulario).find("input[name='periodoClases']").val(datos.periodoClases);
+        $(formulario).find("input[name='pagoXHoraProfesor']").val(util.redondear(datos.pagoXHoraProfesor, 2));
+      }
+
+      $(formulario).find("select[name='motivo']").change();
     }
   }
 
-  //Público
-  var seccionesCargadas = [];
-  var saldoFavorTotal = 0;
-  function cargar(idSeccion) {
-    if (!seccionesCargadas.includes(idSeccion)) {
-      seccionesCargadas.push(idSeccion);
-
-      cargarFormulario(idSeccion);
-    }
-
-    limpiarCampos(idSeccion);
-    if (saldoFavorTotal > 0) {
-      $("#lbl-usar-saldo-favor-pago-" + idSeccion).text("Utilizar saldo a favor total (S/. " + util.redondear(saldoFavorTotal, 2) + ")");
-      $("#sec-pago-saldo-favor-" + idSeccion).show();
-    }
-    $("#sec-pago-datos-clases-" + idSeccion).show();
-  }
-  function establecerDocente(idSeccion, datosDocente) {
-    if (datosDocente !== undefined && datosDocente !== null) {
-      $("#formulario-pago-" + idSeccion).find("input[name='idDocente']").val(datosDocente.id);
-      $("#nombre-docente-pago-" + idSeccion).html(datosDocente.id !== ''
-              ? '<i class="fa flaticon-teach"></i> <b>' + datosDocente.nombreCompleto + '</b> ' +
-              '<a href=' + ((datosDocente.tipo === tipoDocenteProfesor ? urlPerfilProfesor : urlPerfilPostulante).replace('/0', '/' + datosDocente.id)) + ' title="Ver perfil del profesor" target="_blank"><i class="fa fa-eye"></i></a>'
-              : '');
-      $("#sec-pago-datos-docente-" + idSeccion).show();
-    }
-  }
   function establecerSaldoFavor(saldoFavor) {
     saldoFavorTotal = saldoFavor;
   }
@@ -164,7 +182,7 @@ formularioPagoAlumno = (function () {
 
   return {
     cargar: cargar,
-    establecerDocente: establecerDocente,
+    establecerDatos: establecerDatos,
     establecerSaldoFavor: establecerSaldoFavor,
     obtenerSaldoFavor: obtenerSaldoFavor
   };

@@ -26,7 +26,7 @@ class ActualizarEstadoRequest extends Request {
     $datos = $this->all();
     $reglasValidacion = [];
 
-    if (!Clase::verificarExistencia($datos["idAlumno"], $datos["idClase"])) {
+    if (!Clase::verificarExistencia($datos["idClase"], $datos["idAlumno"])) {
       $reglasValidacion["claseNoValida"] = "required";
     }
     $estados = EstadosClase::listarDisponibleCambio();

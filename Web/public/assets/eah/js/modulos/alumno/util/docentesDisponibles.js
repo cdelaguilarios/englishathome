@@ -1,31 +1,27 @@
 var docentesDisponibles = {};
 docentesDisponibles = (function ()/* - */ {
-  function cargar(seccion, funcionObtenerDatosAdicionales, funcionConfirmarDocente)/* - */ {
-    if ($.fn.DataTable.isDataTable("#tab-lista-docentes-" + seccion)) {
-      utilTablas.recargarDatosTabla($("#tab-lista-docentes-" + seccion));
+  function mostrar(funcionConfirmarDocente)/* - */ {
+    if ($.fn.DataTable.isDataTable("#tab-lista-docentes")) {
+      utilTablas.recargarDatosTabla($("#tab-lista-docentes"));
     } else {
-      urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
-      estadosProfesor = (typeof (estadosProfesor) === "undefined" ? "" : estadosProfesor);
-
       urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
-      if (urlListar !== "" && urlPerfilProfesor !== "" && estadosProfesor !== "") {
-        $("#tab-lista-docentes-" + seccion).DataTable({
+      urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
+      urlPerfilPostulante = (typeof (urlPerfilPostulante) === "undefined" ? "" : urlPerfilPostulante);
+      estadosDocente = (typeof (estadosDocente) === "undefined" ? "" : estadosDocente);
+
+      if (urlListar !== "" && urlPerfilProfesor !== "" && urlPerfilPostulante !== "" && estadosDocente !== "") {
+        $("#tab-lista-docentes").DataTable({
           processing: true,
           serverSide: true,
           ajax: {
             url: urlListar,
             type: "POST",
             data: function (d) {
-              d.tipoDocente = $("#tipo-docente-disponible-" + seccion).val();
-              d.estadoDocente = $("#estado-docente-disponible-" + seccion).val();
-              d.sexoDocente = $("#sexo-docente-disponible-" + seccion).val();
-              d.idCursoDocente = $("#id-curso-docente-disponible-" + seccion).val();
-              if (funcionObtenerDatosAdicionales) {
-                var datosAdicionales = funcionObtenerDatosAdicionales();
-                $(datosAdicionales).each(function (i, o) {
-                  d[o.name] = o.value;
-                });
-              }
+              d._token = $("meta[name=_token]").attr("content");
+              d.tipoDocente = $("#tipo-docente-disponible").val();
+              d.estadoDocente = $("#estado-docente-disponible").val();
+              d.sexoDocente = $("#sexo-docente-disponible").val();
+              d.idCursoDocente = $("#id-curso-docente-disponible").val();
             }
           },
           autoWidth: false,
@@ -41,36 +37,36 @@ docentesDisponibles = (function ()/* - */ {
             {data: "id", name: "id", orderable: false, "searchable": false, width: "5%", className: "text-center"}
           ],
           createdRow: function (r, d, i) {
-            $("td", r).eq(2).html('<input type="radio" name="idDocenteDisponible' + util.letraCapital(seccion) + '" value="' + d.id + '"/>');
+            $("td", r).eq(2).html('<input type="radio" name="idDocenteDisponible" value="' + d.id + '"/>');
           },
           initComplete: function (s, j) {
-            utilTablas.establecerBotonRecargaTabla($("#tab-lista-docentes-" + seccion));
-            utilTablas.establecerCabecerasBusquedaTabla($("#tab-lista-docentes-" + seccion));
+            utilTablas.establecerBotonRecargaTabla($("#tab-lista-docentes"));
+            utilTablas.establecerCabecerasBusquedaTabla($("#tab-lista-docentes"));
           }
         });
-        $("#tipo-docente-disponible-" + seccion + ", #estado-docente-disponible-" + seccion + ", #sexo-docente-disponible-" + seccion + ", #id-curso-docente-disponible-" + seccion).change(function () {
-          utilTablas.recargarDatosTabla($("#tab-lista-docentes-" + seccion));
+        $("#tipo-docente-disponible" + ", #estado-docente-disponible" + ", #sexo-docente-disponible" + ", #id-curso-docente-disponible").change(function () {
+          utilTablas.recargarDatosTabla($("#tab-lista-docentes"));
         });
 
-        $("#btn-confirmar-docente-disponible-" + seccion).click(function () {
+        $("#btn-confirmar-docente-disponible").click(function () {
           if (urlPerfilProfesor !== "" && urlPerfilPostulante !== "") {
-            var docenteDisponible = $("input[name='idDocenteDisponible" + util.letraCapital(seccion) + "']:checked");
+            var docenteDisponible = $("input[name='idDocenteDisponible']:checked");
             if (docenteDisponible.length > 0 && funcionConfirmarDocente) {
-              var tr = $("#tab-lista-docentes-" + seccion).find("#" + docenteDisponible.val())[0];
-              var fila = $("#tab-lista-docentes-" + seccion).DataTable().row(tr);
+              var tr = $("#tab-lista-docentes").find("#" + docenteDisponible.val())[0];
+              var fila = $("#tab-lista-docentes").DataTable().row(tr);
               var datosDocente = fila.data();
               funcionConfirmarDocente(datosDocente);
             }
           }
-          $("#mod-docentes-disponibles-" + seccion).modal("hide");
+          $("#mod-docentes-disponibles").modal("hide");
         });
       }
     }
-    $("#mod-docentes-disponibles-" + seccion).modal("show");
+    $("#mod-docentes-disponibles").modal("show");
   }
 
   return {
-    cargar: cargar
+    mostrar: mostrar
   };
 }());
 

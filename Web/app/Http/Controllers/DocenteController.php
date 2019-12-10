@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Log;
 use Mensajes;
 use Datatables;
-use App\Models\Clase;
 use App\Models\Docente;
 use App\Models\Profesor;
 use App\Models\PagoProfesor;
@@ -44,23 +43,31 @@ class DocenteController extends Controller/* - */ {
 
   public function listarPagosXClases(PagoRequest\ListarXClasesRequest $req)/* - */ {
     return Datatables::of(PagoProfesor::listarXClases($req->all()))
-                    ->filterColumn("estadoPago", function($q, $k) {
-                      $q->whereRaw("estadoPago like ?", ["%{$k}%"])
-                      ->orWhereRaw("DATE_FORMAT(fechaPago, '%d/%m/%Y') like ?", ["%{$k}%"]);
+                    ->filterColumn("numeroTotalClases", function($q, $k) {
+                      $q->whereRaw("COUNT(T.id) like ?", ["%{$k}%"]);
+                    })
+                    ->filterColumn("duracionTotalClases", function($q, $k) {
+                      $q->whereRaw("SUM(T.duracion) like ?", ["%{$k}%"]);
+                    })
+                    ->filterColumn("pagoPromedioXHoraProfesor", function($q, $k) {
+                      $q->whereRaw("SUM(T.pagoTotalAlProfesor)/SUM(T.duracion/3600) like ?", ["%{$k}%"]);
+                    })
+                    ->filterColumn("montoTotalXClases", function($q, $k) {
+                      $q->whereRaw("SUM(T.pagoTotalAlProfesor) like ?", ["%{$k}%"]);
+                    })
+                    ->filterColumn("estadoPagoProfesor", function($q, $k) {
+                      $q->whereRaw("T.estadoPagoProfesor like ?", ["%{$k}%"])
+                      ->orWhereRaw("DATE_FORMAT(T.fechaPagoProfesor, '%d/%m/%Y') like ?", ["%{$k}%"]);
                     })->make(true);
   }
 
   public function listarPagosXClasesDetalle($id, PagoRequest\ListarXClasesRequest $req)/* - */ {
-    $nombreTablaClase = Clase::nombreTabla();
     return Datatables::of(PagoProfesor::listarXClasesDetalle($id, $req->all()))
-                    ->filterColumn("fechaConfirmacion", function($q, $k) use($nombreTablaClase) {
-                      $q->whereRaw("DATE_FORMAT(" . $nombreTablaClase . ".fechaConfirmacion, '%d/%m/%Y') like ?", ["%{$k}%"]);
+                    ->filterColumn("fechaConfirmacion", function($q, $k) {
+                      $q->whereRaw("DATE_FORMAT(T.fechaConfirmacion, '%d/%m/%Y') like ?", ["%{$k}%"]);
                     })
-                    ->filterColumn("duracion", function($q, $k) use($nombreTablaClase) {
-                      $q->whereRaw("SEC_TO_TIME(" . $nombreTablaClase . ".duracion) like ?", ["%{$k}%"]);
-                    })
-                    ->filterColumn("pagoTotalFinalProfesor", function($q, $k) {
-                      $q->whereRaw("(T.costoHoraProfesor * (T.duracion/3600)) like ?", ["%{$k}%"]);
+                    ->filterColumn("duracion", function($q, $k) {
+                      $q->whereRaw("SEC_TO_TIME(T.duracion) like ?", ["%{$k}%"]);
                     })->make(true);
   }
 
@@ -70,9 +77,9 @@ class DocenteController extends Controller/* - */ {
       PagoProfesor::registrarActualizarXClases($datos["idProfesor"], $req);
     } catch (\Exception $e) {
       Log::error($e);
-      return response()->json(["mensaje" => "Ocurrió un problema durante " . (isset($datos["idPago"]) ? "la actualización" : "el registro") . " de datos. Por favor inténtelo nuevamente."], 500);
+      return response()->json(["mensaje" => "Ocurrió un problema durante el registro y/o actualización de datos. Por favor inténtelo nuevamente."], 500);
     }
-    return response()->json(["mensaje" => (isset($datos["idPago"]) ? "Actualización exitosa." : "Registro exitoso.")], 200);
+    return response()->json(["mensaje" => "Se guardaron los cambios exitosamente."], 200);
   }
 
   public function eliminarPagoXClases($id, $idPago)/* - */ {

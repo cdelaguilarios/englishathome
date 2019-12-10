@@ -5,7 +5,7 @@
   var tipoDocenteProfesor = "{{ App\Helpers\Enum\TiposEntidad::Profesor }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/alumno/util/docentesDisponibles.js")}}"></script>     
-<div id="mod-docentes-disponibles-{{ $idSeccion }}" class="modal" data-keyboard="false" data-backdrop="static">
+<div id="mod-docentes-disponibles" class="modal" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -22,23 +22,23 @@
         </div>
         <div class="box-body">
           <div class="row">
-            {{ Form::label("tipo-docente-disponible-" . $idSeccion, "Tipo: ", ["class" => "col-sm-1 control-label"]) }}
+            {{ Form::label("tipo-docente-disponible", "Tipo: ", ["class" => "col-sm-1 control-label"]) }}
             <div class="col-sm-5">
-              {{ Form::select("tipoDocenteDisponible" . $idSeccion, App\Helpers\Enum\TiposEntidad::listarTiposDocente(), null, ["id" => "tipo-docente-disponible-" . $idSeccion, "class" => "form-control"]) }}
+              {{ Form::select("tipoDocenteDisponible", App\Helpers\Enum\TiposEntidad::listarTiposDocente(), null, ["id" => "tipo-docente-disponible", "class" => "form-control"]) }}
             </div> 
-            {{ Form::label("estado-docente-disponible-" . $idSeccion, "Estado: ", ["class" => "col-sm-1 control-label"]) }}
+            {{ Form::label("estado-docente-disponible", "Estado: ", ["class" => "col-sm-1 control-label"]) }}
             <div class="col-sm-5">
-              {{ Form::select("estadoDocenteDisponible" . $idSeccion, App\Helpers\Enum\EstadosDocente::listarBusqueda(), null, ["id" => "estado-docente-disponible-" . $idSeccion, "placeholder" => "Todos", "class" => "form-control"]) }}
+              {{ Form::select("estadoDocenteDisponible", App\Helpers\Enum\EstadosDocente::listarBusqueda(), App\Helpers\Enum\EstadosProfesor::Activo, ["id" => "estado-docente-disponible", "placeholder" => "Todos", "class" => "form-control"]) }}
             </div> 
           </div>
           <div class="row">
-            {{ Form::label("sexo-docente-disponible-" . $idSeccion, "Sexo: ", ["class" => "col-sm-1 control-label"]) }}
+            {{ Form::label("sexo-docente-disponible", "Sexo: ", ["class" => "col-sm-1 control-label"]) }}
             <div class="col-sm-5">
-              {{ Form::select("sexoDocenteDisponible" . $idSeccion, App\Helpers\Enum\SexosEntidad::listar(), null, ["id" => "sexo-docente-disponible-" . $idSeccion, "placeholder" => "Todos", "class" => "form-control"]) }}
+              {{ Form::select("sexoDocenteDisponible", App\Helpers\Enum\SexosEntidad::listar(), null, ["id" => "sexo-docente-disponible", "placeholder" => "Todos", "class" => "form-control"]) }}
             </div> 
-            {{ Form::label("id-curso-docente-disponible-" . $idSeccion, "Curso: ", ["class" => "col-sm-1 control-label"]) }}
+            {{ Form::label("id-curso-docente-disponible", "Curso: ", ["class" => "col-sm-1 control-label"]) }}
             <div class="col-sm-5">
-              {{ Form::select("idCursoDocenteDisponible" . $idSeccion, App\Models\Curso::listarSimple(), $idCurso, ["id" => "id-curso-docente-disponible-" . $idSeccion, "placeholder" => "Todos", "class" => "form-control"]) }}
+              {{ Form::select("idCursoDocenteDisponible", App\Models\Curso::listarSimple(), $idCurso, ["id" => "id-curso-docente-disponible", "placeholder" => "Todos", "class" => "form-control"]) }}
             </div> 
           </div>
         </div><br/>
@@ -49,7 +49,7 @@
         </div>
         <div class="row box-body">
           <div class="col-sm-12">
-            <table id="tab-lista-docentes-{{ strtolower($idSeccion) }}" class="table table-bordered sub-table">
+            <table id="tab-lista-docentes" class="table table-bordered sub-table">
               <thead>
                 <tr>
                   <th>Docente</th>
@@ -62,7 +62,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button id="btn-confirmar-docente-disponible-{{ $idSeccion }}" type="button" class="btn btn-success btn-sm">Confirmar</button>
+        <button id="btn-confirmar-docente-disponible" type="button" class="btn btn-success btn-sm">Confirmar</button>
       </div>
     </div>
   </div>

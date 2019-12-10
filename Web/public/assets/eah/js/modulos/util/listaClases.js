@@ -64,10 +64,10 @@ listaClases = (function ()/* - */ {
                       '<br/><b>Duración:</b> ' + utilFechasHorarios.formatoHora(d.duracion);
               if (_esListaClasesAlumno) {
                 datos += (d.nombreProfesor !== null ? '<br/><b>Profesor(a):</b> <a href="' + (urlPerfilProfesor.replace("/0", "/" + d.idProfesor)) + '" target="_blank">' + (d.nombreProfesor !== null ? d.nombreProfesor : "") + " " + (d.apellidoProfesor !== null ? d.apellidoProfesor : "") + '</a>' : '');
-                datos += (d.idPagoAlumno !== null && d.idPagoAlumno !== "" ? '<br/><b>Código de pago:</b> ' + d.idPagoAlumno : '');
+                datos += (d.idsPagosAlumno !== null && d.idsPagosAlumno !== "" ? '<br/><b>Pago(s):</b> ' + d.idsPagosAlumno : '');
               } else {
                 datos += '<br/><b>Alumno(a):</b> <a href="' + (urlPerfilAlumno.replace("/0", "/" + d.idAlumno)) + '" target="_blank">' + (d.nombreAlumno !== null ? d.nombreAlumno : "") + " " + (d.apellidoAlumno !== null ? d.apellidoAlumno : "") + '</a>';
-                datos += (d.idPagoProfesor !== null && d.idPagoProfesor !== "" ? '<br/><b>Código de pago:</b> ' + d.idPagoProfesor : '');
+                datos += (d.idsPagosProfesor !== null && d.idsPagosProfesor !== "" ? '<br/><b>Pago(s):</b> ' + d.idsPagosProfesor : '');
               }
               return datos;
             }},

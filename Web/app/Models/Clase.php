@@ -25,18 +25,15 @@ class Clase extends Model {
       "idAlumno",
       "idProfesor",
       "numeroPeriodo",
-      "duracion",
-      "costoHora",
-      "costoHoraProfesor",
-      "pagoTotalProfesor",
       "fechaInicio",
       "fechaFin",
-      "fechaCancelacion",
+      "fechaConfirmacion",
+      "duracion",
       "comentarioAlumno",
       "comentarioProfesor",
       "comentarioParaAlumno",
       "comentarioParaProfesor",
-      "fechaConfirmacion",
+      "fechaCancelacion",
       "estado"
   ];
 
@@ -62,28 +59,37 @@ class Clase extends Model {
               ->on("entidadAlumno.eliminado", "=", DB::raw("0"));
             })
             //Pago del alumno asociado
-            ->leftJoin($nombreTablaPagoAlumno . " AS relPagoAlumno", function ($q) use ($nombreTablaClase, $nombreTablaPagoClase) {
-              $q->on("relPagoAlumno.idPago", "IN", DB::raw("(SELECT idPago 
-                                                      FROM " . $nombreTablaPagoClase . "
-                                                      WHERE idClase = " . $nombreTablaClase . ".id)"))
-              ->on("relPagoAlumno.idAlumno", "=", $nombreTablaClase . ".idAlumno");
+            ->join($nombreTablaPago . " AS pagoAlumno", function ($q) use ($nombreTablaClase, $nombreTablaPagoClase, $nombreTablaPagoAlumno) {
+              $q->on("pagoAlumno.id", "IN", DB::raw("(SELECT idPago 
+                                                        FROM " . $nombreTablaPagoClase . "
+                                                        WHERE idClase = " . $nombreTablaClase . ".id)"))
+              ->on("pagoAlumno.id", "IN", DB::raw("(SELECT idPago 
+                                                      FROM " . $nombreTablaPagoAlumno . "
+                                                      WHERE idAlumno = " . $nombreTablaClase . ".idAlumno)"))
+              ->on("pagoAlumno.eliminado", "=", DB::raw("0"));
             })
-            ->leftJoin($nombreTablaPago . " as pagoAlumno", "pagoAlumno.id", "=", "relPagoAlumno.idPago")
-
+            ->join($nombreTablaPagoClase . " AS pagoClaseAlumno", function ($q) use ($nombreTablaClase) {
+              $q->on("pagoClaseAlumno.idPago", "=", "pagoAlumno.id")
+              ->on("pagoClaseAlumno.idClase", "=", $nombreTablaClase . ".id");
+            })
             //Datos del profesor
             ->leftJoin($nombreTablaEntidad . " as entidadProfesor", function ($q) use($nombreTablaClase) {
               $q->on($nombreTablaClase . ".idProfesor", "=", "entidadProfesor.id")
               ->on("entidadProfesor.eliminado", "=", DB::raw("0"));
             })
             //Pago al profesor asociado
-            ->leftJoin($nombreTablaPagoProfesor . " AS relPagoProfesor", function ($q) use ($nombreTablaClase, $nombreTablaPagoClase) {
-              $q->on("relPagoProfesor.idPago", "IN", DB::raw("(SELECT idPago 
-                                                        FROM " . $nombreTablaPagoClase . "
-                                                        WHERE idClase = " . $nombreTablaClase . ".id)"))
-              ->on("relPagoProfesor.idProfesor", "=", $nombreTablaClase . ".idProfesor");
+            ->leftJoin($nombreTablaPago . " AS pagoProfesor", function ($q) use ($nombreTablaClase, $nombreTablaPagoClase, $nombreTablaPagoProfesor) {
+              $q->on("pagoProfesor.id", "IN", DB::raw("(SELECT idPago 
+                                                          FROM " . $nombreTablaPagoClase . "
+                                                          WHERE idClase = " . $nombreTablaClase . ".id)"))
+              ->on("pagoProfesor.id", "IN", DB::raw("(SELECT idPago 
+                                                        FROM " . $nombreTablaPagoProfesor . "
+                                                        WHERE idProfesor = " . $nombreTablaClase . ".idProfesor)"))
+              ->on("pagoProfesor.eliminado", "=", DB::raw("0"));
             })
-            ->leftJoin($nombreTablaPago . " as pagoProfesor", "pagoProfesor.id", "=", "relPagoProfesor.idPago")
-            ->where($nombreTablaClase . ".eliminado", DB::raw("0"))                    
+            ->whereRaw("(pagoAlumno.eliminado = 0 AND pagoAlumno.id > 0)")
+            ->whereRaw("(pagoProfesor.id IS NULL OR pagoProfesor.id > 0)")
+            ->where($nombreTablaClase . ".eliminado", DB::raw("0"))
             ->groupBy($nombreTablaClase . ".id")
             ->distinct();
     if ($incluirSoloRealizadas) {
@@ -99,10 +105,10 @@ class Clase extends Model {
                                     $nombreTablaClase . ".*, 
                                     entidadAlumno.nombre AS nombreAlumno, 
                                     entidadAlumno.apellido AS apellidoAlumno, 
-                                    pagoAlumno.id AS idPagoAlumno,
+                                    GROUP_CONCAT(pagoAlumno.id SEPARATOR ', ') AS idsPagosAlumno,
                                     entidadProfesor.nombre AS nombreProfesor, 
                                     entidadProfesor.apellido AS apellidoProfesor, 
-                                    pagoProfesor.id AS idPagoProfesor")
+                                    GROUP_CONCAT(pagoProfesor.id SEPARATOR ', ') AS idsPagosProfesor")
                     )
                     ->groupBy($nombreTablaClase . ".id");
   }
@@ -115,13 +121,17 @@ class Clase extends Model {
     return Clase::listarNUEVO($incluirSoloRealizadas)->where(Clase::nombreTabla() . ".idProfesor", $idProfesor);
   }
 
-  public static function obtenerXIdNUEVO($id)/* - */ {
-    $nombreTabla = Clase::nombreTabla();
-    $clase = Clase::listarBase()
-            ->select($nombreTabla . ".*")
-            ->where($nombreTabla . ".id", $id)
-            ->firstOrFail();
-    return $clase;
+  public static function obtenerXIdNUEVO($id, $idAlumno = NULL)/* - */ {
+    $nombreTablaClase = Clase::nombreTabla();
+    $clase = Clase::listarBase()->where($nombreTablaClase . ".id", $id);
+    if (isset($idAlumno)) {
+      $clase->where($nombreTablaClase . ".idAlumno", $idAlumno);
+    }
+    return $clase->select(DB::raw(
+                            $nombreTablaClase . ".*, 
+                            SUM(pagoAlumno.costoXHoraClase)/COUNT(pagoAlumno.id) AS costoPromedioXHoraClase,
+                            SUM(pagoAlumno.pagoXHoraProfesor)/COUNT(pagoAlumno.id) AS pagoPromedioXHoraProfesor")
+            )->firstOrFail();
   }
 
   public static function listarPeriodosXIdAlumno($idAlumno)/* - */ {
@@ -273,7 +283,7 @@ class Clase extends Model {
 
   public static function verificarExistencia($idAlumno, $id) {
     try {
-      Clase::listarXAlumnoNUEVO($idAlumno, FALSE)->where(Clase::nombreTabla() . ".id", $id)->firstOrFail();
+      Clase::obtenerXIdNUEVO($id, $idAlumno);
     } catch (\Exception $e) {
       Log::error($e);
       return FALSE;
@@ -304,6 +314,21 @@ class Clase extends Model {
       $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
       $clase->save();
       Historial::eliminarXIdClase($id);
+
+      //Se actualiza la bolsa de horas del alumno
+      $idsPagosRelacionados = PagoClase::where("idClase", $id)->lists("idPago")->toArray();
+      foreach ($idsPagosRelacionados as $idPagoRelacionado) {
+        if (PagoAlumno::verificarExistencia($idAlumno, $idPagoRelacionado)) {
+          $pagoXBolsaHoras = AlumnoBolsaHoras::where("idAlumno", $idAlumno)->where("idPago", $idPagoRelacionado)->first();
+          if (!isset($pagoXBolsaHoras)) {
+            $bolsaHoras = new AlumnoBolsaHoras([
+                "idAlumno" => $idAlumno,
+                "idPago" => $idPagoRelacionado
+            ]);
+            $bolsaHoras->save();
+          }
+        }
+      }
     }
   }
 

@@ -45,7 +45,7 @@ class FormularioRequest extends Request {
         "pagoXHoraProfesor" => ["regex:" . ReglasValidacion::RegexDecimal]
     ];
 
-    if (!is_null($datos["idClase"]) && !Clase::verificarExistencia($datos["idAlumno"], $datos["idClase"])) {
+    if (!is_null($datos["idClase"]) && !Clase::verificarExistencia($datos["idClase"], $datos["idAlumno"])) {
       $reglasValidacion["claseNoValida"] = "required";
     }
     $estados = EstadosClase::listarDisponibleCambio();

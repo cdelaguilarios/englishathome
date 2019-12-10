@@ -26,7 +26,6 @@ class Pago extends Model {
       "saldoFavor",
       "saldoFavorUtilizado",
       "costoXHoraClase",
-      "idProfesorClases",
       "pagoXHoraProfesor",
       "periodoClases"
   ];
@@ -39,7 +38,7 @@ class Pago extends Model {
   }
 
   public static function listarBase()/* - */ {
-    return Pago::where(Pago::nombreTabla() . ".eliminado", 0);
+    return Pago::where("eliminado", 0);
   }
 
   public static function obtenerXId($id)/* - */ {
@@ -80,10 +79,6 @@ class Pago extends Model {
                                 AND " . $nombreTablaClase . ".eliminado = 0)");
     }
     return $pagos;
-  }
-
-  public static function listarXIdProfesorClases($idProfesorClases, $soloDeAlumnosVigentes = FALSE)/* - */ {
-    return Pago::listarNUEVO($soloDeAlumnosVigentes)->where("idProfesorClases", $idProfesorClases);
   }
 
   public static function registrar($datos, $estado, $request)/* - */ {
@@ -147,7 +142,6 @@ class Pago extends Model {
     $pago->eliminado = 1;
     $pago->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $pago->save();
-    PagoClase::eliminarXIdPago($id);
   }
 
   // <editor-fold desc="TODO: ELIMINAR">

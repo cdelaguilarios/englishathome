@@ -11,5 +11,5 @@
 
 @section("content")
 @include("docente.pago.lista")     
-@include("docente.pago.formulario")
+@include("docente.pago.crearEditar")
 @endsection

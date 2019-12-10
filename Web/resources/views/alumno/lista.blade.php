@@ -55,7 +55,7 @@
               <th>Avance de clases</th>  
               <th>Curso</th>    
               <th>Estado/Nivel</th>
-              <th>Último pago</th>
+              <th>Pagos<br/>(Bolsa de horas)</th>
               <th>Fecha de registro</th>
               <th class="all">Opciones</th>
             </tr>

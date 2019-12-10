@@ -43,14 +43,17 @@ class AlumnoController extends Controller {
                       ->orWhereRaw('distritoAlumno like ?', ["%{$k}%"])
                       ->orWhereRaw('CONCAT(nombreProfesor, " ", apellidoProfesor) like ?', ["%{$k}%"])
                       ->orWhereRaw('distritoProfesor like ?', ["%{$k}%"]);
-            })->filterColumn("ultimoPagoPorcentajeAvanceXClases", function($q, $k) {
-              $q->whereRaw("(ultimoPagoDuracionTotalXClasesRealizadas*100/ultimoPagoDuracionTotalXClases) like ?", ["%{$k}%"])
-                      ->orWhereRaw("SEC_TO_TIME(ultimoPagoDuracionTotalXClases) like ?", ["%{$k}%"])
-                      ->orWhereRaw("SEC_TO_TIME(ultimoPagoDuracionTotalXClasesRealizadas) like ?", ["%{$k}%"])
+            })->filterColumn("porcentajeAvanceXClases", function($q, $k) {
+              $q->whereRaw("(duracionTotalXClasesRealizadas*100/duracionTotalXClases) like ?", ["%{$k}%"])
+                      ->orWhereRaw("SEC_TO_TIME(duracionTotalXClases) like ?", ["%{$k}%"])
+                      ->orWhereRaw("SEC_TO_TIME(duracionTotalXClasesRealizadas) like ?", ["%{$k}%"])
                       ->orWhereRaw("DATE_FORMAT(ultimaClaseFecha, '%d/%m/%Y') like ?", ["%{$k}%"]);
             })->filterColumn("estado", function($q, $k) {
               $q->whereRaw("estado like ?", ["%{$k}%"])
                       ->orWhereRaw('nivelIngles like ?', ["%{$k}%"]);
+            })->filterColumn("montoTotalPagosXBolsaHoras", function($q, $k) {
+              $q->whereRaw("montoTotalPagosXBolsaHoras like ?", ["%{$k}%"])
+                      ->orWhereRaw("numeroPagosXBolsaHoras like ?", ["%{$k}%"]);
             })->filterColumn("fechaRegistro", function($q, $k) {
               $q->whereRaw("DATE_FORMAT(fechaRegistro, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"])
                       ->orWhereRaw("DATE_FORMAT(fechaInicioClase, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
@@ -177,6 +180,16 @@ class AlumnoController extends Controller {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
+  public function actualizarProfesor($id, $idDocente)/* - */ {
+    try {
+      Alumno::actualizarProfesor($id, $idDocente);
+    } catch (\Exception $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
+    }
+    return response()->json(["mensaje" => "Actualización exitosa."], 200);
+  }
+
   public function eliminar($id)/* - */ {
     try {
       Alumno::eliminar($id);
@@ -194,6 +207,7 @@ class AlumnoController extends Controller {
               $q->whereRaw("id like ?", ["%{$k}%"])
                       ->orWhereRaw("motivo like ?", ["%{$k}%"])
                       ->orWhereRaw("cuenta like ?", ["%{$k}%"])
+                      ->orWhereRaw("descripcion like ?", ["%{$k}%"])
                       ->orWhereRaw("costoXHoraClase like ?", ["%{$k}%"]);
             })->filterColumn("fecha", function($q, $k) {
               $q->whereRaw("DATE_FORMAT(fecha, '%d/%m/%Y') like ?", ["%{$k}%"])
@@ -233,26 +247,14 @@ class AlumnoController extends Controller {
             })->make(true);
   }
 
-  public function registrarPago($id, PagoRequest\FormularioRequest $req)/* - */ {
+  public function registrarActualizarPago($id, PagoRequest\FormularioRequest $req)/* - */ {
     try {
       PagoAlumno::registrarActualizar($id, $req);
-      Mensajes::agregarMensajeExitoso("Registro exitoso.");
     } catch (\Exception $e) {
       Log::error($e);
-      Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
+      return response()->json(["mensaje" => "Ocurrió un problema durante el registro y/o actualización de datos. Por favor inténtelo nuevamente."], 500);
     }
-    return redirect(route("alumnos.perfil", ["id" => $id, "seccion" => "pago"]));
-  }
-
-  public function actualizarPago($id, PagoRequest\FormularioRequest $req)/* - */ {
-    try {
-      PagoAlumno::registrarActualizar($id, $req);
-      Mensajes::agregarMensajeExitoso("Actualización exitosa.");
-    } catch (\Exception $e) {
-      Log::error($e);
-      Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");
-    }
-    return redirect(route("alumnos.perfil", ["id" => $id, "seccion" => "pago"]));
+    return response()->json(["mensaje" => "Se guardaron los cambios exitosamente."], 200);
   }
 
   public function obtenerDatosPago($id, $idPago)/* - */ {
@@ -304,17 +306,20 @@ class AlumnoController extends Controller {
   }
 
   public function confirmarClase($id, ClaseRequest\ConfirmarClaseRequest $req)/* - */ {
-    $datos = $req->all();
-    $datos["comentario"] = "";
-    Profesor::confirmarClase($datos["idProfesor"], $id, $datos);
-    Mensajes::agregarMensajeExitoso("Confirmación exitosa.");
     try {
-      
+      $datos = $req->all();
+      $datos["comentario"] = "";
+      Profesor::confirmarClase($datos["idProfesor"], $id, $datos);
+      Mensajes::agregarMensajeExitoso("Confirmación exitosa.");
     } catch (\Exception $e) {
       Log::error($e->getMessage());
       Mensajes::agregarMensajeError("Ocurrió un problema durante la confirmación de la clase. Por favor inténtelo nuevamente.");
     }
     return redirect(route("alumnos.perfil", ["id" => $id, "seccion" => "clase"]));
+  }
+
+  public function obtenerDatosClase($id, $idClase) {
+    return response()->json(Clase::obtenerXId($id, $idClase), 200);
   }
 
   public function eliminarClase($id, $idClase)/* - */ {
@@ -404,10 +409,6 @@ class AlumnoController extends Controller {
       Mensajes::agregarMensajeError("No se pudo cancelar la clase seleccionada.");
     }
     return redirect(route("alumnos.perfil", ["id" => $id, "seccion" => "clase", "nrp" => $nroPeriodo]));
-  }
-
-  public function datosClase($id, $idClase) {
-    return response()->json(Clase::obtenerXId($id, $idClase), 200);
   }
 
   public function datosClasesGrupo($id, ClaseRequest\DatosGrupoRequest $req) {
