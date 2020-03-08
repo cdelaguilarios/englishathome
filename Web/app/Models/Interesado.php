@@ -11,10 +11,10 @@ use Config;
 use Storage;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\EstadosAlumno;
-use App\Helpers\Enum\MensajesHistorial;
 use App\Helpers\Enum\EstadosInteresado;
 use Illuminate\Database\Eloquent\Model;
 use App\Helpers\Enum\TiposRelacionEntidad;
+use App\Helpers\Enum\MensajesNotificacion;
 
 class Interesado extends Model/* |-| */ {
 
@@ -99,11 +99,9 @@ class Interesado extends Model/* |-| */ {
     $interesado->idEntidad = $idEntidad;
     $interesado->save();
 
-    //TODO: El historial va a cambiar
-    Historial::registrar([
+    Notificacion::registrarActualizar([
         "idEntidades" => [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
-        "titulo" => (Auth::guest() ? MensajesHistorial::TituloInteresadoRegistro : MensajesHistorial::TituloInteresadoRegistroXUsuario),
-        "mensaje" => ""
+        "titulo" => (Auth::guest() ? MensajesNotificacion::TituloInteresadoRegistro : MensajesNotificacion::TituloInteresadoRegistroXUsuario)
     ]);
     return $idEntidad;
   }
@@ -137,12 +135,10 @@ class Interesado extends Model/* |-| */ {
       $alumno->save();
       $idAlumno = $idEntidadAlumno;
 
-      //TODO: El historial va a cambiar
-      Historial::registrar([
+      Notificacion::registrarActualizar([
           "idEntidades" => [$idAlumno, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
-          "titulo" => (Auth::guest() ? MensajesHistorial::TituloAlumnoRegistro : MensajesHistorial::TituloAlumnoRegistroXUsuario),
-          "enviarCorreo" => (Auth::guest() ? 1 : 0),
-          "mensaje" => ""
+          "titulo" => (Auth::guest() ? MensajesNotificacion::TituloAlumnoRegistro : MensajesNotificacion::TituloAlumnoRegistroXUsuario),
+          "enviarCorreo" => (Auth::guest() ? 1 : 0)
       ]);
     } else {
       $alumno = Entidad::obtenerXId($idAlumno);
@@ -153,11 +149,9 @@ class Interesado extends Model/* |-| */ {
     RelacionEntidad::registrar($idAlumno, $id, TiposRelacionEntidad::AlumnoInteresado);
     Interesado::actualizarEstado($id, EstadosInteresado::FichaCompleta);
 
-    //TODO: El historial va a cambiar
-    Historial::registrar([
+    Notificacion::registrarActualizar([
         "idEntidades" => [$id, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
-        "titulo" => (Auth::guest() ? MensajesHistorial::TituloInteresadoRegistroAlumno : MensajesHistorial::TituloInteresadoRegistroAlumnoXUsuario),
-        "mensaje" => ""
+        "titulo" => (Auth::guest() ? MensajesNotificacion::TituloInteresadoRegistroAlumno : MensajesNotificacion::TituloInteresadoRegistroAlumnoXUsuario)
     ]);
     return $idAlumno;
   }
@@ -243,11 +237,9 @@ class Interesado extends Model/* |-| */ {
       }
       Interesado::actualizarEstado($id, EstadosInteresado::Seguimiento);
 
-      //TODO: El historial va a cambiar
-      Historial::registrar([
+      Notificacion::registrarActualizar([
           "idEntidades" => [$id, Auth::user()->idEntidad],
-          "titulo" => (MensajesHistorial::TituloInteresadoEnvioCorreoCotizacion),
-          "mensaje" => ""
+          "titulo" => MensajesNotificacion::TituloInteresadoEnvioCorreoCotizacion
       ]);
     }
   }

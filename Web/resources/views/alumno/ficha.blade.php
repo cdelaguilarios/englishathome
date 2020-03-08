@@ -85,7 +85,7 @@
             @include("util.imagenPerfil", ["entidad" => $alumno])
           </p>
           <hr>   
-          @if(isset($alumno->idCurso))
+          @if(isset($alumno->idCurso) && App\Models\Curso::verificarExistencia($alumno->idCurso))
           <strong><i class="fa fa-fw flaticon-favorite-book"></i> Curso</strong>
           <p class="text-muted">{!! App\Models\Curso::listarSimple(FALSE)[$alumno->idCurso] !!}</p>
           <hr> 

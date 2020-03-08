@@ -72,7 +72,7 @@ listaPagosProfesor = (function ()/* - */ {
                               '<a href="javascript:void(0);" onclick="actualizarPagoProfesor.mostrar(' + d.id + ');" title="Editar datos del pago"><i class="fa fa-pencil"></i></a>' +
                               '</li>' : '') +
                       '<li>' +
-                      '<a href="javascript:void(0);" title="Eliminar pago" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?\', \'tab-lista-pagos\', false, function(){utilTablas.recargarDatosTabla($(\'#tab-lista-clases\'));reiniciarHistorial();})" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' + //TODO: revisar función reiniciarHistorial()
+                      '<a href="javascript:void(0);" title="Eliminar pago" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?\', \'tab-lista-pagos\', false, function(){utilTablas.recargarDatosTabla($(\'#tab-lista-clases\'));listaNotificacionesHistorial.reiniciar();})" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' + 
                       '<i class="fa fa-trash"></i>' +
                       '</a>' +
                       '</li>' +

@@ -9,8 +9,8 @@ use Carbon\Carbon;
 use App\Helpers\Enum\EstadosClase;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\EstadosProfesor;
-use App\Helpers\Enum\MensajesHistorial;
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\Enum\MensajesNotificacion;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class Profesor extends Model {
@@ -105,10 +105,9 @@ class Profesor extends Model {
     $profesor->save();
 
     Docente::registrarActualizarAudio($idEntidad, $req->file("audio"));
-    Historial::registrar([
+    Notificacion::registrar([
         "idEntidades" => [$idEntidad, Auth::user()->idEntidad],
-        "titulo" => MensajesHistorial::TituloProfesorRegistroXUsuario,
-        "mensaje" => ""
+        "titulo" => MensajesNotificacion::TituloProfesorRegistroXUsuario
     ]);
     return $idEntidad;
   }
@@ -343,10 +342,9 @@ class Profesor extends Model {
     }
 
     //TODO: revisar
-    /* Historial::registrar([
+    /* Notificacion::registrar([
       "idEntidades" => [$id, $idAlumno],
-      "titulo" => "[" . TiposEntidad::Profesor . "] confirmó una clase del alumno(a) [" . TiposEntidad::Alumno . "]",
-      "mensaje" => ""
+      "titulo" => "[" . TiposEntidad::Profesor . "] confirmó una clase del alumno(a) [" . TiposEntidad::Alumno . "]"
       ]); */
   }
 

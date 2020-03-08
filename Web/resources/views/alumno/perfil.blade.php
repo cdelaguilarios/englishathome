@@ -58,7 +58,7 @@
           @include("util.horario", ["horario" => $alumno->horario, "modo" => "visualizar"])
         </p>
         <hr>   
-        @if(isset($alumno->idCurso))
+        @if(isset($alumno->idCurso) && App\Models\Curso::verificarExistencia($alumno->idCurso))
         <strong><i class="fa fa-fw flaticon-favorite-book"></i> Curso</strong>
         <p class="text-muted">{{ App\Models\Curso::listarSimple(FALSE)[$alumno->idCurso] }}</p>
         <hr> 
@@ -180,7 +180,7 @@
       </ul>
       <div class="tab-content">
         <div id="historial" class="active tab-pane">
-          @include("util.historial", ["idEntidad" => $alumno->id, "nombreEntidad" => "alumno"]) 
+          @include("util.notificacion.principalHistorial", ["idEntidad" => $alumno->id, "nombreEntidad" => "alumno"]) 
         </div>
         <div id="pago" class="tab-pane">
           @include("alumno.pago.principal")         

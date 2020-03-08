@@ -90,8 +90,6 @@
         <div class="col-sm-4">
           {{ Form::select("idCurso", App\Models\Curso::listarSimple(), $interesado->idCurso, ["id" => "id-curso", "class" => "form-control"]) }}
         </div>  
-        <div id="sec-imagen-curso" class="col-sm-6"></div>     
-        {{ Form::hidden("rutaImagenCurso") }}
       </div>
       <div class="form-group">
         {{ Form::label("contenido-correo", "Contenido correo (*): ", ["class" => "col-sm-2 control-label"]) }}

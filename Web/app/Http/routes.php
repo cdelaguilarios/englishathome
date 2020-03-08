@@ -62,6 +62,7 @@ Route::group(["middleware" => "auth"], function() {
   });
   Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Principal . "|" . RolesUsuario::Secundario . "]"], function() {
     // <editor-fold desc="Entidades">
+    Route::get("entidades/{id}/perfil", ["uses" => "EntidadController@perfil", "as" => "entidades.perfil"]); //--
     Route::post("entidades/{id}/actualizarComentariosAdministrador", ["uses" => "EntidadController@actualizarComentariosAdministrador", "as" => "entidades.actualizar.comentarios.administrador"]); //--
     Route::post("entidades/{id}/actualizarCredencialesAcceso", ["uses" => "EntidadController@actualizarCredencialesAcceso", "as" => "entidades.actualizar.credenciales.acceso"]); //--
     Route::post("entidades/{id}/actualizarImagenPerfil", ["uses" => "EntidadController@actualizarImagenPerfil", "as" => "entidades.actualizar.imagen.perfil"]); //--
@@ -198,6 +199,25 @@ Route::group(["middleware" => "auth"], function() {
     Route::get("notificaciones", ["uses" => "HistorialController@listarNotificaciones", "as" => "historial.notificaciones"]);
     Route::post("notificaciones", ["uses" => "HistorialController@listarNotificaciones", "as" => "historial.notificaciones"]);
     // </editor-fold>
+    // <editor-fold desc="Notificaciones">
+    Route::post("notificaciones/listar", ["uses" => "NotificacionController@listar", "as" => "notificaciones.listar"]);
+    Route::post("notificaciones/listarNuevas", ["uses" => "NotificacionController@listarNuevas", "as" => "notificaciones.listar.nuevas"]);
+    Route::post("notificaciones/{idEntidad}/listarHistorial", ["uses" => "NotificacionController@listarHistorial", "as" => "notificaciones.listar.historial"]);
+    Route::post("notificaciones/registrarActualizar", ["uses" => "NotificacionController@registrarActualizar", "as" => "notificaciones.registrar.actualizar"]);
+    Route::post("notificaciones/{id}/datos", ["uses" => "NotificacionController@obtenerDatos", "as" => "notificaciones.datos"]);
+    Route::post("notificaciones/revisarMultiple", ["uses" => "NotificacionController@revisarMultiple", "as" => "notificaciones.revisar.multiple"]);
+    Route::delete("notificaciones/{id}/eliminar", ["uses" => "NotificacionController@eliminar", "as" => "notificaciones.eliminar"]);
+    // </editor-fold>
+    // <editor-fold desc="Tareas">
+    Route::post("tareas/listar", ["uses" => "TareaController@listar", "as" => "tareas.listar"]);
+    Route::post("tareas/listarNuevas", ["uses" => "TareaController@listarNuevas", "as" => "tareas.listar.nuevas"]);
+    Route::post("tareas/{idEntidad}/registrarActualizar", ["uses" => "TareaController@registrarActualizar", "as" => "tareas.registrar.actualizar"]);
+    Route::post("tareas/{id}/datos", ["uses" => "TareaController@obtenerDatos", "as" => "tareas.datos"]);
+    Route::delete("tareas/{id}/eliminar", ["uses" => "TareaController@eliminar", "as" => "tareas.eliminar"]);
+    
+    
+    Route::post("tareas/{id}/actualizarRealizacion", ["uses" => "TareaController@actualizarRealizacion", "as" => "tareas.actualizar.realizacion"]);
+    // </editor-fold>
     // <editor-fold desc="Horario">
     Route::post("horarios", ["uses" => "HorarioController@obtenerMultiple", "as" => "horario.multiple"]); //--
     // </editor-fold>
@@ -235,9 +255,9 @@ Route::group(["middleware" => "auth"], function() {
     Route::post("reporte/listar/pagos/grafico", ["uses" => "ReporteController@listarPagosGrafico", "as" => "reporte.listar.pagos.grafico"]);
     // </editor-fold> 
     // <editor-fold desc="Correos">
-    Route::get("correos", ["uses" => "HistorialController@correos", "as" => "correos"]); //--
-    Route::post("correos/entidades", ["uses" => "HistorialController@listarEntidades", "as" => "correos.entidades"]); //--
-    Route::post("correos/registrar", ["uses" => "HistorialController@registrarCorreos", "as" => "correos.registrar"]);
+    Route::get("correos", ["uses" => "CorreoController@index", "as" => "correos"]); //--
+    Route::post("correos/entidades", ["uses" => "CorreoController@listarEntidades", "as" => "correos.entidades"]); //--
+    Route::post("correos/registrar", ["uses" => "CorreoController@registrarCorreos", "as" => "correos.registrar"]);
     // </editor-fold>
     // <editor-fold desc="Configuración">
     Route::get("configuracion", ["uses" => "ConfiguracionController@index", "as" => "configuracion"]);

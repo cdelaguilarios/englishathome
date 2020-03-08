@@ -42,7 +42,7 @@
             {{ Form::textarea("mensaje", null, ["class" => "form-control", "rows" => "5", "maxlength" =>"8000"]) }}
           </div>
         </div>    
-        @include("util.archivosAdjuntos", ["adjuntos" => [(object)["idCampo" => "Adjuntos", "idHtml" => "adjuntos", "titulo" => "Archivos"]]])        
+        @include("util.archivosAdjuntos", ["adjuntos" => [(object)["idCampo" => "Adjuntos", "idHtml" => "adjuntos", "titulo" => "Adjuntos", "archivosRegistrados" => null, "mensajeReferencia" => null, "cantidadMaximaArchivos" => 5, "soloImagenes" => false]]])         
         <div class="form-group">
           {{ Form::label("tipo-entidad-correos", "Enviar a: ", ["class" => "col-sm-2 control-label"]) }}
           <div class="col-sm-3">

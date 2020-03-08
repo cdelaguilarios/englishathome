@@ -44,7 +44,10 @@ class AlumnoController extends Controller {
                       ->orWhereRaw('CONCAT(nombreProfesor, " ", apellidoProfesor) like ?', ["%{$k}%"])
                       ->orWhereRaw('distritoProfesor like ?', ["%{$k}%"]);
             })->filterColumn("porcentajeAvanceXClases", function($q, $k) {
-              $q->whereRaw("(duracionTotalXClasesRealizadas*100/duracionTotalXClases) like ?", ["%{$k}%"])
+              $q->whereRaw("(duracionTotalXClasesRealizadasGlobal*100/duracionTotalXClasesGlobal) like ?", ["%{$k}%"])
+                      ->orWhereRaw("SEC_TO_TIME(duracionTotalXClasesGlobal) like ?", ["%{$k}%"])
+                      ->orWhereRaw("SEC_TO_TIME(duracionTotalXClasesRealizadasGlobal) like ?", ["%{$k}%"])
+                      ->orWhereRaw("(duracionTotalXClasesRealizadas*100/duracionTotalXClases) like ?", ["%{$k}%"])
                       ->orWhereRaw("SEC_TO_TIME(duracionTotalXClases) like ?", ["%{$k}%"])
                       ->orWhereRaw("SEC_TO_TIME(duracionTotalXClasesRealizadas) like ?", ["%{$k}%"])
                       ->orWhereRaw("DATE_FORMAT(ultimaClaseFecha, '%d/%m/%Y') like ?", ["%{$k}%"]);

@@ -89,6 +89,16 @@
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
               {{--@include("notificacion.widget")--}} 
+              <li class="dropdown notifications-menu">
+                <a id="btn-ver-notificaciones-generales" data-target="#mod-notificaciones-generales" data-toggle="modal" class="dropdown-toggle" data-toggle="dropdown">
+                  <i class="fa fa-bell-o"></i>
+                </a>
+              </li>
+              {{--<li class="dropdown tasks-menu">
+                <a id="btn-ver-tareas" data-target="#mod-tareas" data-toggle="modal" class="dropdown-toggle" data-toggle="dropdown">
+                  <i class="fa fa-flag-o"></i>
+                </a>
+              </li>--}}
               <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   @if ($usuarioActual->imagenPerfil == "null" || empty($usuarioActual->imagenPerfil))
@@ -207,6 +217,8 @@
         </section>
         <section class="content">                
           @include("partials/mensajes")
+          @include("util.notificacion.principal") 
+          @include("util.tarea.principal") 
           @yield("content")
         </section>
       </div>

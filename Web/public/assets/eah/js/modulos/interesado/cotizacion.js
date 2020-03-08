@@ -11,9 +11,8 @@ cotizacionInteresado = (function () {
         $.blockUI({message: "<h4>Cargando...</h4>"});
         util.llamadaAjax(urlDatosCurso.replace("/0", "/" + $(this).val()), "POST", {}, true,
                 function (d) {
-                  var rutaImagenCurso = (d.imagen !== null ? urlBaseImagen.replace(encodeURI("[RUTA_IMAGEN]"), d.imagen) : "");
-                  $("input[name='imagenCurso']").val(rutaImagenCurso);
-                  $("#sec-imagen-curso").html(rutaImagenCurso !== "" ? '<img src="' + rutaImagenCurso + '" width="120"/>' : "");
+                  var saludo = "Estimado(a) " + nombreCompletoInteresado;
+                  CKEDITOR.instances["contenido-correo"].setData(saludo + ",<br/>" + d.descripcion);
 
                   var idHtmlAdjuntos = "adjuntos";
                   $("." + idHtmlAdjuntos + "-registrado").remove();

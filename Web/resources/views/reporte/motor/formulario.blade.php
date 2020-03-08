@@ -3,7 +3,7 @@
     <div class="box box-info">
       <div class="box-header">
         <h3 id="sec-titulo" class="box-title"></h3>
-        <div id="sec-mensajes-alerta"></div>
+        <div id="sec-mensajes-alerta" tabindex="0"></div>
       </div>
       <div id="sec-paso-1" class="box-body" style="display: none">      
         @foreach (App\Helpers\Enum\TiposEntidad::listar() as $nombre => $datos)

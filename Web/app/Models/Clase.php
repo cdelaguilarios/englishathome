@@ -8,12 +8,8 @@ use Auth;
 use Config;
 use Carbon\Carbon;
 use App\Helpers\Util;
-use App\Models\Horario;
-use App\Models\Historial;
 use App\Helpers\Enum\EstadosClase;
 use App\Helpers\Enum\RolesUsuario;
-use App\Helpers\Enum\TiposHistorial;
-use App\Helpers\Enum\MensajesHistorial;
 use Illuminate\Database\Eloquent\Model;
 use App\Helpers\Enum\TiposBusquedaFecha;
 
@@ -313,7 +309,7 @@ class Clase extends Model {
       $clase->eliminado = 1;
       $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
       $clase->save();
-      Historial::eliminarXIdClase($id);
+      Notificacion::eliminarXIdClase($id);
 
       //Se actualiza la bolsa de horas del alumno
       $idsPagosRelacionados = PagoClase::where("idClase", $id)->lists("idPago")->toArray();

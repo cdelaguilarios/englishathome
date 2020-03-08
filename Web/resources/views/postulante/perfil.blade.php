@@ -144,7 +144,7 @@
       </ul>
       <div class="tab-content">
         <div id="historial" class="active tab-pane">
-          @include("util.historial", ["idEntidad" => $postulante->id, "nombreEntidad" => "postulante"]) 
+          @include("util.notificacion.principalHistorial", ["idEntidad" => $postulante->id, "nombreEntidad" => "postulante"]) 
         </div>
         <div id="experiencia-laboral" class="tab-pane">
           @include("docente.util.experienciaLaboral", ["docente" => $postulante]) 

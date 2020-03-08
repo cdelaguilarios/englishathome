@@ -7,8 +7,7 @@ pagoProfesor = (function () {
 
   //Privado
   function cargarSeccion() {
-    registroHistorial = (typeof (registroHistorial) === "undefined" ? false : registroHistorial);
-    if (util.obtenerParametroUrlXNombre("seccion") === "pago" && !registroHistorial) {
+    if (util.obtenerParametroUrlXNombre("seccion") === "pago") {
       $("a[href='#pago']").trigger("click");
     }
     listaPagosProfesor.mostrar();

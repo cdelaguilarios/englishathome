@@ -176,7 +176,7 @@
           </div>
           <div class="form-group">
             <div class="col-sm-offset-1 col-sm-10">
-              <div id="sec-men-alerta-horario"></div>
+              <div id="sec-men-alerta-horario" tabindex="0"></div>
               @include("util.horario", ["textoBoton" => (Auth::guest() ? "Set schedule available" : null), "tituloModal" => (Auth::guest() ? "Schedule available to work" : null)])  
             </div>                                        
           </div>

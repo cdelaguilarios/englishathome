@@ -186,7 +186,7 @@ class Historial extends Model {
                     ->where($nombreTabla . ".correoEnviado", 0)
                     ->where($nombreTabla . ".envioCorreoProceso", 0)
                     ->orderBy($nombreTabla . ".fechaNotificacion", "ASC")
-                    ->skip(0)->take((int) Config::get("eah.numeroNotificacionesXLlamada"));
+                    ->skip(0)->take((int) Config::get("eah.numeroCorreosXEnvio"));
     $historiales = $preHistoriales->get();
     Historial::whereIn("id", $preHistoriales->lists($nombreTabla . ".id")->toArray())->update(["envioCorreoProceso" => 1]);
 
@@ -267,8 +267,8 @@ class Historial extends Model {
       if (!array_key_exists($entidad->tipo, $tiposEntidad)) {
         continue;
       }
-      $historial->titulo = str_replace("[" . $entidad->tipo . "]", ($seccionWidget ? "" : "<a href='" . route($tiposEntidad[$entidad->tipo][3], ['id' => $entidad->id]) . "' target='_blank'>") . $entidad->nombre . " " . $entidad->apellido . ($seccionWidget ? "" : "</a>"), $historial->titulo);
-      $historial->mensaje = str_replace("[" . $entidad->tipo . "]", ($seccionWidget ? "" : "<a href='" . route($tiposEntidad[$entidad->tipo][3], ['id' => $entidad->id]) . "' target='_blank'>") . $entidad->nombre . " " . $entidad->apellido . ($seccionWidget ? "" : "</a>"), $historial->mensaje);
+      $historial->titulo = str_replace("[" . $entidad->tipo . "]", ($seccionWidget ? "" : "<a href='" . route($tiposEntidad[$entidad->tipo][4], ['id' => $entidad->id]) . "' target='_blank'>") . $entidad->nombre . " " . $entidad->apellido . ($seccionWidget ? "" : "</a>"), $historial->titulo);
+      $historial->mensaje = str_replace("[" . $entidad->tipo . "]", ($seccionWidget ? "" : "<a href='" . route($tiposEntidad[$entidad->tipo][4], ['id' => $entidad->id]) . "' target='_blank'>") . $entidad->nombre . " " . $entidad->apellido . ($seccionWidget ? "" : "</a>"), $historial->mensaje);
     }
     $historial->horaNotificacion = Carbon::createFromFormat("Y-m-d H:i:s", $historial->fechaNotificacion)->format("H:i:s");
     $historial->icono = (array_key_exists($historial->tipo, $tiposNotificacion) ? $tiposNotificacion[$historial->tipo][1] : TiposHistorial::IconoDefecto);

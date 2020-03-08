@@ -1,11 +1,16 @@
 {{----}}
-<script>
-  var adjuntos = {!!  json_encode($adjuntos) !!};
-</script>
 <script src="{{ asset("assets/eah/js/modulos/util/archivosAdjuntos.js")}}"></script>
+<script>
+  var archivosAdjuntos{{ uniqid() }} = (function ()/* - */ {
+    window.addEventListener("load", esperarCargaJquery, false);
+    function esperarCargaJquery()/* - */ {
+      ((window.jQuery && jQuery.ui && typeof (utilFormularios) !== "undefined") ? archivosAdjuntos.cargar({!!  json_encode($adjuntos) !!}) : window.setTimeout(esperarCargaJquery, 100));
+    }
+  }());
+</script>
 @foreach ($adjuntos as $adjunto)
 <div class="form-group">
-  {{ Form::label($adjunto->idCampo, $adjunto->titulo .  ": ", ["class" => "col-sm-2 control-label"]) }}   
+  {{ Form::label("nombres-archivos-" . $adjunto->idHtml, $adjunto->titulo .  ": ", ["class" => "col-sm-2 control-label"]) }}   
   <div class="col-sm-10">
     <div id="{{ $adjunto->idHtml }}">{{ (Auth::guest() ? "Upload file" : "Subir archivo") }}</div>
     @if(isset($adjunto->archivosRegistrados) && $adjunto->archivosRegistrados != null)

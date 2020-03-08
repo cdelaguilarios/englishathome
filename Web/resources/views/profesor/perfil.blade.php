@@ -59,7 +59,9 @@
         @if(isset($profesor->cursos) && count($profesor->cursos) > 0)      
         <strong><i class="fa fa-fw flaticon-favorite-book"></i> Cursos</strong>
         @foreach($profesor->cursos as $curso)
+        @if(App\Models\Curso::verificarExistencia($curso->idCurso))
         <p class="text-muted">{{ App\Models\Curso::listarSimple(FALSE)[$curso->idCurso] }}</p>
+        @endif
         @endforeach
         <hr>
         @endif
@@ -147,7 +149,7 @@
       </ul>
       <div class="tab-content">
         <div id="historial" class="active tab-pane">
-          @include("util.historial", ["idEntidad" => $profesor->id, "nombreEntidad" => "profesor"]) 
+          @include("util.notificacion.principalHistorial", ["idEntidad" => $profesor->id, "nombreEntidad" => "profesor"]) 
         </div>
         <div id="pago" class="tab-pane">
           @include("profesor.pago.principal")

@@ -7,6 +7,7 @@ listaPagosDocente = (function ()/* - */ {
 
   //Privado  
   var tablaPagos = null;
+  var idSeccion = "docentes-pagos-x-clases";
   function cargar()/* - */ {
     urlListarPagosXClases = (typeof (urlListarPagosXClases) === "undefined" ? "" : urlListarPagosXClases);
     urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
@@ -26,7 +27,7 @@ listaPagosDocente = (function ()/* - */ {
           data: function (d) {
             d._token = $("meta[name=_token]").attr("content");
             d.estadoPago = $("#bus-estado").val();
-            $.extend(d, filtrosBusquedaFechas.obtenerDatos());
+            $.extend(d, filtrosBusquedaFechas.obtenerDatos(idSeccion));
           }
         },
         dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" + "<'row'<'col-sm-12'i>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
@@ -128,8 +129,8 @@ listaPagosDocente = (function ()/* - */ {
       var funcionCambio = function () {
         reCargar();
       };
-      filtrosBusquedaFechas.cargar(funcionCambio);
-      filtrosBusquedaFechas.actualizarTitulo("Fecha de clases (*): ");
+      filtrosBusquedaFechas.cargar(idSeccion, funcionCambio);
+      filtrosBusquedaFechas.actualizarTitulo(idSeccion, "Fecha de clases (*): ");
     }
   }
   function obtenerDatos(elemento) {
@@ -198,7 +199,7 @@ listaPagosDocente = (function ()/* - */ {
           data: function (d) {
             d._token = $("meta[name=_token]").attr("content");
             d.estadoPago = $("#bus-estado").val();
-            $.extend(d, filtrosBusquedaFechas.obtenerDatos());
+            $.extend(d, filtrosBusquedaFechas.obtenerDatos(idSeccion));
           }
         },
         pageLength: 10,
@@ -274,7 +275,7 @@ listaPagosDocente = (function ()/* - */ {
   function obtenerDatosFiltrosBusqueda() {
     var d = {};
     d.estadoPago = $("#bus-estado").val();
-    $.extend(d, filtrosBusquedaFechas.obtenerDatos());
+    $.extend(d, filtrosBusquedaFechas.obtenerDatos(idSeccion));
     return d;
   }
 

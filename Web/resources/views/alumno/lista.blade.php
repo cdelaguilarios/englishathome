@@ -55,9 +55,9 @@
               <th>Avance de clases</th>  
               <th>Curso</th>    
               <th>Estado/Nivel</th>
-              <th>Pagos<br/>(Bolsa de horas)</th>
+              <th>Pagos por clases</th>
               <th>Fecha de registro</th>
-              <th class="all">Opciones</th>
+              <th>Opciones</th>
             </tr>
           </thead>
         </table>

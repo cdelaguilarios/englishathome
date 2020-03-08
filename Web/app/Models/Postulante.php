@@ -8,9 +8,9 @@ use Auth;
 use Carbon\Carbon;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\EstadosProfesor;
-use App\Helpers\Enum\MensajesHistorial;
 use Illuminate\Database\Eloquent\Model;
 use App\Helpers\Enum\EstadosPostulante;
+use App\Helpers\Enum\MensajesNotificacion;
 use App\Helpers\Enum\TiposRelacionEntidad;
 
 class Postulante extends Model {
@@ -87,11 +87,10 @@ class Postulante extends Model {
     $postulante->save();
 
     Docente::registrarActualizarAudio($idEntidad, $req->file("audio"));
-    Historial::registrar([
+    Notificacion::registrar([
         "idEntidades" => [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
-        "titulo" => (Auth::guest() ? MensajesHistorial::TituloPostulanteRegistro : MensajesHistorial::TituloPostulanteRegistroXUsuario),
-        "enviarCorreo" => (Auth::guest() ? 1 : 0),
-        "mensaje" => ""
+        "titulo" => (Auth::guest() ? MensajesNotificacion::TituloPostulanteRegistro : MensajesNotificacion::TituloPostulanteRegistroXUsuario),
+        "enviarCorreo" => (Auth::guest() ? 1 : 0)
     ]);
     return $idEntidad;
   }
@@ -163,18 +162,16 @@ class Postulante extends Model {
       $profesor->save();
       $idProfesor = $idEntidad;
 
-      Historial::registrar([
+      Notificacion::registrar([
           "idEntidades" => [$idEntidad, Auth::user()->idEntidad],
-          "titulo" => MensajesHistorial::TituloProfesorRegistroXUsuario,
-          "mensaje" => ""
+          "titulo" => MensajesNotificacion::TituloProfesorRegistroXUsuario
       ]);
     }
     RelacionEntidad::registrar($idProfesor, $id, TiposRelacionEntidad::ProfesorPostulante);
     Postulante::actualizarEstado($id, EstadosPostulante::ProfesorRegistrado);
-    Historial::registrar([
+    Notificacion::registrar([
         "idEntidades" => [$id, Auth::user()->idEntidad],
-        "titulo" => MensajesHistorial::TituloPostulanteRegistroProfesorXUsuario,
-        "mensaje" => ""
+        "titulo" => MensajesNotificacion::TituloPostulanteRegistroProfesorXUsuario
     ]);
     return $idProfesor;
   }

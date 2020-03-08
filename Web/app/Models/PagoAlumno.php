@@ -9,10 +9,10 @@ use App\Helpers\Enum\EstadosPago;
 use App\Helpers\Enum\MotivosPago;
 use App\Helpers\Enum\EstadosClase;
 use App\Helpers\Enum\EstadosAlumno;
-use App\Helpers\Enum\TiposHistorial;
+use App\Helpers\Enum\TiposNotificacion;
 use App\Helpers\Enum\EstadosInteresado;
-use App\Helpers\Enum\MensajesHistorial;
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\Enum\MensajesNotificacion;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class PagoAlumno extends Model {
@@ -204,28 +204,26 @@ class PagoAlumno extends Model {
 
   //Util
   private static function registrarActualizarEvento($idAlumno, $datosPago)/* - */ {
-    //TODO: El historial de eventos y tareas va a cambiar
     $listaMotivosPago = MotivosPago::listar();
     $motivo = $listaMotivosPago[$datosPago["motivo"]];
     $descripcion = (isset($datosPago["descripcion"]) && $datosPago["descripcion"] != "" ? "<br/><strong>Descripción:</strong> " . $datosPago["descripcion"] : "");
     $monto = number_format((float) ($datosPago["monto"]), 2, ".", "");
-    $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$motivo, $descripcion, $monto], MensajesHistorial::MensajeAlumnoRegistroPago);
+    $mensajeNotificacion = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$motivo, $descripcion, $monto], MensajesNotificacion::MensajeAlumnoRegistroPago);
 
     $datos = [
         "idEntidades" => [$idAlumno, Auth::user()->idEntidad],
-        "titulo" => MensajesHistorial::TituloAlumnoRegistroPago,
-        "mensaje" => $mensajeHistorial,
-        "imagenes" => $datosPago["imagenesComprobante"],
-        "idPago" => $datosPago["id"],
-        "tipo" => TiposHistorial::Pago
+        "tipo" => TiposNotificacion::Pago,
+        "titulo" => MensajesNotificacion::TituloAlumnoRegistroPago,
+        "mensaje" => $mensajeNotificacion,
+        "adjuntos" => $datosPago["imagenesComprobante"], //TODO: verificar
+        "idPago" => $datosPago["id"]
     ];
 
-    $historial = Historial::where("eliminado", 0)->where("idPago", $datosPago["id"])->first();
-    if (isset($historial)) {
-      Historial::actualizar($historial->id, $datos);
-    } else {
-      Historial::registrar($datos);
+    $notificacion = Notificacion::obtenerXIdPago($datosPago["id"]);
+    if (isset($notificacion)) {
+      $datos["idNotificacion"] = $notificacion->id;
     }
+    Notificacion::registrarActualizar($datos);
   }
 
   // <editor-fold desc="TODO: ELIMINAR">

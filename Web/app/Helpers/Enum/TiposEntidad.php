@@ -15,11 +15,11 @@ class TiposEntidad/* - */ {
 
   public static function listar()/* - */ {
     return [
-        TiposEntidad::Alumno => ["Alumnos", "Alumno", "Alumna", "alumnos.perfil", route("alumnos.buscar"), '<i class="fa fa-mortar-board"></i>'],
-        TiposEntidad::Interesado => ["Interesados", "Interesado", "Interesada", "interesados.editar", route("interesados.buscar"), '<i class="fa flaticon-questioning"></i>'],
-        TiposEntidad::Profesor => ["Profesores", "Profesor", "Profesora", "profesores.perfil", route("profesores.buscar"), '<i class="fa flaticon-teacher-with-stick"></i>'],
-        TiposEntidad::Postulante => ["Postulantes", "Postulante", "Postulante", "postulantes.perfil", route("postulantes.buscar"), 'CV&nbsp;&nbsp;'],
-        TiposEntidad::Usuario => ["Usuarios", "Usuario", "Usuaria", "usuarios.editar", route("usuarios.buscar"), '<i class="fa fa-users"></i>'],
+        TiposEntidad::Interesado => ["Interesados", "Interesado(a)", "Interesado", "Interesada", "interesados.editar", route("interesados.buscar"), '<i class="fa flaticon-questioning"></i>'],
+        TiposEntidad::Alumno => ["Alumnos", "Alumno(a)", "Alumno", "Alumna", "alumnos.perfil", route("alumnos.buscar"), '<i class="fa fa-mortar-board"></i>'],
+        TiposEntidad::Postulante => ["Postulantes", "Postulante", "Postulante", "Postulante", "postulantes.perfil", route("postulantes.buscar"), 'CV&nbsp;&nbsp;'],
+        TiposEntidad::Profesor => ["Profesores", "Profesor(a)", "Profesor", "Profesora", "profesores.perfil", route("profesores.buscar"), '<i class="fa flaticon-teacher-with-stick"></i>'],
+        TiposEntidad::Usuario => ["Usuarios", "Usuario(a)", "Usuario", "Usuaria", "usuarios.editar", route("usuarios.buscar"), '<i class="fa fa-users"></i>'],
         TiposEntidad::Curso => ["Cursos", "Curso", "Curso", "cursos.editar", route("cursos.buscar"), '<i class="fa fa-book"></i>'],
         TiposEntidad::Clase => ["Clases", "Clase", "Clase", "", "", '<i class="fa flaticon-student-in-front-of-a-stack-of-books"></i>'],
         TiposEntidad::Pago => ["Pagos", "Pago", "Pago", "", "", '<i class="fa fa-dollar"></i>']

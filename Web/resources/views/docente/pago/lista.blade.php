@@ -21,7 +21,7 @@
               {{ Form::select("estadoPago", App\Helpers\Enum\EstadosPago::listarBusqueda(FALSE), App\Helpers\Enum\EstadosPago::Pendiente, ["id"=>"bus-estado", "class" => "form-control", "placeholder" => "Todos", "data-idtabla" => "tab-lista-pagos"]) }}
             </div>
           </div>
-          @include("util.filtrosBusquedaFechas")
+          @include("util.filtrosBusquedaFechas", ["idSeccion" => "docentes-pagos-x-clases"])
         </div>
       </div>
     </div>

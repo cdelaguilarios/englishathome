@@ -4,6 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+   * Las entidades relacionadas pueden ser:
+   * 
+   * Alumno-Interesado
+   * Profesor-Postulante
+   * 
+   */
 class RelacionEntidad extends Model/* |-| */ {
 
   public $timestamps = false;

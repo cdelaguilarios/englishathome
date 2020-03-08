@@ -3,7 +3,7 @@
   var registroHistorial = true;
 </script>
 @endif
-<div id="sec-men-historial"></div>
+<div id="sec-men-historial" tabindex="0"></div>
 <div id="sec-historial-1">
   @if(!(isset($observador) && $observador == 1))
   <div>

@@ -9,9 +9,9 @@ use App\Helpers\Util;
 use App\Helpers\Enum\MotivosPago;
 use App\Helpers\Enum\EstadosClase;
 use App\Helpers\Enum\EstadosPago;
-use App\Helpers\Enum\TiposHistorial;
-use App\Helpers\Enum\MensajesHistorial;
+use App\Helpers\Enum\TiposNotificacion;
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\Enum\MensajesNotificacion;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class PagoProfesor extends Model {
@@ -235,23 +235,33 @@ class PagoProfesor extends Model {
     $motivo = $listaMotivosPago[$datosPago["motivo"]];
     $descripcion = (isset($datosPago["descripcion"]) && $datosPago["descripcion"] != "" ? "<br/><strong>Descripción:</strong> " . $datosPago["descripcion"] : "");
     $monto = number_format((float) ($datosPago["monto"]), 2, ".", "");
-    $mensajeHistorial = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$motivo, $descripcion, $monto], MensajesHistorial::MensajeProfesorRegistroPago);
+    $mensajeNotificacion = str_replace(["[MOTIVO]", "[DESCRIPCION]", "[MONTO]"], [$motivo, $descripcion, $monto], MensajesNotificacion::MensajeProfesorRegistroPago);
+
+    $imagenEvento = $datosPago["imagenesComprobante"];
+    if (isset($imagenEvento)) {
+      $datImagenes = explode(",", $imagenEvento);
+      if (count($datImagenes) > 0) {
+        $datPrimeraImagen = explode(":", $datImagenes[0]);
+        if (count($datPrimeraImagen) > 0) {
+          $imagenEvento = $datPrimeraImagen[0];
+        }
+      }
+    }
 
     $datos = [
         "idEntidades" => [$idProfesor, Auth::user()->idEntidad],
-        "titulo" => MensajesHistorial::TituloProfesorRegistroPago,
-        "mensaje" => $mensajeHistorial,
-        "imagenes" => $datosPago["imagenesComprobante"],
-        "idPago" => $datosPago["id"],
-        "tipo" => TiposHistorial::Pago
+        "tipo" => TiposNotificacion::Pago,
+        "titulo" => MensajesNotificacion::TituloProfesorRegistroPago,
+        "mensaje" => $mensajeNotificacion,
+        "adjuntos" => $imagenEvento,
+        "idPago" => $datosPago["id"]
     ];
 
-    $historial = Historial::where("eliminado", 0)->where("idPago", $datosPago["id"])->first();
-    if (isset($historial)) {
-      Historial::actualizar($historial->id, $datos);
-    } else {
-      Historial::registrar($datos);
+    $notificacion = Notificacion::obtenerXIdPago($datosPago["id"]);
+    if (isset($notificacion)) {
+      $datos["idNotificacion"] = $notificacion->id;
     }
+    Notificacion::registrarActualizar($datos);
   }
 
   // <editor-fold desc="TODO: ELIMINAR">

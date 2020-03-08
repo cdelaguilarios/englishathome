@@ -4,7 +4,7 @@
 </script>
 <script src="{{ asset("assets/eah/js/modulos/util/listaClases.js") }}"></script>
 <div class="col-sm-12">
-  <div id="sec-men-lista-clases"></div>
+  <div id="sec-men-lista-clases" tabindex="0"></div>
 </div>
 <div class="col-sm-12">      
   <div class="box-body">

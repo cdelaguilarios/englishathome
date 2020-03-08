@@ -43,7 +43,7 @@ correos = (function ()/* - */ {
         templateResult: function (d) {
           if (d.loading)
             return d.text;
-          var tipoEntidad = tiposEntidades[d.tipo][(d.sexo === "F" ? 2 : 1)];
+          var tipoEntidad = tiposEntidades[d.tipo][(d.sexo === "F" ? 3 : 2)];
           var rutaImagenPerfil = urlArchivos.replace("/0", "/" + (d.imagenPerfil !== null && d.imagenPerfil !== "" ? d.imagenPerfil : "-")) + "?tip=" + (d.sexo === "F" ? "f" : "m");
           return '<div class="clearfix">' +
                   '<div><img src="' + rutaImagenPerfil + '" width="25"/> ' + tipoEntidad + " " + d.nombre + " " + d.apellido + ' (' + d.correoElectronico + ')</div>' +

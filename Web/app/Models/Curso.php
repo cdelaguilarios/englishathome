@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Log;
 use Carbon\Carbon;
 use App\Helpers\Enum\TiposEntidad;
 use Illuminate\Support\Facades\Cache;
@@ -86,6 +87,16 @@ class Curso extends Model {
     $curso->eliminado = 1;
     $curso->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $curso->save();
+  }
+
+  public static function verificarExistencia($id)/* - */ {
+    try {
+      Curso::obtenerXId($id, TRUE);
+    } catch (\Exception $e) {
+      Log::error($e);
+      return FALSE;
+    }
+    return TRUE;
   }
 
   //REPORTE

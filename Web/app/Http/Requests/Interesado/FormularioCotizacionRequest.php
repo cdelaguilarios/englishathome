@@ -15,7 +15,6 @@ class FormularioCotizacionRequest extends Request/* - */ {
   protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     $datos["idCurso"] = ReglasValidacion::formatoDato($datos, "idCurso");
-    $datos["rutaImagenCurso"] = ReglasValidacion::formatoDato($datos, "rutaImagenCurso");
     $datos["contenidoCorreo"] = ReglasValidacion::formatoDato($datos, "contenidoCorreo");
     $datos["costoXHoraClase"] = ReglasValidacion::formatoDato($datos, "costoXHoraClase");
     $datos["correoCotizacionPrueba"] = ReglasValidacion::formatoDato($datos, "correoCotizacionPrueba");

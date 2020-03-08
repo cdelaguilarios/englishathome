@@ -7,12 +7,13 @@ use Log;
 use Auth;
 use Crypt;
 use Carbon\Carbon;
+use App\Helpers\Enum\MotivosPago;
 use App\Helpers\Enum\EstadosPago;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\EstadosClase;
 use App\Helpers\Enum\EstadosAlumno;
-use App\Helpers\Enum\MensajesHistorial;
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\Enum\MensajesNotificacion;
 
 class Alumno extends Model {
 
@@ -105,12 +106,31 @@ class Alumno extends Model {
       $q->on("distritoAlumno.codigo", "=", "entidad.codigoUbigeo");
     });
 
+
+    //Datos de pagos del alumno
+    $alumnos->leftJoin($nombreTablaPago . " AS pago", function ($q) {
+      $nombreTablaPagoAlumno = PagoAlumno::nombreTabla();
+      $q->on("pago.id", "IN", DB::raw("(SELECT idPago 
+                                                    FROM " . $nombreTablaPagoAlumno . "
+                                                    WHERE idAlumno = entidad.id)"))
+              ->where("pago.motivo", "=", MotivosPago::Clases)
+              ->whereIn("pago.estado", [EstadosPago::Consumido, EstadosPago::Realizado]);
+    });
+    $queryDuracionTotalXClasesRealizadasGlobal = "(SELECT SUM(duracionCubierta) 
+                                                        FROM " . $nombreTablaPagoClase . " 
+                                                        WHERE idPago = pago.id
+                                                          AND idClase IN (SELECT id 
+                                                                            FROM " . $nombreTablaClase . " 
+                                                                            WHERE estado IN ('" . EstadosClase::ConfirmadaProfesorAlumno . "', '" . EstadosClase::Realizada . "')
+                                                                              AND eliminado = 0))";
+    
     //Datos de pagos de la bolsa de horas actual del alumno
     $alumnos->leftJoin($nombreTablaPago . " AS pagoXBolsaHoras", function ($q) {
       $nombreTablaAlumnoBolsaHoras = AlumnoBolsaHoras::nombreTabla();
       $q->on("pagoXBolsaHoras.id", "IN", DB::raw("(SELECT idPago 
                                                     FROM " . $nombreTablaAlumnoBolsaHoras . "
                                                     WHERE idAlumno = entidad.id)"))
+              ->on("pagoXBolsaHoras.id", "=", "pago.id")
               ->where("pagoXBolsaHoras.estado", "=", EstadosPago::Realizado);
     });
     $queryDuracionTotalXClasesRealizadas = "(SELECT SUM(duracionCubierta) 
@@ -129,24 +149,40 @@ class Alumno extends Model {
                       nivelIngles.nombre AS nivelIngles,              
                       profesor.id AS idProfesor, 
                       profesor.nombre AS nombreProfesor, 
-                      profesor.apellido AS apellidoProfesor, 
+                      profesor.apellido AS apellidoProfesor,        
+                      profesor.telefono AS telefonoProfesor, 
                       distritoProfesor.distrito AS distritoProfesor, 
                       (CASE WHEN ultimaClase.fechaConfirmacion IS NOT NULL
                         THEN ultimaClase.fechaConfirmacion
                         ELSE ultimaClase.fechaFin
-                      END) AS ultimaClaseFecha,
-                      SUM(CASE WHEN IFNULL(pagoXBolsaHoras.costoXHoraClase, 0) > 0 
+                      END) AS ultimaClaseFecha," .                  
+                    // <editor-fold desc="Datos globales">
+                    "SUM(CASE WHEN IFNULL(pago.costoXHoraClase, 0) > 0 
+			THEN ((IFNULL(pago.monto, 0) - IFNULL(pago.saldoFavor, 0)) * 3600 / (pago.costoXHoraClase))
+                        ELSE 0
+                      END) AS duracionTotalXClasesGlobal,
+                      SUM(" . $queryDuracionTotalXClasesRealizadasGlobal . ") AS duracionTotalXClasesRealizadasGlobal,
+                      COUNT(DISTINCT pago.id) AS numeroPagosXBolsaHorasGlobal,
+                      SUM(pago.monto) AS montoTotalPagosXBolsaHorasGlobal," .
+                    // </editor-fold>
+                    // <editor-fold desc="Datos por bolsa de horas">
+                    "SUM(CASE WHEN IFNULL(pagoXBolsaHoras.costoXHoraClase, 0) > 0 
 			THEN ((IFNULL(pagoXBolsaHoras.monto, 0) - IFNULL(pagoXBolsaHoras.saldoFavor, 0)) * 3600 / (pagoXBolsaHoras.costoXHoraClase))
                         ELSE 0
                       END) AS duracionTotalXClases,
                       SUM(" . $queryDuracionTotalXClasesRealizadas . ") AS duracionTotalXClasesRealizadas,
                       COUNT(DISTINCT pagoXBolsaHoras.id) AS numeroPagosXBolsaHoras,
-                      SUM(pagoXBolsaHoras.monto) AS montoTotalPagosXBolsaHoras")
+                      SUM(pagoXBolsaHoras.monto) AS montoTotalPagosXBolsaHoras"
+                    // </editor-fold>  
+            )
     );
-
     return DB::table(DB::raw("({$alumnos->toSql()}) AS T"))
                     ->mergeBindings($alumnos->getQuery())
-                    ->select(DB::raw("T.*, (duracionTotalXClasesRealizadas*100/duracionTotalXClases) AS porcentajeAvanceXClases")
+                    ->select(DB::raw(
+                                    "T.*,
+                                    (duracionTotalXClasesRealizadas*100/duracionTotalXClases) AS porcentajeAvanceXClases,
+                                    (duracionTotalXClasesRealizadasGlobal*100/duracionTotalXClasesGlobal) AS porcentajeAvanceXClasesGlobal"
+                            )
     );
   }
 
@@ -173,7 +209,7 @@ class Alumno extends Model {
 
       $entidadCurso = EntidadCurso::obtenerXIdEntidad($id);
       $entidadNivelIngles = EntidadNivelIngles::obtenerXIdEntidad($id);
-      
+
       $alumno->horario = Horario::obtenerJsonXIdEntidad($id);
       $alumno->idCurso = (isset($entidadCurso) ? $entidadCurso->idCurso : NULL);
       $alumno->direccionUbicacion = Ubigeo::obtenerTextoUbigeo($alumno->codigoUbigeo);
@@ -219,11 +255,10 @@ class Alumno extends Model {
     $alumno->idEntidad = $idEntidad;
     $alumno->save();
 
-    Historial::registrar([
+    Notificacion::registrarActualizar([
         "idEntidades" => [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
-        "titulo" => (Auth::guest() ? MensajesHistorial::TituloAlumnoRegistro : MensajesHistorial::TituloAlumnoRegistroXUsuario),
-        "enviarCorreo" => (Auth::guest() ? 1 : 0),
-        "mensaje" => ""
+        "titulo" => (Auth::guest() ? MensajesNotificacion::TituloAlumnoRegistro : MensajesNotificacion::TituloAlumnoRegistroXUsuario),
+        "enviarCorreo" => (Auth::guest() ? 1 : 0)
     ]);
     return $idEntidad;
   }

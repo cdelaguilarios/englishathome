@@ -35,6 +35,7 @@ class ListarXClasesRequest extends Request/* - */ {
     if (!array_key_exists($datos["tipoBusquedaFecha"], $listaTiposBusquedaFecha)) {
       $reglasValidacion["tipoBusquedaFechaNoValido"] = "required";
     }
+    
     switch ($this->method()) {
       case "GET":
       case "DELETE":

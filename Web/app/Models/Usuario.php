@@ -60,7 +60,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
 
   public static function obtenerXId($id, $simple = TRUE)/* - */ {
     $usuario = Usuario::listar()->where("entidad.id", $id)->firstOrFail();
-    
+
     if (!$simple) {
       $datosIdsAntSig = Entidad::ObtenerIdsAnteriorSiguienteXEntidad(TiposEntidad::Usuario, $usuario);
       $usuario->idUsuarioAnterior = $datosIdsAntSig["idEntidadAnterior"];
@@ -126,12 +126,17 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
   }
 
   public static function esUnicoPrincipal($id)/* - */ {
-    $totalUsuariosPrincipales = Usuario::listar()
-            ->where(Usuario::nombreTabla() . ".rol", RolesUsuario::Principal)
-            ->count();
-    if ($totalUsuariosPrincipales > 1) {
+    $preUsuariosPrincipales = Usuario::listar()
+            ->where(Usuario::nombreTabla() . ".rol", RolesUsuario::Principal);
+    $usuariosPrincipales = DB::table(DB::raw("({$preUsuariosPrincipales->toSql()}) AS T"))
+            ->mergeBindings($preUsuariosPrincipales->getQuery())
+            ->select(DB::raw("COUNT(T.idEntidad) AS total"))
+            ->first();
+
+    if (isset($usuariosPrincipales) && $usuariosPrincipales->total > 1) {
       return FALSE;
     }
+    
     $usuario = Usuario::obtenerXId($id);
     return ($usuario->rol == RolesUsuario::Principal);
   }
