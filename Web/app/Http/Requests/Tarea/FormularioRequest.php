@@ -2,8 +2,7 @@
 
 namespace App\Http\Requests\Tarea;
 
-use Carbon\Carbon;
-use App\Models\Tarea;
+use App\Models\Usuario;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 
@@ -17,9 +16,9 @@ class FormularioRequest extends Request/* - */ {
     $datos = $this->all();
     $datos["titulo"] = ReglasValidacion::formatoDato($datos, "titulo");
     $datos["mensaje"] = ReglasValidacion::formatoDato($datos, "mensaje", "");
-    $datos["nombresArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresArchivosAdjuntos");
-    $datos["nombresOriginalesArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresOriginalesArchivosAdjuntos");
-    $datos["nombresArchivosAdjuntosEliminados"] = ReglasValidacion::formatoDato($datos, "nombresArchivosAdjuntosEliminados");
+    $datos["nombresArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresArchivosAdjuntosTarea");
+    $datos["nombresOriginalesArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresOriginalesArchivosAdjuntosTarea");
+    $datos["nombresArchivosAdjuntosEliminados"] = ReglasValidacion::formatoDato($datos, "nombresArchivosAdjuntosTareaEliminados");
     $datos["notificarInmediatamente"] = (isset($datos["notificarInmediatamente"]) ? 1 : 0);
     $datos["fechaProgramada"] = ReglasValidacion::formatoDato($datos, "fechaProgramada");
     $this->getInputSource()->replace($datos);
@@ -30,19 +29,12 @@ class FormularioRequest extends Request/* - */ {
     $datos = $this->all();
     $reglasValidacion = [
         "titulo" => "required|max:100",
-        "mensaje" => "max:8000"
+        "mensaje" => "max:8000",
+        "fechaProgramada" => "date_format:d/m/Y H:i:s"
     ];
 
-    $validarProgramacion = TRUE;
-    if (isset($datos["idTarea"]) && $datos["idTarea"] != "") {
-      $tarea = Tarea::obtenerXId($datos["idTarea"]);
-      $fechaActual = Carbon::now();
-      $fechaNotificacion = Carbon::createFromFormat("Y-m-d H:i:s", $tarea->fechaNotificacion);
-      $validarProgramacion = ($fechaNotificacion > $fechaActual);
-    }
-
-    if ($validarProgramacion) {
-      $reglasValidacion["fechaProgramada"] = "date_format:d/m/Y H:i:s";
+    if (!Usuario::verificarExistencia($datos["idUsuarioAsignado"])) {
+      $reglasValidacion["usuarioNoValido"] = "required";
     }
 
     switch ($this->method()) {
@@ -57,6 +49,12 @@ class FormularioRequest extends Request/* - */ {
         }
       default:break;
     }
+  }
+
+  public function messages()/* - */ {
+    return [
+        "usuarioNoValido.required" => "El usuario seleccionado no es válido."
+    ];
   }
 
 }

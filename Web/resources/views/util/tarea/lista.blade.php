@@ -1,11 +1,3 @@
-<script>
-  var urlListarTareas = "{{ route('tareas.listar') }}";
-  var urlListarTareasNuevas = "{{ route('tareas.listar.nuevas') }}";
-  var urlPerfilEntidad = "{{ route('entidades.perfil', ['id' => 0]) }}";
-  var urlActualizarRealizacion = "{{ route('tareas.actualizar.realizacion', ['id' => 0]) }}";
-  var urlEliminarTarea = "{{ route('tareas.eliminar', ['id' => 0]) }}";
-</script>
-<script src="{{ asset("assets/eah/js/modulos/util/tarea/lista.js")}}"></script>     
 <div id="sec-tareas-lista" style="display: none">
   <div class="row">
     <div class="col-sm-12">

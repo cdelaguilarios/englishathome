@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="{{ asset("assets/plugins/jQueryUploadFileMaster/css/uploadfile.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/plugins/datetimepicker/bootstrap-datetimepicker.min.css") }}" />
     <link rel="stylesheet" href="{{ asset("assets/eah/css/eah.css") }}" />
+    <link rel="stylesheet" href="{{ asset("assets/plugins/jkanban-master/jkanban.min.css") }}" />
     @yield("section_style")   
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn"t work if you view the page via file:// -->
@@ -94,11 +95,11 @@
                   <i class="fa fa-bell-o"></i>
                 </a>
               </li>
-              {{--<li class="dropdown tasks-menu">
+              <li class="dropdown tasks-menu">
                 <a id="btn-ver-tareas" data-target="#mod-tareas" data-toggle="modal" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-flag-o"></i>
                 </a>
-              </li>--}}
+              </li>
               <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   @if ($usuarioActual->imagenPerfil == "null" || empty($usuarioActual->imagenPerfil))
@@ -263,6 +264,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
     <script src="{{ asset("assets/plugins/fullcalendar/fullcalendar.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/fullcalendar/locale/es.js") }}"></script>
+    <script src="{{ asset("assets/plugins/jkanban-master/jkanban.min.js") }}"></script>
     <script src="//www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
       var urlBase = "{{ url('/') }}";

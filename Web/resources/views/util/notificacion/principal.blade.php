@@ -16,11 +16,12 @@
     tipoEntidadUsuario: "{{ App\Helpers\Enum\TiposEntidad::Usuario }}",
     tiposEntidades: {!!  json_encode(App\Helpers\Enum\TiposEntidad::listarTiposBase()) !!},
     tiposNotificaciones: {!!  json_encode(App\Helpers\Enum\TiposNotificacion::listar()) !!},
+    idBtnVerNotificaciones: "btn-ver-notificaciones-generales",
     //Módulos
-    nombreModuloCrearEditar: "crearEditarNotificacionGenerales"
+    nombreModuloCrearEditar: "crearEditarNotificacionGeneral"
   }); 
    
-  var crearEditarNotificacionGenerales = new CrearEditarNotificacion({
+  var crearEditarNotificacionGeneral = new CrearEditarNotificacion({
     //URL's
     urlDatosNotificacion: "{{ route('notificaciones.datos', ['id' => 0]) }}",
     //Datos adicionales
@@ -28,7 +29,8 @@
     //Módulos
     formularioNotificacion: new FormularioNotificacion({
       //Datos adicionales
-      idSeccion: "{{ $idSeccionGen }}"
+      idSeccion: "{{ $idSeccionGen }}",
+      listaNotificaciones: listaNotificacionesGenerales
     }),
     listaNotificaciones: listaNotificacionesGenerales
   });

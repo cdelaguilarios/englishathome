@@ -1,12 +1,23 @@
-var tareas = {};
-tareas = (function () {
-  window.addEventListener("load", esperarCargaJquery, false);
-  function esperarCargaJquery() {
-    ((window.jQuery && jQuery.ui) ? cargarSeccion() : window.setTimeout(esperarCargaJquery, 100));
-  }
+var Tareas = Tareas || (function () {
+  'use strict';
 
   //Privado
-  function cargarSeccion() {
-    listaTareas.mostrar();
-  }
-}());
+  var esperarCargaJquery = function () {
+    var self = this;
+    ((window.jQuery && jQuery.ui) ? cargarSeccion.call(self) : window.setTimeout(function () {
+      esperarCargaJquery.call(self);
+    }, 100));
+  };
+  var cargarSeccion = function () {
+    this._args.panelTareas.mostrar();
+  };
+
+  //Público
+  var Constructor = function (args) {
+    this._args = {};
+    Object.assign(this._args, args);
+    esperarCargaJquery.call(this);
+  };
+
+  return Constructor;
+})();

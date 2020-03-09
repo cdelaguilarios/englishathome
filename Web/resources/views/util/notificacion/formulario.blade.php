@@ -1,9 +1,9 @@
 {{----}}
 <div class="box-body">
   <div class="form-group">
-    {{ Form::label("titulo-" . $idSeccion, "Título (*): ", ["class" => "col-sm-2 control-label"]) }}
+    {{ Form::label("titulo-notificacion-" . $idSeccion, "Título (*): ", ["class" => "col-sm-2 control-label"]) }}
     <div class="col-sm-10">
-      {{ Form::text("titulo", null, ["id" => "titulo-" . $idSeccion, "class" => "form-control", "maxlength" =>"100"]) }}
+      {{ Form::text("titulo", null, ["id" => "titulo-notificacion-" . $idSeccion, "class" => "form-control", "maxlength" =>"100"]) }}
     </div>
   </div>
   <div class="form-group">
@@ -12,7 +12,7 @@
       {{ Form::textarea("mensaje", null, ["id" => "mensaje-notificacion-" . $idSeccion, "class" => "form-control", "rows" => "5", "maxlength" =>"8000"]) }}
     </div>                                        
   </div>  
-  @include("util.archivosAdjuntos", ["adjuntos" => [(object)["idCampo" => "Adjuntos" .  ucfirst($idSeccion), "idHtml" => "adjuntos-" . $idSeccion, "titulo" => "Adjuntos", "archivosRegistrados" => null, "mensajeReferencia" => null, "cantidadMaximaArchivos" => 5, "soloImagenes" => false]]])   
+  @include("util.archivosAdjuntos", ["adjuntos" => [(object)["idCampo" => "AdjuntosNotificacion" .  ucfirst($idSeccion), "idHtml" => "adjuntos-notificacion-" . $idSeccion, "titulo" => "Adjuntos", "archivosRegistrados" => null, "mensajeReferencia" => null, "cantidadMaximaArchivos" => 5, "soloImagenes" => false]]])   
   <div id="sec-notificaciones-{{ $idSeccion }}-programacion"> 
     <div class="form-group">
       <div class="col-sm-3 col-sm-offset-2">
@@ -52,13 +52,13 @@
       </div>    
     </div>
     <div id="sec-notificaciones-{{ $idSeccion }}-fecha" class="form-group"> 
-      {{ Form::label("fecha-programada-" . $idSeccion, "Fecha notificación ", ["class" => "col-sm-2 control-label"]) }}
+      {{ Form::label("fecha-programada-notificacion-" . $idSeccion, "Fecha notificación ", ["class" => "col-sm-2 control-label"]) }}
       <div class="col-sm-4">
         <div class="input-group date">
           <div class="input-group-addon">
             <i class="fa fa-calendar"></i>
           </div>                                
-          {{ Form::text("fechaProgramada", null, ["id" => "fecha-programada-" . $idSeccion, "class" => "form-control", "placeholder" => "dd/mm/aaaa HH:mm:ss"]) }}
+          {{ Form::text("fechaProgramada", null, ["id" => "fecha-programada-notificacion-" . $idSeccion, "class" => "form-control", "placeholder" => "dd/mm/aaaa HH:mm:ss"]) }}
         </div>
       </div> 
       {{ Form::hidden("idSeccion", $idSeccion) }}

@@ -21,7 +21,8 @@
     //Módulos
     formularioNotificacion: new FormularioNotificacion({
       //Datos adicionales
-      idSeccion: "{{ $idSeccionHis }}"
+      idSeccion: "{{ $idSeccionHis }}",
+      listaNotificaciones: listaNotificacionesHistorial
     }),
     listaNotificaciones: listaNotificacionesHistorial
   });

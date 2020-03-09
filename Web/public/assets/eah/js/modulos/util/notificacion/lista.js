@@ -104,7 +104,7 @@ var ListaNotificacionesGenerales = ListaNotificacionesGenerales || (function () 
               if (involucrados.includes("<li>")) {
                 htmlNotificacion += "<br/><br/><b>Involucrado(s):<b> " + involucrados;
               }
-              htmlNotificacion += '<br/><br/><b>Creado por<b> <a href="' + self._args.urlPerfilEntidad.replace("/0", "/" + d.idUsuarioCreador) + '" target="_blank">' + d.nombreUsuarioCreador + ' ' + d.apellidoUsuarioCreador + '</a><br/><br/>';
+              htmlNotificacion += '<br/><br/><b>Creado por</b> <a href="' + self._args.urlPerfilEntidad.replace("/0", "/" + d.idUsuarioCreador) + '" target="_blank">' + d.nombreUsuarioCreador + ' ' + d.apellidoUsuarioCreador + '</a><br/><br/>';
 
               if (idEntidadPrincipal !== null) {
                 htmlNotificacion += '<a href="javascript:void(0);" onclick="' + self._args.nombreModuloCrearEditar + '.editar(' + d.id + ', ' + idEntidadPrincipal + ');" class="btn btn-primary btn-xs">Editar</a>';
@@ -137,7 +137,8 @@ var ListaNotificacionesGenerales = ListaNotificacionesGenerales || (function () 
     var funcionCambio = function () {
       reCargar.call(self);
     };
-    filtrosBusquedaFechas.cargar(self._args.idSeccion, funcionCambio);
+    filtrosBusquedaFechas.cargar(self._args.idSeccion, funcionCambio);       
+    $("#" + self._args.idBtnVerNotificaciones).click(funcionCambio);
   };
   var actualizarNumeroNotificacionesNuevas = function () {
     var self = this;
@@ -177,7 +178,6 @@ var ListaNotificacionesGenerales = ListaNotificacionesGenerales || (function () 
       idPrefijoSeccionNotificaciones: "sec-notificaciones-generales-",
       idSeccionLista: "sec-notificaciones-generales-lista",
       idTablaLista: "tab-lista-notificaciones-generales",
-      idBtnVerNotificaciones: "btn-ver-notificaciones-generales",
       primeraCarga: true
     };
     Object.assign(this._args, args);

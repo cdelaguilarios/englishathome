@@ -98,8 +98,7 @@ class Notificacion extends Model {
   public static function listar($datos)/* - */ {
     $nombreTablaTareaNotificacion = TareaNotificacion::nombreTabla();
 
-    $notificaciones = Notificacion::listarBase();
-    $notificaciones->where("entidadNotificacion.idEntidad", Auth::user()->idEntidad);
+    $notificaciones = Notificacion::listarBase()->where("entidadNotificacion.idEntidad", Auth::user()->idEntidad);
     Util::aplicarFiltrosBusquedaXFechas($notificaciones, $nombreTablaTareaNotificacion, "fechaNotificacion", $datos);
 
     return $notificaciones;
@@ -110,11 +109,10 @@ class Notificacion extends Model {
     $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", $fechaActual->format('d/m/Y') . " 00:00:00");
     $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", $fechaActual->format('d/m/Y') . " 23:59:59");
 
-    $notificaciones = Notificacion::listarBase();
-    $notificaciones->where("entidadNotificacion.idEntidad", Auth::user()->idEntidad)
-            ->whereBetween("tareaNotificacion.fechaNotificacion", [$fechaBusIni, $fechaBusFin])
-            ->whereNull("entidadNotificacionUsuarioActual.fechaRevision");
-    return $notificaciones->get();
+    return Notificacion::listarBase()
+                    ->where("entidadNotificacion.idEntidad", Auth::user()->idEntidad)
+                    ->whereBetween("tareaNotificacion.fechaNotificacion", [$fechaBusIni, $fechaBusFin])
+                    ->whereNull("entidadNotificacionUsuarioActual.fechaRevision")->get();
   }
 
   public static function listarHistorial($idEntidad, $numeroCarga)/* - */ {
@@ -211,7 +209,8 @@ class Notificacion extends Model {
     $idEntidadesSel = (is_array($datos["idEntidades"]) ? $datos["idEntidades"] : [$datos["idEntidades"]]);
     if (count($idEntidadesSel) > 0) {
       $datos["tipo"] = (isset($datos["tipo"]) ? $datos["tipo"] : TiposNotificacion::Notificacion);
-      if (!isset($datos["fechaProgramada"]) || (isset($datos["notificarInmediatamente"]) && $datos["notificarInmediatamente"] == 1)) {
+      $notificarInmediatamente = isset($datos["notificarInmediatamente"]) && $datos["notificarInmediatamente"] == 1;
+      if (!isset($datos["fechaProgramada"]) || $notificarInmediatamente) {
         $datos["fechaProgramada"] = Carbon::now()->toDateTimeString();
       }
       $datos["fechaNotificacion"] = $datos["fechaProgramada"];
@@ -228,7 +227,7 @@ class Notificacion extends Model {
 
         $enviarCorreo = (isset($notificacion["enviarCorreo"]) && ((int) $notificacion["enviarCorreo"] == 1));
         $enviarCorreoEntidades = (isset($notificacion["enviarCorreoEntidades"]) && ((int) $notificacion["enviarCorreoEntidades"] == 1));
-        Notificacion::registrarActualizarEntidades($idTareaNotificacion, $idEntidadesSel, ($enviarCorreo || $enviarCorreoEntidades));
+        Notificacion::registrarActualizarEntidades($idTareaNotificacion, $idEntidadesSel, $notificarInmediatamente, $creadoPorElSistema, ($enviarCorreo || $enviarCorreoEntidades));
       } else {
         //Actualización
         $idTareaNotificacion = $datos["idNotificacion"];
@@ -253,7 +252,7 @@ class Notificacion extends Model {
     }
   }
 
-  private static function registrarActualizarEntidades($idNotificacion, $idEntidades, $incluirObservadores = FALSE)/* - */ {
+  private static function registrarActualizarEntidades($idNotificacion, $idEntidades, $notificarInmediatamente, $creadoPorElSistema, $incluirObservadores)/* - */ {
     EntidadNotificacion::where("idNotificacion", $idNotificacion)->delete();
     foreach ($idEntidades as $idEntidad) {
       if (isset($idEntidad)) {
@@ -262,11 +261,22 @@ class Notificacion extends Model {
       }
     }
 
-    //Se incluye como observadores a todos los usuarios del sistema
+    $entidadesObservadoras = [];
     if ($incluirObservadores) {
-      $entidadesUsuarios = Entidad::listar(TiposEntidad::Usuario, EstadosUsuario::Activo, $idEntidades)->get();
-      foreach ($entidadesUsuarios as $entidadUsuario) {
-        $entidadHitorial = new EntidadNotificacion([ "idEntidad" => $entidadUsuario->id, "idNotificacion" => $idNotificacion, "esObservador" => 1]);
+      //Se incluye como observadores a todos los usuarios del sistema
+      $entidadesObservadoras = Entidad::listar(TiposEntidad::Usuario, EstadosUsuario::Activo, $idEntidades)->get();
+    } else if (!($creadoPorElSistema || Auth::guest())) {
+      //Se incluye como observador al usuario creador
+      $entidadActual = Entidad::ObtenerXId(Auth::user()->idEntidad);
+      $entidadesObservadoras = [$entidadActual];
+    }
+
+    if (count($entidadesObservadoras) > 0) {
+      foreach ($entidadesObservadoras as $entidadObservadora) {
+        $entidadHitorial = new EntidadNotificacion([ "idEntidad" => $entidadObservadora->id, "idNotificacion" => $idNotificacion, "esObservador" => 1]);
+        if (!Auth::guest() && $notificarInmediatamente && $entidadObservadora->id == Auth::user()->idEntidad) {
+          $entidadHitorial->fechaRevision = Carbon::now()->toDateTimeString();
+        }
         $entidadHitorial->save();
       }
     }

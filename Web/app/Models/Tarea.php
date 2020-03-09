@@ -6,6 +6,7 @@ use DB;
 use Auth;
 use Carbon\Carbon;
 use App\Helpers\Util;
+use App\Helpers\Enum\EstadosTarea;
 use Illuminate\Database\Eloquent\Model;
 
 class Tarea extends Model {
@@ -13,7 +14,7 @@ class Tarea extends Model {
   public $timestamps = false;
   protected $table = "tarea";
   protected $fillable = [
-      "fechaFinalizacion"
+      "fechaRevision"
   ];
 
   public static function nombreTabla()/* - */ {
@@ -27,30 +28,24 @@ class Tarea extends Model {
     $nombreTablaTarea = Tarea::nombreTabla();
     $nombreTablaEntidad = Entidad::nombreTabla();
     $nombreTablaTareaNotificacion = TareaNotificacion::nombreTabla();
-    $nombreTablaEntidadTarea = EntidadTarea::nombreTabla();
 
     $tareas = Tarea::leftJoin($nombreTablaTareaNotificacion . " AS tareaNotificacion", $nombreTablaTarea . ".id", "=", "tareaNotificacion.id")
-            ->leftJoin($nombreTablaEntidadTarea . " as entidadTarea", $nombreTablaTarea . ".id", "=", "entidadTarea.idTarea")
-            ->leftJoin($nombreTablaEntidad . " AS entidadInvolucradaTarea", function ($q) use ($nombreTablaEntidadTarea, $nombreTablaTarea) {
-              $q->on("entidadInvolucradaTarea.id", "IN", DB::raw("(SELECT idEntidad 
-                                                                            FROM " . $nombreTablaEntidadTarea . "
-                                                                            WHERE idTarea = " . $nombreTablaTarea . ".id)"));
+            //Datos del usuario creado
+            ->leftJoin($nombreTablaEntidad . " as entidadUsuarioCreador", function ($q) {
+              $q->on("tareaNotificacion.idUsuarioCreador", "=", "entidadUsuarioCreador.id")
+              ->on("entidadUsuarioCreador.eliminado", "=", DB::raw("0"));
+            })
+            //Datos del usuario asignado
+            ->leftJoin($nombreTablaEntidad . " as entidadUsuarioAsignado", function ($q) use($nombreTablaTarea) {
+              $q->on($nombreTablaTarea . ".idUsuarioAsignado", "=", "entidadUsuarioAsignado.id")
+              ->on("entidadUsuarioAsignado.eliminado", "=", DB::raw("0"));
             })
             ->where("tareaNotificacion.eliminado", 0)
             ->groupBy("tareaNotificacion.id")
             ->distinct();
 
-    if (!Auth::guest()) {
-      $tareas->leftJoin($nombreTablaEntidadTarea . " AS entidadTareaUsuarioActual", function ($q) {
-        $q->on("entidadTareaUsuarioActual.idTarea", "=", "entidadTarea.idTarea")
-                ->on("entidadTareaUsuarioActual.idEntidad", "=", DB::raw(Auth::user()->idEntidad));
-      });
-    }
-
     return $tareas->select(DB::raw(
                             $nombreTablaTarea . ".*," .
-                            (Auth::guest() ? "NULL AS 'fechaRevision'," : "entidadTareaUsuarioActual.fechaRevision,") .
-                            (Auth::guest() ? "NULL AS 'fechaRealizada'," : "entidadTareaUsuarioActual.fechaRealizada,") .
                             "tareaNotificacion.idUsuarioCreador, 
                             tareaNotificacion.titulo, 
                             tareaNotificacion.mensaje, 
@@ -58,77 +53,112 @@ class Tarea extends Model {
                             tareaNotificacion.fechaProgramada, 
                             tareaNotificacion.fechaNotificacion, 
                             tareaNotificacion.fechaRegistro, 
-                            GROUP_CONCAT(
-                              DISTINCT CONCAT(entidadInvolucradaTarea.tipo, '-', entidadInvolucradaTarea.id, ':', entidadInvolucradaTarea.nombre, ' ', entidadInvolucradaTarea.apellido) 
-                              SEPARATOR ';'
-                            ) AS entidadesInvolucradas")
+                            entidadUsuarioCreador.id AS idUsuarioCreador, 
+                            entidadUsuarioCreador.nombre AS nombreUsuarioCreador, 
+                            entidadUsuarioCreador.apellido AS apellidoUsuarioCreador, 
+                            entidadUsuarioAsignado.id AS idUsuarioAsignado, 
+                            entidadUsuarioAsignado.nombre AS nombreUsuarioAsignado, 
+                            entidadUsuarioAsignado.apellido AS apellidoUsuarioAsignado")
     );
+  }
+
+  public static function listar($datos)/* - */ {
+    $nombreTablaTareaNotificacion = TareaNotificacion::nombreTabla();
+
+    $tareas = Tarea::listarBase()->where("entidadUsuarioAsignado.id", Auth::user()->idEntidad);
+    Util::aplicarFiltrosBusquedaXFechas($tareas, $nombreTablaTareaNotificacion, "fechaProgramada", $datos);
+
+    return $tareas;
+  }
+
+  public static function listarNoRealizadas($seleccionarMisTareas = TRUE)/* - */ {
+    $nombreTablaTarea = Tarea::nombreTabla();
+
+    $tareas = Tarea::listarBase();
+    if ($seleccionarMisTareas) {
+      $tareas->where("entidadUsuarioAsignado.id", Auth::user()->idEntidad);
+    } else {
+      $tareas->where("entidadUsuarioCreador.id", Auth::user()->idEntidad);
+    }
+    return $tareas->whereNull($nombreTablaTarea . ".fechaRealizacion")->get();
+  }
+
+  public static function listarParaPanel($seleccionarMisTareas = TRUE)/* - */ {
+    $tareasNoRealizadas = Tarea::listarNoRealizadas($seleccionarMisTareas);
+
+    //Tareas recientemente realizadas    
+    $nombreTablaTarea = Tarea::nombreTabla();
+
+    $fechaActual = Carbon::now();
+    $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", $fechaActual->addDays(-2)->format('d/m/Y') . " 00:00:00");
+    $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", $fechaActual->addDays(2)->format('d/m/Y') . " 23:59:59");
+
+    $preTareasRealizadas = Tarea::listarBase();
+    if ($seleccionarMisTareas) {
+      $preTareasRealizadas->where("entidadUsuarioAsignado.id", Auth::user()->idEntidad);
+    } else {
+      $preTareasRealizadas->where("entidadUsuarioCreador.id", Auth::user()->idEntidad);
+    }
+    $tareasRealizadas = $preTareasRealizadas->whereNotNull($nombreTablaTarea . ".fechaRealizacion")
+                    ->whereBetween($nombreTablaTarea . ".fechaRealizacion", [$fechaBusIni, $fechaBusFin])->get();
+
+    return $tareasNoRealizadas->merge($tareasRealizadas);
   }
 
   public static function obtenerXId($id)/* - */ {
     return Tarea::listarBase()->where("tareaNotificacion.id", $id)->firstOrFail();
   }
 
-  public static function listar($datos)/* - */ {
-    $nombreTablaTareaNotificacion = TareaNotificacion::nombreTabla();
-
-    $tareas = Tarea::listarBase();
-    Util::aplicarFiltrosBusquedaXFechas($tareas, $nombreTablaTareaNotificacion, "fechaNotificacion", $datos);
-
-    return $tareas;
-  }
-
-  public static function listarNuevas()/* - */ {
-    if (!Auth::guest()) {
-      $fechaActual = Carbon::now();
-      $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", $fechaActual->format('d/m/Y') . " 00:00:00");
-      $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", $fechaActual->format('d/m/Y') . " 23:59:59");
-
-      $tareas = Tarea::listarBase();
-      $tareas->whereBetween("tareaNotificacion.fechaNotificacion", [$fechaBusIni, $fechaBusFin])
-              ->whereNull("entidadTareaUsuarioActual.fechaRealizada");
-      return $tareas->get();
-    }
-    return null;
-  }
-
   public static function registrarActualizar($datos) {
-    $idEntidadesSel = (is_array($datos["idEntidades"]) ? $datos["idEntidades"] : [$datos["idEntidades"]]);
-    if (count($idEntidadesSel) > 0) {
-      if (!isset($datos["fechaProgramada"]) || (isset($datos["notificarInmediatamente"]) && $datos["notificarInmediatamente"] == 1)) {
-        $datos["fechaProgramada"] = Carbon::now()->toDateTimeString();
-      }
-      $datos["fechaNotificacion"] = $datos["fechaProgramada"];
+    if (!isset($datos["fechaProgramada"]) || (isset($datos["notificarInmediatamente"]) && $datos["notificarInmediatamente"] == 1)) {
+      $datos["fechaProgramada"] = Carbon::now()->toDateTimeString();
+    }
 
-      if (!(isset($datos["idTarea"]) && $datos["idTarea"] != "")) {
-        //Registro
-        $datos["adjuntos"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 5, "Adjuntos");
+    if (!(isset($datos["idTarea"]) && $datos["idTarea"] != "")) {
+      //Registro
+      $datos["adjuntos"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 5, "Adjuntos");
 
-        $idTareaNotificacion = TareaNotificacion::registrar($datos);
-        $tarea = new Tarea($datos);
-        $tarea->id = $idTareaNotificacion;
-        $tarea->save();
-      } else {
-        //Actualización
-        $idTareaNotificacion = $datos["idTarea"];
+      $idTareaNotificacion = TareaNotificacion::registrar($datos, FALSE);
+      $tarea = new Tarea($datos);
+      $tarea->id = $idTareaNotificacion;
+      $tarea->idUsuarioAsignado = $datos["idUsuarioAsignado"];
+      $tarea->estado = EstadosTarea::Pendiente;
+      $tarea->save();
+    } else {
+      //TODO: Completar
+      //Actualización
+      /* $idTareaNotificacion = $datos["idTarea"];
         $tarea = Tarea::obtenerXId($idTareaNotificacion);
         $datos["adjuntos"] = Archivo::procesarArchivosSubidosNUEVO($tarea->adjuntos, $datos, 5, "Adjuntos");
 
-        TareaNotificacion::actualizar($idTareaNotificacion, $datos);
-        $tarea->update($datos);
-      }
-      Tarea::registrarActualizarEntidades($idTareaNotificacion, $idEntidadesSel);
+        TareaNotificacion::actualizar($idTareaNotificacion, $datos, FALSE);
+        $tarea->update($datos); */
     }
   }
 
-  private static function registrarActualizarEntidades($idTarea, $idEntidades)/* - */ {
-    EntidadTarea::where("idTarea", $idTarea)->delete();
-    foreach ($idEntidades as $idEntidad) {
-      if (isset($idEntidad)) {
-        $entidadTarea = new EntidadTarea([ "idEntidad" => $idEntidad, "idTarea" => $idTarea]);
-        $entidadTarea->save();
+  public static function revisarMultiple($ids) {
+    $idUsuarioActual = Auth::user()->idEntidad;
+
+    foreach ($ids as $id) {
+      $tarea = Tarea::where("id", $id)
+              ->where("idUsuarioAsignado", $idUsuarioActual)
+              ->first();
+      if ($tarea != NULL) {
+        Tarea::where("id", $id)
+                ->where("idUsuarioAsignado", $idUsuarioActual)
+                ->update(["fechaRevision" => Carbon::now()->toDateTimeString()]);
       }
     }
+  }
+
+  public static function actualizarEstado($id, $estado)/* - */ {
+    $tarea = Tarea::obtenerXId($id);
+    $tarea->estado = $estado;
+    $tarea->fechaRealizacion = NULL;
+    if ($estado == EstadosTarea::Realizada) {
+      $tarea->fechaRealizacion = Carbon::now()->toDateTimeString();
+    }
+    $tarea->save();
   }
 
   public static function eliminar($id) {

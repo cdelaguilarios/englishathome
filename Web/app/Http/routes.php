@@ -180,12 +180,12 @@ Route::group(["middleware" => "auth"], function() {
     Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Principal . "],true"], function() {
       Route::get("usuarios", ["uses" => "UsuarioController@index", "as" => "usuarios"]); //--
       Route::post("usuarios/listar", ["uses" => "UsuarioController@listar", "as" => "usuarios.listar"]); //--
-      Route::get("usuarios/buscar", ["uses" => "UsuarioController@buscar", "as" => "usuarios.buscar"]); //--
       Route::get("usuario/nuevo", ["uses" => "UsuarioController@crear", "as" => "usuarios.crear"]); //--
       Route::post("usuario/registrar", ["uses" => "UsuarioController@registrar", "as" => "usuarios.registrar"]); //--
       Route::post("usuario/{id}/actualizarEstado", ["uses" => "UsuarioController@actualizarEstado", "as" => "usuarios.actualizar.estado"]); //--
       Route::delete("usuario/{id}/eliminar", ["uses" => "UsuarioController@eliminar", "as" => "usuarios.eliminar"]); //--
     });
+    Route::get("usuarios/buscar", ["uses" => "UsuarioController@buscar", "as" => "usuarios.buscar"]); //--
     // </editor-fold>
     // <editor-fold desc="Clases">
     Route::post("clase/{id}/actualizarEstado", ["uses" => "ClaseController@actualizarEstado", "as" => "clases.actualizar.estado"]); //--
@@ -210,13 +210,13 @@ Route::group(["middleware" => "auth"], function() {
     // </editor-fold>
     // <editor-fold desc="Tareas">
     Route::post("tareas/listar", ["uses" => "TareaController@listar", "as" => "tareas.listar"]);
-    Route::post("tareas/listarNuevas", ["uses" => "TareaController@listarNuevas", "as" => "tareas.listar.nuevas"]);
-    Route::post("tareas/{idEntidad}/registrarActualizar", ["uses" => "TareaController@registrarActualizar", "as" => "tareas.registrar.actualizar"]);
+    Route::post("tareas/listarPanel", ["uses" => "TareaController@listarParaPanel", "as" => "tareas.listar.panel"]);
+    Route::post("tareas/listarNoRealizadas", ["uses" => "TareaController@listarNoRealizadas", "as" => "tareas.listar.no.realizadas"]);
+    Route::post("tareas/registrarActualizar", ["uses" => "TareaController@registrarActualizar", "as" => "tareas.registrar.actualizar"]);
     Route::post("tareas/{id}/datos", ["uses" => "TareaController@obtenerDatos", "as" => "tareas.datos"]);
+    Route::post("tareas/{id}/actualizarEstado", ["uses" => "TareaController@actualizarEstado", "as" => "tareas.actualizar.estado"]); //--
+    Route::post("tareas/revisarMultiple", ["uses" => "TareaController@revisarMultiple", "as" => "tareas.revisar.multiple"]);
     Route::delete("tareas/{id}/eliminar", ["uses" => "TareaController@eliminar", "as" => "tareas.eliminar"]);
-    
-    
-    Route::post("tareas/{id}/actualizarRealizacion", ["uses" => "TareaController@actualizarRealizacion", "as" => "tareas.actualizar.realizacion"]);
     // </editor-fold>
     // <editor-fold desc="Horario">
     Route::post("horarios", ["uses" => "HorarioController@obtenerMultiple", "as" => "horario.multiple"]); //--

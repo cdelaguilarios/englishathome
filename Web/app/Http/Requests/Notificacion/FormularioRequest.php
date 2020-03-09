@@ -19,9 +19,9 @@ class FormularioRequest extends Request/* - */ {
     $datos["idSeccion"] = ReglasValidacion::formatoDato($datos, "idSeccion", "");
     $datos["titulo"] = ReglasValidacion::formatoDato($datos, "titulo");
     $datos["mensaje"] = ReglasValidacion::formatoDato($datos, "mensaje", "");
-    $datos["nombresArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresArchivosAdjuntos" . ucfirst($datos["idSeccion"]));
-    $datos["nombresOriginalesArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresOriginalesArchivosAdjuntos" . ucfirst($datos["idSeccion"]));
-    $datos["nombresArchivosAdjuntosEliminados"] = ReglasValidacion::formatoDato($datos, "nombresArchivosAdjuntos" . ucfirst($datos["idSeccion"]) . "Eliminados");
+    $datos["nombresArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresArchivosAdjuntosNotificacion" . ucfirst($datos["idSeccion"]));
+    $datos["nombresOriginalesArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresOriginalesArchivosAdjuntosNotificacion" . ucfirst($datos["idSeccion"]));
+    $datos["nombresArchivosAdjuntosEliminados"] = ReglasValidacion::formatoDato($datos, "nombresArchivosAdjuntosNotificacion" . ucfirst($datos["idSeccion"]) . "Eliminados");
     $datos["enviarCorreo"] = (isset($datos["enviarCorreo"]) ? 1 : 0);
     $datos["enviarCorreoEntidad"] = (isset($datos["enviarCorreoEntidad"]) ? 1 : 0);
     $datos["mostrarEnPerfil"] = (isset($datos["mostrarEnPerfil"]) ? 1 : 0);

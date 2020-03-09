@@ -51,7 +51,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
   }
 
   public static function listarBusqueda($terminoBus = NULL)/* - */ {
-    $alumnos = Usuario::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
+    $alumnos = Usuario::listar(NULL, TRUE)->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
     if (isset($terminoBus)) {
       $alumnos->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
     }
@@ -126,7 +126,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
   }
 
   public static function esUnicoPrincipal($id)/* - */ {
-    $preUsuariosPrincipales = Usuario::listar()
+    $preUsuariosPrincipales = Usuario::listar(NULL, TRUE)
             ->where(Usuario::nombreTabla() . ".rol", RolesUsuario::Principal);
     $usuariosPrincipales = DB::table(DB::raw("({$preUsuariosPrincipales->toSql()}) AS T"))
             ->mergeBindings($preUsuariosPrincipales->getQuery())
@@ -136,7 +136,7 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     if (isset($usuariosPrincipales) && $usuariosPrincipales->total > 1) {
       return FALSE;
     }
-    
+
     $usuario = Usuario::obtenerXId($id);
     return ($usuario->rol == RolesUsuario::Principal);
   }

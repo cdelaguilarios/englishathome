@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Log;
-use Input;
 use Datatables;
 use Carbon\Carbon;
 use App\Models\Notificacion;

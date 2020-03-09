@@ -16,7 +16,7 @@ var FormularioNotificacion = FormularioNotificacion || (function () {
         }
       }
     });
-    archivosAdjuntos.limpiarCampos(formulario, "Adjuntos" + util.letraCapital(self._args.idSeccion));
+    archivosAdjuntos.limpiarCampos(formulario, "AdjuntosNotificacion" + util.letraCapital(self._args.idSeccion));
     $(formulario).find("input[name='mostrarEnPerfil']").attr("checked", true);
     $(formulario).find("input[name='mostrarEnPerfil']").closest("label").addClass("checked");
     var fechaProgramada = new Date();
@@ -61,10 +61,10 @@ var FormularioNotificacion = FormularioNotificacion || (function () {
           util.llamadaAjax($(f).attr("action"), "POST", datos, true,
                   function (d) {
                     $("body").unblock();
-                    (window["listaNotificaciones" + util.letraCapital(self._args.idSeccion)]).mostrar();
+                    self._args.listaNotificaciones.mostrar();
                   },
                   function (d) {
-                    (window["listaNotificaciones" + util.letraCapital(self._args.idSeccion)]).reCargar();
+                    self._args.listaNotificaciones.reCargar();
                   },
                   function (de) {
                     var rj = de.responseJSON;
@@ -129,7 +129,7 @@ var FormularioNotificacion = FormularioNotificacion || (function () {
         for (var i = 0; i < adjuntos.length; i++) {
           if (adjuntos[i].trim() !== "") {
             var datosAdjunto = adjuntos[i].split(":");
-            archivosAdjuntos.agregar(formulario, "adjuntos-" + this._args.idSeccion, datosAdjunto[0], datosAdjunto[datosAdjunto.length === 2 ? 1 : 0], true);
+            archivosAdjuntos.agregar(formulario, "adjuntos-notificacion-" + this._args.idSeccion, datosAdjunto[0], datosAdjunto[datosAdjunto.length === 2 ? 1 : 0], true);
           }
         }
       }

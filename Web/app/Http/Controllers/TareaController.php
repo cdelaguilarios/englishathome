@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use Log;
-use Auth;
-use Input;
 use Datatables;
 use Carbon\Carbon;
 use App\Models\Tarea;
-use App\Models\EntidadTarea;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Tarea\FormularioRequest;
 use App\Http\Requests\Tarea\ListaRequest;
+use App\Http\Requests\Tarea\FormularioRequest;
+use App\Http\Requests\Tarea\ListaParaPanelRequest;
+use App\Http\Requests\Tarea\ActualizarEstadoRequest;
+use App\Http\Requests\Tarea\ActualizarRevisionRequest;
 
 class TareaController extends Controller {
 
@@ -22,35 +22,46 @@ class TareaController extends Controller {
   }
 
   public function listar(ListaRequest $req)/* - */ {
-    return Datatables::of(Tarea::listar($req->all()))->make(true);
+    return Datatables::of(Tarea::listar($req->all()))->filterColumn("titulo", function($q, $k) {
+              $q->whereRaw('titulo like ?', ["%{$k}%"])
+                      ->orWhereRaw('mensaje like ?', ["%{$k}%"]);
+            })->filterColumn("fechaNotificacion", function($q, $k) {
+              $q->whereRaw("DATE_FORMAT(fechaNotificacion, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
+            })->make(true);
   }
 
-  public function listarNuevas()/* - */ {
-    return response()->json(Tarea::listarNuevas(), 200);
+  public function listarParaPanel(ListaParaPanelRequest $req)/* - */ {
+    $datos = $req->all();
+    $seleccionarMisTareas = (isset($datos["seleccionarMisTareas"]) && $datos["seleccionarMisTareas"] != "0");
+    return response()->json(Tarea::listarParaPanel($seleccionarMisTareas), 200);
   }
 
-  public function registrarActualizar($idEntidad, FormularioRequest $req)/* - */ {
-    try {
+  public function listarNoRealizadas()/* - */ {
+    return response()->json(Tarea::listarNoRealizadas(), 200);
+  }
+
+  public function obtenerDatos($id)/* - */ {
+    return response()->json(Tarea::obtenerXId($id), 200);
+  }
+
+  public function registrarActualizar(FormularioRequest $req)/* - */ {
       $datos = $req->all();
-      $datos["idEntidades"] = [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)];
       $datos["fechaProgramada"] = (isset($datos["fechaProgramada"]) ? Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaProgramada"]) : NULL);
 
-      $cambioAprobado = TRUE;
       if (isset($datos["idTarea"]) && $datos["idTarea"] != "") {
-        //Pasado la fecha de notificación de la tarea no se pueden cambiar los datos de programación
+        //Pasado la fecha programada de la tarea no se pueden cambiar sus datos de programación
         $tarea = Tarea::obtenerXId($datos["idTarea"]);
         $fechaActual = Carbon::now();
-        $fechaNotificacion = Carbon::createFromFormat("Y-m-d H:i:s", $tarea->fechaNotificacion);
-        if ($fechaActual >= $fechaNotificacion) {
+        $fechaProgramada = Carbon::createFromFormat("Y-m-d H:i:s", $tarea->fechaProgramada);
+        if ($fechaActual >= $fechaProgramada) {
           unset($datos["notificarInmediatamente"]);
           unset($datos["fechaProgramada"]);
           unset($datos["fechaNotificacion"]);
         }
       }
 
-      if ($cambioAprobado) {
-        Tarea::registrarActualizar($datos);
-      }
+      Tarea::registrarActualizar($datos);
+    try {
     } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante el registro y/o actualización de datos. Por favor inténtelo nuevamente."], 500);
@@ -58,19 +69,27 @@ class TareaController extends Controller {
     return response()->json(["mensaje" => "Se guardaron los datos exitosamente."], 200);
   }
 
-  public function obtenerDatos($id)/* - */ {
-    return response()->json(Tarea::obtenerXId($id), 200);
-  }
-
-  public function actualizarRealizacion($id) {
+  public function actualizarEstado($id, ActualizarEstadoRequest $req)/* - */ {
     try {
-      $realizado = (Input::get("realizado") === "true");
-      EntidadTarea::actualizarRealizacion($id, $realizado);
+      $datos = $req->all();
+      Tarea::actualizarEstado($id, $datos["estado"]);
     } catch (\Exception $e) {
       Log::error($e);
-      return response()->json(["mensaje" => "No se pudo actualizar la realización de la tarea seleccionada."], 400);
+      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 500);
     }
-    return response()->json(["mensaje" => "Actualización exitosa.", "id" => $id], 200);
+    return response()->json(["mensaje" => "Actualización exitosa."], 200);
+  }
+
+  public function revisarMultiple(ActualizarRevisionRequest $req) {
+    try {
+      $datos = $req->all();
+      $idsTareas = $datos["idsTareas"];
+      Tarea::revisarMultiple($idsTareas);
+    } catch (\Exception $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "No se pudo actualizar la revisión de la tarea seleccionada."], 400);
+    }
+    return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
   public function eliminar($id)/* - */ {

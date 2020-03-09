@@ -25,7 +25,6 @@ var ListaNotificacionesHistorial = ListaNotificacionesHistorial || (function () 
     var eSecBtnCargaMas = $("#" + self._args.idSeccionLista + " .sec-btn-carga-mas");
     var eNumeroCarga = $("#" + self._args.idSeccionLista).find("input[name='numeroCarga']");
 
-
     $(eNumeroCarga).val(($(eLista).html() !== "") ? $(eNumeroCarga).val() : 0);
     var numeroCarga = $(eNumeroCarga).val();
 
@@ -123,9 +122,9 @@ var ListaNotificacionesHistorial = ListaNotificacionesHistorial || (function () 
   //Público
   var Constructor = function (args) {
     this._args = {
-      idBtnNuevaNotificacion: "btn-nueva-notificacion-historial",
       idPrefijoSeccionNotificaciones: "sec-notificaciones-historial-",
       idSeccionLista: "sec-notificaciones-historial-lista",
+      idBtnNuevaNotificacion: "btn-nueva-notificacion-historial",
       ultimaFechaCargada: ""
     };
     Object.assign(this._args, args);
