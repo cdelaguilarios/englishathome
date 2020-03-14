@@ -4,7 +4,7 @@ var FormularioTarea = FormularioTarea || (function () {
   //Privado
   var limpiarCampos = function (formulario) {
     $(formulario).find(":input, select").each(function (i, e) {
-      if (e.name !== "fechaProgramada" && e.name !== "_token" && e.type !== "hidden") {
+      if (e.name !== "fechaProgramada" && e.name !== "fechaFinalizacion" && e.name !== "_token" && e.type !== "hidden") {
         if ($(e).is("select")) {
           $(e).prop("selectedIndex", 0);
         } else if ($(e).is(":checkbox")) {
@@ -15,10 +15,14 @@ var FormularioTarea = FormularioTarea || (function () {
         }
       }
     });
+
     archivosAdjuntos.limpiarCampos(formulario, "AdjuntosTarea");
+
     var fechaProgramada = new Date();
     fechaProgramada.setDate(fechaProgramada.getDate() + 1);
     $(formulario).find("input[name='fechaProgramada']").datetimepicker("setDate", fechaProgramada);
+    $(formulario).find("input[name='fechaFinalizacion']").val("");
+
     $("form .help-block-error").remove();
   };
 
@@ -28,7 +32,7 @@ var FormularioTarea = FormularioTarea || (function () {
       idSeccionMensajes: "sec-tareas-mensajes",
       idSelUsuarioAsignado: "sel-usuario-tarea",
       idSeccionProgramacion: "sec-tareas-programacion",
-      idSeccionFecha: "sec-tareas-fecha"
+      idSeccionFechaProgramada: "sec-tareas-fecha-programada"
     };
     Object.assign(this._args, args);
   };
@@ -37,13 +41,14 @@ var FormularioTarea = FormularioTarea || (function () {
     $(formulario).validate({
       ignore: ":hidden",
       rules: {
-        titulo: {
-          required: true
-        },
-        usuarioAsignado: {
+        idUsuarioAsignado: {
           required: true
         },
         fechaProgramada: {
+          required: true,
+          validarFechaHora: true
+        },
+        fechaFinalizacion: {
           validarFechaHora: true
         }
       },
@@ -62,6 +67,9 @@ var FormularioTarea = FormularioTarea || (function () {
                   },
                   function (d) {
                     self._args.panelTareas.reCargar();
+                    if (self._args.listaTareas !== undefined) {
+                      self._args.listaTareas.reCargar();
+                    }
                   },
                   function (de) {
                     var rj = de.responseJSON;
@@ -101,8 +109,9 @@ var FormularioTarea = FormularioTarea || (function () {
     CKEDITOR.replace("mensaje-tarea");
     utilBusqueda.establecerListaBusqueda($("#" + self._args.idSelUsuarioAsignado), self._args.urlBuscarUsuarios);
     utilFechasHorarios.establecerCalendario($(formulario).find("input[name='fechaProgramada']"), true, false);
+    utilFechasHorarios.establecerCalendario($(formulario).find("input[name='fechaFinalizacion']"), true, false);
 
-    var seccionFechaProgramada = $(formulario).find("#" + self._args.idSeccionFecha);
+    var seccionFechaProgramada = $(formulario).find("#" + self._args.idSeccionFechaProgramada);
     $(formulario).find("input[name='notificarInmediatamente']").change(function () {
       (($(this).is(":visible") && $(this).is(":checked")) ? $(seccionFechaProgramada).hide() : $(seccionFechaProgramada).show());
     });
@@ -116,7 +125,7 @@ var FormularioTarea = FormularioTarea || (function () {
 
     if (datos) {
       $(formulario).find("input[name='idTarea']").val(datos.id);
-      $(formulario).find("input[name='titulo']").val(datos.titulo);
+      $(formulario).find("#" + this._args.idSelUsuarioAsignado).empty().append('<option value="' + datos.idUsuarioAsignado + '">' + datos.nombreUsuarioAsignado + ' ' + datos.apellidoUsuarioAsignado + '</option>').val(datos.idUsuarioAsignado);
       CKEDITOR.instances["mensaje-tarea"].setData(datos.mensaje);
 
       if (datos.adjuntos !== null && datos.adjuntos !== "") {
@@ -130,8 +139,9 @@ var FormularioTarea = FormularioTarea || (function () {
       }
 
       var fechaActual = new Date();
-      var fechaProgramada = ((!isNaN(Date.parse(datos.fechaProgramada))) ? new Date(datos.fechaProgramada) : fechaActual);
+      var fechaProgramada = ((!isNaN(Date.parse(datos.fechaProgramada))) ? new Date(datos.fechaProgramada) : null);
       var fechaNotificacion = ((!isNaN(Date.parse(datos.fechaNotificacion))) ? new Date(datos.fechaNotificacion) : fechaActual);
+      var fechaFinalizacion = ((!isNaN(Date.parse(datos.fechaFinalizacion))) ? new Date(datos.fechaFinalizacion) : null);
 
       if (fechaActual >= fechaNotificacion) {
         $(seccionProgramacion).hide();
@@ -141,7 +151,10 @@ var FormularioTarea = FormularioTarea || (function () {
           $(formulario).find("input[name='notificarInmediatamente']").closest("label").addClass("checked");
         }
       }
-      $(formulario).find("input[name='fechaProgramada']").datetimepicker("setDate", fechaProgramada);
+      if (fechaProgramada !== null)
+        $(formulario).find("input[name='fechaProgramada']").datetimepicker("setDate", fechaProgramada);
+      if (fechaFinalizacion !== null)
+        $(formulario).find("input[name='fechaFinalizacion']").datetimepicker("setDate", fechaFinalizacion);
     } else {
       CKEDITOR.instances["mensaje-tarea"].setData("");
     }

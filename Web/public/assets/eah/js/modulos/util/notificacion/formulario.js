@@ -43,6 +43,7 @@ var FormularioNotificacion = FormularioNotificacion || (function () {
           required: true
         },
         fechaProgramada: {
+          required: true,
           validarFechaHora: true
         }
       },

@@ -70,7 +70,7 @@
         @yield("content")
       </div>
     </div> 
-    @elseif(!(Auth::guest())) 
+    @elseif(!Auth::guest()) 
     <div class="wrapper" style="display: none">
       <header class="main-header">
         <a href="{{ route("/")}}" class="logo">

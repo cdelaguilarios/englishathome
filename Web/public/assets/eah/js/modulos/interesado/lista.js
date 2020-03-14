@@ -54,7 +54,7 @@ listaInteresados = (function ()/* - */ {
             }, "className": "not-mobile"},
           {data: "correoElectronico", name: "entidad.correoElectronico", render: function (e, t, d, m) {
               return (d.correoElectronico !== null ? '<b>Correo electrónico:</b> ' + d.correoElectronico : '') +
-                      (d.telefono !== null ? (d.correoElectronico !== null ? '<br/>' : '') + '<b>Teléfono:</b> ' + incluirEnlaceWhatsApp(d.telefono) : '');
+                      (d.telefono !== null ? (d.correoElectronico !== null ? '<br/>' : '') + '<b>Teléfono:</b> ' + util.incluirEnlaceWhatsApp(d.telefono) : '');
             }, "className": "not-mobile"},
           {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
               var estado = '';

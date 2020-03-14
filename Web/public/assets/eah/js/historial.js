@@ -125,6 +125,7 @@ function cargarFormularioHistorial() {
         required: true
       },
       fechaNotificacion: {
+        required: true,
         validarFechaHora: true
       }
     },

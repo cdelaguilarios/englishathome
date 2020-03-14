@@ -14,7 +14,8 @@ class Tarea extends Model {
   public $timestamps = false;
   protected $table = "tarea";
   protected $fillable = [
-      "fechaRevision"
+      "fechaRevision",
+      "fechaFinalizacion"
   ];
 
   public static function nombreTabla()/* - */ {
@@ -46,9 +47,7 @@ class Tarea extends Model {
 
     return $tareas->select(DB::raw(
                             $nombreTablaTarea . ".*," .
-                            "tareaNotificacion.idUsuarioCreador, 
-                            tareaNotificacion.titulo, 
-                            tareaNotificacion.mensaje, 
+                            "tareaNotificacion.mensaje, 
                             tareaNotificacion.adjuntos, 
                             tareaNotificacion.fechaProgramada, 
                             tareaNotificacion.fechaNotificacion, 
@@ -56,7 +55,6 @@ class Tarea extends Model {
                             entidadUsuarioCreador.id AS idUsuarioCreador, 
                             entidadUsuarioCreador.nombre AS nombreUsuarioCreador, 
                             entidadUsuarioCreador.apellido AS apellidoUsuarioCreador, 
-                            entidadUsuarioAsignado.id AS idUsuarioAsignado, 
                             entidadUsuarioAsignado.nombre AS nombreUsuarioAsignado, 
                             entidadUsuarioAsignado.apellido AS apellidoUsuarioAsignado")
     );
@@ -64,10 +62,8 @@ class Tarea extends Model {
 
   public static function listar($datos)/* - */ {
     $nombreTablaTareaNotificacion = TareaNotificacion::nombreTabla();
-
-    $tareas = Tarea::listarBase()->where("entidadUsuarioAsignado.id", Auth::user()->idEntidad);
+    $tareas = Tarea::listarBase();
     Util::aplicarFiltrosBusquedaXFechas($tareas, $nombreTablaTareaNotificacion, "fechaProgramada", $datos);
-
     return $tareas;
   }
 
@@ -110,6 +106,9 @@ class Tarea extends Model {
   }
 
   public static function registrarActualizar($datos) {
+    $datos["fechaProgramada"] = (isset($datos["fechaProgramada"]) ? Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaProgramada"]) : NULL);
+    $datos["fechaFinalizacion"] = (isset($datos["fechaFinalizacion"]) ? Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaFinalizacion"]) : NULL);
+
     if (!isset($datos["fechaProgramada"]) || (isset($datos["notificarInmediatamente"]) && $datos["notificarInmediatamente"] == 1)) {
       $datos["fechaProgramada"] = Carbon::now()->toDateTimeString();
     }
@@ -125,14 +124,23 @@ class Tarea extends Model {
       $tarea->estado = EstadosTarea::Pendiente;
       $tarea->save();
     } else {
-      //TODO: Completar
       //Actualización
-      /* $idTareaNotificacion = $datos["idTarea"];
-        $tarea = Tarea::obtenerXId($idTareaNotificacion);
-        $datos["adjuntos"] = Archivo::procesarArchivosSubidosNUEVO($tarea->adjuntos, $datos, 5, "Adjuntos");
+      $idTareaNotificacion = $datos["idTarea"];
+      $tarea = Tarea::obtenerXId($idTareaNotificacion);
+      
+      //Pasado la fecha programada de la tarea no se pueden cambiar sus datos de programación
+      $fechaActual = Carbon::now();
+      $fechaProgramada = Carbon::createFromFormat("Y-m-d H:i:s", $tarea->fechaProgramada);
+      if ($fechaActual >= $fechaProgramada) {
+        unset($datos["notificarInmediatamente"]);
+        unset($datos["fechaProgramada"]);
+        unset($datos["fechaNotificacion"]);
+      }
+      
+      $datos["adjuntos"] = Archivo::procesarArchivosSubidosNUEVO($tarea->adjuntos, $datos, 5, "Adjuntos");
 
-        TareaNotificacion::actualizar($idTareaNotificacion, $datos, FALSE);
-        $tarea->update($datos); */
+      TareaNotificacion::actualizar($idTareaNotificacion, $datos, FALSE);
+      $tarea->update($datos);
     }
   }
 

@@ -209,7 +209,9 @@ Route::group(["middleware" => "auth"], function() {
     Route::delete("notificaciones/{id}/eliminar", ["uses" => "NotificacionController@eliminar", "as" => "notificaciones.eliminar"]);
     // </editor-fold>
     // <editor-fold desc="Tareas">
-    Route::post("tareas/listar", ["uses" => "TareaController@listar", "as" => "tareas.listar"]);
+    Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Principal . "],true"], function() {
+      Route::post("tareas/listar", ["uses" => "TareaController@listar", "as" => "tareas.listar"]);
+    });
     Route::post("tareas/listarPanel", ["uses" => "TareaController@listarParaPanel", "as" => "tareas.listar.panel"]);
     Route::post("tareas/listarNoRealizadas", ["uses" => "TareaController@listarNoRealizadas", "as" => "tareas.listar.no.realizadas"]);
     Route::post("tareas/registrarActualizar", ["uses" => "TareaController@registrarActualizar", "as" => "tareas.registrar.actualizar"]);

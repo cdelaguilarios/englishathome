@@ -4,7 +4,7 @@ var PanelTareas = PanelTareas || (function () {
   //Privado
   var esperarCargaJquery = function () {
     var self = this;
-    ((window.jQuery && jQuery.ui) ? cargar.call(self) : window.setTimeout(function () {
+    (typeof (util) !== "undefined" && util.jQueryCargado() ? cargar.call(self) : window.setTimeout(function () {
       esperarCargaJquery.call(self);
     }, 100));
   };
@@ -60,33 +60,43 @@ var PanelTareas = PanelTareas || (function () {
     util.llamadaAjax(self._args.urlListarTareasPanel, "POST", {seleccionarMisTareas: $("#" + self._args.idSelTipoTareas).val()}, true,
             function (tareas) {
               self._args.tareas = tareas;
+              var seleccionarMisTareas = ($("#" + self._args.idSelTipoTareas).val() === "1");
+
               tareas.forEach(function (tarea) {
-                var htmlTarea = '<b>' + tarea.titulo + '</b><br/><br/>';
-                if (tarea.mensaje !== "" || tarea.adjuntos !== null) {
-                  htmlTarea += '<div>' + (tarea.mensaje !== "" ? tarea.mensaje : "");
+                var htmlTarea = '<div>' +
+                        '<small class="label label-primary">Tarea #' + tarea.id + '</small>' +
+                        (!seleccionarMisTareas || tarea.idUsuarioCreador === self._args.idUsuarioActual ?
+                                '<div class="pull-right">' +
+                                '<a title="Editar tarea" href="javascript:void(0);" onclick="' + self._args.nombreModuloCrearEditar + '.editar(' + tarea.id + ');"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;' +
+                                '<a title="Eliminar tarea" href="javascript:void(0);" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de esta tarea?\', null, true, function(d){ ' + self._args.nombreModuloPanel + '.reCargar(); }, true)" data-id="' + tarea.id + '" data-urleliminar="' + self._args.urlEliminarTarea.replace("/0", "/" + tarea.id) + '"><i class="fa fa-trash"></i></a>' +
+                                '</div>' : '') +
+                        '</div><br/>';
+                htmlTarea += '<div>' + tarea.mensaje;
+                if (tarea.adjuntos !== null && tarea.adjuntos !== "") {
+                  var adjuntos = tarea.adjuntos.split(",");
+                  $.each(adjuntos, function (e, v) {
+                    if (v !== null && v !== "") {
+                      var datosAdjunto = v.split(":");
 
-                  if (tarea.adjuntos !== null && tarea.adjuntos !== "") {
-                    var adjuntos = tarea.adjuntos.split(",");
-                    $.each(adjuntos, function (e, v) {
-                      if (v !== null && v !== "") {
-                        var datosAdjunto = v.split(":");
+                      var rutaAdjunto = urlArchivos.replace("/0", "/" + datosAdjunto[0]);
+                      var nombreAdjunto = datosAdjunto[datosAdjunto.length === 2 ? 1 : 0];
 
-                        var rutaAdjunto = urlArchivos.replace("/0", "/" + datosAdjunto[0]);
-                        var nombreAdjunto = datosAdjunto[datosAdjunto.length === 2 ? 1 : 0];
+                      htmlTarea += '<a href="javascript:void(0)" onclick="util.cargarUrl(\'' + rutaAdjunto + '\');" target="_blank">' +
+                              (util.urlEsImagen(rutaAdjunto) ? '<img src="' + rutaAdjunto + '" class="margin" width="100">' : nombreAdjunto) +
+                              '</a><br/>';
+                    }
+                  });
+                }
+                htmlTarea += '</div>';
 
-                        htmlTarea += '<a href="' + rutaAdjunto + '" target="_blank">' +
-                                (util.urlEsImagen(rutaAdjunto) ? '<img src="' + rutaAdjunto + '" class="margin" width="200">' : nombreAdjunto) +
-                                '</a><br/>';
-                      }
-                    });
-                  }
-                  htmlTarea += '</div>';
+                if (seleccionarMisTareas && tarea.idUsuarioCreador !== null && tarea.idUsuarioCreador !== self._args.idUsuarioActual) {
+                  htmlTarea += '<br/><b>Creado por</b> ' + tarea.nombreUsuarioCreador + ' ' + tarea.apellidoUsuarioCreador + '<br/>';
+                } else if (tarea.idUsuarioAsignado !== null && tarea.idUsuarioAsignado !== self._args.idUsuarioActual) {
+                  htmlTarea += '<br/><b>Asignado a</b> ' + tarea.nombreUsuarioAsignado + ' ' + tarea.apellidoUsuarioAsignado + '<br/>';
                 }
 
-                if ($("#" + self._args.idSelTipoTareas).val() === 1 && tarea.idUsuarioCreador !== null) {
-                  htmlTarea += '<br/><b>Creado por</b> ' + tarea.nombreUsuarioCreador + ' ' + tarea.apellidoUsuarioCreador + '<br/>';
-                } else if ($("#" + self._args.idSelTipoTareas).val() !== 1 && tarea.idUsuarioAsignado !== null) {
-                  htmlTarea += '<br/><b>Asignado a</b> ' + tarea.nombreUsuarioAsignado + ' ' + tarea.apellidoUsuarioAsignado + '<br/>';
+                if (tarea.fechaFinalizacion !== null) {
+                  htmlTarea += '<br/><b>Fecha finalización: </b> ' + utilFechasHorarios.formatoFecha(tarea.fechaFinalizacion, true);
                 }
 
                 self._args.panel.addElement(
@@ -151,6 +161,7 @@ var PanelTareas = PanelTareas || (function () {
   };
   Constructor.prototype.reCargar = function ()/* - */ {
     cargarDatos.call(this);
+    actualizarNumeroTareasNoRevisadas.call(this);
   };
 
   return Constructor;

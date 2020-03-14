@@ -19,9 +19,8 @@
             <thead>
               <tr>
                 <th>N°</th>    
-                <th class="all">Tarea</th>
-                <th class="all">Fecha</th>
-                <th class="all">Realizado</th>
+                <th>Tarea</th>
+                <th>Estado</th>
               </tr>
             </thead>
           </table>

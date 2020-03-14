@@ -5,7 +5,7 @@ var CrearEditarTarea = CrearEditarTarea || (function () {
   window.addEventListener("load", esperarCargaJquery, false);
   var esperarCargaJquery = function () {
     var self = this;
-    ((window.jQuery && jQuery.ui) ? cargarSeccion.call(self) : window.setTimeout(function () {
+    (typeof (util) !== "undefined" && util.jQueryCargado() ? cargarSeccion.call(self) : window.setTimeout(function () {
       esperarCargaJquery.call(self);
     }, 100));
   };
@@ -15,7 +15,7 @@ var CrearEditarTarea = CrearEditarTarea || (function () {
     self._args.formularioTarea.cargar(formulario);
 
     $("#" + self._args.idBtnCancelar).click(function () {
-      self._args.panelTareas.mostrar();
+      self._args.moduloPrincipal.mostrarVistaActual();
     });
   };
   var obtenerReferenciaFormulario = function () {

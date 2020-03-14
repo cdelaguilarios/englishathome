@@ -214,7 +214,8 @@ class Notificacion extends Model {
         $datos["fechaProgramada"] = Carbon::now()->toDateTimeString();
       }
       $datos["fechaNotificacion"] = $datos["fechaProgramada"];
-      $datos["enviarCorreoEntidades"] = $datos["enviarCorreoEntidad"];
+      //TODO: Revisar esta variable
+      $datos["enviarCorreoEntidades"] = (isset($datos["enviarCorreoEntidad"]) ? $datos["enviarCorreoEntidad"] : 0);
 
       if (!(isset($datos["idNotificacion"]) && $datos["idNotificacion"] != "")) {
         //Registro

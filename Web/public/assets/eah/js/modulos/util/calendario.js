@@ -22,7 +22,7 @@ calendario = (function ()/* - */ {
         allDaySlot: false,
         eventSources: [datosFuenteCalendario],
         eventClick: function (ce, jse, v) {
-          verDatosClase(ce.idAlumno, ce.id);
+          utilClase.verDatos(ce.idAlumno, ce.id);
         },
         contentHeight: 400
       });

@@ -40,11 +40,11 @@ listaAlumnos = (function ()/* - */ {
             }, "className": "text-center", responsivePriority: 0},
           {data: "nombre", name: "nombre", render: function (e, t, d, m) {
               return '<a href="' + (urlPerfilAlumno.replace("/0", "/" + d.id)) + '">' + (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "") + '</a>' +
-                      (d.telefono ? '<br/><span class="text-info"><i class="fa  fa-mobile"></i> ' + incluirEnlaceWhatsApp(d.telefono) + '</span>' : '') +
+                      (d.telefono ? '<br/><span class="text-info"><i class="fa  fa-mobile"></i> ' + util.incluirEnlaceWhatsApp(d.telefono) + '</span>' : '') +
                       (d.distritoAlumno ? '<br/><span class="text-info"><small><i class="fa fa-street-view"></i> ' + util.letraCapital(d.distritoAlumno) + '</small></span>' : '') +
                       (d.nombreProfesor ?
                               '<small><br/><br/>Profesor(a): <a href="' + (urlPerfilProfesor.replace("/0", "/" + d.idProfesor)) + '">' + (d.nombreProfesor !== null ? d.nombreProfesor : "") + " " + (d.apellidoProfesor !== null ? d.apellidoProfesor : "") + '</a></small>' +
-                              (d.telefonoProfesor ? '<br/><span class="text-info"><small><i class="fa  fa-mobile"></i> ' + incluirEnlaceWhatsApp(d.telefonoProfesor) + '</small></span>' : '') +
+                              (d.telefonoProfesor ? '<br/><span class="text-info"><small><i class="fa  fa-mobile"></i> ' + util.incluirEnlaceWhatsApp(d.telefonoProfesor) + '</small></span>' : '') +
                               (d.distritoProfesor ? '<br/><span class="text-info"><small><i class="fa fa-street-view"></i> ' + util.letraCapital(d.distritoProfesor) + '</small></span>' : '')
                               : '');
             }, responsivePriority: 0},

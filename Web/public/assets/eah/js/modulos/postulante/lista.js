@@ -41,7 +41,7 @@ listaPostulantes = (function ()/* - */ {
             }},
           {data: "correoElectronico", name: "entidad.correoElectronico"},
           {data: "telefono", name: "entidad.telefono", render: function (e, t, d, m) {
-              return  (d.telefono ? '<span class="text-info"><i class="fa  fa-mobile"></i> ' + incluirEnlaceWhatsApp(d.telefono) + '</span>' : '');
+              return  (d.telefono ? '<span class="text-info"><i class="fa  fa-mobile"></i> ' + util.incluirEnlaceWhatsApp(d.telefono) + '</span>' : '');
             }},
           {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
               var estado = '';

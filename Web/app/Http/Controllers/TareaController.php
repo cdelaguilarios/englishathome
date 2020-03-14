@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Log;
 use Datatables;
-use Carbon\Carbon;
 use App\Models\Tarea;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tarea\ListaRequest;
@@ -22,10 +21,7 @@ class TareaController extends Controller {
   }
 
   public function listar(ListaRequest $req)/* - */ {
-    return Datatables::of(Tarea::listar($req->all()))->filterColumn("titulo", function($q, $k) {
-              $q->whereRaw('titulo like ?', ["%{$k}%"])
-                      ->orWhereRaw('mensaje like ?', ["%{$k}%"]);
-            })->filterColumn("fechaNotificacion", function($q, $k) {
+    return Datatables::of(Tarea::listar($req->all()))->filterColumn("fechaNotificacion", function($q, $k) {
               $q->whereRaw("DATE_FORMAT(fechaNotificacion, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
             })->make(true);
   }
@@ -45,23 +41,9 @@ class TareaController extends Controller {
   }
 
   public function registrarActualizar(FormularioRequest $req)/* - */ {
-      $datos = $req->all();
-      $datos["fechaProgramada"] = (isset($datos["fechaProgramada"]) ? Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaProgramada"]) : NULL);
-
-      if (isset($datos["idTarea"]) && $datos["idTarea"] != "") {
-        //Pasado la fecha programada de la tarea no se pueden cambiar sus datos de programación
-        $tarea = Tarea::obtenerXId($datos["idTarea"]);
-        $fechaActual = Carbon::now();
-        $fechaProgramada = Carbon::createFromFormat("Y-m-d H:i:s", $tarea->fechaProgramada);
-        if ($fechaActual >= $fechaProgramada) {
-          unset($datos["notificarInmediatamente"]);
-          unset($datos["fechaProgramada"]);
-          unset($datos["fechaNotificacion"]);
-        }
-      }
-
-      Tarea::registrarActualizar($datos);
     try {
+      $datos = $req->all();
+      Tarea::registrarActualizar($datos);
     } catch (\Exception $e) {
       Log::error($e);
       return response()->json(["mensaje" => "Ocurrió un problema durante el registro y/o actualización de datos. Por favor inténtelo nuevamente."], 500);

@@ -5,7 +5,7 @@ var CrearEditarNotificacion = CrearEditarNotificacion || (function () {
   window.addEventListener("load", esperarCargaJquery, false);
   var esperarCargaJquery = function () {
     var self = this;
-    ((window.jQuery && jQuery.ui) ? cargarSeccion.call(self) : window.setTimeout(function () {
+    (typeof (util) !== "undefined" && util.jQueryCargado() ? cargarSeccion.call(self) : window.setTimeout(function () {
       esperarCargaJquery.call(self);
     }, 100));
   };

@@ -532,3 +532,13 @@ table.dataTable thead .tabla-sec-busqueda .sorting_desc:after{
   border-radius: 50%;
   text-align: center;
 }
+
+/*Panel de tareas*/
+.kanban-board{
+  background: #ebebeb !important;
+}
+.kanban-item{
+  border-top: 3px solid #3c8dbc;
+  border-radius: 3px;
+  cursor: grab !important;
+}

@@ -6,6 +6,8 @@ class EstadosInteresado/* - */ {
 
   const PendienteInformacion = "PENDIENTE-INFORMACION";
   const Seguimiento = "SEGUIMIENTO";
+  const MuyInteresado = "MUY-INTERESADO";
+  const PorCerrar = "POR-CERRAR";
   const NoInteresado = "NO-INTERESADO";
   const FichaCompleta = "FICHA-COMPLETA";
   const AlumnoRegistrado = "ALUMNO-REGISTRADO";
@@ -14,6 +16,8 @@ class EstadosInteresado/* - */ {
     return [
         EstadosInteresado::PendienteInformacion => ["Pendiente de información", "label-warning"],
         EstadosInteresado::Seguimiento => ["Seguimiento", "label-info"],
+        EstadosInteresado::MuyInteresado => ["Muy interesado", "label-info"],
+        EstadosInteresado::PorCerrar => ["Por cerrar", "label-info"],
         EstadosInteresado::NoInteresado => ["No interesado", "label-warning"],
         EstadosInteresado::FichaCompleta => ["Ficha completa", "label-primary"],
     ];
@@ -22,7 +26,7 @@ class EstadosInteresado/* - */ {
   public static function listarBusqueda()/* - */ {
     $estados = EstadosInteresado::listar();
     $estadosBusqueda = [];
-    foreach ($estados as $k => $v){
+    foreach ($estados as $k => $v) {
       $estadosBusqueda[$k] = $v[0];
     }
     return $estadosBusqueda;
@@ -33,12 +37,14 @@ class EstadosInteresado/* - */ {
     $estadosDisponibleCambio = [
         EstadosInteresado::PendienteInformacion,
         EstadosInteresado::Seguimiento,
+        EstadosInteresado::MuyInteresado,
+        EstadosInteresado::PorCerrar,
         EstadosInteresado::NoInteresado
     ];
 
     $estadosDisponibleCambioSel = [];
-    foreach ($estadosBusqueda as $k => $v){
-      if (in_array($k, $estadosDisponibleCambio)){
+    foreach ($estadosBusqueda as $k => $v) {
+      if (in_array($k, $estadosDisponibleCambio)) {
         $estadosDisponibleCambioSel[$k] = $v;
       }
     }

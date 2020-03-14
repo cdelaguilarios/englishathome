@@ -5,7 +5,7 @@ var ListaNotificacionesHistorial = ListaNotificacionesHistorial || (function () 
   window.addEventListener("load", esperarCargaJquery, false);
   var esperarCargaJquery = function () {
     var self = this;
-    ((window.jQuery && jQuery.ui) ? cargar.call(self) : window.setTimeout(function () {
+    (typeof (util) !== "undefined" && util.jQueryCargado() ? cargar.call(self) : window.setTimeout(function () {
       esperarCargaJquery.call(self);
     }, 100));
   };
