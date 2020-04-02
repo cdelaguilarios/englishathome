@@ -16,12 +16,15 @@ var FormularioTarea = FormularioTarea || (function () {
       }
     });
 
+    $(formulario).find("#" + this._args.idSelUsuarioAsignado).val(null).trigger('change');
+
     archivosAdjuntos.limpiarCampos(formulario, "AdjuntosTarea");
 
     var fechaProgramada = new Date();
     fechaProgramada.setDate(fechaProgramada.getDate() + 1);
     $(formulario).find("input[name='fechaProgramada']").datetimepicker("setDate", fechaProgramada);
     $(formulario).find("input[name='fechaFinalizacion']").val("");
+
 
     $("form .help-block-error").remove();
   };
@@ -107,7 +110,7 @@ var FormularioTarea = FormularioTarea || (function () {
     });
 
     CKEDITOR.replace("mensaje-tarea");
-    utilBusqueda.establecerListaBusqueda($("#" + self._args.idSelUsuarioAsignado), self._args.urlBuscarUsuarios);
+    utilBusqueda.establecerListaBusqueda($(formulario).find("#" + self._args.idSelUsuarioAsignado), self._args.urlBuscarUsuarios);
     utilFechasHorarios.establecerCalendario($(formulario).find("input[name='fechaProgramada']"), true, false);
     utilFechasHorarios.establecerCalendario($(formulario).find("input[name='fechaFinalizacion']"), true, false);
 

@@ -89,7 +89,7 @@ class Clase extends Model {
             ->groupBy($nombreTablaClase . ".id")
             ->distinct();
     if ($incluirSoloRealizadas) {
-      $clases->whereIn($nombreTablaClase . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
+      $clases->whereIn($nombreTablaClase . ".estado", [EstadosClase::ConfirmadaProfesor, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
     }
     return $clases;
   }
@@ -250,7 +250,7 @@ class Clase extends Model {
 
     if (Auth::user()->rol == RolesUsuario::Alumno && Auth::user()->idEntidad == $clase->idAlumno) {
       $clase->comentarioAlumno = $datos["comentario"];
-    }if (Auth::user()->rol == RolesUsuario::Profesor && Auth::user()->idEntidad == $clase->idProfesor) {
+    }else if (Auth::user()->rol == RolesUsuario::Profesor && Auth::user()->idEntidad == $clase->idProfesor) {
       if ($clase->idAlumno != $datos["idAlumno"]) {
         return;
       }
@@ -379,7 +379,7 @@ class Clase extends Model {
     $preClases = Clase::listarBase()
             ->select($nombreTabla . ".*", "entidadProfesor.nombre AS nombreProfesor", "entidadProfesor.apellido AS apellidoProfesor", DB::raw("max(historial.id) AS idHistorial"))
             ->where($nombreTabla . ".idAlumno", $idAlumno)
-            ->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
+            ->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesor, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
     if (!is_null($numeroPeriodo)) {
       $preClases->where($nombreTabla . ".numeroPeriodo", $numeroPeriodo)
               ->orderBy($nombreTabla . ".fechaInicio", "ASC");
@@ -434,7 +434,7 @@ class Clase extends Model {
     }
     $datos["estado"] = (isset($datos["estadoClase"]) ? $datos["estadoClase"] : NULL);
     Util::filtrosBusqueda($nombreTabla, $clases, "fechaInicio", $datos);
-    $clases->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
+    $clases->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesor, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
     return $clases;
   }
 

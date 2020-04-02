@@ -140,6 +140,7 @@ class Tarea extends Model {
       $datos["adjuntos"] = Archivo::procesarArchivosSubidosNUEVO($tarea->adjuntos, $datos, 5, "Adjuntos");
 
       TareaNotificacion::actualizar($idTareaNotificacion, $datos, FALSE);
+      $tarea->idUsuarioAsignado = $datos["idUsuarioAsignado"];
       $tarea->update($datos);
     }
   }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Log;
+use Auth;
 use Crypt;
 use Input;
 use Mensajes;
@@ -21,6 +22,7 @@ use App\Http\Requests\Alumno\Pago as PagoRequest;
 use App\Http\Requests\Alumno\Clase as ClaseRequest;
 use App\Http\Requests\Alumno\ActualizarEstadoRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Http\Requests\Alumno\MisClases\RegistrarComentariosRequest;
 
 class AlumnoController extends Controller {
 
@@ -347,6 +349,50 @@ class AlumnoController extends Controller {
       return redirect(route("alumnos"));
     }
     return view("alumno.clase.descargarLista", $this->data);
+  }
+
+  // </editor-fold>
+  // <editor-fold desc="Externo">
+  public function misClases()/* - */ {
+    return view("externo.alumno.misClases", $this->data);
+  }
+
+  public function listarMisClases()/* - */ {
+    return Datatables::of(Alumno::listarClases(Auth::user()->idEntidad))
+                    ->filterColumn("fechaConfirmacion", function($q, $k) {
+                      $q->whereRaw('fechaConfirmacion like ?', ["%{$k}%"])
+                      ->orWhereRaw('fechaFin like ?', ["%{$k}%"])
+                      ->orWhereRaw('duracion like ?', ["%{$k}%"])
+                      ->orWhereRaw('entidadProfesor.nombre like ?', ["%{$k}%"])
+                      ->orWhereRaw('entidadProfesor.apellido like ?', ["%{$k}%"])
+                      ->orWhereRaw('estado like ?', ["%{$k}%"]);
+                    })
+                    ->filterColumn("comentarioProfesor", function($q, $k) {
+                      $q->whereRaw('comentarioProfesor like ?', ["%{$k}%"]);
+                    })
+                    ->filterColumn("comentarioParaAlumno", function($q, $k) {
+                      $q->whereRaw('comentarioParaAlumno like ?', ["%{$k}%"]);
+                    })->make(true);
+  }
+
+  public function misClasesRegistrarComentarios(RegistrarComentariosRequest $req)/* - */ {
+    try {
+      Alumno::registrarComentariosClase(Auth::user()->idEntidad, $req->all());
+    } catch (\Exception $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "Ocurrió un problema durante el registro de comentarios. Por favor inténtelo nuevamente."], 400);
+    }
+    return response()->json(["mensaje" => "Gracias por dejarnos tus comentarios."], 200);
+  }
+
+  public function misClasesConfirmar($idClase)/* - */ {
+    try {
+      Alumno::confirmarClase(Auth::user()->idEntidad, $idClase);
+    } catch (\Exception $e) {
+      Log::error($e);
+      return response()->json(["mensaje" => "Ocurrió un problema durante la confirmación de la clase. Por favor inténtelo nuevamente."], 400);
+    }
+    return response()->json(["mensaje" => "Confirmación exitosa."], 200);
   }
 
   // </editor-fold>

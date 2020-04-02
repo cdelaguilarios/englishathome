@@ -48,7 +48,7 @@ class PagoProfesor extends Model {
       $q->on("clase.id", "IN", DB::raw("(SELECT idClase 
                                                       FROM " . $nombreTablaPagoClase . "
                                                       WHERE idPago = pago.id)"))
-              ->whereIn("clase.estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada])
+              ->whereIn("clase.estado", [EstadosClase::ConfirmadaProfesor, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada])
               ->where("clase.eliminado", "=", 0);
     });
 

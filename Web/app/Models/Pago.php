@@ -56,7 +56,7 @@ class Pago extends Model {
                         WHERE id IN (SELECT idClase 
                                         FROM " . PagoClase::nombreTabla() . " 
                                         WHERE idPago = " . $nombreTabla . ".id) 
-                          AND estado IN ('" . EstadosClase::Realizada . "','" . EstadosClase::ConfirmadaProfesorAlumno . "')
+                          AND estado IN ('" . EstadosClase::ConfirmadaProfesor . "','" . EstadosClase::ConfirmadaProfesorAlumno . "','" . EstadosClase::Realizada . "')
                           AND eliminado = 0
                     ) AS duracionXClasesRealizadas"))
             ->join(PagoAlumno::nombreTabla() . " as pagoAlumno", Pago::nombreTabla() . ".id", "=", "pagoAlumno.idPago")
@@ -75,7 +75,7 @@ class Pago extends Model {
                               WHERE " . $nombreTablaClase . ".Id IN (SELECT idClase 
                                                   FROM " . $nombreTablaPagoClase . "
                                                   WHERE " . $nombreTablaPagoClase . ".idPago = " . $nombreTabla . ".id) 
-                                AND " . $nombreTablaClase . ".estado IN ('" . EstadosClase::ConfirmadaProfesorAlumno . "', '" . EstadosClase::Realizada . "')
+                                AND " . $nombreTablaClase . ".estado IN ('" . EstadosClase::ConfirmadaProfesor . "', '" . EstadosClase::ConfirmadaProfesorAlumno . "', '" . EstadosClase::Realizada . "')
                                 AND " . $nombreTablaClase . ".eliminado = 0)");
     }
     return $pagos;

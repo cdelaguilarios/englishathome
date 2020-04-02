@@ -101,7 +101,7 @@ class ReporteController extends Controller {
   public function listarClases(BusquedaRequest $req) {
     $nombreTabla = Clase::nombreTabla();
     return Datatables::of(Clase::listar($req->all()))
-            ->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada])
+            ->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesor, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada])
             ->filterColumn("nombreProfesor", function($q, $k) {
               $q->whereRaw('CONCAT(entidadProfesor.nombre, " ", entidadProfesor.apellido) like ?', ["%{$k}%"]);
             })->filterColumn("nombreAlumno", function($q, $k) {

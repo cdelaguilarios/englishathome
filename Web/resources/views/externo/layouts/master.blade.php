@@ -89,9 +89,15 @@
         <section class="sidebar">
           <ul class="sidebar-menu">
             <li class="header">Menú</li>
+            @if($usuarioActual->rol == App\Helpers\Enum\RolesUsuario::Profesor)
             <li class="{{ ((isset($seccion) && $seccion == "docentes") ? "active" : "") }}">
               <a href="{{ route("profesores.mis.alumnos") }}"><i class="fa fa-mortar-board"></i> <span>Mis alumnos</span></a>
             </li> 
+            @else
+            <li class="{{ ((isset($seccion) && $seccion == "alumnos") ? "active" : "") }}">
+              <a href="{{ route("alumnos.mis.clases") }}"><i class="fa flaticon-teach"></i> <span>Mis clases</span></a>
+            </li> 
+            @endif
           </ul>
         </section>
       </aside>

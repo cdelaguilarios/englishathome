@@ -31,12 +31,6 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    {{ Form::label("codigoVerificacion", "Código del alumno (*): ", ["class" => "col-sm-4 control-label"]) }}
-                    <div class="col-sm-4">
-                      {{ Form::password("codigoVerificacion", ["class" => "form-control", "minlength" =>"4", "maxlength" =>"6"]) }}
-                    </div>
-                  </div>
-                  <div class="form-group">
                     {{ Form::label("comentario", "Avances de la clase: ", ["class" => "col-sm-4 control-label"]) }}
                     <div class="col-sm-8">
                       {{ Form::textarea("comentario", null, ["class" => "form-control", "rows" => "6", "maxlength" =>"8000"]) }}

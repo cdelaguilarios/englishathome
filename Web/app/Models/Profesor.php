@@ -8,6 +8,7 @@ use Auth;
 use Carbon\Carbon;
 use App\Helpers\Enum\EstadosClase;
 use App\Helpers\Enum\TiposEntidad;
+use App\Helpers\Enum\EstadosAlumno;
 use App\Helpers\Enum\EstadosProfesor;
 use Illuminate\Database\Eloquent\Model;
 use App\Helpers\Enum\MensajesNotificacion;
@@ -171,19 +172,21 @@ class Profesor extends Model {
   }
 
   public static function listarAlumnos($id, $soloVigentes = FALSE, $soloAntiguos = FALSE)/* - */ {
-    $idsAlumnosVigentes = Alumno::listarXIdProfesorActual($id)->lists("entidad.id")->toArray();
+    $idsAlumnosVigentes = Alumno::listarXIdProfesorActual($id)
+                    ->where("entidad.estado", EstadosAlumno::Activo)
+                    ->lists("entidad.id")->toArray();
     if ($soloVigentes) {
       $idsAlumnos = $idsAlumnosVigentes;
     } else {
       $nombreTablaClase = Clase::nombreTabla();
       $idsAlumnos = Clase::listarBase()
                       ->where($nombreTablaClase . ".idProfesor", $id)
-                      ->whereIn($nombreTablaClase . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada])
+                      ->whereIn($nombreTablaClase . ".estado", [EstadosClase::ConfirmadaProfesor, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada])
                       ->lists($nombreTablaClase . ".idAlumno")->toArray();
-      
+
       if ($soloAntiguos) {
         $idsAlumnos = array_diff($idsAlumnos, $idsAlumnosVigentes);
-      }else{
+      } else {
         $idsAlumnos = array_merge($idsAlumnos, $idsAlumnosVigentes);
       }
     }
@@ -250,7 +253,7 @@ class Profesor extends Model {
                                     $nombreTablaClase . ".comentarioParaProfesor"))
                     ->where($nombreTablaClase . ".idProfesor", $id)
                     ->where($nombreTablaClase . ".idAlumno", $idAlumno)
-                    ->whereIn($nombreTablaClase . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada])
+                    ->whereIn($nombreTablaClase . ".estado", [EstadosClase::ConfirmadaProfesor, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada])
                     ->whereRaw($nombreTablaClase . ".id IN (SELECT idClase 
                                                               FROM " . $nombreTablaPagoClase . " 
                                                               WHERE idPago IN (SELECT idPago FROM " . $nombreTablaAlumnoBolsaHoras . "
@@ -293,7 +296,7 @@ class Profesor extends Model {
         "fechaInicio" => $fechaInicio->subSeconds($duracion)->toDateTimeString(),
         "fechaFin" => $fechaConfirmacion->toDateTimeString(),
         "fechaConfirmacion" => $fechaConfirmacion->toDateTimeString(),
-        "estado" => EstadosClase::Realizada
+        "estado" => EstadosClase::ConfirmadaProfesor
     ];
 
     $clase = new Clase($datosClase);
@@ -377,7 +380,7 @@ class Profesor extends Model {
     if ($soloVigentes)
       $clases->whereIn($nombreTabla . ".estado", [EstadosClase::Programada, EstadosClase::PendienteConfirmar]);
     else if ($soloConfirmadasORealizadas)
-      $clases->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
+      $clases->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesor, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
     return $clases;
   }
 

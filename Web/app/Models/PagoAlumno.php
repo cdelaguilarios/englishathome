@@ -61,11 +61,11 @@ class PagoAlumno extends Model {
                                             THEN IFNULL(pago.costoXHoraClase, 0)
                                             ELSE 0 
                                           END)";
-    $queryDuracionXClasesRealizadas = "SUM(CASE WHEN clase.estado = '" . EstadosClase::ConfirmadaProfesorAlumno . "' OR clase.estado = '" . EstadosClase::Realizada . "' 
+    $queryDuracionXClasesRealizadas = "SUM(CASE WHEN clase.estado = '" . EstadosClase::ConfirmadaProfesor . "' OR clase.estado = '" . EstadosClase::ConfirmadaProfesorAlumno . "' OR clase.estado = '" . EstadosClase::Realizada . "' 
                                             THEN pagoClase.duracionCubierta 
                                             ELSE 0 
                                           END)";
-    $queryMontoXClasesRealizadas = "SUM(CASE WHEN clase.estado = '" . EstadosClase::ConfirmadaProfesorAlumno . "' OR clase.estado = '" . EstadosClase::Realizada . "' 
+    $queryMontoXClasesRealizadas = "SUM(CASE WHEN clase.estado = '" . EstadosClase::ConfirmadaProfesor. "' OR clase.estado = '" . EstadosClase::ConfirmadaProfesorAlumno . "' OR clase.estado = '" . EstadosClase::Realizada . "' 
                                             THEN (pagoClase.duracionCubierta/3600) * IFNULL(pago.costoXHoraClase, 0)
                                             ELSE 0 
                                           END)";

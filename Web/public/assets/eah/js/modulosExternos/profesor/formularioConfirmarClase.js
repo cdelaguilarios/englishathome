@@ -16,10 +16,6 @@ formularioConfirmarClase = (function ()/* - */ {
           required: true,
           validarDecimal: true,
           range: [(minHorasClase * 3600), (maxHorasClase * 3600)]
-        },
-        codigoVerificacion: {
-          required: true,
-          number: true
         }
       },
       submitHandler: function (f) {

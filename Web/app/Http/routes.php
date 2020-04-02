@@ -56,8 +56,9 @@ Route::group(["middleware" => "auth"], function() {
   Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Alumno . "]"], function() {
     // <editor-fold desc="Clases">
     Route::get("misClases", ["uses" => "AlumnoController@misClases", "as" => "alumnos.mis.clases"]);
-    Route::post("misClases/listar", ["uses" => "AlumnoController@listarMisClases", "as" => "listar.mis.clases"]);
-    Route::put("misClases/comentarios", ["uses" => "AlumnoController@actualizarComentariosClase", "as" => "alumnos.mis.clases.actualizar.comentarios"]);
+    Route::post("misClases/listar", ["uses" => "AlumnoController@listarMisClases", "as" => "alumnos.mis.clases.listar"]);
+    Route::post("misClases/comentarios", ["uses" => "AlumnoController@misClasesRegistrarComentarios", "as" => "alumnos.mis.clases.registrar.comentarios.clase"]);
+    Route::post("misClases/{idClase}/confirmar", ["uses" => "AlumnoController@misClasesConfirmar", "as" => "alumnos.mis.clases.confirmar.clase"]);
     // </editor-fold>
   });
   Route::group(["middleware" => "verificacion.usuario:[" . RolesUsuario::Principal . "|" . RolesUsuario::Secundario . "]"], function() {

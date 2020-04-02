@@ -16,27 +16,19 @@ class ConfirmarClaseRequest extends Request/* - */ {
   protected function getValidatorInstance()/* - */ {
     $datos = $this->all();
     $datos["duracion"] = ReglasValidacion::formatoDato($datos, "duracion");
-    $datos["codigoVerificacion"] = ReglasValidacion::formatoDato($datos, "codigoVerificacion");
     $datos["comentario"] = ReglasValidacion::formatoDato($datos, "comentario");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
 
   public function rules() {
-    $datos = $this->all();
     $reglasValidacion = [
         "duracion" => "required|numeric|between:" . ((int) Config::get("eah.minHorasClase") * 3600) . "," . ((int) Config::get("eah.maxHorasClase") * 3600),
-        "codigoVerificacion" => "required|min:4|max:6",
         "comentario" => "max:8000"
     ];
 
     $idAlumno = $this->route()->getParameter('id');
-    if (Alumno::verificarExistencia($idAlumno)) {
-      $alumno = Alumno::obtenerXId($idAlumno, TRUE);
-      if ($alumno->codigoVerificacionClases != $datos["codigoVerificacion"]) {
-        $reglasValidacion["codigoVerificacionNoValido"] = "required";
-      }
-    } else {
+    if (!Alumno::verificarExistencia($idAlumno)) {
       $reglasValidacion["alumnoNoValido"] = "required";
     }
     
@@ -56,8 +48,7 @@ class ConfirmarClaseRequest extends Request/* - */ {
 
   public function messages()/* - */ {
     return [
-        "alumnoNoValido.required" => "El alumno seleccionado no es válido.",
-        "codigoVerificacionNoValido.required" => "El código de verificación del alumno no es válido."
+        "alumnoNoValido.required" => "El alumno seleccionado no es válido."
     ];
   }
 

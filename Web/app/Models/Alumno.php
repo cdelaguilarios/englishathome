@@ -82,7 +82,7 @@ class Alumno extends Model {
               ->on("ultimaClase.id", "=", DB::raw("(SELECT id 
                                                         FROM " . $nombreTablaClase . "
                                                         WHERE idAlumno = entidad.id 
-                                                          AND estado IN ('" . EstadosClase::Realizada . "','" . EstadosClase::ConfirmadaProfesorAlumno . "')
+                                                          AND estado IN ('" . EstadosClase::ConfirmadaProfesor . "','" . EstadosClase::ConfirmadaProfesorAlumno . "','" . EstadosClase::Realizada . "')
                                                           AND eliminado=0 
                                                         ORDER BY fechaConfirmacion DESC 
                                                         LIMIT 1)"));
@@ -121,9 +121,9 @@ class Alumno extends Model {
                                                         WHERE idPago = pago.id
                                                           AND idClase IN (SELECT id 
                                                                             FROM " . $nombreTablaClase . " 
-                                                                            WHERE estado IN ('" . EstadosClase::ConfirmadaProfesorAlumno . "', '" . EstadosClase::Realizada . "')
+                                                                            WHERE estado IN ('" . EstadosClase::ConfirmadaProfesor . "', '" . EstadosClase::ConfirmadaProfesorAlumno . "', '" . EstadosClase::Realizada . "')
                                                                               AND eliminado = 0))";
-    
+
     //Datos de pagos de la bolsa de horas actual del alumno
     $alumnos->leftJoin($nombreTablaPago . " AS pagoXBolsaHoras", function ($q) {
       $nombreTablaAlumnoBolsaHoras = AlumnoBolsaHoras::nombreTabla();
@@ -138,7 +138,7 @@ class Alumno extends Model {
                                               WHERE idPago = pagoXBolsaHoras.id
                                                 AND idClase IN (SELECT id 
                                                                   FROM " . $nombreTablaClase . " 
-                                                                  WHERE estado IN ('" . EstadosClase::ConfirmadaProfesorAlumno . "', '" . EstadosClase::Realizada . "')
+                                                                  WHERE estado IN ('" . EstadosClase::ConfirmadaProfesor . "', '" . EstadosClase::ConfirmadaProfesorAlumno . "', '" . EstadosClase::Realizada . "')
                                                                     AND eliminado = 0))";
 
     $alumnos->select(DB::raw(
@@ -155,7 +155,7 @@ class Alumno extends Model {
                       (CASE WHEN ultimaClase.fechaConfirmacion IS NOT NULL
                         THEN ultimaClase.fechaConfirmacion
                         ELSE ultimaClase.fechaFin
-                      END) AS ultimaClaseFecha," .                  
+                      END) AS ultimaClaseFecha," .
                     // <editor-fold desc="Datos globales">
                     "SUM(CASE WHEN IFNULL(pago.costoXHoraClase, 0) > 0 
 			THEN ((IFNULL(pago.monto, 0) - IFNULL(pago.saldoFavor, 0)) * 3600 / (pago.costoXHoraClase))
@@ -342,6 +342,54 @@ class Alumno extends Model {
       return FALSE;
     }
     return TRUE;
+  }
+
+  public static function listarClases($id) {
+    $nombreTablaClase = Clase::nombreTabla();
+    $nombreTablaPagoClase = PagoClase::nombreTabla();
+    $nombreTablaAlumnoBolsaHoras = AlumnoBolsaHoras::nombreTabla();
+
+    return Clase::listarBase()->select(DB::raw(
+                                    $nombreTablaClase . ".id, " .
+                                    $nombreTablaClase . ".duracion, " .
+                                    $nombreTablaClase . ".estado, " .
+                                    $nombreTablaClase . ".fechaInicio, " .
+                                    $nombreTablaClase . ".fechaFin, " .
+                                    $nombreTablaClase . ".fechaConfirmacion, " .
+                                    $nombreTablaClase . ".comentarioProfesor, " .
+                                    $nombreTablaClase . ".comentarioAlumno, " .
+                                    $nombreTablaClase . ".comentarioParaAlumno,
+                                    entidadProfesor.nombre AS nombreProfesor, 
+                                    entidadProfesor.apellido AS apellidoProfesor"))
+                    ->where($nombreTablaClase . ".idAlumno", $id)
+                    ->whereIn($nombreTablaClase . ".estado", [EstadosClase::ConfirmadaProfesor, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada])
+                    ->whereRaw($nombreTablaClase . ".id IN (SELECT idClase 
+                                                              FROM " . $nombreTablaPagoClase . " 
+                                                              WHERE idPago IN (SELECT idPago FROM " . $nombreTablaAlumnoBolsaHoras . "
+                                                                                  WHERE idAlumno = " . $id . "))");
+  }
+
+  public static function registrarComentariosClase($id, $datos)/* - */ {
+    $nombreTablaClase = Clase::nombreTabla();
+    $idClases = Alumno::listarClases($id)->lists($nombreTablaClase . ".id")->toArray();
+    if (in_array($datos["idClase"], $idClases)) {
+      $datos["tipo"] = 1;
+      $datos["idAlumno"] = $id;
+      Clase::actualizarComentarios($datos["idClase"], $datos);
+    }
+  }
+
+  public static function confirmarClase($id, $idClase)/* - */ {
+    $nombreTablaClase = Clase::nombreTabla();
+    $idClases = Alumno::listarClases($id)->lists($nombreTablaClase . ".id")->toArray();
+    if (in_array($idClase, $idClases)) {
+      $clase = Clase::obtenerXIdNUEVO($idClase, $id);
+      if ($clase->estado == EstadosClase::ConfirmadaProfesor) {
+        $clase->estado = EstadosClase::Realizada;
+        $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
+        $clase->save();
+      }
+    }
   }
 
   // <editor-fold desc="TODO: ELIMINAR">

@@ -706,7 +706,9 @@ utilBusqueda = (function () {
           };
         },
         results: function (data) {
-          return {results: data};
+          return {
+            results: data
+          };
         }
       }
     });
