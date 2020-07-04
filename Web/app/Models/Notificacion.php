@@ -176,7 +176,7 @@ class Notificacion extends Model {
     return $notificacionesFormateadas;
   }
 
-  private static function formatearDatos(&$notificacion)/* - */ {
+  public static function formatearDatos(&$notificacion, $incluirEnlaces = TRUE)/* - */ {
     $notificacion->tituloOriginal = $notificacion->titulo;
     $notificacion->mensajeOriginal = $notificacion->mensaje;
 
@@ -195,8 +195,13 @@ class Notificacion extends Model {
       if (!array_key_exists($entidad->tipo, $tiposEntidad)) {
         continue;
       }
-      $notificacion->titulo = str_replace("[" . $entidad->tipo . "]", "<a href='" . route($tiposEntidad[$entidad->tipo][4], ['id' => $entidad->id]) . "' target='_blank'>" . $entidad->nombre . " " . $entidad->apellido . "</a>", $notificacion->titulo);
-      $notificacion->mensaje = str_replace("[" . $entidad->tipo . "]", "<a href='" . route($tiposEntidad[$entidad->tipo][4], ['id' => $entidad->id]) . "' target='_blank'>" . $entidad->nombre . " " . $entidad->apellido . "</a>", $notificacion->mensaje);
+      
+      $datosEntidad = $entidad->nombre . " " . $entidad->apellido;
+      if($incluirEnlaces){
+        $datosEntidad = "<a href='" . route($tiposEntidad[$entidad->tipo][4], ['id' => $entidad->id]) . "' target='_blank'>" . $entidad->nombre . " " . $entidad->apellido . "</a>";
+      }      
+      $notificacion->titulo = str_replace("[" . $entidad->tipo . "]", $datosEntidad, $notificacion->titulo);
+      $notificacion->mensaje = str_replace("[" . $entidad->tipo . "]", $datosEntidad, $notificacion->mensaje);
     }
 
     $notificacion->horaNotificacion = Carbon::createFromFormat("Y-m-d H:i:s", $notificacion->fechaNotificacion)->format("H:i:s");

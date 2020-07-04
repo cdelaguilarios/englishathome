@@ -101,7 +101,8 @@ class Interesado extends Model/* |-| */ {
 
     Notificacion::registrarActualizar([
         "idEntidades" => [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
-        "titulo" => (Auth::guest() ? MensajesNotificacion::TituloInteresadoRegistro : MensajesNotificacion::TituloInteresadoRegistroXUsuario)
+        "titulo" => (Auth::guest() ? MensajesNotificacion::TituloInteresadoRegistro : MensajesNotificacion::TituloInteresadoRegistroXUsuario),
+        "enviarCorreo" => (Auth::guest() ? 1 : 0)
     ]);
     return $idEntidad;
   }

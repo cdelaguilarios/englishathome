@@ -110,7 +110,7 @@ var FormularioTarea = FormularioTarea || (function () {
     });
 
     CKEDITOR.replace("mensaje-tarea");
-    utilBusqueda.establecerListaBusqueda($(formulario).find("#" + self._args.idSelUsuarioAsignado), self._args.urlBuscarUsuarios);
+    utilBusqueda.establecerListaBusqueda($(formulario).find("#" + self._args.idSelUsuarioAsignado), self._args.urlBuscarUsuarios + "?soloActivos=1");
     utilFechasHorarios.establecerCalendario($(formulario).find("input[name='fechaProgramada']"), true, false);
     utilFechasHorarios.establecerCalendario($(formulario).find("input[name='fechaFinalizacion']"), true, false);
 

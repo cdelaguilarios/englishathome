@@ -6,6 +6,7 @@ use DB;
 use Log;
 use Auth;
 use Carbon\Carbon;
+use App\Helpers\Enum\RolesUsuario;
 use App\Helpers\Enum\EstadosClase;
 use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\EstadosAlumno;
@@ -296,7 +297,7 @@ class Profesor extends Model {
         "fechaInicio" => $fechaInicio->subSeconds($duracion)->toDateTimeString(),
         "fechaFin" => $fechaConfirmacion->toDateTimeString(),
         "fechaConfirmacion" => $fechaConfirmacion->toDateTimeString(),
-        "estado" => EstadosClase::ConfirmadaProfesor
+        "estado" => (in_array(Auth::user()->rol, [RolesUsuario::Principal, RolesUsuario::Secundario]) ? EstadosClase::Realizada : EstadosClase::ConfirmadaProfesor)
     ];
 
     $clase = new Clase($datosClase);

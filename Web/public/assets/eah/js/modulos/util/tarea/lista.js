@@ -59,15 +59,15 @@ var ListaTareas = ListaTareas || (function () {
             htmlTarea += '<br/><b>Creado por</b> ' + tarea.nombreUsuarioCreador + ' ' + tarea.apellidoUsuarioCreador;
             htmlTarea += '<br/><b>Asignado a</b> ' + tarea.nombreUsuarioAsignado + ' ' + tarea.apellidoUsuarioAsignado;
             
-            if (tarea.fechaProgramada !== null) {
-              htmlTarea += '<br/><b>Fecha notificacion: </b> ' + utilFechasHorarios.formatoFecha(tarea.fechaProgramada, true);
-            }
             if (tarea.fechaFinalizacion !== null) {
               htmlTarea += '<br/><b>Fecha finalización: </b> ' + utilFechasHorarios.formatoFecha(tarea.fechaFinalizacion, true);
             }
 
             return htmlTarea;
           }, responsivePriority: 0},
+          {data: "fechaProgramada", name: "fechaProgramada", render: function (e, t, d, m) {
+              return utilFechasHorarios.formatoFecha(d.fechaProgramada, true);
+            }, className: "text-center not-mobile"},
         {data: "estado", name: "estado", width: "15%", "className": "text-center desktop"}
       ],
       initComplete: function (s, j) {

@@ -40,7 +40,7 @@ class Clase extends Model {
     return $nombreTabla;
   }
 
-  public static function listarBase($incluirSoloRealizadas = FALSE)/* - */ {
+  public static function listarBase($incluirSoloConfirmadasYRealizadas = FALSE, $incluirSoloRealizadas = FALSE)/* - */ {
     $nombreTablaClase = Clase::nombreTabla();
     $nombreTablaPago = Pago::nombreTabla();
     $nombreTablaEntidad = Entidad::nombreTabla();
@@ -88,15 +88,17 @@ class Clase extends Model {
             ->where($nombreTablaClase . ".eliminado", DB::raw("0"))
             ->groupBy($nombreTablaClase . ".id")
             ->distinct();
-    if ($incluirSoloRealizadas) {
+    if ($incluirSoloConfirmadasYRealizadas) {
       $clases->whereIn($nombreTablaClase . ".estado", [EstadosClase::ConfirmadaProfesor, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
+    } else if ($incluirSoloRealizadas) {
+      $clases->whereIn($nombreTablaClase . ".estado", [EstadosClase::Realizada]);
     }
     return $clases;
   }
 
-  public static function listarNUEVO($incluirSoloRealizadas = FALSE)/* - */ {
+  public static function listarNUEVO($incluirSoloConfirmadasYRealizadas = FALSE)/* - */ {
     $nombreTablaClase = Clase::nombreTabla();
-    return Clase::listarBase($incluirSoloRealizadas)
+    return Clase::listarBase($incluirSoloConfirmadasYRealizadas)
                     ->select(DB::raw(
                                     $nombreTablaClase . ".*, 
                                     entidadAlumno.nombre AS nombreAlumno, 
@@ -109,12 +111,12 @@ class Clase extends Model {
                     ->groupBy($nombreTablaClase . ".id");
   }
 
-  public static function listarXAlumnoNUEVO($idAlumno, $incluirSoloRealizadas = TRUE)/* - */ {
-    return Clase::listarNUEVO($incluirSoloRealizadas)->where(Clase::nombreTabla() . ".idAlumno", $idAlumno);
+  public static function listarXAlumnoNUEVO($idAlumno, $incluirSoloConfirmadasYRealizadas = TRUE)/* - */ {
+    return Clase::listarNUEVO($incluirSoloConfirmadasYRealizadas)->where(Clase::nombreTabla() . ".idAlumno", $idAlumno);
   }
 
-  public static function listarXProfesorNUEVO($idProfesor, $incluirSoloRealizadas = TRUE)/* - */ {
-    return Clase::listarNUEVO($incluirSoloRealizadas)->where(Clase::nombreTabla() . ".idProfesor", $idProfesor);
+  public static function listarXProfesorNUEVO($idProfesor, $incluirSoloConfirmadasYRealizadas = TRUE)/* - */ {
+    return Clase::listarNUEVO($incluirSoloConfirmadasYRealizadas)->where(Clase::nombreTabla() . ".idProfesor", $idProfesor);
   }
 
   public static function obtenerXIdNUEVO($id, $idAlumno = NULL)/* - */ {
@@ -250,7 +252,7 @@ class Clase extends Model {
 
     if (Auth::user()->rol == RolesUsuario::Alumno && Auth::user()->idEntidad == $clase->idAlumno) {
       $clase->comentarioAlumno = $datos["comentario"];
-    }else if (Auth::user()->rol == RolesUsuario::Profesor && Auth::user()->idEntidad == $clase->idProfesor) {
+    } else if (Auth::user()->rol == RolesUsuario::Profesor && Auth::user()->idEntidad == $clase->idProfesor) {
       if ($clase->idAlumno != $datos["idAlumno"]) {
         return;
       }

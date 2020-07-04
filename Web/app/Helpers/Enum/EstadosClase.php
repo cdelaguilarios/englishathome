@@ -33,7 +33,7 @@ class EstadosClase/* - */ {
 
   public static function listarDisponibleCambio()/* - */ {
     $estadosBusqueda = EstadosClase::listarBusqueda();
-    $estadosDisponibleCambio = [];
+    $estadosDisponibleCambio = [EstadosClase::ConfirmadaProfesor, EstadosClase::Realizada];
     $estadosDisponibleCambioSel = [];
     foreach ($estadosBusqueda as $k => $v) {
       if (in_array($k, $estadosDisponibleCambio)) {

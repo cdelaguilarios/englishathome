@@ -114,7 +114,8 @@ class Alumno extends Model {
                                                     FROM " . $nombreTablaPagoAlumno . "
                                                     WHERE idAlumno = entidad.id)"))
               ->where("pago.motivo", "=", MotivosPago::Clases)
-              ->whereIn("pago.estado", [EstadosPago::Consumido, EstadosPago::Realizado]);
+              ->whereIn("pago.estado", [EstadosPago::Consumido, EstadosPago::Realizado])
+              ->where("pago.eliminado", "=", 0);
     });
     $queryDuracionTotalXClasesRealizadasGlobal = "(SELECT SUM(duracionCubierta) 
                                                         FROM " . $nombreTablaPagoClase . " 

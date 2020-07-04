@@ -39,9 +39,10 @@ class UsuarioController extends Controller/* - */ {
 
   public function buscar()/* - */ {
     $termino = Input::get("termino");
+    $soloActivos = (Input::get("soloActivos") == "1");
     
     $usuariosPro = [];
-    $usuarios = Usuario::listarBusqueda($termino["term"]);
+    $usuarios = Usuario::listarBusqueda($termino["term"], $soloActivos);
     foreach ($usuarios as $id => $nombreCompleto) {
       $usuariosPro[] = ['id' => $id, 'text' => $nombreCompleto];
     }

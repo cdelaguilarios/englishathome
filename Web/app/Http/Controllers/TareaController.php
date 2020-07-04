@@ -21,8 +21,8 @@ class TareaController extends Controller {
   }
 
   public function listar(ListaRequest $req)/* - */ {
-    return Datatables::of(Tarea::listar($req->all()))->filterColumn("fechaNotificacion", function($q, $k) {
-              $q->whereRaw("DATE_FORMAT(fechaNotificacion, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
+    return Datatables::of(Tarea::listar($req->all()))->filterColumn("fechaProgramada", function($q, $k) {
+              $q->whereRaw("DATE_FORMAT(fechaProgramada, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
             })->make(true);
   }
 

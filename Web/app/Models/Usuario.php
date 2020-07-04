@@ -50,10 +50,13 @@ class Usuario extends Model implements AuthenticatableContract, AuthorizableCont
     return $usuarios;
   }
 
-  public static function listarBusqueda($terminoBus = NULL)/* - */ {
+  public static function listarBusqueda($terminoBus = NULL, $soloActivos = FALSE)/* - */ {
     $alumnos = Usuario::listar(NULL, TRUE)->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
     if (isset($terminoBus)) {
       $alumnos->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
+    }
+    if ($soloActivos) {
+      $alumnos->where('entidad.estado', EstadosUsuario::Activo);
     }
     return $alumnos->lists("nombreCompleto", "entidad.id");
   }

@@ -115,7 +115,7 @@ class PagoProfesor extends Model {
   public static function listarXClasesBase($datos) {
     $nombreTablaClase = Clase::nombreTabla();
 
-    $clases = Clase::listarBase(TRUE);
+    $clases = Clase::listarBase(FALSE, TRUE);
     $clases->leftJoin(EntidadCuentaBancaria::nombreTabla() . " as cuentaBancariaProfesor", $nombreTablaClase . ".idProfesor", "=", "cuentaBancariaProfesor.idEntidad");
     if ($datos["estadoPago"] == EstadosPago::Realizado) {
       $clases->whereRaw("pagoProfesor.id IS NOT NULL");

@@ -20,6 +20,7 @@
               <tr>
                 <th>N°</th>    
                 <th>Tarea</th>
+                <th>Fecha de notificación</th>
                 <th>Estado</th>
               </tr>
             </thead>
