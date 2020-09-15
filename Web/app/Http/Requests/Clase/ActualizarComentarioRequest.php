@@ -4,13 +4,13 @@ namespace App\Http\Requests\Clase;
 
 use App\Http\Requests\Request;
 
-class ActualizarComentarioRequest extends Request/* - */ {
+class ActualizarComentarioRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     switch ($this->method()) {
       case "GET":
       case "DELETE":

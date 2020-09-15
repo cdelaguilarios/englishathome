@@ -268,7 +268,7 @@ textarea{
 #sec-perfil-horario .btn, #btn-seleccionar-profesor-actual{
   margin-left: 20px;
 }
-[id*='sec-info-horario'] ul{
+[class*='sec-info-horario'] ul{
   list-style-type: none;
   margin-top: 5px;
   margin-left: -20px;
@@ -285,10 +285,7 @@ textarea{
   font-size: 90%;
 }
 
-
-
 /*Sección historial*/
-/*TODO: ELIMINAR*/
 #sec-notificaciones-historial-lista > .sec-cargando{
   background-color: #fff;
 }
@@ -367,6 +364,12 @@ table.dataTable thead input {
 
 @media (max-width: 768px){
   table.dataTable thead .tabla-sec-busqueda{
+    display: none !important;
+  }
+}
+
+@media only screen and (max-width: 1024px) {
+  .tabla-sec-busqueda {
     display: none !important;
   }
 }

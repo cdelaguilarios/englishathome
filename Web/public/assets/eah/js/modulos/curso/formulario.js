@@ -1,6 +1,6 @@
 var formularioCurso = {};
-formularioCurso = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+formularioCurso = (function () {
+  $(document).ready(function () {
     cargarFormulario();
 
     $("#sel-curso").select2();

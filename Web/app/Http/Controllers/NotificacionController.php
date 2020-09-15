@@ -21,7 +21,7 @@ class NotificacionController extends Controller {
     
   }
 
-  public function listar(ListaRequest $req)/* - */ {
+  public function listar(ListaRequest $req) {
     return Datatables::of(Notificacion::listar($req->all()))->filterColumn("titulo", function($q, $k) {
               $q->whereRaw('titulo like ?', ["%{$k}%"])
                       ->orWhereRaw('mensaje like ?', ["%{$k}%"]);
@@ -30,7 +30,7 @@ class NotificacionController extends Controller {
             })->make(true);
   }
 
-  public function listarNuevas()/* - */ {
+  public function listarNuevas() {
     return response()->json(Notificacion::listarNuevas(), 200);
   }
 
@@ -40,11 +40,11 @@ class NotificacionController extends Controller {
     return response()->json($datosHistorial, 200);
   }
 
-  public function obtenerDatos($id)/* - */ {
+  public function obtenerDatos($id) {
     return response()->json(Notificacion::obtenerXId($id), 200);
   }
 
-  public function registrarActualizar(FormularioRequest $req)/* - */ {
+  public function registrarActualizar(FormularioRequest $req) {
     try {
       $datos = $req->all();
       $datos["idEntidades"] = [$datos["idEntidad"]];
@@ -81,7 +81,7 @@ class NotificacionController extends Controller {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function eliminar($id)/* - */ {
+  public function eliminar($id) {
     try {
       //Las notificaciones generadas por el sistema no pueden ser eliminadas
       $notificacion = Notificacion::obtenerXId($id);

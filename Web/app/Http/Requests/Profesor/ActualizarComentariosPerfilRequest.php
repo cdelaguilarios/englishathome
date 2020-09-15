@@ -4,13 +4,13 @@ namespace App\Http\Requests\Profesor;
 
 use App\Http\Requests\Request;
 
-class ActualizarComentariosPerfilRequest extends Request /* - */{
+class ActualizarComentariosPerfilRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     switch ($this->method()) {
       case "GET":
       case "DELETE":

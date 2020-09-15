@@ -55,7 +55,7 @@ return [
     |
     */
 
-    'from' => ['address' => 'englishathomelima@gmail.com', 'name' => 'English at home'],
+    'from' => ['address' => env('MAIL_FROM_ADDRESS'), 'name' => env('MAIL_FROM_NAME')],
 
     /*
     |--------------------------------------------------------------------------

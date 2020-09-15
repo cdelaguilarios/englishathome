@@ -10,23 +10,23 @@ use App\Models\Curso;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Curso\FormularioRequest;
 
-class CursoController extends Controller/* - */ {
+class CursoController extends Controller {
 
   protected $data = array();
 
-  public function __construct()/* - */ {
+  public function __construct() {
     $this->data["seccion"] = "cursos";
   }
 
-  public function index()/* - */ {
+  public function index() {
     return view("curso.lista", $this->data);
   }
 
-  public function listar()/* - */ {
+  public function listar() {
     return Datatables::of(Curso::listar())->make(true);
   }
 
-  public function buscar()/* - */ {
+  public function buscar() {
     $termino = Input::get("termino");
     
     $cursosPro = [];
@@ -37,15 +37,15 @@ class CursoController extends Controller/* - */ {
     return \Response::json(["results" => $cursosPro]);
   }
 
-  public function datos($id)/* - */ {
+  public function datos($id) {
     return response()->json(Curso::obtenerXId($id), 200);
   }
 
-  public function crear()/* - */ {
+  public function crear() {
     return view("curso.crear", $this->data);
   }
 
-  public function registrar(FormularioRequest $req)/* - */ {
+  public function registrar(FormularioRequest $req) {
     try {
       Curso::registrar($req);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
@@ -57,7 +57,7 @@ class CursoController extends Controller/* - */ {
     }
   }
 
-  public function editar($id)/* - */ {
+  public function editar($id) {
     try {
       $this->data["curso"] = Curso::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
@@ -68,7 +68,7 @@ class CursoController extends Controller/* - */ {
     return view("curso.editar", $this->data);
   }
 
-  public function actualizar($id, FormularioRequest $req)/* - */ {
+  public function actualizar($id, FormularioRequest $req) {
     try {
       Curso::actualizar($id, $req);
       Mensajes::agregarMensajeExitoso("Actualización exitosa.");
@@ -79,7 +79,7 @@ class CursoController extends Controller/* - */ {
     return redirect(route("cursos.editar", ["id" => $id]));
   }
 
-  public function eliminar($id)/* - */ {
+  public function eliminar($id) {
     try {
       Curso::eliminar($id);
     } catch (\Exception $e) {

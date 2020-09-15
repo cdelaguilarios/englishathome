@@ -1,6 +1,6 @@
 var perfilAlumno = {};
-perfilAlumno = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+perfilAlumno = (function () {
+  $(document).ready(function () {
     $("input[name='horario']").change(function () {
       urlActualizarHorario = (typeof (urlActualizarHorario) === "undefined" ? "" : urlActualizarHorario);
       if (urlActualizarHorario !== "" && $(this).val() !== "") {

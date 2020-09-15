@@ -1,10 +1,10 @@
 var listaPostulantes = {};
-listaPostulantes = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+listaPostulantes = (function () {
+  $(document).ready(function () {
     cargarLista();
   });
 
-  function cargarLista()/* - */ {
+  function cargarLista() {
     urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
     urlPerfilProfesorPostulante = (typeof (urlPerfilProfesorPostulante) === "undefined" ? "" : urlPerfilProfesorPostulante);
     urlPerfilPostulante = (typeof (urlPerfilPostulante) === "undefined" ? "" : urlPerfilPostulante);
@@ -16,7 +16,7 @@ listaPostulantes = (function ()/* - */ {
     estadoProfesorRegistrado = (typeof (estadoProfesorRegistrado) === "undefined" ? "" : estadoProfesorRegistrado);
 
     if (urlListar !== "" && urlPerfilProfesorPostulante !== "" && urlPerfilPostulante !== "" && urlEditarPostulante !== "" && urlEliminar !== "" && estados !== "" && estadosDisponibleCambio !== "" && estadoProfesorRegistrado !== "") {
-      $("#tab-lista-postulantes").DataTable({
+      utilTablas.iniciarTabla($("#tab-lista-postulantes"), {
         processing: true,
         serverSide: true,
         ajax: {
@@ -35,14 +35,14 @@ listaPostulantes = (function ()/* - */ {
         columns: [
           {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
               return m.row + m.settings._iDisplayStart + 1;
-            }, "className": "text-center not-mobile"},
+            }, "className": "text-center", responsivePriority: 0},
           {data: "nombre", name: "entidad.nombre", render: function (e, t, d, m) {
               return '<a href="' + (urlPerfilPostulante.replace("/0", "/" + d.id)) + '">' + (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "") + '</a>';
-            }},
-          {data: "correoElectronico", name: "entidad.correoElectronico"},
+            }, responsivePriority: 0},
+          {data: "correoElectronico", name: "entidad.correoElectronico", "className": "min-tablet-l"},
           {data: "telefono", name: "entidad.telefono", render: function (e, t, d, m) {
-              return  (d.telefono ? '<span class="text-info"><i class="fa  fa-mobile"></i> ' + util.incluirEnlaceWhatsApp(d.telefono) + '</span>' : '');
-            }},
+              return  (d.telefono ? '<span class="text-info"><i class="fa  fa-mobile"></i> ' + util.incluirEnlaceWhatsApp(d.telefono) + '</span>' : '<span class="text-info">-</span>');
+            }, "className": "min-tablet-l"},
           {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
               var estado = '';
               if (estados[d.estado] !== undefined) {
@@ -58,10 +58,10 @@ listaPostulantes = (function ()/* - */ {
                 }
               }
               return estado;
-            }, className: "text-center not-mobile"},
+            }, className: "text-center min-tablet-p"},
           {data: "fechaRegistro", name: "entidad.fechaRegistro", render: function (e, t, d, m) {
               return utilFechasHorarios.formatoFecha(d.fechaRegistro, true);
-            }, className: "text-center not-mobile"},
+            }, className: "text-center desktop"},
           {data: "id", name: "entidad.id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
               return '<ul class="buttons">' +
                       '<li>' +
@@ -76,13 +76,40 @@ listaPostulantes = (function ()/* - */ {
                       '</a>' +
                       '</li>' +
                       '</ul>';
-            }, className: "text-center"}
+            }, className: "text-center min-mobile-l"},
+          //--------- Columnas ocultas solo para exportación excel ---------
+          {data: "nombre", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "apellido", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "telefono", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "correoElectronico", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "descripcionPropia", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "ensayo", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "experienciaOtrosIdiomas", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "ultimosTrabajos", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "comentarioAdministrador", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (estados[d.estado] !== undefined ? estados[d.estado][0] : '');
+            }, "className": "never"},
+          {data: "numeroDocumento", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return utilFechasHorarios.formatoFecha(d.fechaNacimiento);
+            }, "className": "never"},
+          {data: "geoLatitud", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "geoLongitud", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "direccion", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "referenciaDireccion", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "numeroDepartamento", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "distrito", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return utilFechasHorarios.formatoFecha(d.fechaRegistro, true);
+            }, "className": "never"}
+          //----------------------------------------------------------------
         ],
         initComplete: function (s, j) {
           utilTablas.establecerBotonRecargaTabla($("#tab-lista-postulantes"));
           utilTablas.establecerCabecerasBusquedaTabla($("#tab-lista-postulantes"));
         }
-      });
+      }, true, [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]);
     }
   }
 }());

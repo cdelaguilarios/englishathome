@@ -1,18 +1,18 @@
 var listaDocentesDisponibles = {};
-listaDocentesDisponibles = (function ()/* - */ {
+listaDocentesDisponibles = (function () {
   window.addEventListener("load", esperarCargaJquery, false);
-  function esperarCargaJquery()/* - */ {
+  function esperarCargaJquery() {
     ((window.jQuery && jQuery.ui) ? cargarSeccion() : window.setTimeout(esperarCargaJquery, 100));
   }
 
-  function cargarSeccion()/* - */ {
+  function cargarSeccion() {
     cargarLista();
 
     $("#bus-tipo, #bus-estado, #bus-sexo, #bus-curso, input[name='horario']").change(function () {
       $("#tab-lista-docentes-disponibles").DataTable().ajax.reload();
     });
   }
-  function cargarLista()/* - */ {
+  function cargarLista() {
     urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
     urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
     urlPerfilPostulante = (typeof (urlPerfilPostulante) === "undefined" ? "" : urlPerfilPostulante);

@@ -1,6 +1,6 @@
 var pagoDocente = {};
 pagoDocente = (function () {
-  $(document).ready(function ()/* - */ {
+  $(document).ready(function () {
     cargarSeccion();
   });
 

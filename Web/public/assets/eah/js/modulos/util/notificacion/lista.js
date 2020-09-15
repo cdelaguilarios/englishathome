@@ -8,7 +8,7 @@ var ListaNotificacionesGenerales = ListaNotificacionesGenerales || (function () 
       esperarCargaJquery.call(self);
     }, 100));
   };
-  var cargarLista = function ()/* - */ {
+  var cargarLista = function () {
     var self = this;
     $("#" + self._args.idTablaLista).DataTable({
       processing: true,
@@ -76,8 +76,8 @@ var ListaNotificacionesGenerales = ListaNotificacionesGenerales || (function () 
                   var nombreAdjunto = datosAdjunto[datosAdjunto.length === 2 ? 1 : 0];
 
                   htmlAdjuntos += '<a href="' + rutaAdjunto + '" target="_blank">' +
-                          (util.urlEsImagen(rutaAdjunto) ? '<img src="' + rutaAdjunto + '" class="margin" width="200">' : nombreAdjunto) +
-                          '</a><br/>';
+                          (util.urlEsImagen(rutaAdjunto) ? '<img src="' + rutaAdjunto + '" class="margin" width="' + (window.mobilecheck() ? '150' : '200') + '">' : nombreAdjunto) +
+                          '</a>';
                 }
               });
             }
@@ -97,7 +97,7 @@ var ListaNotificacionesGenerales = ListaNotificacionesGenerales || (function () 
               htmlNotificacion += '<br/><br/>' + htmlAdjuntos;
             }
             if (window.mobilecheck()) {
-              htmlNotificacion += '<br/><br/><b>Fecha:</b> ' + utilFechasHorarios.formatoFecha(d.fechaNotificacion, true);
+              htmlNotificacion += '<br/><br/><b>Fecha:</b> ' + utilFechasHorarios.formatoFecha(d.fechaNotificacion, false);
             }
 
             if (d.idUsuarioCreador !== null) {
@@ -183,12 +183,12 @@ var ListaNotificacionesGenerales = ListaNotificacionesGenerales || (function () 
     Object.assign(this._args, args);
     esperarCargaJquery.call(this);
   };
-  Constructor.prototype.mostrar = function ()/* - */ {
+  Constructor.prototype.mostrar = function () {
     $("div[id^=" + this._args.idPrefijoSeccionNotificaciones + "]").hide();
     utilTablas.recargarDatosTabla($("#" + this._args.idTablaLista));
     $("#" + this._args.idSeccionLista).show();
   };
-  Constructor.prototype.reCargar = function ()/* - */ {
+  Constructor.prototype.reCargar = function () {
     reCargar.call(this);
   };
 

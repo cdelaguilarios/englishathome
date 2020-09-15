@@ -9,7 +9,7 @@ var PanelTareas = PanelTareas || (function () {
     }, 100));
   };
 
-  var cargar = function ()/* - */ {
+  var cargar = function () {
     var self = this;
 
     $("#" + self._args.idBtnNuevaTarea).click(function () {
@@ -23,7 +23,7 @@ var PanelTareas = PanelTareas || (function () {
     });
     actualizarNumeroTareasNoRevisadas.call(self);
   };
-  var cargarDatos = function ()/* - */ {
+  var cargarDatos = function () {
     var self = this;
 
     $("#" + self._args.idPanel).html("");
@@ -155,11 +155,11 @@ var PanelTareas = PanelTareas || (function () {
     Object.assign(this._args, args);
     esperarCargaJquery.call(this);
   };
-  Constructor.prototype.mostrar = function ()/* - */ {
+  Constructor.prototype.mostrar = function () {
     $("div[id^=" + this._args.idPrefijoSeccionTareas + "]").hide();
     $("#" + this._args.idSeccionPanel).show();
   };
-  Constructor.prototype.reCargar = function ()/* - */ {
+  Constructor.prototype.reCargar = function () {
     cargarDatos.call(this);
     actualizarNumeroTareasNoRevisadas.call(this);
   };

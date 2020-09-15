@@ -8,13 +8,13 @@ use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\RolesUsuario;
 
-class FormularioRequest extends Request/* - */ {
+class FormularioRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["mensaje"] = ReglasValidacion::formatoDato($datos, "mensaje", "");
     $datos["nombresArchivosAdjuntos"] = ReglasValidacion::formatoDato($datos, "nombresArchivosAdjuntosTarea");
@@ -27,7 +27,7 @@ class FormularioRequest extends Request/* - */ {
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     $datos = $this->all();
     $reglasValidacion = [
         "mensaje" => "required|max:8000",
@@ -67,7 +67,7 @@ class FormularioRequest extends Request/* - */ {
     }
   }
 
-  public function messages()/* - */ {
+  public function messages() {
     return [
         "usuarioNoValido.required" => "El usuario seleccionado no es válido.",
         "mensaje.required" => "Debe ingresar la descripción de la tarea.",

@@ -28,14 +28,14 @@ class Notificacion extends Model {
 
   const numeroNotificacionesXCarga = 10;
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloNotificacion = new Notificacion();
     $nombreTabla = $modeloNotificacion->getTable();
     unset($modeloNotificacion);
     return $nombreTabla;
   }
 
-  public static function listarBase()/* - */ {
+  public static function listarBase() {
     $nombreClase = Clase::nombreTabla();
     $nombreTablaPago = Pago::nombreTabla();
     $nombreTablaEntidad = Entidad::nombreTabla();
@@ -95,7 +95,7 @@ class Notificacion extends Model {
     );
   }
 
-  public static function listar($datos)/* - */ {
+  public static function listar($datos) {
     $nombreTablaTareaNotificacion = TareaNotificacion::nombreTabla();
 
     $notificaciones = Notificacion::listarBase()->where("entidadNotificacion.idEntidad", Auth::user()->idEntidad);
@@ -104,7 +104,7 @@ class Notificacion extends Model {
     return $notificaciones;
   }
 
-  public static function listarNuevas()/* - */ {
+  public static function listarNuevas() {
     $fechaActual = Carbon::now();
     $fechaBusIni = Carbon::createFromFormat("d/m/Y H:i:s", $fechaActual->format('d/m/Y') . " 00:00:00");
     $fechaBusFin = Carbon::createFromFormat("d/m/Y H:i:s", $fechaActual->format('d/m/Y') . " 23:59:59");
@@ -115,7 +115,7 @@ class Notificacion extends Model {
                     ->whereNull("entidadNotificacionUsuarioActual.fechaRevision")->get();
   }
 
-  public static function listarHistorial($idEntidad, $numeroCarga)/* - */ {
+  public static function listarHistorial($idEntidad, $numeroCarga) {
     $nombreTablaNotificacion = Notificacion::nombreTabla();
     $preNotificaciones = Notificacion::listarBase()->where($nombreTablaNotificacion . ".mostrarEnPerfil", 1);
     $preNotificaciones->where("entidadNotificacion.esObservador", 0);
@@ -140,7 +140,7 @@ class Notificacion extends Model {
     ];
   }
 
-  public static function obtenerXId($id, $simple = FALSE)/* - */ {
+  public static function obtenerXId($id, $simple = FALSE) {
     $notificacion = Notificacion::listarBase()->where("tareaNotificacion.id", $id)->firstOrFail();
     if (!$simple) {
       Notificacion::formatearDatos($notificacion);
@@ -148,11 +148,11 @@ class Notificacion extends Model {
     return $notificacion;
   }
 
-  public static function obtenerXIdPago($idPago)/* - */ {
+  public static function obtenerXIdPago($idPago) {
     return Notificacion::listarBase()->where("idPago", $idPago)->first();
   }
 
-  private static function formatearDatosHistorial($notificaciones)/* - */ {
+  private static function formatearDatosHistorial($notificaciones) {
     $notificacionesFormateadas = [];
     foreach ($notificaciones as $notificacion) {
       $fechaNotificacion = date("Y-m-d 00:00:00", strtotime($notificacion->fechaNotificacion));
@@ -176,7 +176,7 @@ class Notificacion extends Model {
     return $notificacionesFormateadas;
   }
 
-  public static function formatearDatos(&$notificacion, $incluirEnlaces = TRUE)/* - */ {
+  public static function formatearDatos(&$notificacion, $incluirEnlaces = TRUE) {
     $notificacion->tituloOriginal = $notificacion->titulo;
     $notificacion->mensajeOriginal = $notificacion->mensaje;
 
@@ -219,12 +219,12 @@ class Notificacion extends Model {
         $datos["fechaProgramada"] = Carbon::now()->toDateTimeString();
       }
       $datos["fechaNotificacion"] = $datos["fechaProgramada"];
-      //TODO: Revisar esta variable
       $datos["enviarCorreoEntidades"] = (isset($datos["enviarCorreoEntidad"]) ? $datos["enviarCorreoEntidad"] : 0);
 
       if (!(isset($datos["idNotificacion"]) && $datos["idNotificacion"] != "")) {
         //Registro
-        $datos["adjuntos"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 5, "Adjuntos");
+        if(!isset($datos["adjuntos"]))
+          $datos["adjuntos"] = Archivo::procesarArchivosSubidos("", $datos, 5, "Adjuntos");
 
         $idTareaNotificacion = TareaNotificacion::registrar($datos, $creadoPorElSistema);
         $notificacion = new Notificacion($datos);
@@ -238,7 +238,8 @@ class Notificacion extends Model {
         //Actualización
         $idTareaNotificacion = $datos["idNotificacion"];
         $notificacion = Notificacion::obtenerXId($idTareaNotificacion, TRUE);
-        $datos["adjuntos"] = Archivo::procesarArchivosSubidosNUEVO($notificacion->adjuntos, $datos, 5, "Adjuntos");
+        if(!isset($datos["adjuntos"]))
+          $datos["adjuntos"] = Archivo::procesarArchivosSubidos($notificacion->adjuntos, $datos, 5, "Adjuntos");
 
         //Pasado la fecha de notificación no se pueden cambiar los datos de programación
         $fechaActual = Carbon::now();
@@ -258,7 +259,7 @@ class Notificacion extends Model {
     }
   }
 
-  private static function registrarActualizarEntidades($idNotificacion, $idEntidades, $notificarInmediatamente, $creadoPorElSistema, $incluirObservadores)/* - */ {
+  private static function registrarActualizarEntidades($idNotificacion, $idEntidades, $notificarInmediatamente, $creadoPorElSistema, $incluirObservadores) {
     EntidadNotificacion::where("idNotificacion", $idNotificacion)->delete();
     foreach ($idEntidades as $idEntidad) {
       if (isset($idEntidad)) {
@@ -292,12 +293,12 @@ class Notificacion extends Model {
     TareaNotificacion::eliminarGrupo([$id]);
   }
 
-  public static function eliminarXIdClase($idClase)/* - */ {
+  public static function eliminarXIdClase($idClase) {
     $idsNotificaciones = Notificacion::listarBase()->where("idClase", $idClase)->lists("id")->toArray();
     TareaNotificacion::eliminarGrupo($idsNotificaciones);
   }
 
-  public static function eliminarXIdPago($idPago)/* - */ {
+  public static function eliminarXIdPago($idPago) {
     $idsNotificaciones = Notificacion::listarBase()->where("idPago", $idPago)->lists("id")->toArray();
     TareaNotificacion::eliminarGrupo($idsNotificaciones);
   }

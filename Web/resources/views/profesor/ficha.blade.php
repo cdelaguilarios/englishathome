@@ -1,4 +1,3 @@
-{{----}}
 @extends("layouts.master")
 @section("titulo", "Ficha " . ($profesor->sexo == "F" ? "de la profesora" : "del profesor") . " " . $profesor->nombre . " " .  $profesor->apellido)
 
@@ -42,7 +41,7 @@
     float: right;
   }
   .login-logo, .register-logo{
-    font-size: 30px;
+    font-size: 25px;
   }
   .sec-ficha-nombre-entidad small{
     font-size: 70%;
@@ -97,7 +96,7 @@
           <strong><i class="fa fa-map-marker margin-r-5"></i> Dirección</strong>
           <p class="text-muted">{{ $profesor->direccion }}{!! ((isset($profesor->numeroDepartamento) && $profesor->numeroDepartamento != "") ? "<br/>Depto./Int " . $profesor->numeroDepartamento : "") !!}{!! ((isset($profesor->referenciaDireccion) && $profesor->referenciaDireccion != "") ? " - " . $profesor->referenciaDireccion : "") !!}<br/>{{ $profesor->direccionUbicacion }}</p>
           <div class="sec-mapa">
-            <img id="img-mapa" src="http://maps.google.com/maps/api/staticmap?sensor=false&center={{ $profesor->geoLatitud }},{{ $profesor->geoLongitud }}&zoom=17&size=800x550&markers=color:0x3C8DBC|{{ $profesor->geoLatitud }},{{ $profesor->geoLongitud }}&key={{ Config::get("eah.apiKeyGoogleMaps") }}" />
+            <img id="img-mapa" src="http://maps.google.com/maps/api/staticmap?sensor=false&center={{ $profesor->geoLatitud }},{{ $profesor->geoLongitud }}&zoom=17&size=800x525&markers=color:0x3C8DBC|{{ $profesor->geoLatitud }},{{ $profesor->geoLongitud }}&key={{ Config::get("eah.apiKeyGoogleMaps") }}" />
           </div>
           <hr>  
         </div> 

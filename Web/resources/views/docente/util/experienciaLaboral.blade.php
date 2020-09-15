@@ -1,4 +1,3 @@
-{{----}}
 <script src="{{ asset("assets/eah/js/modulos/docente/experienciaLaboral.js")}}"></script>
 {{ Form::model($docente, ["method" => "PATCH", "action" => ["DocenteController@actualizarExperienciaLaboral", $docente->id], "id" => "formulario-experiencia-laboral-docente", "class" => "form-horizontal", "files" => true]) }}
 <div class="row">

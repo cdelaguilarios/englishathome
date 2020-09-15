@@ -1,4 +1,3 @@
-{{----}}
 {{--*/ $idSeccionHis = "historial" /*--}}  
 <script src="{{ asset("assets/eah/js/modulos/util/notificacion/principal.js")}}"></script>
 <script src="{{ asset("assets/eah/js/modulos/util/notificacion/listaHistorial.js")}}"></script>

@@ -71,7 +71,7 @@
               <th>N°</th>    
               <th class="all">Datos</th>
               <th>Avances</th>
-              <th>Comentarios de English At Home</th>
+              <th>Comentarios de {{ $nombreComercialEmpresa }}</th>
             </tr>
           </thead>
         </table>

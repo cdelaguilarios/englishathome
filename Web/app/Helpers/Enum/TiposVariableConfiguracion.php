@@ -2,7 +2,7 @@
 
 namespace App\Helpers\Enum;
 
-class TiposVariableConfiguracion/* - */ {
+class TiposVariableConfiguracion {
 
   const Password = "PASSWORD";
   const Correo = "CORREO";

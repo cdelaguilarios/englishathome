@@ -1,4 +1,3 @@
-{{----}}
 <div class="row">
   <div class="col-sm-12">
     <div id="wiz-registro-postulante" class="box box-info wizard" data-initialize="wizard">

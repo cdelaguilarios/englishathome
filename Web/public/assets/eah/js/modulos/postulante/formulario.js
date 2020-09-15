@@ -1,10 +1,10 @@
 var formularioPostulante = {};
-formularioPostulante = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+formularioPostulante = (function () {
+  $(document).ready(function () {
     cargarFormulario();
   });
 
-  function cargarFormulario()/* - */ {
+  function cargarFormulario() {
     formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
     urlActualizarHorario = (typeof (urlActualizarHorario) === "undefined" ? "" : urlActualizarHorario);
 
@@ -85,6 +85,8 @@ formularioPostulante = (function ()/* - */ {
           if (confirm(mensajeConfirmacion)) {
             $.blockUI({message: "<h4>" + ($("input[name='modoEditar']").val() === "1" ? "Guardando datos..." : (formularioExternoPostulante ? "Saving Your Data" : "Registrando datos...")) + "</h4>"});
             f.submit();
+          } else {
+            $("input[name='registrarComoProfesor']").val("0");
           }
         } else {
           mensajes.agregar("advertencias", (formularioExternoPostulante ? "Must enter your schedule available to work" : "Debe ingresar un horario disponible"), true, "#sec-men-alerta-horario");
@@ -132,14 +134,14 @@ formularioPostulante = (function ()/* - */ {
 
     $("#direccion").focusout(ubicacionMapa.verificarDatosBusquedaMapa);
     $("input[name='codigoUbigeo']").change(ubicacionMapa.verificarDatosBusquedaMapa);
-    
+
+    $("input[name='registrarComoProfesor']").val("0");
     $("#btn-registrar-profesor").click(function () {
       $("input[name='registrarComoProfesor']").val("1");
       $("#formulario-postulante").submit();
     });
     $("#btn-guardar").click(function () {
       $("input[name='registrarComoProfesor']").val("0");
-      $("#formulario-postulante").submit();
     });
   }
 }());

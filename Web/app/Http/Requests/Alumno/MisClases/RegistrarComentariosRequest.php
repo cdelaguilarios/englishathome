@@ -5,13 +5,13 @@ namespace App\Http\Requests\Alumno\MisClases;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 
-class RegistrarComentariosRequest extends Request/* - */ {
+class RegistrarComentariosRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["idClase"] = ReglasValidacion::formatoDato($datos, "idClase");
     $datos["comentario"] = ReglasValidacion::formatoDato($datos, "comentario");
@@ -19,7 +19,7 @@ class RegistrarComentariosRequest extends Request/* - */ {
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     $reglasValidacion = [
         "idClase" => "required",
         "comentario" => "required|max:8000"

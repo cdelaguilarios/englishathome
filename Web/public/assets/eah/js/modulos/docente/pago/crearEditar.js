@@ -1,7 +1,7 @@
 var crearEditarPagoDocente = {};
-crearEditarPagoDocente = (function ()/* - */ {
+crearEditarPagoDocente = (function () {
   window.addEventListener("load", esperarCargaJquery, false);
-  function esperarCargaJquery()/* - */ {
+  function esperarCargaJquery() {
     ((window.jQuery && jQuery.ui) ? cargar() : window.setTimeout(esperarCargaJquery, 100));
   }
 
@@ -15,12 +15,12 @@ crearEditarPagoDocente = (function ()/* - */ {
   }
 
   //Público
-  function registrar(datos)/* - */ {
+  function registrar(datos) {
     var formulario = obtenerReferenciaFormulario();
     formularioPagoDocente.establecerDatos(formulario, datos);
     $(formulario).submit();
   }
-  function editar(datos)/* - */ {
+  function editar(datos) {
     var formulario = obtenerReferenciaFormulario();
     formularioPagoDocente.establecerDatos(formulario, datos);
     $("#mod-pago").find(".modal-title").html("Pago al profesor(a) " + datos.profesor);

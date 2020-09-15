@@ -1,10 +1,10 @@
 var listaInteresados = {};
-listaInteresados = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+listaInteresados = (function () {
+  $(document).ready(function () {
     cargarLista();
   });
 
-  function cargarLista()/* - */ {
+  function cargarLista() {
     urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
     urlPerfilAlumnoInteresado = (typeof (urlPerfilAlumnoInteresado) === "undefined" ? "" : urlPerfilAlumnoInteresado);
     urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
@@ -18,7 +18,7 @@ listaInteresados = (function ()/* - */ {
     estadoAlumnoRegistrado = (typeof (estadoAlumnoRegistrado) === "undefined" ? "" : estadoAlumnoRegistrado);
 
     if (urlListar !== "" && urlPerfilAlumnoInteresado !== "" && urlEditar !== "" && urlCotizar !== "" && urlEliminar !== "" && estados !== "" && origenes !== "" && estadosDisponibleCambio !== "" && estadoFichaCompleta !== "" && estadoAlumnoRegistrado !== "") {
-      $("#tab-lista-interesados").DataTable({
+      utilTablas.iniciarTabla($("#tab-lista-interesados"), {
         processing: true,
         serverSide: true,
         ajax: {
@@ -29,7 +29,6 @@ listaInteresados = (function ()/* - */ {
             d.estado = $("#bus-estado").val();
           }
         },
-        dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" + "<'row'<'col-sm-12'i>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
         autoWidth: false,
         responsive: true,
         order: [[5, "desc"]],
@@ -37,10 +36,10 @@ listaInteresados = (function ()/* - */ {
         columns: [
           {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
               return m.row + m.settings._iDisplayStart + 1;
-            }, "className": "text-center not-mobile"},
+            }, "className": "text-center", responsivePriority: 0},
           {data: "nombre", name: "entidad.nombre", render: function (e, t, d, m) {
               return '<a href="' + (urlEditar.replace("/0", "/" + d.id)) + '">' + (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "") + '</a>';
-            }},
+            }, responsivePriority: 0},
           {data: "consulta", name: "consulta", width: "35%", render: function (e, t, d, m) {
               var datos = (d.consulta !== null ? d.consulta : '');
               var cursoSel = (d.curso !== null && d.curso !== "" ? d.curso : (d.cursoInteres !== null && d.cursoInteres !== "" ? d.cursoInteres : ""));
@@ -51,11 +50,11 @@ listaInteresados = (function ()/* - */ {
                 datos += (datos !== '' ? '<br/>' + (cursoSel !== "" ? '' : '<br/>') : '') + '<b>Origen:</b> ' + origenes[d.origen];
               }
               return datos;
-            }, "className": "not-mobile"},
+            }, "className": "min-tablet-p"},
           {data: "correoElectronico", name: "entidad.correoElectronico", render: function (e, t, d, m) {
               return (d.correoElectronico !== null ? '<b>Correo electrónico:</b> ' + d.correoElectronico : '') +
                       (d.telefono !== null ? (d.correoElectronico !== null ? '<br/>' : '') + '<b>Teléfono:</b> ' + util.incluirEnlaceWhatsApp(d.telefono) : '');
-            }, "className": "not-mobile"},
+            }, "className": "min-tablet-p"},
           {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
               var estado = '';
               if (estados[d.estado] !== undefined) {
@@ -71,10 +70,10 @@ listaInteresados = (function ()/* - */ {
                 }
               }
               return estado;
-            }, className: "text-center not-mobile"},
+            }, className: "text-center min-tablet-l"},
           {data: "fechaRegistro", name: "entidad.fechaRegistro", render: function (e, t, d, m) {
               return utilFechasHorarios.formatoFecha(d.fechaRegistro, true);
-            }, className: "text-center not-mobile"},
+            }, className: "text-center desktop"},
           {data: "id", name: "entidad.id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
               return '<ul class="buttons">' +
                       '<li>' +
@@ -89,13 +88,32 @@ listaInteresados = (function ()/* - */ {
                       '</a>' +
                       '</li>' +
                       '</ul>';
-            }, className: "text-center"}
+            }, className: "text-center min-mobile-l"},
+          //--------- Columnas ocultas solo para exportación excel ---------
+          {data: "nombre", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "apellido", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "telefono", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "correoElectronico", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "consulta", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (d.curso !== null && d.curso !== "" ? d.curso : (d.cursoInteres !== null && d.cursoInteres !== "" ? d.cursoInteres : ""));
+            }, "className": "never"},
+          {data: "origen", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "costoXHoraClase", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "comentarioAdicional", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (estados[d.estado] !== undefined ? estados[d.estado][0] : '');
+            }, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return utilFechasHorarios.formatoFecha(d.fechaRegistro, true);
+            }, "className": "never"}
+          //----------------------------------------------------------------
         ],
         initComplete: function (s, j) {
           utilTablas.establecerBotonRecargaTabla($("#tab-lista-interesados"));
           utilTablas.establecerCabecerasBusquedaTabla($("#tab-lista-interesados"));
         }
-      });
+      }, true, [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]/*Indices de las columnas que se exportarán al excel*/);
     }
   }
 }());

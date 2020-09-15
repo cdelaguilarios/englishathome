@@ -5,13 +5,13 @@ namespace App\Http\Requests\Correo;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 
-class BusquedaEntidadRequest extends Request/* - */ {
+class BusquedaEntidadRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["texto"] = ReglasValidacion::formatoDato($datos, "texto");
     $datos["pagina"] = ReglasValidacion::formatoDato($datos, "pagina", 1);
@@ -19,7 +19,7 @@ class BusquedaEntidadRequest extends Request/* - */ {
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     $reglasValidacion = [
         "texto" => "required|min:3|max:255",
         "pagina" => "required|numeric|min:1"

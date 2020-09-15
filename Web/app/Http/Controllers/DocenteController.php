@@ -13,20 +13,20 @@ use App\Http\Requests\Docente\BusquedaRequest;
 use App\Http\Requests\Docente\Pago as PagoRequest;
 use App\Http\Requests\Docente\FormularioExperienciaLaboralRequest;
 
-class DocenteController extends Controller/* - */ {
+class DocenteController extends Controller {
 
   protected $data = array();
 
-  public function __construct()/* - */ {
+  public function __construct() {
     $this->data["seccion"] = "docentes";
   }
 
-  public function disponibles()/* - */ {
+  public function disponibles() {
     $this->data["subSeccion"] = "disponibles";
     return view("docente.listaDisponibles", $this->data);
   }
 
-  public function listarDisponibles(BusquedaRequest $req)/* - */ {
+  public function listarDisponibles(BusquedaRequest $req) {
     return Datatables::of(Docente::listarDisponibles($req->all()))->filterColumn("nombreCompleto", function($q, $k) {
               $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
             })->filterColumn('estado', function($q, $k) {
@@ -36,12 +36,12 @@ class DocenteController extends Controller/* - */ {
             })->make(true);
   }
 
-  public function pagosXClases()/* - */ {
+  public function pagosXClases() {
     $this->data["subSeccion"] = "pagos";
     return view("docente.pago.principal", $this->data);
   }
 
-  public function listarPagosXClases(PagoRequest\ListarXClasesRequest $req)/* - */ {
+  public function listarPagosXClases(PagoRequest\ListarXClasesRequest $req) {
     return Datatables::of(PagoProfesor::listarXClases($req->all()))
                     ->filterColumn("numeroTotalClases", function($q, $k) {
                       $q->whereRaw("COUNT(T.id) like ?", ["%{$k}%"]);
@@ -61,7 +61,7 @@ class DocenteController extends Controller/* - */ {
                     })->make(true);
   }
 
-  public function listarPagosXClasesDetalle($id, PagoRequest\ListarXClasesRequest $req)/* - */ {
+  public function listarPagosXClasesDetalle($id, PagoRequest\ListarXClasesRequest $req) {
     return Datatables::of(PagoProfesor::listarXClasesDetalle($id, $req->all()))
                     ->filterColumn("fechaConfirmacion", function($q, $k) {
                       $q->whereRaw("DATE_FORMAT(T.fechaConfirmacion, '%d/%m/%Y') like ?", ["%{$k}%"]);
@@ -71,7 +71,7 @@ class DocenteController extends Controller/* - */ {
                     })->make(true);
   }
 
-  public function registrarActualizarPagoXClases(PagoRequest\FormularioRequest $req)/* - */ {
+  public function registrarActualizarPagoXClases(PagoRequest\FormularioRequest $req) {
     try {
       $datos = $req->all();
       PagoProfesor::registrarActualizarXClases($datos["idProfesor"], $req);
@@ -82,7 +82,7 @@ class DocenteController extends Controller/* - */ {
     return response()->json(["mensaje" => "Se guardaron los cambios exitosamente."], 200);
   }
 
-  public function eliminarPagoXClases($id, $idPago)/* - */ {
+  public function eliminarPagoXClases($id, $idPago) {
     try {
       PagoProfesor::eliminar($id, $idPago);
     } catch (\Exception $e) {
@@ -92,7 +92,7 @@ class DocenteController extends Controller/* - */ {
     return response()->json(["mensaje" => "Eliminación exitosa.", "id" => $idPago], 200);
   }
 
-  public function actualizarExperienciaLaboral($id, FormularioExperienciaLaboralRequest $req)/* - */ {
+  public function actualizarExperienciaLaboral($id, FormularioExperienciaLaboralRequest $req) {
     try {
       Docente::actualizarExperienciaLaboral($id, $req);
       Mensajes::agregarMensajeExitoso("Actualización exitosa.");

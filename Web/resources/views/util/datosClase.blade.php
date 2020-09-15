@@ -35,24 +35,18 @@
               <p id="dat-estado-clase" class="text-muted"></p>
             </div>
           </div>
-          <div id="sec-dat-notificar-clase" class="col-sm-3">            
-            <div class="box-body sec-datos">
-              <strong><i class="fa  fa-check-square margin-r-5"></i> Notificar</strong>
-              <p id="dat-notificar-clase" class="text-muted"></p>  
-            </div>
-          </div>
         </div>
         <div class="row">
-          <div class="col-sm-6">
-            <div class="box-body sec-datos">
-              <strong><i class="fa  fa-check-square margin-r-5"></i> Costo por hora</strong>
-              <p id="dat-costo-hora-clase" class="text-muted"></p> 
-            </div>
-          </div>
           <div class="col-sm-6">            
             <div class="box-body sec-datos">
               <strong><i class="fa  fa-check-square margin-r-5"></i> Código de pago</strong>
               <p id="dat-codigo-pago-clase" class="text-muted"></p> 
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="box-body sec-datos">
+              <strong><i class="fa  fa-check-square margin-r-5"></i> Costo por hora</strong>
+              <p id="dat-costo-hora-clase" class="text-muted"></p> 
             </div>
           </div>
         </div>

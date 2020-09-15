@@ -28,7 +28,7 @@
               <th>N°</th>    
               <th class="all">Datos</th>
               <th>Avance</th>
-              <th>Comentarios de English At Home</th>
+              <th>Comentarios de {{ $nombreComercialEmpresa }}</th>
               <th>Confirmada</th>
             </tr>
           </thead>

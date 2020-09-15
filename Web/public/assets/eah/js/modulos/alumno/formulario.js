@@ -1,10 +1,10 @@
 var formularioAlumno = {};
-formularioAlumno = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+formularioAlumno = (function () {
+  $(document).ready(function () {
     cargarFormulario();
   });
 
-  function cargarFormulario()/* - */ {
+  function cargarFormulario() {
     minHorasClase = (typeof (minHorasClase) === "undefined" ? "" : minHorasClase);
     maxHorasClase = (typeof (maxHorasClase) === "undefined" ? "" : maxHorasClase);
     urlActualizarHorario = (typeof (urlActualizarHorario) === "undefined" ? "" : urlActualizarHorario);

@@ -1,10 +1,10 @@
 var listaCursos = {};
-listaCursos = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+listaCursos = (function () {
+  $(document).ready(function () {
     cargarLista();
   });
 
-  function cargarLista()/* - */ {
+  function cargarLista() {
     urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
     urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
     urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
@@ -27,16 +27,16 @@ listaCursos = (function ()/* - */ {
         columns: [
           {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
               return m.row + m.settings._iDisplayStart + 1;
-            }, "className": "text-center not-mobile"},
+            }, "className": "text-center", responsivePriority: 0},
           {data: "nombre", name: "nombre", render: function (e, t, d, m) {
               return '<a href="' + (urlEditar.replace("/0", "/" + d.id)) + '">' + d.nombre + '</a>';
-            }},
+            }, responsivePriority: 0},
           {data: "descripcion", name: "descripcion", render: function (e, t, d, m) {
               return ((d.descripcion.length > 200) ? (d.descripcion.substr(0, d.descripcion.lastIndexOf(' ', 197)) + '...') : d.descripcion);
-            }},
+            }, "className": "min-tablet-l"},
           {data: "activo", name: "activo", orderable: false, "searchable": false, render: function (e, t, d, m) {
               return '<input type="checkbox"' + (d.activo.toString() === "1" ? ' checked="checked"' : '') + ' disabled="disabled"/>';
-            }, className: "text-center"},
+            }, className: "text-center min-tablet-p"},
           {data: "id", name: "id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
               return '<ul class="buttons">' +
                       '<li><a href="' + (urlEditar.replace("/0", "/" + d.id)) + '" title="Editar datos"><i class="fa fa-pencil"></i></a>' +
@@ -47,7 +47,7 @@ listaCursos = (function ()/* - */ {
                       '</a>' +
                       '</li>' +
                       '</ul>';
-            }, className: "text-center"}
+            }, className: "text-center min-mobile-l"}
         ],
         initComplete: function (s, j) {
           utilTablas.establecerBotonRecargaTabla($("#tab-lista-cursos"));

@@ -8,6 +8,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Debug\Exception\FlattenException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -48,6 +49,22 @@ class Handler extends ExceptionHandler
     {
         if ($e instanceof TokenMismatchException){
             return redirect(route("/"));
+        }
+        
+        // Model not found
+        if ($e instanceof ModelNotFoundException) {
+            return response()->view('errors.404', [], 404);
+        }
+
+        // Http exceptions
+        if ($this->isHttpException($e))
+        {
+            $exception = FlattenException::create($e);
+            $statusCode = $exception->getStatusCode($exception);
+
+            if (in_array($statusCode, array(404, 500, 503))){
+                return response()->view('errors.' . $statusCode, [], $statusCode);
+            }
         }
 
         return parent::render($request, $e);

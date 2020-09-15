@@ -10,13 +10,13 @@ use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\EstadosInteresado;
 use App\Helpers\Enum\OrigenesInteresado;
 
-class FormularioRequest extends Request/* - */ {
+class FormularioRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["telefono"] = ReglasValidacion::formatoDato($datos, "telefono");
     $datos["consulta"] = ReglasValidacion::formatoDato($datos, "consulta");
@@ -35,13 +35,14 @@ class FormularioRequest extends Request/* - */ {
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     $datos = $this->all();
     $reglasValidacion = [
         "nombre" => [(Auth::guest() ? "" : "required"), "max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
         "apellido" => [(Auth::guest() ? "" : "required"), "max:255", "regex:" . ReglasValidacion::RegexAlfabetico],
         "telefono" => (Auth::guest() ? "" : "required|") . "max:30",
-        "correoElectronico" => (Auth::guest() ? "" : "required|email|") . "max:245" . ($datos["registrarComoAlumno"] == 1 ? "|unique:" . Usuario::nombreTabla() . ",email" : ""),
+        "correoElectronico" => (Auth::guest() ? "" : "required|email|") . "max:245" .
+        ($datos["registrarComoAlumno"] == 1 ? "|unique:" . Usuario::nombreTabla() . ",email" : ""),
         "consulta" => "max:255",
         "cursoInteres" => "max:255",
         "costoXHoraClase" => (Auth::guest() ? "" : ["required", "regex:" . ReglasValidacion::RegexDecimal]),
@@ -81,7 +82,7 @@ class FormularioRequest extends Request/* - */ {
     }
   }
 
-  public function messages()/* - */ {
+  public function messages() {
     return [
         "correoElectronico.unique" => "El correo electrónico ingresado ya está siendo utilizado por un alumno. Tomar en cuenta que el alumno utiliza su correo electrónico para acceder al sistema y este dato no puede ser igual al que utiliza un profesor o un usuario del sistema.",
         "cursoNoValido.required" => "El curso seleccionado no es válido.",

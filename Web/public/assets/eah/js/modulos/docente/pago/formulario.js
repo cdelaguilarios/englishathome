@@ -1,5 +1,5 @@
 var formularioPagoDocente = {};
-formularioPagoDocente = (function ()/* - */ {
+formularioPagoDocente = (function () {
   //Privado  
   function limpiarCampos(formulario) {
     $(formulario).find(":input, select").each(function (i, e) {

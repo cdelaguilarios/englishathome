@@ -32,18 +32,21 @@ class Profesor extends Model {
       "comentarioPerfil"
   ];
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloProfesor = new Profesor();
     $nombreTabla = $modeloProfesor->getTable();
     unset($modeloProfesor);
     return $nombreTabla;
   }
 
-  public static function listar($datos = NULL)/* - */ {
+  public static function listar($datos = NULL) {
     $nombreTabla = Profesor::nombreTabla();
     $profesores = Profesor::leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
             ->leftJoin(EntidadCurso::nombreTabla() . " as entidadCurso", $nombreTabla . ".idEntidad", "=", "entidadCurso.idEntidad")
             ->leftJoin(EntidadCuentaBancaria::nombreTabla() . " as cuentaBancaria", $nombreTabla . ".idEntidad", "=", "cuentaBancaria.idEntidad")
+            ->leftJoin("distrito AS distritoProfesor", function ($q) {
+              $q->on("distritoProfesor.codigo", "=", "entidad.codigoUbigeo");
+            })
             ->where("entidad.eliminado", 0)
             ->groupBy("entidad.id")
             ->distinct();
@@ -55,6 +58,7 @@ class Profesor extends Model {
     return $profesores->select(DB::raw(
                             $nombreTabla . ".*, 
                         entidad.*, 
+                        distritoProfesor.distrito AS distrito,   
                         GROUP_CONCAT(
                           DISTINCT CONCAT(cuentaBancaria.banco, '|', cuentaBancaria.numeroCuenta) 
                           SEPARATOR ';'
@@ -62,7 +66,7 @@ class Profesor extends Model {
                         CONCAT(entidad.nombre, ' ', entidad.apellido) AS nombreCompleto"));
   }
 
-  public static function listarBusqueda($terminoBus = NULL)/* - */ {
+  public static function listarBusqueda($terminoBus = NULL) {
     $profesores = Profesor::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
     if (isset($terminoBus)) {
       $profesores->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
@@ -70,7 +74,7 @@ class Profesor extends Model {
     return $profesores->lists("nombreCompleto", "entidad.id");
   }
 
-  public static function obtenerXId($id, $simple = FALSE)/* - */ {
+  public static function obtenerXId($id, $simple = FALSE) {
     $profesor = Profesor::listar()->where("entidad.id", $id)->firstOrFail();
 
     if (!$simple) {
@@ -86,7 +90,7 @@ class Profesor extends Model {
     return $profesor;
   }
 
-  public static function registrar($req)/* - */ {
+  public static function registrar($req) {
     $datos = $req->all();
     if (isset($datos["fechaNacimiento"])) {
       $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
@@ -98,23 +102,24 @@ class Profesor extends Model {
     Horario::registrarActualizar($idEntidad, $datos["horario"]);
     EntidadCuentaBancaria::registrarActualizar($idEntidad, $datos["cuentasBancarias"]);
 
-    $datos["cv"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 1, "DocumentoPersonalCv");
-    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 1, "DocumentoPersonalCertificadoInternacional");
-    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 1, "DocumentoPersonalImagenDocumentoIdentidad");
+    $datos["cv"] = Archivo::procesarArchivosSubidos("", $datos, 1, "DocumentoPersonalCv");
+    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidos("", $datos, 1, "DocumentoPersonalCertificadoInternacional");
+    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidos("", $datos, 1, "DocumentoPersonalImagenDocumentoIdentidad");
 
     $profesor = new Profesor($datos);
     $profesor->idEntidad = $idEntidad;
     $profesor->save();
 
     Docente::registrarActualizarAudio($idEntidad, $req->file("audio"));
-    Notificacion::registrar([
+    Notificacion::registrarActualizar([
         "idEntidades" => [$idEntidad, Auth::user()->idEntidad],
-        "titulo" => MensajesNotificacion::TituloProfesorRegistroXUsuario
+        "titulo" => MensajesNotificacion::TituloProfesorRegistroXUsuario,
+        "mostrarEnPerfil" => 1
     ]);
     return $idEntidad;
   }
 
-  public static function actualizar($id, $req)/* - */ {
+  public static function actualizar($id, $req) {
     $datos = $req->all();
     if (isset($datos["fechaNacimiento"])) {
       $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
@@ -129,9 +134,9 @@ class Profesor extends Model {
     EntidadCuentaBancaria::registrarActualizar($id, $datos["cuentasBancarias"]);
 
     $profesor = Profesor::obtenerXId($id, TRUE);
-    $datos["cv"] = Archivo::procesarArchivosSubidosNUEVO($profesor->cv, $datos, 1, "DocumentoPersonalCv");
-    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidosNUEVO($profesor->certificadoInternacional, $datos, 1, "DocumentoPersonalCertificadoInternacional");
-    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidosNUEVO($profesor->imagenDocumentoIdentidad, $datos, 1, "DocumentoPersonalImagenDocumentoIdentidad");
+    $datos["cv"] = Archivo::procesarArchivosSubidos($profesor->cv, $datos, 1, "DocumentoPersonalCv");
+    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidos($profesor->certificadoInternacional, $datos, 1, "DocumentoPersonalCertificadoInternacional");
+    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidos($profesor->imagenDocumentoIdentidad, $datos, 1, "DocumentoPersonalImagenDocumentoIdentidad");
     $profesor->update($datos);
 
     if (Usuario::verificarExistencia($id)) {
@@ -141,28 +146,28 @@ class Profesor extends Model {
     }
   }
 
-  public static function actualizarEstado($id, $estado)/* - */ {
+  public static function actualizarEstado($id, $estado) {
     Profesor::obtenerXId($id, TRUE);
     Entidad::actualizarEstado($id, $estado);
   }
 
-  public static function actualizarHorario($id, $horario)/* - */ {
+  public static function actualizarHorario($id, $horario) {
     Profesor::obtenerXId($id, TRUE);
     Horario::registrarActualizar($id, $horario);
   }
 
-  public static function actualizarComentariosPerfil($id, $datos)/* - */ {
+  public static function actualizarComentariosPerfil($id, $datos) {
     $profesor = Profesor::ObtenerXId($id, TRUE);
     $profesor->comentarioPerfil = $datos["comentarioPerfil"];
     $profesor->save();
   }
 
-  public static function eliminar($id)/* - */ {
+  public static function eliminar($id) {
     Profesor::obtenerXId($id, TRUE);
     Entidad::eliminar($id);
   }
 
-  public static function verificarExistencia($id)/* - */ {
+  public static function verificarExistencia($id) {
     try {
       Profesor::obtenerXId($id, TRUE);
     } catch (\Exception $e) {
@@ -172,7 +177,7 @@ class Profesor extends Model {
     return TRUE;
   }
 
-  public static function listarAlumnos($id, $soloVigentes = FALSE, $soloAntiguos = FALSE)/* - */ {
+  public static function listarAlumnos($id, $soloVigentes = FALSE, $soloAntiguos = FALSE) {
     $idsAlumnosVigentes = Alumno::listarXIdProfesorActual($id)
                     ->where("entidad.estado", EstadosAlumno::Activo)
                     ->lists("entidad.id")->toArray();
@@ -194,7 +199,7 @@ class Profesor extends Model {
     return (count($idsAlumnos) > 0 ? Alumno::listarBase()->whereIn("entidad.id", array_unique($idsAlumnos))->get() : null);
   }
 
-  public static function obtenerAlumno($id, $idAlumno, $incluirDatosPagosXBolsaHoras = FALSE)/* - */ {
+  public static function obtenerAlumno($id, $idAlumno, $incluirDatosPagosXBolsaHoras = FALSE) {
     $alumnosProfesor = Profesor::listarAlumnos($id)->toArray();
     $alumnosProfesorFil = array_filter($alumnosProfesor, function($alumnoProfesor) use ($idAlumno) {
       return $alumnoProfesor["id"] == $idAlumno;
@@ -231,7 +236,7 @@ class Profesor extends Model {
     return $alumno;
   }
 
-  public static function listarClasesAlumno($id, $idAlumno)/* - */ {
+  public static function listarClasesAlumno($id, $idAlumno) {
     $alumnosProfesor = Profesor::listarAlumnos($id)->toArray();
     $alumnosProfesorFil = array_filter($alumnosProfesor, function($alumnoProfesor) use ($idAlumno) {
       return $alumnoProfesor["id"] == $idAlumno;
@@ -241,8 +246,7 @@ class Profesor extends Model {
     }
 
     $nombreTablaClase = Clase::nombreTabla();
-    $nombreTablaPagoClase = PagoClase::nombreTabla();
-    $nombreTablaAlumnoBolsaHoras = AlumnoBolsaHoras::nombreTabla();
+    
     return Clase::listarBase()->select(DB::raw(
                                     $nombreTablaClase . ".id, " .
                                     $nombreTablaClase . ".duracion, " .
@@ -254,14 +258,10 @@ class Profesor extends Model {
                                     $nombreTablaClase . ".comentarioParaProfesor"))
                     ->where($nombreTablaClase . ".idProfesor", $id)
                     ->where($nombreTablaClase . ".idAlumno", $idAlumno)
-                    ->whereIn($nombreTablaClase . ".estado", [EstadosClase::ConfirmadaProfesor, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada])
-                    ->whereRaw($nombreTablaClase . ".id IN (SELECT idClase 
-                                                              FROM " . $nombreTablaPagoClase . " 
-                                                              WHERE idPago IN (SELECT idPago FROM " . $nombreTablaAlumnoBolsaHoras . "
-                                                                                  WHERE idAlumno = " . $idAlumno . "))");
+                    ->whereIn($nombreTablaClase . ".estado", [EstadosClase::ConfirmadaProfesor, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
   }
 
-  public static function registrarAvanceClase($id, $idAlumno, $datos)/* - */ {
+  public static function registrarAvanceClase($id, $idAlumno, $datos) {
     $nombreTablaClase = Clase::nombreTabla();
     $idClases = Profesor::listarClasesAlumno($id, $idAlumno)->lists($nombreTablaClase . ".id")->toArray();
     if (in_array($datos["idClase"], $idClases)) {
@@ -271,13 +271,13 @@ class Profesor extends Model {
     }
   }
 
-  public static function confirmarClase($id, $idAlumno, $datos)/* - */ {
+  public static function confirmarClase($id, $idAlumno, $datos) {
     $duracion = (int) $datos["duracion"];
     $alumno = Profesor::obtenerAlumno($id, $idAlumno, TRUE);
 
     //1 - Verificación de tiempo disponible de la bolsa de horas del alumno
     if ($alumno->duracionTotalXClasesPendientes < $duracion) {
-      throw new Exception("La duración de la clase confirmada es superior a las horas que le quedan al alumno");
+      throw new \Exception("La duración de la clase confirmada es superior a las horas que le quedan al alumno");
     }
 
     //2 - Registro de datos de la clase
@@ -344,46 +344,6 @@ class Profesor extends Model {
     if ($alumno->duracionTotalXClasesPendientes == $duracion) {
       AlumnoBolsaHoras::where("idAlumno", $idAlumno)->delete();
     }
-
-    //TODO: revisar
-    /* Notificacion::registrar([
-      "idEntidades" => [$id, $idAlumno],
-      "titulo" => "[" . TiposEntidad::Profesor . "] confirmó una clase del alumno(a) [" . TiposEntidad::Alumno . "]"
-      ]); */
   }
 
-  // <editor-fold desc="TODO: ELIMINAR">
-  //REPORTE
-  public static function listarCampos() {
-    return [
-        "ultimosTrabajos" => ["titulo" => "Últimos trabajos"],
-        "experienciaOtrosIdiomas" => ["titulo" => "Experencia en otros idiomas"],
-        "descripcionPropia" => ["titulo" => "Descripción propia"],
-        "ensayo" => ["titulo" => "Ensayo"],
-        "cv" => ["titulo" => "CV"],
-        "certificadoInternacional" => ["titulo" => "Certificado internacional"],
-        "imagenDocumentoIdentidad" => ["titulo" => "Imagen documento de identidad"],
-        "audio" => ["titulo" => "Audio"]
-    ];
-  }
-
-  public static function obtenerProximaClase($id, $idAlumno) {
-    return Profesor::listarClasesBase($id, $idAlumno, TRUE)
-                    ->orderBy(Clase::nombreTabla() . ".fechaInicio", "ASC")
-                    ->first();
-  }
-
-  public static function listarClasesBase($id, $idAlumno = NULL, $soloVigentes = FALSE, $soloConfirmadasORealizadas = FALSE) {
-    $nombreTabla = Clase::nombreTabla();
-    $clases = Clase::listarBase()->where($nombreTabla . ".idProfesor", $id);
-    if (!is_null($idAlumno))
-      $clases->where($nombreTabla . ".idAlumno", $idAlumno);
-    if ($soloVigentes)
-      $clases->whereIn($nombreTabla . ".estado", [EstadosClase::Programada, EstadosClase::PendienteConfirmar]);
-    else if ($soloConfirmadasORealizadas)
-      $clases->whereIn($nombreTabla . ".estado", [EstadosClase::ConfirmadaProfesor, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
-    return $clases;
-  }
-
-  // </editor-fold>
 }

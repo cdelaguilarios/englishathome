@@ -37,7 +37,7 @@
     text-align: center;
   }
   .login-logo, .register-logo{
-    font-size: 30px;
+    font-size: 25px;
   }
   .sec-ficha-nombre-entidad small{
     font-size: 70%;

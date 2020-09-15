@@ -1,4 +1,3 @@
-{{----}}
 @extends((in_array($usuarioActual->tipo, [App\Helpers\Enum\TiposEntidad::Alumno, App\Helpers\Enum\TiposEntidad::Profesor]) ? "externo.layouts.master" : "layouts.master"))
 @section("titulo", "Usuarios")
 

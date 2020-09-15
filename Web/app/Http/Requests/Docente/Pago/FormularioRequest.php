@@ -9,13 +9,13 @@ use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\TiposBusquedaFecha;
 
-class FormularioRequest extends Request/* - */ {
+class FormularioRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["idPago"] = ReglasValidacion::formatoDato($datos, "idPago");
     $datos["idProfesor"] = ReglasValidacion::formatoDato($datos, "idProfesor");
@@ -29,7 +29,7 @@ class FormularioRequest extends Request/* - */ {
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     $datos = $this->all();
     $reglasValidacion = [
         "fecha" => "required|date_format:d/m/Y",
@@ -61,7 +61,7 @@ class FormularioRequest extends Request/* - */ {
     }
   }
 
-  public function messages()/* - */ {
+  public function messages() {
     return [
         "profesorNoValido.required" => "El profesor seleccionado no es válido.",
         "pagoNoValido.required" => "El pago seleccionado no es válido."

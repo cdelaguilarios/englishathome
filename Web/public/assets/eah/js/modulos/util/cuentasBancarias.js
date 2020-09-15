@@ -1,7 +1,7 @@
 var cuentasBancarias = {};
 cuentasBancarias = (function () {
   window.addEventListener("load", esperarCargaJquery, false);
-  function esperarCargaJquery()/* - */ {
+  function esperarCargaJquery() {
     ((window.jQuery && jQuery.ui) ? cargar() : window.setTimeout(esperarCargaJquery, 100));
   }
 

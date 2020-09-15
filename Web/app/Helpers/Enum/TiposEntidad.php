@@ -2,7 +2,7 @@
 
 namespace App\Helpers\Enum;
 
-class TiposEntidad/* - */ {
+class TiposEntidad {
 
   const Alumno = "ALUMNO";
   const Interesado = "INTERESADO";
@@ -13,7 +13,7 @@ class TiposEntidad/* - */ {
   const Clase = "CLASE";
   const Pago = "PAGO";
 
-  public static function listar()/* - */ {
+  public static function listar() {
     return [
         TiposEntidad::Interesado => ["Interesados", "Interesado(a)", "Interesado", "Interesada", "interesados.editar", route("interesados.buscar"), '<i class="fa flaticon-questioning"></i>'],
         TiposEntidad::Alumno => ["Alumnos", "Alumno(a)", "Alumno", "Alumna", "alumnos.perfil", route("alumnos.buscar"), '<i class="fa fa-mortar-board"></i>'],
@@ -26,7 +26,7 @@ class TiposEntidad/* - */ {
     ];
   }
 
-  public static function listarTiposBase()/* - */ {
+  public static function listarTiposBase() {
     $tipos = TiposEntidad::listar();
     $tiposBase = [TiposEntidad::Alumno, TiposEntidad::Interesado, TiposEntidad::Profesor, TiposEntidad::Postulante, TiposEntidad::Usuario];
     $tiposSel = [];
@@ -36,7 +36,7 @@ class TiposEntidad/* - */ {
     return $tiposSel;
   }
 
-  public static function listarTiposDocente()/* - */ {
+  public static function listarTiposDocente() {
     $tipos = TiposEntidad::listar();
     $tiposDocente = [TiposEntidad::Profesor, TiposEntidad::Postulante];
     $tiposSel = [];
@@ -46,7 +46,7 @@ class TiposEntidad/* - */ {
     return $tiposSel;
   }
 
-  public static function listarSeccionCorreos()/* - */ {
+  public static function listarSeccionCorreos() {
     return [
         TiposEntidad::Alumno => "Todos los alumnos",
         TiposEntidad::Interesado => "Todos los interesados",

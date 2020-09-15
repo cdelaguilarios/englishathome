@@ -1,8 +1,7 @@
-{{----}}
 <script type="text/javascript" src="{{ asset("assets/eah/js/modulos/util/horario.js")}}"></script>
 @if(isset($modo) && $modo == "visualizar")
 <div id="sec-perfil-horario">  
-  <div id="sec-info-horario"></div>
+  <div class="sec-info-horario"></div>
   @if(!(isset($vistaImpresion) && $vistaImpresion))
   <button id="btn-horario" type="button" class="btn btn-primary btn-xs">{{ (isset($textoBotonEdicion) ? $textoBotonEdicion : "Editar horario") }}</button>
   @endif
@@ -15,7 +14,7 @@
       <i class="fa fa-fw fa-calendar"></i> {{ (isset($textoBoton) ? $textoBoton : "Establecer horario disponible") }}
     </button>
   </div>    
-  <div id="sec-info-horario" class="col-sm-9"></div>
+  <div class="sec-info-horario" class="col-sm-9"></div>
 </div>
 {{ Form::hidden("horario") }} 
 @endif

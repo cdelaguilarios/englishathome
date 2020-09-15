@@ -9,13 +9,13 @@ use App\Helpers\Enum\TiposEntidad;
 use App\Helpers\Enum\SexosEntidad;
 use App\Helpers\Enum\EstadosDocente;
 
-class BusquedaRequest extends Request/* - */ {
+class BusquedaRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["tipoDocente"] = ReglasValidacion::formatoDato($datos, "tipoDocente");
     $datos["estadoDocente"] = ReglasValidacion::formatoDato($datos, "estadoDocente");
@@ -26,7 +26,7 @@ class BusquedaRequest extends Request/* - */ {
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     $datos = $this->all();
     $reglasValidacion = [];
 
@@ -64,7 +64,7 @@ class BusquedaRequest extends Request/* - */ {
     }
   }
 
-  public function messages()/* - */ {
+  public function messages() {
     return [
         "tipoDocenteNoValido.required" => "El tipo seleccionado para filtrar la lista de docentes no es válido.",
         "estadoDocenteNoValido.required" => "El estado seleccionado para filtrar la lista de docentes no es válido.",

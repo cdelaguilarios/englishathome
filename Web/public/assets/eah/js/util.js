@@ -8,7 +8,7 @@ util = (function () {
       });
     }, 100);
   });
-  function llamadaAjax(url, metodo, datos, async, funcionRetorno, funcionCompletado, funcionError)/* - */ {
+  function llamadaAjax(url, metodo, datos, async, funcionRetorno, funcionCompletado, funcionError) {
     jQuery.ajax({
       url: url,
       method: metodo,
@@ -36,7 +36,7 @@ util = (function () {
     var win = window.open(url, '_blank');
     win.focus();
   }
-  function obtenerParametroUrlXNombre(nombre, url)/* - */ {
+  function obtenerParametroUrlXNombre(nombre, url) {
     if (!url)
       url = window.location.href;
     nombre = nombre.replace(/[\[\]]/g, "\\$&");
@@ -50,12 +50,12 @@ util = (function () {
   }
 
 
-  function letraCapital(texto)/* - */ {
+  function letraCapital(texto) {
     if (!texto)
       return "";
     return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
   }
-  function redondear(numero, numDecimales)/* - */ {
+  function redondear(numero, numDecimales) {
     var numVal = parseFloat(numero + "");
     if (isNaN(numVal))
       return 0;
@@ -67,7 +67,7 @@ util = (function () {
       s = "0" + s;
     return s;
   }
-  function rgb2hex(rgb)/* - */ {
+  function rgb2hex(rgb) {
     if (/^#[0-9A-F]{6}$/i.test(rgb)) {
       return rgb;
     }
@@ -135,7 +135,7 @@ utilFechasHorarios = (function () {
     }
   });
 
-  function establecerCampoHoras(elemento, min, max, intervalo, tiempoSegundosDefecto)/* - */ {
+  function establecerCampoHoras(elemento, min, max, intervalo, tiempoSegundosDefecto) {
     $(elemento).html("");
     var valorDefecto = (parseFloat(min) * 3600);
     var cont = parseFloat(min);
@@ -150,10 +150,10 @@ utilFechasHorarios = (function () {
     $(elemento).val(valorDefecto);
   }
 
-  function obtenerMeses()/* - */ {
+  function obtenerMeses() {
     return {1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio", 7: "Julio", 8: "Agosto", 9: "Setiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"};
   }
-  function formatoFecha(fecha, contiempo, soloTiempo)/* - */ {
+  function formatoFecha(fecha, contiempo, soloTiempo) {
     if (!isNaN(Date.parse(fecha))) {
       var fechaSel = new Date(fecha);
       var horas = fechaSel.getHours();
@@ -163,14 +163,14 @@ utilFechasHorarios = (function () {
     }
     return "";
   }
-  function formatoHora(tiempoSegundos, incluirSegundos)/* - */ {
+  function formatoHora(tiempoSegundos, incluirSegundos) {
     tiempoSegundos = Number(tiempoSegundos);
     var h = Math.floor(tiempoSegundos / 3600);
     var m = Math.floor(tiempoSegundos % 3600 / 60);
     var s = Math.floor(tiempoSegundos % 3600 % 60);
     return ((h >= 0 ? ((h < 10 ? "0" : "") + h) + ":" + (m < 10 ? "0" : "") : "") + m + (incluirSegundos ? ":" + (s < 10 ? "0" : "") + s : ""));
   }
-  function establecerCalendario(elemento, incluirHora, soloFechasPasadas, soloFechasFuturas, funcionCierre, soloMeses, soloAnhos)/* - */ {
+  function establecerCalendario(elemento, incluirHora, soloFechasPasadas, soloFechasFuturas, funcionCierre, soloMeses, soloAnhos) {
     /*$("#" + idElemento).keydown(function () {
      return false;
      });*/
@@ -221,7 +221,7 @@ utilFechasHorarios = (function () {
       }
     }
   }
-  function establecerCampoDuracion(elemento, tiempoSegundosDefecto)/* - */ {
+  function establecerCampoDuracion(elemento, tiempoSegundosDefecto) {
     minHorasClase = (typeof (minHorasClase) === "undefined" ? "" : minHorasClase);
     maxHorasClase = (typeof (maxHorasClase) === "undefined" ? "" : maxHorasClase);
 
@@ -260,7 +260,7 @@ utilFechasHorarios = (function () {
 }());
 
 var utilTablas = {};
-utilTablas = (function ()/* - */ {
+utilTablas = (function () {
   $.extend(true, $.fn.dataTable.defaults, {
     "oLanguage": {
       "sUrl": urlBase + "/assets/plugins/datatables/languages/Spanish.json"
@@ -268,7 +268,7 @@ utilTablas = (function ()/* - */ {
     "pageLength": 50
   });
 
-  ﻿$(document).ready(function ()/* - */ {
+  ﻿$(document).ready(function () {
     $.fn.dataTable.ext.errMode = "none";
     jQuery.extend(jQuery.fn.dataTableExt.oSort, {
       "fecha-pre": function (f) {
@@ -309,7 +309,7 @@ utilTablas = (function ()/* - */ {
       $("#" + idTabla).DataTable().ajax.reload();
     });
   });
-  function establecerCambioEstados()/* - */ {
+  function establecerCambioEstados() {
     $(window).click(function (e) {
       if (!$(e.target).closest(".sec-btn-editar-estado").length)
         $(".sec-btn-editar-estado select").trigger("change");
@@ -375,37 +375,95 @@ utilTablas = (function ()/* - */ {
     });
   }
 
-  function establecerBotonRecargaTabla(tabla)/* - */ {
+  function iniciarTabla(tabla, datos, incluirBotonExcel, indicesColumnasExcel) {
+    if (incluirBotonExcel && indicesColumnasExcel && indicesColumnasExcel.length) {
+      var datosAdicionales = {
+        dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" + "<'row'<'col-sm-6'i><'col-sm-6 text-right'B>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        lengthMenu: [
+          [10, 25, 50, 100, -1],
+          ['10', '25', '50', '100', 'todos']
+        ],
+        pageLength: 50,
+        buttons: [
+          {
+            extend: 'excelHtml5',
+            text: 'Exportar a excel (solo registros visibles)',
+            className: 'btn btn-primary btn-clean btn-xs',
+            exportOptions: {
+              columns: indicesColumnasExcel,
+              modifier: {
+                search: 'applied'
+              }
+            },
+            autoFilter: true,
+            customize: function (xlsx) {
+              var xmlEstilos = xlsx.xl['styles.xml'];
+              var ultimoXfInd = $('cellXfs xf', xmlEstilos).length - 1;
+
+              var estiloFilas = '<xf borderId="1" />';
+              var estiloCabecera1 = '<xf numFmtId="0" fontId="2" fillId="2" borderId="1" applyFont="1" applyFill="1" applyBorder="1" xfId="0" applyAlignment="1">' +
+                      '<alignment horizontal="center"/></xf>';
+              var estiloCabecera2 = '<xf numFmtId="0" fontId="2" fillId="2" borderId="1" applyFont="1" applyFill="1" applyBorder="1" xfId="0" applyAlignment="1">' +
+                      '<alignment horizontal="center" wrapText="1"/></xf>';
+              xmlEstilos.childNodes[0].childNodes[5].innerHTML += estiloFilas + estiloCabecera1 + estiloCabecera2;
+
+              var hojaExcel = xlsx.xl.worksheets['sheet1.xml'];
+              $('row c', hojaExcel).attr('s', ultimoXfInd + 1);//Aplicando estilos comunes a todas las filas
+              $('row:eq(0) c', hojaExcel).attr('s', ultimoXfInd + 2);//Aplicando estilos a la primera cabecera
+              $('row:eq(1) c', hojaExcel).attr('s', ultimoXfInd + 3);//Aplicando estilos a la segunda cabecera
+            }
+          }
+        ]
+      };
+      datos = $.extend({}, datos, datosAdicionales);
+    }
+
+    return $(tabla).on('preXhr.dt', function (e, s, d) {
+      var idTabla = $(tabla).attr("id");
+      $("#" + idTabla + "_wrapper").find('.buttons-excel').prop('disabled', true);
+    }).on('xhr.dt', function (e, s, json, xhr) {
+      var idTabla = $(tabla).attr("id");
+      $("#" + idTabla + "_wrapper").find('.buttons-excel').prop('disabled', false);
+    }).DataTable(datos);
+  }
+  function establecerBotonRecargaTabla(tabla) {
     var idTabla = $(tabla).attr("id");
     $("#" + idTabla + "_length").append('<a href="javascript:void(0)" onclick="utilTablas.recargarDatosTabla($(\'#' + idTabla + '\'))" title="Recargar datos..." style="margin-left: 10px;"><i class="fa fa-refresh"></i></a>');
   }
-  function recargarDatosTabla(tabla)/* - */ {
+  function recargarDatosTabla(tabla) {
     var idTabla = $(tabla).attr("id");
     if ($.fn.DataTable.isDataTable("#" + idTabla)) {
       $(tabla).DataTable().ajax.reload();
     }
   }
-  function establecerCabecerasBusquedaTabla(tabla)/* - */ {
+  function establecerCabecerasBusquedaTabla(tabla) {
     var idTabla = $(tabla).attr("id");
     $("#" + idTabla + " thead tr").clone(true).appendTo("#" + idTabla + " thead").addClass("tabla-sec-busqueda");
     $("#" + idTabla + " thead tr:eq(1) th").each(function (numEle) {
       var permiteBus = $(tabla).DataTable().settings().init().columns[numEle].searchable;
-      if (permiteBus || permiteBus === undefined) {
-        $(this).html('<input type="text" placeholder="Buscar por ' + $(this).text().toLowerCase() + '" />');
-        $("input", this).on("click", function (e) {
-          e.preventDefault();
-          return false;
-        });
-        $("input", this).on("keyup change", function () {
-          if ($(tabla).DataTable().column(numEle).search() !== this.value)
-            $(tabla).DataTable().column(numEle).search(this.value).draw();
-        });
+      var clasesCss = $(tabla).DataTable().settings().init().columns[numEle].className;
+
+console.log($(this).text().toLowerCase() + " - " + clasesCss);
+      if (clasesCss && clasesCss.includes("never")) {
+        $(this).remove();
       } else {
-        $(this).html("");
+        if (permiteBus || permiteBus === undefined) {
+          $(this).html('<input type="text" placeholder="Buscar por ' + $(this).text().toLowerCase() + '" />');
+          $("input", this).on("click", function (e) {
+            e.preventDefault();
+            return false;
+          });
+          $("input", this).on("keyup change", function () {
+            if ($(tabla).DataTable().column(numEle).search() !== this.value)
+              $(tabla).DataTable().column(numEle).search(this.value).draw();
+          });
+        } else {
+          $(this).html("");
+        }
       }
     });
   }
-  function eliminarElemento(elemento, mensajePrevio, idTabla, noRecargarTabla, funcionCompletado, excluirMensajeConfirmacion)/* - */ {
+  function eliminarElemento(elemento, mensajePrevio, idTabla, noRecargarTabla, funcionCompletado, excluirMensajeConfirmacion) {
     mensajePrevio = (mensajePrevio !== undefined && mensajePrevio !== null && mensajePrevio.trim() !== "" ? mensajePrevio : "¿Está seguro que desea eliminar este elemento?");
     if (confirm(mensajePrevio)) {
       util.llamadaAjax($(elemento).data("urleliminar"), "DELETE", {}, true,
@@ -432,6 +490,7 @@ utilTablas = (function ()/* - */ {
   }
 
   return {
+    iniciarTabla: iniciarTabla,
     establecerBotonRecargaTabla: establecerBotonRecargaTabla,
     recargarDatosTabla: recargarDatosTabla,
     establecerCabecerasBusquedaTabla: establecerCabecerasBusquedaTabla,
@@ -532,7 +591,7 @@ utilFormularios = (function () {
   });
 
   //Wizard
-  function establecerWizard(tipoEntidad, modoEditar)/* - */ {
+  function establecerWizard(tipoEntidad, modoEditar) {
     $("#wiz-registro-" + tipoEntidad).wizard();
     $("#wiz-registro-" + tipoEntidad).on("actionclicked.fu.wizard", function (e, d) {
       var campos = $("#formulario-" + tipoEntidad).find("#sec-wiz-" + tipoEntidad + "-" + d.step).find(":input, select");
@@ -575,7 +634,7 @@ utilFormularios = (function () {
       }, 100);
     }
   }
-  function habilitarTodosPasosWizard(tipoEntidad)/* - */ {
+  function habilitarTodosPasosWizard(tipoEntidad) {
     var pasos = $("#wiz-registro-" + tipoEntidad).find('.steps-container').find('li');
     $.each(pasos, function (i, v) {
       if (!pasos.eq(i).hasClass('active')) {
@@ -584,7 +643,7 @@ utilFormularios = (function () {
     });
   }
 
-  function procesarDatos(f)/* - */ {
+  function procesarDatos(f) {
     var datos = {};
     var formularioDatos = $(f).serializeArray();
     $(formularioDatos).each(function (i, o) {
@@ -597,14 +656,14 @@ utilFormularios = (function () {
     return datos;
   }
 
-  function incluirSeccionSubidaArchivos(elemento, datosAdicionales, funcionSubirCompletado, funcionEliminarCompletado)/* - */ {
+  function incluirSeccionSubidaArchivos(elemento, datosAdicionales, funcionSubirCompletado, funcionEliminarCompletado) {
     var idElemento = $(elemento).attr("id");
     urlRegistrarArchivo = (typeof (urlRegistrarArchivo) === "undefined" ? "" : urlRegistrarArchivo);
     urlEliminarArchivo = (typeof (urlEliminarArchivo) === "undefined" ? "" : urlEliminarArchivo);
-    maxTamanhoArchivoSubida = (typeof (maxTamanhoArchivoSubida) === "undefined" ? "" : maxTamanhoArchivoSubida);
+    maxTamanioArchivoSubida = (typeof (maxTamanioArchivoSubida) === "undefined" ? "" : maxTamanioArchivoSubida);
     formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
 
-    if (urlRegistrarArchivo !== "" && urlEliminarArchivo !== "" && maxTamanhoArchivoSubida !== "") {
+    if (urlRegistrarArchivo !== "" && urlEliminarArchivo !== "" && maxTamanioArchivoSubida !== "") {
       var datIni = {
         url: urlRegistrarArchivo,
         fileName: "archivo",
@@ -613,7 +672,7 @@ utilFormularios = (function () {
         formData: {"_token": $('meta[name=_token]').attr("content"), "idElemento": idElemento},
         showPreview: true,
         showDelete: true,
-        maxFileSize: maxTamanhoArchivoSubida,
+        maxFileSize: maxTamanioArchivoSubida,
         onSuccess: function (f, d, xhr, pd)
         {
           var nombresArchivosSubidos = $("#nombres-archivos-" + d.idElemento).val();
@@ -661,7 +720,7 @@ utilFormularios = (function () {
     }
   }
 
-  function limpiarCampos()/* - */ {
+  function limpiarCampos() {
     $("form input, form select").each(function (i, e) {
       if (e.type !== "hidden") {
         if ($(e).is("select")) {
@@ -691,7 +750,7 @@ utilFormularios = (function () {
 
 var utilBusqueda = {};
 utilBusqueda = (function () {
-  function establecerListaBusqueda(elemento, urlBuscar)/* - */ {
+  function establecerListaBusqueda(elemento, urlBuscar) {
     $(elemento).select2({
       minimumInputLength: 2,
       tags: false,
@@ -741,19 +800,12 @@ utilAlumno = (function () {
 var utilClase = {};
 utilClase = (function () {
   function verDatos(idAlumno, idClase) {
-    //TODO: Falta verificar
     estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
     urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
     if (estadosClase !== "" && urlPerfilProfesor !== "") {
       obtenerDatosClase(idAlumno, idClase, function (d) {
         $("#dat-numero-periodo-clase").text(d.numeroPeriodo);
         $("#dat-estado-clase").html('<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">' + estadosClase[d.estado][0] + '</span>');
-
-        $("#sec-dat-notificar-clase").hide();
-        if (d.idHistorial !== null) {
-          $("#sec-dat-notificar-clase").show();
-          $("#dat-notificar-clase").html('<i class="fa fa-check-circle-o icon-notificar-clase"></i>');
-        }
         $("#dat-fecha-clase").html(utilFechasHorarios.formatoFecha(d.fechaInicio) + ' - De ' + utilFechasHorarios.formatoFecha(d.fechaInicio, false, true) + ' a ' + utilFechasHorarios.formatoFecha(d.fechaFin, false, true));
         $("#dat-alumno-clase").html('<i class="fa fa-mortar-board"></i> <b>' + d.nombreAlumno + ' ' + d.apellidoAlumno + '</b> <a href=' + (urlPerfilAlumno.replace('/0', '/' + d.idAlumno)) + ' title="Ver perfil del alumno" target="_blank"><i class="fa fa-eye"></i></a>');
         $("#dat-costo-hora-clase").html('S/. ' + util.redondear(d.costoPromedioXHoraClase, 2));
@@ -766,6 +818,28 @@ utilClase = (function () {
         }
         $("#mod-datos-clase").modal("show");
       });
+    }
+  }
+  
+  function obtenerDatosClase(idAlumno, idClase, funcionRetorno) {
+    urlDatosClase = (typeof (urlDatosClase) === "undefined" ? "" : urlDatosClase);
+    if (urlDatosClase !== "") {
+      $.blockUI({message: "<h4>Cargando...</h4>", baseZ: 2000});
+      util.llamadaAjax(urlDatosClase.replace(encodeURI("/[ID_ALUMNO]"), "/" + idAlumno).replace("/0", "/" + idClase), "POST", {}, true,
+          function (d) {
+            if (funcionRetorno !== undefined)
+              funcionRetorno(d);
+            $("body").unblock();
+          },
+          function (d) {},
+          function (de) {
+            $('body').unblock({
+              onUnblock: function () {
+                agregarMensaje("errores", "Ocurrió un problema durante la carga de datos de la clase seleccionada. Por favor inténtelo nuevamente.", true);
+              }
+            });
+          }
+      );
     }
   }
 

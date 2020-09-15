@@ -34,14 +34,14 @@ class Alumno extends Model {
       "costoXHoraClase"
   ];
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloAlumno = new Alumno();
     $nombreTabla = $modeloAlumno->getTable();
     unset($modeloAlumno);
     return $nombreTabla;
   }
 
-  public static function listarBase($estado = NULL)/* - */ {
+  public static function listarBase($estado = NULL) {
     $alumnos = Alumno::leftJoin(Entidad::nombreTabla() . " AS entidad", Alumno::nombreTabla() . ".idEntidad", "=", "entidad.id")
             ->where("entidad.eliminado", 0)
             ->groupBy("entidad.id")
@@ -59,7 +59,7 @@ class Alumno extends Model {
     return $alumnos;
   }
 
-  public static function listar($estado)/* - */ {
+  public static function listar($estado) {
     $nombreTablaAlumno = Alumno::nombreTabla();
     $nombreTablaClase = Clase::nombreTabla();
     $nombreTablaPago = Pago::nombreTabla();
@@ -187,7 +187,7 @@ class Alumno extends Model {
     );
   }
 
-  public static function listarBusqueda($terminoBus = NULL)/* - */ {
+  public static function listarBusqueda($terminoBus = NULL) {
     $alumnos = Alumno::listarBase()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
     if (isset($terminoBus)) {
       $alumnos->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
@@ -195,11 +195,11 @@ class Alumno extends Model {
     return $alumnos->lists("nombreCompleto", "entidad.id");
   }
 
-  public static function listarXIdProfesorActual($idProfesorActual)/* - */ {
+  public static function listarXIdProfesorActual($idProfesorActual) {
     return Alumno::listarBase()->where(Alumno::nombreTabla() . ".idProfesorActual", $idProfesorActual);
   }
 
-  public static function obtenerXId($id, $simple = FALSE)/* - */ {
+  public static function obtenerXId($id, $simple = FALSE) {
     $alumno = Alumno::listarBase()->where("entidad.id", $id)->firstOrFail();
 
     if (!$simple) {
@@ -239,7 +239,7 @@ class Alumno extends Model {
     return $alumno;
   }
 
-  public static function registrar($req)/* - */ {
+  public static function registrar($req) {
     $datos = $req->all();
     if (isset($datos["fechaNacimiento"])) {
       $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
@@ -259,12 +259,13 @@ class Alumno extends Model {
     Notificacion::registrarActualizar([
         "idEntidades" => [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
         "titulo" => (Auth::guest() ? MensajesNotificacion::TituloAlumnoRegistro : MensajesNotificacion::TituloAlumnoRegistroXUsuario),
-        "enviarCorreo" => (Auth::guest() ? 1 : 0)
+        "enviarCorreo" => (Auth::guest() ? 1 : 0),
+        "mostrarEnPerfil" => 1
     ]);
     return $idEntidad;
   }
 
-  public static function registrarExterno($req)/* - */ {
+  public static function registrarExterno($req) {
     $datos = $req->all();
     $interesado = Interesado::obtenerXId(Crypt::decrypt($datos["codigoVerificacion"]), TRUE);
     if ($interesado->idEntidad == $datos["idInteresado"] && Interesado::obtenerIdAlumno($datos["idInteresado"]) == 0) {
@@ -273,7 +274,7 @@ class Alumno extends Model {
     }
   }
 
-  public static function actualizar($id, $req)/* - */ {
+  public static function actualizar($id, $req) {
     $datos = $req->all();
     if (isset($datos["fechaNacimiento"])) {
       $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
@@ -295,17 +296,17 @@ class Alumno extends Model {
     }
   }
 
-  public static function actualizarEstado($id, $estado)/* - */ {
+  public static function actualizarEstado($id, $estado) {
     Alumno::obtenerXId($id, TRUE);
     Entidad::actualizarEstado($id, $estado);
   }
 
-  public static function actualizarHorario($id, $horario)/* - */ {
+  public static function actualizarHorario($id, $horario) {
     Alumno::obtenerXId($id, TRUE);
     Horario::registrarActualizar($id, $horario);
   }
 
-  public static function actualizarProfesor($id, $idDocente)/* - */ {
+  public static function actualizarProfesor($id, $idDocente) {
     $idProfesor = $idDocente;
     if (Postulante::verificarExistencia($idDocente)) {
       $idProfesor = Postulante::registrarProfesor($idDocente);
@@ -316,26 +317,13 @@ class Alumno extends Model {
     $alumno->save();
   }
 
-  public static function eliminar($id)/* - */ {
+  public static function eliminar($id) {
     Alumno::obtenerXId($id, TRUE);
     Entidad::eliminar($id);
-    Clase::eliminadXIdAdlumno($id); //TODO: Todas las funciones de clase y pagos se tienen que revisar bien
+    Clase::eliminarXIdAdlumno($id);
   }
 
-  public static function sincronizarEstados() {
-    //TODO: corregir
-    /* Clase::sincronizarEstados();
-      $alumnos = Alumno::listarBase()
-      ->whereIn("entidad.id", Clase::where("eliminado", 0)->groupBy("idAlumno")->lists("idAlumno"))//TODO:Cambiar
-      ->whereNotIn("entidad.id", Clase::listarXEstados([EstadosClase::Programada, EstadosClase::PendienteConfirmar])->groupBy("idAlumno")->lists("idAlumno"))
-      ->whereNotIn("entidad.estado", [EstadosAlumno::PorConfirmar, EstadosAlumno::StandBy, EstadosAlumno::Inactivo])
-      ->get();
-      foreach ($alumnos as $alumno) {
-      Alumno::actualizarEstado($alumno->idEntidad, EstadosAlumno::CuotaProgramada);
-      } */
-  }
-
-  public static function verificarExistencia($id)/* - */ {
+  public static function verificarExistencia($id) {
     try {
       Alumno::obtenerXId($id, TRUE);
     } catch (\Exception $e) {
@@ -345,10 +333,8 @@ class Alumno extends Model {
     return TRUE;
   }
 
-  public static function listarClases($id) {
+  public static function listarClases($idAlumno) {
     $nombreTablaClase = Clase::nombreTabla();
-    $nombreTablaPagoClase = PagoClase::nombreTabla();
-    $nombreTablaAlumnoBolsaHoras = AlumnoBolsaHoras::nombreTabla();
 
     return Clase::listarBase()->select(DB::raw(
                                     $nombreTablaClase . ".id, " .
@@ -362,15 +348,11 @@ class Alumno extends Model {
                                     $nombreTablaClase . ".comentarioParaAlumno,
                                     entidadProfesor.nombre AS nombreProfesor, 
                                     entidadProfesor.apellido AS apellidoProfesor"))
-                    ->where($nombreTablaClase . ".idAlumno", $id)
-                    ->whereIn($nombreTablaClase . ".estado", [EstadosClase::ConfirmadaProfesor, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada])
-                    ->whereRaw($nombreTablaClase . ".id IN (SELECT idClase 
-                                                              FROM " . $nombreTablaPagoClase . " 
-                                                              WHERE idPago IN (SELECT idPago FROM " . $nombreTablaAlumnoBolsaHoras . "
-                                                                                  WHERE idAlumno = " . $id . "))");
+                    ->where($nombreTablaClase . ".idAlumno", $idAlumno)
+                    ->whereIn($nombreTablaClase . ".estado", [EstadosClase::ConfirmadaProfesor, EstadosClase::ConfirmadaProfesorAlumno, EstadosClase::Realizada]);
   }
 
-  public static function registrarComentariosClase($id, $datos)/* - */ {
+  public static function registrarComentariosClase($id, $datos) {
     $nombreTablaClase = Clase::nombreTabla();
     $idClases = Alumno::listarClases($id)->lists($nombreTablaClase . ".id")->toArray();
     if (in_array($datos["idClase"], $idClases)) {
@@ -380,11 +362,11 @@ class Alumno extends Model {
     }
   }
 
-  public static function confirmarClase($id, $idClase)/* - */ {
+  public static function confirmarClase($id, $idClase) {
     $nombreTablaClase = Clase::nombreTabla();
     $idClases = Alumno::listarClases($id)->lists($nombreTablaClase . ".id")->toArray();
     if (in_array($idClase, $idClases)) {
-      $clase = Clase::obtenerXIdNUEVO($idClase, $id);
+      $clase = Clase::obtenerXId($idClase, $id);
       if ($clase->estado == EstadosClase::ConfirmadaProfesor) {
         $clase->estado = EstadosClase::Realizada;
         $clase->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
@@ -392,28 +374,4 @@ class Alumno extends Model {
       }
     }
   }
-
-  // <editor-fold desc="TODO: ELIMINAR">
-  //REPORTE
-  public static function listarCampos() {
-    return [
-        "inglesLugarEstudio" => ["titulo" => "Ingles - Lugar de estudio"],
-        "inglesPracticaComo" => ["titulo" => "Ingles - Como practica"],
-        "inglesObjetivo" => ["titulo" => "Ingles - Objetivo"],
-        "conComputadora" => ["titulo" => "Con computadora"],
-        "conInternet" => ["titulo" => "Con internet"],
-        "conPlumonPizarra" => ["titulo" => "Con plumon y pizarra"],
-        "conAmbienteClase" => ["titulo" => "Con ambiente adecuado para clases"],
-        "numeroHorasClase" => ["titulo" => "Número de horas por clase"],
-        "fechaInicioClase" => ["titulo" => "Fecha de inicio de clases"],
-        "comentarioAdicional" => ["titulo" => "Comentario adicional"],
-        "costoXHoraClase" => ["titulo" => "Costo por hora de clase"]
-    ];
-  }
-
-  public static function listarEntidadesRelacionadas() {
-    return [];
-  }
-
-  // </editor-fold>
 }

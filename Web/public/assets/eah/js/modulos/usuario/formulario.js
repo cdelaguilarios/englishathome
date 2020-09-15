@@ -1,16 +1,16 @@
 var formularioUsuario = {};
-formularioUsuario = (function ()/* - */ {
+formularioUsuario = (function () {
   $.validator.addMethod("validarPassword", validarPassword, "Este campo es obligatorio.");
   function validarPassword(value, element, param) {
     return (($("#modo-edicion") === undefined && value.trim() !== "") ||
             ($("#modo-edicion") !== undefined && ($("#modo-edicion").val() === "1" || ($("#modo-edicion").val() === "0" && value.trim() !== ""))));
   }
 
-  $(document).ready(function ()/* - */ {
+  $(document).ready(function () {
     cargarFormulario();
   });
 
-  function cargarFormulario()/* - */ {
+  function cargarFormulario() {
     $("#formulario-usuario").validate({
       ignore: ":hidden",
       rules: {

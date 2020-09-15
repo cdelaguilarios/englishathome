@@ -12,7 +12,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 
-class AuthController extends Controller/* - */ {
+class AuthController extends Controller {
 
     use AuthenticatesAndRegistersUsers,
         ThrottlesLogins;
@@ -20,12 +20,12 @@ class AuthController extends Controller/* - */ {
     protected $loginPath = "";
     protected $redirectTo = "/";
 
-    public function __construct()/* - */ {
+    public function __construct() {
         $this->middleware($this->guestMiddleware(), ["except" => "getLogout"]);
         $this->loginPath = route("auth.login");
     }
 
-    public function authenticated($request, $user)/* - */ {
+    public function authenticated($request, $user) {
         if (Usuario::usuarioEliminado($user["idEntidad"])) {
             Auth::logout();
             Mensajes::agregarMensajeAdvertencia("Su cuenta ha sido eliminada.");
@@ -36,14 +36,14 @@ class AuthController extends Controller/* - */ {
         return redirect()->intended($this->redirectPath());
     }
 
-    protected function validator(array $data)/* - */ {
+    protected function validator(array $data) {
         return Validator::make($data, [
                     "email" => "required|email|max:255|unique:" . Usuario::nombreTabla(),
                     "password" => "required|min:6|confirmed",
         ]);
     }
 
-    protected function create(array $data)/* - */ {
+    protected function create(array $data) {
         $usuario = new Usuario([
             "email" => $data["email"],
             "password" => bcrypt($data["password"]),
@@ -52,7 +52,7 @@ class AuthController extends Controller/* - */ {
         return $usuario;
     }
 
-    public function getLogout()/* - */ {
+    public function getLogout() {
         Auth::logout();
         Session::flush();
         return Redirect::to('/');

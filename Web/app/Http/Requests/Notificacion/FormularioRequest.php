@@ -8,13 +8,13 @@ use App\Models\Notificacion;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 
-class FormularioRequest extends Request/* - */ {
+class FormularioRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["idSeccion"] = ReglasValidacion::formatoDato($datos, "idSeccion", "");
     $datos["titulo"] = ReglasValidacion::formatoDato($datos, "titulo");
@@ -31,7 +31,7 @@ class FormularioRequest extends Request/* - */ {
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     $datos = $this->all();
     $reglasValidacion = [
         "titulo" => "required|max:100",
@@ -71,7 +71,7 @@ class FormularioRequest extends Request/* - */ {
     }
   }
 
-  public function messages()/* - */ {
+  public function messages() {
     return [
         "entidadNoValida.required" => "La entidad seleccionada no es válida.",
         "opcionEventoNoValido.required" => "Por favor selecione por lo menos una de las siguientes opciones: \"Enviar correo\" (administrador o entidad) o \"Mostrar en perfil\"."

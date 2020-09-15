@@ -7,6 +7,9 @@ claseAlumno = (function () {
 
   //Privado
   function cargarSeccion() {
+    if (util.obtenerParametroUrlXNombre("seccion") === "clase") {
+      $("a[href='#clase']").trigger("click");
+    }
     listaClasesAlumno.mostrar();
   }
 }());

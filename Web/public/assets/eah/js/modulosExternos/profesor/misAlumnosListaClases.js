@@ -1,10 +1,10 @@
 var misAlumnosListaClases = {};
-misAlumnosListaClases = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+misAlumnosListaClases = (function () {
+  $(document).ready(function () {
     cargarLista();
   });
 
-  function cargarLista()/* - */ {
+  function cargarLista() {
     urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
     estadosClase = (typeof (estadosClase) === "undefined" ? "" : estadosClase);
     estadoClaseConfirmadaProfesorAlumno = (typeof (estadoClaseConfirmadaProfesorAlumno) === "undefined" ? "" : estadoClaseConfirmadaProfesorAlumno);
@@ -26,9 +26,9 @@ misAlumnosListaClases = (function ()/* - */ {
         order: [[1, "asc"]],
         rowId: 'id',
         columns: [
-          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+          {data: "", name: "", width: "2%", orderable: false, "searchable": false, render: function (e, t, d, m) {
               return m.row + m.settings._iDisplayStart + 1;
-            }, "className": "text-center not-mobile"},
+            }, "className": "text-center", responsivePriority: 0},
           {data: "fechaConfirmacion", name: "fechaConfirmacion", width: "20%", render: function (e, t, d, m) {
               var fechaConfirmacionIni = "";
               if (d.fechaConfirmacion !== null && !isNaN(Date.parse(d.fechaConfirmacion))) {
@@ -41,17 +41,19 @@ misAlumnosListaClases = (function ()/* - */ {
                       utilFechasHorarios.formatoFecha(d.fechaInicio) + ' - De ' + utilFechasHorarios.formatoFecha(d.fechaInicio, false, true) + ' a ' + utilFechasHorarios.formatoFecha(d.fechaFin, false, true)) + '<br/>'
                       + '<b>Duración:</b> ' + utilFechasHorarios.formatoHora(d.duracion) + '<br/>'
                       + '<b>Estado:</b> ' + (estadosClase[d.estado] !== undefined ? '<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">' + estadosClase[d.estado][0] + '</span>' : '');
-            }},
+            }, responsivePriority: 0},
           {data: "comentarioProfesor", name: "comentarioProfesor", render: function (e, t, d, m) {
               return (d.comentarioProfesor ?
-                      d.comentarioProfesor :
+                      d.comentarioProfesor !== "" ? d.comentarioProfesor : "-" :
                       '<div class="text-center">' +
                       '<a href="javascript:void(0);" onclick="formularioAvancesClase.abrirModal(' + d.id + ');" class="btn btn-primary btn-xs">' +
                       '<i class="fa fa-commenting-o"></i> Registrar avance' +
                       '</a>' +
                       '</div>');
-            }, "className": "not-mobile"},
-          {data: "comentarioParaProfesor", name: "comentarioParaProfesor", "className": "not-mobile"}
+            }, "className": "desktop"},
+          {data: "comentarioParaProfesor", name: "comentarioParaProfesor", render: function (e, t, d, m) {
+              return d.comentarioParaProfesor !== null && d.comentarioParaProfesor !== "" ? d.comentarioParaProfesor : "-";
+            }, "className": "desktop"}
         ],
         initComplete: function (s, j) {
           utilTablas.establecerBotonRecargaTabla($("#tab-lista-clases"));

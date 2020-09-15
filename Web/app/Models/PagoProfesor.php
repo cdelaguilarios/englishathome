@@ -23,19 +23,19 @@ class PagoProfesor extends Model {
       "idPago"
   ];
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloPagoProfesor = new PagoProfesor();
     $nombreTabla = $modeloPagoProfesor->getTable();
     unset($modeloPagoProfesor);
     return $nombreTabla;
   }
 
-  public static function listarBase()/* - */ {
+  public static function listarBase() {
     return PagoProfesor::leftJoin(Pago::nombreTabla() . " as pago", PagoProfesor::nombreTabla() . ".idPago", "=", "pago.id")
                     ->where("pago.eliminado", 0);
   }
 
-  public static function listar($idProfesor)/* - */ {
+  public static function listar($idProfesor) {
     $nombreTabla = PagoProfesor::nombreTabla();
     $pagosProfesor = PagoProfesor::listarBase()
             ->where($nombreTabla . ".idProfesor", $idProfesor)
@@ -63,7 +63,7 @@ class PagoProfesor extends Model {
     );
   }
 
-  public static function obtenerXId($idProfesor, $id)/* - */ {
+  public static function obtenerXId($idProfesor, $id) {
     $datosPago = PagoProfesor::listar($idProfesor)->where("id", $id)->first();
     if (!isset($datosPago)) {
       throw new ModelNotFoundException;
@@ -72,35 +72,27 @@ class PagoProfesor extends Model {
   }
 
   // <editor-fold desc="Pagos generales/otros">
-  public static function registrarGeneral($idProfesor, $req)/* - */ {
+  public static function registrarActualizarGeneral($idProfesor, $req) {
     //Pago general es del tipo "OTROS"
     $datos = $req->all();
     $datos["motivo"] = MotivosPago::Otros;
 
-    $datosPago = Pago::registrar($datos, $datos["estado"], $req);
-    $pagoProfesor = new PagoProfesor([
-        "idPago" => $datosPago["id"],
-        "idProfesor" => $idProfesor
-    ]);
-    $pagoProfesor->save();
+    if (!(isset($datos["idPago"]) && $datos["idPago"] != "")) {
+      //Registro
+      $datosPago = Pago::registrar($datos, $datos["estado"]);
+      $pagoProfesor = new PagoProfesor([
+          "idPago" => $datosPago["id"],
+          "idProfesor" => $idProfesor
+      ]);
+      $pagoProfesor->save();
+    } else {
+      //Actualización
+      $datosPago = Pago::actualizar($datos["idPago"], $datos);
+    }
     PagoProfesor::registrarActualizarEvento($idProfesor, $datosPago);
   }
 
-  public static function actualizarGeneral($idProfesor, $req)/* - */ {
-    //Pago general es del tipo "OTROS"
-    $datos = $req->all();
-    $datos["motivo"] = MotivosPago::Otros;
-
-    if (PagoProfesor::verificarExistencia($idProfesor, $datos["idPago"])) {
-      $pago = Pago::obtenerXId($datos["idPago"]);
-      if ($pago->motivo == MotivosPago::Otros) {
-        $datosPago = Pago::actualizar($datos["idPago"], $datos, $req);
-        PagoProfesor::registrarActualizarEvento($idProfesor, $datosPago);
-      }
-    }
-  }
-
-  public static function actualizarEstadoGeneral($idProfesor, $id, $datos)/* - */ {
+  public static function actualizarEstadoGeneral($idProfesor, $id, $datos) {
     //Pago general es del tipo "OTROS"
     if (PagoProfesor::verificarExistencia($idProfesor, $id)) {
       $pago = Pago::obtenerXId($id);
@@ -146,7 +138,7 @@ class PagoProfesor extends Model {
     );
   }
 
-  public static function listarXClases($datos)/* - */ {
+  public static function listarXClases($datos) {
     $clases = PagoProfesor::listarXClasesBase($datos);
     return DB::table(DB::raw("({$clases->toSql()}) AS T"))
                     ->mergeBindings($clases->getQuery())
@@ -174,7 +166,7 @@ class PagoProfesor extends Model {
                     )->where("T.idProfesor", $idProfesor);
   }
 
-  public static function registrarActualizarXClases($idProfesor, $req)/* - */ {
+  public static function registrarActualizarXClases($idProfesor, $req) {
     $datos = $req->all();
 
     $datosPagoIni = PagoProfesor::listarXClases($datos)->where("idProfesor", $idProfesor)->first();
@@ -184,8 +176,7 @@ class PagoProfesor extends Model {
 
       if (!(isset($datos["idPago"]) && $datos["idPago"] != "")) {
         //Registro
-        $datos["imagenesComprobante"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 5, "ImagenesComprobantes");
-        $datosPago = Pago::registrar($datos, EstadosPago::Realizado, null);
+        $datosPago = Pago::registrar($datos, EstadosPago::Realizado);
         $pagoProfesor = new PagoProfesor([
             "idPago" => $datosPago["id"],
             "idProfesor" => $idProfesor
@@ -202,9 +193,7 @@ class PagoProfesor extends Model {
         }
       } else {
         //Actualización
-        $pago = Pago::obtenerXId($datos["idPago"]);
-        $datos["imagenesComprobante"] = Archivo::procesarArchivosSubidosNUEVO($pago->imagenesComprobante, $datos, 5, "ImagenesComprobantes");
-        $datosPago = Pago::actualizar($datos["idPago"], $datos, null);
+        $datosPago = Pago::actualizar($datos["idPago"], $datos);
       }
 
       PagoProfesor::registrarActualizarEvento($idProfesor, $datosPago);
@@ -213,7 +202,7 @@ class PagoProfesor extends Model {
 
   // </editor-fold>
 
-  public static function verificarExistencia($idProfesor, $id)/* - */ {
+  public static function verificarExistencia($idProfesor, $id) {
     try {
       PagoProfesor::obtenerXId($idProfesor, $id);
     } catch (\Exception $e) {
@@ -223,14 +212,14 @@ class PagoProfesor extends Model {
     return TRUE;
   }
 
-  public static function eliminar($idProfesor, $id)/* - */ {
+  public static function eliminar($idProfesor, $id) {
     if (PagoProfesor::verificarExistencia($idProfesor, $id)) {
       Pago::eliminar($id);
     }
   }
 
   //Util
-  private static function registrarActualizarEvento($idProfesor, $datosPago)/* - */ {
+  private static function registrarActualizarEvento($idProfesor, $datosPago) {
     $listaMotivosPago = MotivosPago::listar();
     $motivo = $listaMotivosPago[$datosPago["motivo"]];
     $descripcion = (isset($datosPago["descripcion"]) && $datosPago["descripcion"] != "" ? "<br/><strong>Descripción:</strong> " . $datosPago["descripcion"] : "");
@@ -254,7 +243,8 @@ class PagoProfesor extends Model {
         "titulo" => MensajesNotificacion::TituloProfesorRegistroPago,
         "mensaje" => $mensajeNotificacion,
         "adjuntos" => $imagenEvento,
-        "idPago" => $datosPago["id"]
+        "idPago" => $datosPago["id"],
+        "mostrarEnPerfil" => 1
     ];
 
     $notificacion = Notificacion::obtenerXIdPago($datosPago["id"]);
@@ -264,15 +254,4 @@ class PagoProfesor extends Model {
     Notificacion::registrarActualizar($datos);
   }
 
-  // <editor-fold desc="TODO: ELIMINAR">
-  public static function obtenerXClase($idClase) {
-    $nombreTabla = PagoProfesor::nombreTabla();
-    return PagoProfesor::select("pago.*")
-                    ->leftJoin(Pago::nombreTabla() . " as pago", $nombreTabla . ".idPago", "=", "pago.id")
-                    ->leftJoin(PagoClase::nombreTabla() . " as pagoClase", $nombreTabla . ".idPago", "=", "pagoClase.idPago")
-                    ->where("pago.eliminado", 0)
-                    ->where("pagoClase.idClase", $idClase)->first();
-  }
-
-  // </editor-fold>
 }

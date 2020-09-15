@@ -1,4 +1,3 @@
-{{----}}
 <script>
   var urlListarDepartamentos = "{{ route('ubigeo.listarDepartamentos') }}";
   var urlListarProvincias = "{{ route('ubigeo.listarProvincias', ['codigoDepartamento' => 0]) }}";

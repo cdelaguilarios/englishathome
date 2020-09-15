@@ -3,7 +3,7 @@
   <head>        
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>English at home {{ ((isset($vistaImpresion) && $vistaImpresion) ? "" : "administrador") }} - @yield("titulo")</title>
+    <title>{{ $nombreComercialEmpresa }} {{ ((isset($vistaImpresion) && $vistaImpresion) ? "" : "administrador") }} - @yield("titulo")</title>
     <meta name="_token" content="{!! csrf_token() !!}"/>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="icon" type="image/ico" href="{{ asset("assets/eah/img/favicon.ico") }}" />
@@ -37,7 +37,7 @@
           <span class="logo-mini" style="background-color: #ecf0f5">
             <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login" width="46" />
           </span>
-          <span class="logo-lg">English at Home Perú</span>
+          <span class="logo-lg">{{ $nombreComercialEmpresa }}</span>
         </a>
         <nav class="navbar navbar-static-top">
           <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
@@ -108,7 +108,7 @@
         </section>
       </div>
       <footer class="main-footer">
-        <strong>Copyright &copy; 2014-{!! date("Y") !!} <a href="http://englishathomeperu.com/" target="_blank">English at Home Perú</a>.</strong> Todos los derechos reservados.
+        <strong>Copyright &copy; 2014-{!! date("Y") !!} <a href="{{ $urlSitioWebEmpresa }}" target="_blank">{{ $nombreComercialEmpresa }}</a>.</strong> Todos los derechos reservados.
       </footer>
     </div>
     <div id="secCargandoPrincipal" class="box cargando">

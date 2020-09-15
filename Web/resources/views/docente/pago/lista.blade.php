@@ -44,6 +44,17 @@
                 <th class="all">Monto total</th> 
                 <th>Datos</th> 
                 <th class="all"></th> 
+                <!--- Columnas ocultas solo para exportación excel --->
+                <th>Profesor</th>
+                <th>Cuentas bancarias</th>
+                <th>Total de clases</th>
+                <th>Duración total (horas)</th>
+                <th>Pago por hora promedio</th>
+                <th>Monto total</th>
+                <th>Estado</th>
+                <th>Fecha pago</th>
+                <th>Descripción del pago</th>
+                <!---------------------------------------------------->
               </tr>
             </thead>
             <tfoot>

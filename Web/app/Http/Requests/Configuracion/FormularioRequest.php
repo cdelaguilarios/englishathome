@@ -7,13 +7,13 @@ use App\Models\VariableSistema;
 use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\TiposVariableConfiguracion;
 
-class FormularioRequest extends Request/* - */ {
+class FormularioRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     $variablesSistema = VariableSistema::listar();
     foreach ($variablesSistema as $variableSistema) {
@@ -23,7 +23,7 @@ class FormularioRequest extends Request/* - */ {
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     $datos = $this->all();
 
     $reglasValidacion = [];

@@ -1,10 +1,10 @@
 var formularioConfirmarClase = {};
-formularioConfirmarClase = (function ()/* - */ {
+formularioConfirmarClase = (function () {
   window.addEventListener("load", esperarCargaJquery, false);
-  function esperarCargaJquery()/* - */ {
+  function esperarCargaJquery() {
     ((window.jQuery && jQuery.ui) ? cargarFormulario() : window.setTimeout(esperarCargaJquery, 100));
   }
-  function cargarFormulario()/* - */ {
+  function cargarFormulario() {
     minHorasClase = (typeof (minHorasClase) === "undefined" ? 0 : minHorasClase);
     maxHorasClase = (typeof (maxHorasClase) === "undefined" ? 0 : maxHorasClase);
     maxHorasClase = (duracionTotalXClasesPendientes > maxHorasClase ? maxHorasClase : duracionTotalXClasesPendientes);

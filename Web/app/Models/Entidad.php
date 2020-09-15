@@ -31,14 +31,14 @@ class Entidad extends Model {
       "comentarioAdministrador"
   ];
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloEntidad = new Entidad();
     $nombreTabla = $modeloEntidad->getTable();
     unset($modeloEntidad);
     return $nombreTabla;
   }
 
-  public static function listar($tipo, $estado = NULL, $idsExcluir = [])/* - */ {
+  public static function listar($tipo, $estado = NULL, $idsExcluir = []) {
     $entidades = Entidad::where("eliminado", 0)->where("tipo", $tipo)->whereNotIn("id", $idsExcluir);
     if (isset($estado) && $estado != "") {
       $entidades->where("estado", $estado);
@@ -46,7 +46,7 @@ class Entidad extends Model {
     return $entidades;
   }
 
-  public static function ObtenerXId($id)/* - */ {
+  public static function ObtenerXId($id) {
     return Entidad::where("id", $id)->where("eliminado", 0)->firstOrFail();
   }
 
@@ -82,7 +82,7 @@ class Entidad extends Model {
     return $datos;
   }
 
-  public static function buscar($datos)/* - */ {
+  public static function buscar($datos) {
     $texto = $datos["texto"];
     $pagina = $datos["pagina"];
     $entidadesXPorPagina = 6;
@@ -97,7 +97,7 @@ class Entidad extends Model {
     return ["incomplete_results" => TRUE, "entidades" => $entidades->skip(($pagina - 1) * $entidadesXPorPagina)->take($entidadesXPorPagina)->get(), "total" => $total];
   }
 
-  public static function registrar($datos, $tipo, $estado)/* - */ {
+  public static function registrar($datos, $tipo, $estado) {
     $entidad = new Entidad($datos);
     $entidad->tipo = $tipo;
     $entidad->estado = $estado;
@@ -106,7 +106,7 @@ class Entidad extends Model {
     return $entidad->id;
   }
 
-  public static function actualizar($id, $datos, $tipo, $estado)/* - */ {
+  public static function actualizar($id, $datos, $tipo, $estado) {
     $entidad = Entidad::ObtenerXId($id);
     $entidad->tipo = $tipo;
     if (isset($estado)) {
@@ -117,14 +117,14 @@ class Entidad extends Model {
     $entidad->update($datos);
   }
 
-  public static function actualizarEstado($id, $estado)/* - */ {
+  public static function actualizarEstado($id, $estado) {
     $entidad = Entidad::ObtenerXId($id);
     $entidad->estado = $estado;
     $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $entidad->save();
   }
 
-  public static function registrarActualizarImagenPerfil($id, $imagenPerfil)/* - */ {
+  public static function registrarActualizarImagenPerfil($id, $imagenPerfil) {
     if (isset($imagenPerfil) && !is_null($imagenPerfil)) {
       $entidad = Entidad::ObtenerXId($id);
       $nuevaImagenEntidad = Archivo::registrar($entidad->id . "_ip_", $imagenPerfil, TRUE);
@@ -139,14 +139,14 @@ class Entidad extends Model {
     }
   }
 
-  public static function actualizarComentariosAdministrador($id, $datos)/* - */ {
+  public static function actualizarComentariosAdministrador($id, $datos) {
     $entidad = Entidad::ObtenerXId($id);
     $entidad->comentarioAdministrador = $datos["comentarioAdministrador"];
     $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
     $entidad->save();
   }
 
-  public static function actualizarCredencialesAcceso($id, $datos)/* - */ {
+  public static function actualizarCredencialesAcceso($id, $datos) {
     $entidad = Entidad::ObtenerXId($id);
     $entidad->correoElectronico = $datos["email"];
     $entidad->update();
@@ -176,7 +176,7 @@ class Entidad extends Model {
     }
   }
 
-  public static function eliminar($id)/* - */ {
+  public static function eliminar($id) {
     $entidad = Entidad::ObtenerXId($id);
     $entidad->eliminado = 1;
     $entidad->fechaUltimaActualizacion = Carbon::now()->toDateTimeString();
@@ -191,28 +191,6 @@ class Entidad extends Model {
       return FALSE;
     }
     return TRUE;
-  }
-
-  //REPORTE
-  public static function listarCampos() {
-    return [
-        "nombre" => ["titulo" => "Nombres"],
-        "apellido" => ["titulo" => "Apellidos"],
-        "fechaNacimiento" => ["titulo" => "Fecha de nacimiento"],
-        "sexo" => ["titulo" => "Sexo", "tipo" => "sexo"],
-        "telefono" => ["titulo" => "Teléfono"],
-        "idTipoDocumento" => ["titulo" => "Tipo de documento", "tipo" => "tipoDocumento"],
-        "numeroDocumento" => ["titulo" => "Número de documento"],
-        "correoElectronico" => ["titulo" => "Correo electrónico"],
-        "imagenPerfil" => ["titulo" => "Imagen de perfil"],
-        "direccion" => ["titulo" => "Dirección"],
-        "numeroDepartamento" => ["titulo" => "Número de departamento"],
-        "referenciaDireccion" => ["titulo" => "Dirección-referencia"],
-        "codigoUbigeo" => ["titulo" => "Código ubigeo"],
-        "geoLatitud" => ["titulo" => "Geo - Latitud"],
-        "geoLongitud" => ["titulo" => "Geo - Longitud"],
-        "comentarioAdministrador" => ["titulo" => "Comentarios del administrador"]
-    ];
   }
 
 }

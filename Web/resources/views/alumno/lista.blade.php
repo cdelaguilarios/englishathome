@@ -1,4 +1,3 @@
-{{----}}
 @extends("layouts.master")
 @section("titulo", "Alumnos")
 
@@ -58,6 +57,40 @@
               <th>Pagos por clases</th>
               <th>Fecha de registro</th>
               <th>Opciones</th>
+              <!--- Columnas ocultas solo para exportación excel --->
+              <th>Nombres</th>
+              <th>Apellidos</th>
+              <th>Teléfono</th>
+              <th>Correo electrónico</th>              
+              <th>Profesor</th>
+              <th>Teléfono del profesor</th>              
+              <th>Bolsa de horas</th>
+              <th>Horas realizadas</th>
+              <th>Horas pendientes</th>
+              <th>Porcentaje de avance</th>              
+              <th>Bolsa de horas histórico</th>
+              <th>Horas realizadas histórico</th>
+              <th>Horas pendientes histórico</th>
+              <th>Porcentaje de avance histórico</th>              
+              <th>Fecha de inicio de clases</th>
+              <th>Fecha de última clase</th>              
+              <th>Curso actual</th>
+              <th>Horario</th>              
+              <th>Estado</th>
+              <th>Nivel de inglés</th>              
+              <th>Número total de pagos por clases</th>
+              <th>Suma total de pagos por clases</th>
+              <th>Número total de pagos por clases histórico</th>
+              <th>Suma total de pagos por clases histórico</th>
+              <th>Costo por hora de clase</th>     
+              <th>Número de documento de identidad</th>                  
+              <th>Fecha de nacimiento</th>  
+              <th>Geo Latitud</th>
+              <th>Geo Longitu</th>
+              <th>Dirección</th>
+              <th>Distrito</th>              
+              <th>Fecha de registro</th>
+              <!---------------------------------------------------->
             </tr>
           </thead>
         </table>

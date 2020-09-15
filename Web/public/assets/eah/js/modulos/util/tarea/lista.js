@@ -8,7 +8,7 @@ var ListaTareas = ListaTareas || (function () {
       esperarCargaJquery.call(self);
     }, 100));
   };
-  var cargarLista = function ()/* - */ {
+  var cargarLista = function () {
     var self = this;
     $("#" + self._args.idTablaLista).DataTable({
       processing: true,
@@ -50,8 +50,8 @@ var ListaTareas = ListaTareas || (function () {
                   var nombreAdjunto = datosAdjunto[datosAdjunto.length === 2 ? 1 : 0];
 
                   htmlTarea += '<a href="javascript:void(0)" onclick="util.cargarUrl(\'' + rutaAdjunto + '\');" target="_blank">' +
-                          (util.urlEsImagen(rutaAdjunto) ? '<img src="' + rutaAdjunto + '" class="margin" width="100">' : nombreAdjunto) +
-                          '</a><br/>';
+                          (util.urlEsImagen(rutaAdjunto) ? '<img src="' + rutaAdjunto + '" class="margin" width="' + (window.mobilecheck() ? '150' : '200') + '">' : nombreAdjunto) +
+                          '</a>';
                 }
               });
             }
@@ -67,8 +67,8 @@ var ListaTareas = ListaTareas || (function () {
           }, responsivePriority: 0},
           {data: "fechaProgramada", name: "fechaProgramada", render: function (e, t, d, m) {
               return utilFechasHorarios.formatoFecha(d.fechaProgramada, true);
-            }, className: "text-center not-mobile"},
-        {data: "estado", name: "estado", width: "15%", "className": "text-center desktop"}
+            }, className: "text-center min-tablet-l"},
+        {data: "estado", name: "estado", width: "15%", "className": "text-center min-tablet-l"}
       ],
       initComplete: function (s, j) {
         utilTablas.establecerBotonRecargaTabla($("#" + self._args.idTablaLista));
@@ -96,12 +96,12 @@ var ListaTareas = ListaTareas || (function () {
     Object.assign(this._args, args);
     esperarCargaJquery.call(this);
   };
-  Constructor.prototype.mostrar = function ()/* - */ {
+  Constructor.prototype.mostrar = function () {
     $("div[id^=" + this._args.idPrefijoSeccionTareas + "]").hide();
     utilTablas.recargarDatosTabla($("#" + this._args.idTablaLista));
     $("#" + this._args.idSeccionLista).show();
   };
-  Constructor.prototype.reCargar = function ()/* - */ {
+  Constructor.prototype.reCargar = function () {
     reCargar.call(this);
   };
 

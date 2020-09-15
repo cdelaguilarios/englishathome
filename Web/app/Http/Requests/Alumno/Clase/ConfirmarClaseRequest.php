@@ -8,13 +8,13 @@ use App\Models\Profesor;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 
-class ConfirmarClaseRequest extends Request/* - */ {
+class ConfirmarClaseRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["idProfesor"] = ReglasValidacion::formatoDato($datos, "idProfesor");
     $datos["fecha"] = ReglasValidacion::formatoDato($datos, "fecha");
@@ -55,7 +55,7 @@ class ConfirmarClaseRequest extends Request/* - */ {
     }
   }
 
-  public function messages()/* - */ {
+  public function messages() {
     return [
         "alumnoNoValido.required" => "El alumno seleccionado no es válido.",
         "profesorNoValido.required" => "El profesor seleccionado no es válido.",

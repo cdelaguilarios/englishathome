@@ -10,7 +10,6 @@ use Mensajes;
 use Datatables;
 use App\Models\Clase;
 use App\Models\Alumno;
-use App\Models\Docente;
 use App\Models\Profesor;
 use App\Models\PagoAlumno;
 use App\Models\Interesado;
@@ -28,16 +27,16 @@ class AlumnoController extends Controller {
 
   protected $data = array();
 
-  public function __construct()/* - */ {
+  public function __construct() {
     $this->data["seccion"] = "alumnos";
   }
 
   // <editor-fold desc="Alumno">
-  public function index()/* - */ {
+  public function index() {
     return view("alumno.lista", $this->data);
   }
 
-  public function listar(BusquedaRequest $req)/* - */ {
+  public function listar(BusquedaRequest $req) {
     $datos = $req->all();
     return Datatables::of(Alumno::listar($datos["estado"]))->filterColumn("nombre", function($q, $k) {
               $q->whereRaw('CONCAT(nombre, " ", apellido) like ?', ["%{$k}%"])
@@ -65,7 +64,7 @@ class AlumnoController extends Controller {
             })->make(true);
   }
 
-  public function buscar()/* - */ {
+  public function buscar() {
     $termino = Input::get("termino");
 
     $alumnosPro = [];
@@ -76,11 +75,11 @@ class AlumnoController extends Controller {
     return \Response::json(["results" => $alumnosPro]);
   }
 
-  public function crear()/* - */ {
+  public function crear() {
     return view("alumno.crear", $this->data);
   }
 
-  public function registrar(FormularioRequest $req)/* - */ {
+  public function registrar(FormularioRequest $req) {
     try {
       $idAlumno = Alumno::registrar($req);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
@@ -92,7 +91,7 @@ class AlumnoController extends Controller {
     }
   }
 
-  public function crearExterno($codigoVerificacion)/* - */ {
+  public function crearExterno($codigoVerificacion) {
     try {
       $nuevoRegistro = Input::get("nr");
       $this->data["nuevoRegistro"] = (isset($nuevoRegistro));
@@ -106,7 +105,7 @@ class AlumnoController extends Controller {
     }
   }
 
-  public function registrarExterno(FormularioRequest $req)/* - */ {
+  public function registrarExterno(FormularioRequest $req) {
     try {
       $datos = $req->all();
       Alumno::registrarExterno($req);
@@ -117,7 +116,7 @@ class AlumnoController extends Controller {
     return redirect(route("alumnos.crear.externo", ["codigoVerificacion" => $datos["codigoVerificacion"], "nr" => 1]));
   }
 
-  public function perfil($id)/* - */ {
+  public function perfil($id) {
     try {
       $this->data["alumno"] = Alumno::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
@@ -128,7 +127,7 @@ class AlumnoController extends Controller {
     return view("alumno.perfil", $this->data);
   }
 
-  public function ficha($id)/* - */ {
+  public function ficha($id) {
     try {
       $this->data["vistaImpresion"] = TRUE;
       $this->data["impresionDirecta"] = TRUE;
@@ -141,7 +140,7 @@ class AlumnoController extends Controller {
     return view("alumno.ficha", $this->data);
   }
 
-  public function editar($id)/* - */ {
+  public function editar($id) {
     try {
       $this->data["alumno"] = Alumno::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
@@ -152,7 +151,7 @@ class AlumnoController extends Controller {
     return view("alumno.editar", $this->data);
   }
 
-  public function actualizar($id, FormularioRequest $req)/* - */ {
+  public function actualizar($id, FormularioRequest $req) {
     try {
       Alumno::actualizar($id, $req);
       Mensajes::agregarMensajeExitoso("Actualización exitosa.");
@@ -163,7 +162,7 @@ class AlumnoController extends Controller {
     return redirect(route("alumnos.editar", ["id" => $id]));
   }
 
-  public function actualizarEstado($id, ActualizarEstadoRequest $req)/* - */ {
+  public function actualizarEstado($id, ActualizarEstadoRequest $req) {
     try {
       $datos = $req->all();
       Alumno::actualizarEstado($id, $datos["estado"]);
@@ -174,7 +173,7 @@ class AlumnoController extends Controller {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function actualizarHorario($id, ActualizarHorarioRequest $req)/* - */ {
+  public function actualizarHorario($id, ActualizarHorarioRequest $req) {
     try {
       $datos = $req->all();
       Alumno::actualizarHorario($id, $datos["horario"]);
@@ -185,7 +184,7 @@ class AlumnoController extends Controller {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function actualizarProfesor($id, $idDocente)/* - */ {
+  public function actualizarProfesor($id, $idDocente) {
     try {
       Alumno::actualizarProfesor($id, $idDocente);
     } catch (\Exception $e) {
@@ -195,7 +194,7 @@ class AlumnoController extends Controller {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function eliminar($id)/* - */ {
+  public function eliminar($id) {
     try {
       Alumno::eliminar($id);
     } catch (\Exception $e) {
@@ -207,7 +206,7 @@ class AlumnoController extends Controller {
 
   // </editor-fold>
   // <editor-fold desc="Pagos">
-  public function listarPagos($id)/* - */ {
+  public function listarPagos($id) {
     return Datatables::of(PagoAlumno::listar($id))->filterColumn("id", function($q, $k) {
               $q->whereRaw("id like ?", ["%{$k}%"])
                       ->orWhereRaw("motivo like ?", ["%{$k}%"])
@@ -252,21 +251,21 @@ class AlumnoController extends Controller {
             })->make(true);
   }
 
-  public function registrarActualizarPago($id, PagoRequest\FormularioRequest $req)/* - */ {
+  public function registrarActualizarPago($id, PagoRequest\FormularioRequest $req) {
     try {
       PagoAlumno::registrarActualizar($id, $req);
     } catch (\Exception $e) {
       Log::error($e);
-      return response()->json(["mensaje" => "Ocurrió un problema durante el registro y/o actualización de datos. Por favor inténtelo nuevamente."], 500);
+      Mensajes::agregarMensajeError("Ocurrió un problema durante el registro y/o actualización de datos. Por favor inténtelo nuevamente.");
     }
-    return response()->json(["mensaje" => "Se guardaron los cambios exitosamente."], 200);
+    return redirect(route("alumnos.perfil", ["id" => $id, "seccion" => "pago"]));
   }
 
-  public function obtenerDatosPago($id, $idPago)/* - */ {
+  public function obtenerDatosPago($id, $idPago) {
     return response()->json(PagoAlumno::obtenerXId($id, $idPago), 200);
   }
 
-  public function actualizarEstadoPago($id, $idPago, PagoRequest\ActualizarEstadoRequest $req)/* - */ {
+  public function actualizarEstadoPago($id, $idPago, PagoRequest\ActualizarEstadoRequest $req) {
     try {
       PagoAlumno::actualizarEstado($id, $idPago, $req->all());
     } catch (\Exception $e) {
@@ -276,7 +275,7 @@ class AlumnoController extends Controller {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function eliminarPago($id, $idPago)/* - */ {
+  public function eliminarPago($id, $idPago) {
     try {
       PagoAlumno::eliminar($id, $idPago);
     } catch (\Exception $e) {
@@ -288,8 +287,8 @@ class AlumnoController extends Controller {
 
   // </editor-fold>
   // <editor-fold desc="Clases">
-  public function listarClases($id)/* - */ {
-    return Datatables::of(Clase::listarXAlumnoNUEVO($id))
+  public function listarClases($id) {
+    return Datatables::of(Clase::listarXAlumno($id))
                     ->filterColumn("fechaConfirmacion", function($q, $k) {
                       $q->whereRaw('numeroPeriodo like ?', ["%{$k}%"])
                       ->orWhereRaw("DATE_FORMAT((CASE WHEN fechaConfirmacion IS NULL 
@@ -310,7 +309,7 @@ class AlumnoController extends Controller {
                     })->make(true);
   }
 
-  public function confirmarClase($id, ClaseRequest\ConfirmarClaseRequest $req)/* - */ {
+  public function confirmarClase($id, ClaseRequest\ConfirmarClaseRequest $req) {
     try {
       $datos = $req->all();
       $datos["comentario"] = "";
@@ -324,10 +323,10 @@ class AlumnoController extends Controller {
   }
 
   public function obtenerDatosClase($id, $idClase) {
-    return response()->json(Clase::obtenerXId($id, $idClase), 200);
+    return response()->json(Clase::obtenerXId($idClase, $id), 200);
   }
 
-  public function eliminarClase($id, $idClase)/* - */ {
+  public function eliminarClase($id, $idClase) {
     try {
       Clase::eliminar($id, $idClase);
     } catch (\Exception $e) {
@@ -342,7 +341,7 @@ class AlumnoController extends Controller {
       $this->data["vistaImpresion"] = TRUE;
       $this->data["impresionDirecta"] = TRUE;
       $this->data["alumno"] = Alumno::obtenerXId($id);
-      $this->data["clases"] = Clase::listarXAlumnoNUEVO($id);
+      $this->data["clases"] = Clase::listarXAlumno($id)->get();
     } catch (ModelNotFoundException $e) {
       Log::error($e);
       Mensajes::agregarMensajeError("No se encontraron datos del alumno seleccionado. Es posible que haya sido eliminado.");
@@ -353,11 +352,11 @@ class AlumnoController extends Controller {
 
   // </editor-fold>
   // <editor-fold desc="Externo">
-  public function misClases()/* - */ {
+  public function misClases() {
     return view("externo.alumno.misClases", $this->data);
   }
 
-  public function listarMisClases()/* - */ {
+  public function listarMisClases() {
     return Datatables::of(Alumno::listarClases(Auth::user()->idEntidad))
                     ->filterColumn("fechaConfirmacion", function($q, $k) {
                       $q->whereRaw('fechaConfirmacion like ?', ["%{$k}%"])
@@ -375,7 +374,7 @@ class AlumnoController extends Controller {
                     })->make(true);
   }
 
-  public function misClasesRegistrarComentarios(RegistrarComentariosRequest $req)/* - */ {
+  public function misClasesRegistrarComentarios(RegistrarComentariosRequest $req) {
     try {
       Alumno::registrarComentariosClase(Auth::user()->idEntidad, $req->all());
     } catch (\Exception $e) {
@@ -385,7 +384,7 @@ class AlumnoController extends Controller {
     return response()->json(["mensaje" => "Gracias por dejarnos tus comentarios."], 200);
   }
 
-  public function misClasesConfirmar($idClase)/* - */ {
+  public function misClasesConfirmar($idClase) {
     try {
       Alumno::confirmarClase(Auth::user()->idEntidad, $idClase);
     } catch (\Exception $e) {
@@ -393,79 +392,6 @@ class AlumnoController extends Controller {
       return response()->json(["mensaje" => "Ocurrió un problema durante la confirmación de la clase. Por favor inténtelo nuevamente."], 400);
     }
     return response()->json(["mensaje" => "Confirmación exitosa."], 200);
-  }
-
-  // </editor-fold>
-  // <editor-fold desc="TODO: ELIMINAR">
-  public function listarPeriodosClases($id) {
-    return Datatables::of(Clase::listarPeriodosXIdAlumno($id))->make(true);
-  }
-
-  public function listarClasesXPeriodo($id, $numeroPeriodo) {
-    return response()->json(Clase::listarXAlumno($id, $numeroPeriodo), 200);
-  }
-
-  public function actualizarEstadoClase($id, ClaseRequest\ActualizarEstadoRequest $req) {
-    try {
-      Clase::actualizarEstado($id, $req->all());
-    } catch (\Exception $e) {
-      Log::error($e);
-      return response()->json(["mensaje" => "Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente."], 400);
-    }
-    return response()->json(["mensaje" => "Actualización exitosa."], 200);
-  }
-
-  public function listarDocentesDisponiblesXClase($id, ClaseRequest\ListarDocentesDisponiblesRequest $req) {
-    return Datatables::of(Docente::listarDisponiblesXDatosClase($req->all()))
-                    ->filterColumn('nombreCompleto', function($q, $k) {
-                      $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
-                    })->filterColumn('estado', function($q, $k) {
-              $q->whereRaw('entidad.estado like ?', ["%{$k}%"]);
-            })->make(true);
-  }
-
-  public function registrarActualizarClase($id, ClaseRequest\FormularioRequest $req) {
-    try {
-      $datos = $req->all();
-      $datosClase = Clase::registrarActualizar($id, $datos);
-      Mensajes::agregarMensajeExitoso(isset($datos["idClase"]) ? "Actualización exitosa." : "Registro exitoso.");
-    } catch (\Exception $e) {
-      Log::error($e);
-      Mensajes::agregarMensajeError("Ocurrió un problema durante el registro/actualización de datos. Por favor inténtelo nuevamente.");
-    }
-    return redirect(route("alumnos.perfil", ["id" => $id, "seccion" => "clase", "nrp" => $datosClase["numeroPeriodo"]]));
-  }
-
-  public function actualizarClasesGrupo($id, ClaseRequest\FormularioGrupoRequest $req) {
-    try {
-      $datos = $req->all();
-      $nroPeriodo = Clase::actualizarGrupo($id, $datos);
-      Mensajes::agregarMensajeExitoso("Actualización exitosa.");
-    } catch (\Exception $e) {
-      Log::error($e);
-      Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");
-    }
-    return redirect(route("alumnos.perfil", ["id" => $id, "seccion" => "clase", "nrp" => $nroPeriodo]));
-  }
-
-  public function cancelarClase($id, ClaseRequest\CancelarRequest $req) {
-    try {
-      $datos = $req->all();
-      $nroPeriodo = Clase::cancelar($id, $datos);
-      Mensajes::agregarMensajeExitoso("Cancelación exitosa.");
-    } catch (\Exception $e) {
-      Log::error($e);
-      Mensajes::agregarMensajeError("No se pudo cancelar la clase seleccionada.");
-    }
-    return redirect(route("alumnos.perfil", ["id" => $id, "seccion" => "clase", "nrp" => $nroPeriodo]));
-  }
-
-  public function datosClasesGrupo($id, ClaseRequest\DatosGrupoRequest $req) {
-    return response()->json(Clase::datosGrupo($id, $req->all()), 200);
-  }
-
-  public function totalClasesXHorario($id, ClaseRequest\TotalHorarioRequest $req) {
-    return response()->json(Clase::totalXHorario($id, $req->all()), 200);
   }
 
   // </editor-fold>

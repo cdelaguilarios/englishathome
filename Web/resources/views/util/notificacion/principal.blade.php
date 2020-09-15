@@ -1,4 +1,3 @@
-{{----}}
 {{--*/ $idSeccionGen = "generales" /*--}}  
 <script src="{{ asset("assets/eah/js/modulos/util/notificacion/principal.js")}}"></script>
 <script src="{{ asset("assets/eah/js/modulos/util/notificacion/lista.js")}}"></script>  

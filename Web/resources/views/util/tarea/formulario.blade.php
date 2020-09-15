@@ -1,4 +1,3 @@
-{{----}}
 <div class="box-body">
   <div class="form-group">
     {{ Form::label("sel-usuario-tarea", "Usuario asignado (*): ", ["class" => "col-sm-2 control-label"]) }}

@@ -1,11 +1,11 @@
 var imagenPerfil = {};
-imagenPerfil = (function ()/* - */ {
+imagenPerfil = (function () {
   window.addEventListener("load", esperarCargaJquery, false);
-  function esperarCargaJquery()/* - */ {
+  function esperarCargaJquery() {
     ((window.jQuery && jQuery.ui) ? cargarSeccion() : window.setTimeout(esperarCargaJquery, 100));
   }
   
-  function cargarSeccion()/* - */ {
+  function cargarSeccion() {
     $("#btn-editar-imagen-perfil").click(function () {
       $("#mod-editar-imagen-perfil").modal("show");
     });

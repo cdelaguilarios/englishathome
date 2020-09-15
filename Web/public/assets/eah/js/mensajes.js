@@ -1,12 +1,12 @@
 var mensajes = {};
-mensajes = (function ()/* - */ {
+mensajes = (function () {
   var mensajesVisibles;
   var tiempoMostrarNuevosMensajes = 2000;
 
-  $(function ()/* - */ {
+  $(function () {
     establecerTiempoMensajeVisible();
   });
-  function establecerTiempoMensajeVisible(idSecContenedor)/* - */ {
+  function establecerTiempoMensajeVisible(idSecContenedor) {
     idSecContenedor = (idSecContenedor !== undefined ? idSecContenedor : ".contenedor-alerta");
     if ($("div" + idSecContenedor + " div[role = alert]") !== undefined && $("div" + idSecContenedor + " div[role = alert]").length > 0) {
       if (!mensajesVisibles) {
@@ -39,7 +39,7 @@ mensajes = (function ()/* - */ {
     }
   }
 
-  function agregar(tipo, mensaje, mostrarTemporalmente, idSecContenedor, refrescar)/* - */ {
+  function agregar(tipo, mensaje, mostrarTemporalmente, idSecContenedor, refrescar) {
     var plantillaMen =
             '<div class="alert alert-[TIPO] alert-dismissible" role="alert">' +
             '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +

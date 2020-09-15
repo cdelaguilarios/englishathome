@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class EntidadCorreo extends Model/* - */ {
+class EntidadCorreo extends Model {
 
   public $timestamps = false;
   protected $table = "entidadCorreo";
@@ -13,7 +13,7 @@ class EntidadCorreo extends Model/* - */ {
       "idCorreo"
   ];
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloEntidadCorreo = new EntidadCorreo();
     $nombreTabla = $modeloEntidadCorreo->getTable();
     unset($modeloEntidadCorreo);

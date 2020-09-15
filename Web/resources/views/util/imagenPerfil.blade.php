@@ -1,4 +1,3 @@
-{{----}}
 <script type="text/javascript" src="{{ asset("assets/eah/js/modulos/util/imagenPerfil.js") }}"></script>
 <a id="btn-editar-imagen-perfil" href="javascript:void(0);" title="Editar imagen de perfil">
   <img class="profile-user-img img-responsive img-circle" src="{{ route("archivos", ["nombre" => (isset($entidad->imagenPerfil) && $entidad->imagenPerfil != "" ? $entidad->imagenPerfil : "-"), "sexoEntidad" => ($entidad->sexo == "F" ? "f" : "m")]) }}" alt="{{ $entidad->nombre . " " .  $entidad->apellido }}">

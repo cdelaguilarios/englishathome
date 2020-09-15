@@ -1,7 +1,7 @@
 var horario = {};
-horario = (function ()/* - */ {
+horario = (function () {
   window.addEventListener("load", esperarCargaJquery, false);
-  function esperarCargaJquery()/* - */ {
+  function esperarCargaJquery() {
     ((window.jQuery && jQuery.ui) ? cargarHorario() : window.setTimeout(esperarCargaJquery, 100));
   }
 
@@ -9,7 +9,7 @@ horario = (function ()/* - */ {
   var diasNumeros = [1, 2, 3, 4, 5, 6, 7];
   var diasNombres = ["Lu.", "Ma.", "Mi.", "Ju.", "Vi.", "Sá.", "Do."];
   var minutosIntervalo = 30;
-  function cargarHorario()/* - */ {
+  function cargarHorario() {
     minHorario = (typeof (minHorario) === "undefined" ? "" : minHorario);
     maxHorario = (typeof (maxHorario) === "undefined" ? "" : maxHorario);
     if (!(minHorario !== "" && maxHorario !== "")) {
@@ -76,7 +76,7 @@ horario = (function ()/* - */ {
       });
     }
   }
-  function inicializarHorario()/* - */ {
+  function inicializarHorario() {
     var datosHorarioInicial = new Object();
     var datosHorarioInicialSel = [];
 
@@ -107,11 +107,27 @@ horario = (function ()/* - */ {
     horarioInicial = datosHorarioInicial;
   }  
   
-  function mostrarTexto()/* - */ {
-    var textoHorario = obtenerTexto(horarioFin);
-    $("#sec-info-horario").html(textoHorario);
+  function mostrarTexto() {
+    var textoHTMLHorario = obtenerTextoHTML(horarioFin);
+    $(".sec-info-horario").html(textoHTMLHorario);
   }
-  function obtenerTexto(horario)/* - */ {
+  function obtenerTextoExcel(horario) {
+    var textoHorario = '';
+    for (var i = 0; i < horario.length; i++) {
+      var dias = horario[i].dias.split(","), horas = horario[i].horas;
+      for (var j = 0; j < dias.length; j++){
+        textoHorario += (j > 0 ? (j === (dias.length - 1) ? (" y ") : " , ") : "") + diasNombres[dias[j] - 1];
+      }
+      for (var k = 0; k < horas.length; k++){
+        textoHorario += (k > 0 ? (k === (horas.length - 1) ? (" y ") : " , ") : "    ") + horas[k];
+      }
+      if(i !== horario.length - 1){
+        textoHorario += ' | ';
+      }
+    }
+    return textoHorario;
+  }
+  function obtenerTextoHTML(horario) {
     var textoHorario = '<ul>';
     for (var i = 0; i < horario.length; i++) {
       var dias = horario[i].dias.split(","), horas = horario[i].horas;
@@ -129,7 +145,7 @@ horario = (function ()/* - */ {
     return textoHorario;
   }
   
-  function simplificarHorario()/* - */ {
+  function simplificarHorario() {
     var horarioSim = [];
     horarioFin = [];
     $.each(horarioSel, function (i, v) {
@@ -177,7 +193,7 @@ horario = (function ()/* - */ {
       }
     });
   }
-  function buscarDiasMismoHorario(horarioSim, numeroDia, horario)/* - */ {
+  function buscarDiasMismoHorario(horarioSim, numeroDia, horario) {
     var diasHorarioIgual = [];
     $.each(horarioSim, function (i, v) {
       if (v !== undefined && i !== numeroDia) {
@@ -191,13 +207,14 @@ horario = (function ()/* - */ {
     });
     return diasHorarioIgual;
   }
-  function hhmm(fecha)/* - */ {
+  function hhmm(fecha) {
     var horas = fecha.getHours(), minutos = fecha.getMinutes();
     return ("0" + horas).slice(-2) + ":" + ("0" + minutos).slice(-2);
   }
 
 
   return {
-    obtenerTexto: obtenerTexto
+    obtenerTextoExcel: obtenerTextoExcel,
+    obtenerTextoHTML: obtenerTextoHTML
   };
 }());

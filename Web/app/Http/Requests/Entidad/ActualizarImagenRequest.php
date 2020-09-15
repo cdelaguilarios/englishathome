@@ -4,13 +4,13 @@ namespace App\Http\Requests\Entidad;
 
 use App\Http\Requests\Request;
 
-class ActualizarImagenRequest extends Request/* - */ {
+class ActualizarImagenRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     switch ($this->method()) {
       case "GET":
       case "DELETE":

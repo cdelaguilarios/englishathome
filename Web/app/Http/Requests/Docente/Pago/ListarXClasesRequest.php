@@ -8,13 +8,13 @@ use App\Helpers\Enum\EstadosPago;
 use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\TiposBusquedaFecha;
 
-class ListarXClasesRequest extends Request/* - */ {
+class ListarXClasesRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["estadoPago"] = ReglasValidacion::formatoDato($datos, "estadoPago");    
     Util::preProcesarFiltrosBusquedaXFechas($datos);    
@@ -22,7 +22,7 @@ class ListarXClasesRequest extends Request/* - */ {
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     $datos = $this->all();
     $reglasValidacion = [];
 
@@ -50,7 +50,7 @@ class ListarXClasesRequest extends Request/* - */ {
     }
   }
 
-  public function messages()/* - */ {
+  public function messages() {
     return [
         "estadoPagoNoValido.required" => "El estado de pago seleccionado no es válido.",
         "tipoBusquedaFechaNoValido.required" => "El tipo de búsqueda de la fecha no es válido."

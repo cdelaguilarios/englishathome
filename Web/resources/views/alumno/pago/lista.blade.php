@@ -1,4 +1,3 @@
-{{----}}
 <script>
   var urlListarPagos = "{{ route('alumnos.pagos.listar', ['id' => $alumno->id]) }}";
   var urlEliminarPago = "{{ route('alumnos.pagos.eliminar', ['id' => $alumno->id, 'idPago' => 0]) }}";
@@ -13,7 +12,7 @@
 <div id="sec-pago-lista" style="display: none">
   <div class="box-header"> 
       <span class="pull-left">
-        <b>Nota: </b> los pagos con estado <span class="label label-primary btn-estado">Consumido</span> no serán considerados en la bolsa de horas de alumno(a).
+        <b>Nota: </b> los pagos con estado <span class="label label-primary btn-estado">Consumido</span> no serán considerados en la bolsa de horas del alumno(a).
       </span>
     <a id="btn-nuevo-pago" type="button" class="btn btn-primary btn-sm pull-right">Nuevo pago</a>  
   </div>     
@@ -25,7 +24,7 @@
           <th>Fecha de pago</th>
           <th>Estado</th> 
           <th>Montos</th>
-          <th class="all">Opciones</th>
+          <th>Opciones</th>
         </tr>
       </thead>
       <tfoot>

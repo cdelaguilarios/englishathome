@@ -1,12 +1,12 @@
 var listaPagosProfesor = {};
-listaPagosProfesor = (function ()/* - */ {
+listaPagosProfesor = (function () {
   window.addEventListener("load", esperarCargaJquery, false);
-  function esperarCargaJquery()/* - */ {
+  function esperarCargaJquery() {
     ((window.jQuery && jQuery.ui) ? cargarSeccion() : window.setTimeout(esperarCargaJquery, 100));
   }
 
   //Privado
-  function cargarSeccion()/* - */ {
+  function cargarSeccion() {
     cargarLista();
 
     $("a[href='#pago']").click(function () {
@@ -14,10 +14,10 @@ listaPagosProfesor = (function ()/* - */ {
       $("#tab-lista-pagos").DataTable().responsive.recalc();
     });
     $("#btn-nuevo-pago").click(function () {
-      crearPagoProfesor.mostrar();
+      crearEditarPagoGeneralProfesor.crear();
     });
   }
-  function cargarLista()/* - */ {
+  function cargarLista() {
     urlListarPagos = (typeof (urlListarPagos) === "undefined" ? "" : urlListarPagos);
     urlEliminarPago = (typeof (urlEliminarPago) === "undefined" ? "" : urlEliminarPago);
 
@@ -45,10 +45,10 @@ listaPagosProfesor = (function ()/* - */ {
               return '<b>Código: </b>' + d.id +
                       '<br/><b>Motivo: </b>' + motivosPago[d.motivo] +
                       (d.motivo === motivoPagoClases && d.duracionTotalXClases > 0 ? ' <small><b>(' + utilFechasHorarios.formatoHora(d.duracionTotalXClases) + ' hora(s) de clases)</b></small>' : '');
-            }},
+            }, responsivePriority: 0},
           {data: "fecha", name: "fecha", render: function (e, t, d, m) {
               return utilFechasHorarios.formatoFecha(d.fecha, false);
-            }, className: "text-center", type: "fecha"},
+            }, className: "text-center min-tablet-l", type: "fecha"},
           {data: "estado", name: "estado", render: function (e, t, d, m) {
               var estado = '';
               if (d.motivo !== motivoPagoClases) {
@@ -61,23 +61,23 @@ listaPagosProfesor = (function ()/* - */ {
                 estado = '<span class="label ' + estadosPago[d.estado][1] + ' btn-estado">' + estadosPago[d.estado][0] + '</span>';
               }
               return estado;
-            }, className: "text-center"},
+            }, className: "text-center", responsivePriority: 0},
           {data: "monto", name: "monto", render: function (e, t, d, m) {
               return 'S/. ' + util.redondear(d.monto, 2);
-            }, className: "text-center", type: "monto"},
+            }, className: "text-center min-tablet-p", type: "monto"},
           {data: "id", name: "id", orderable: false, searchable: false, width: "5%", render: function (e, t, d, m) {
               return '<ul class="buttons">' +
                       (d.motivo !== motivoPagoClases ?
                               '<li>' +
-                              '<a href="javascript:void(0);" onclick="actualizarPagoProfesor.mostrar(' + d.id + ');" title="Editar datos del pago"><i class="fa fa-pencil"></i></a>' +
+                              '<a href="javascript:void(0);" onclick="crearEditarPagoGeneralProfesor.editar(' + d.id + ');" title="Editar datos del pago"><i class="fa fa-pencil"></i></a>' +
                               '</li>' : '') +
                       '<li>' +
-                      '<a href="javascript:void(0);" title="Eliminar pago" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?\', \'tab-lista-pagos\', false, function(){utilTablas.recargarDatosTabla($(\'#tab-lista-clases\'));listaNotificacionesHistorial.reiniciar();})" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' + 
+                      '<a href="javascript:void(0);" title="Eliminar pago" onclick="utilTablas.eliminarElemento(this, \'¿Está seguro que desea eliminar los datos de este pago?\', \'tab-lista-pagos\', false, function(){utilTablas.recargarDatosTabla($(\'#tab-lista-clases\'));listaNotificacionesHistorial.reCargar();})" data-id="' + d.id + '" data-urleliminar="' + ((urlEliminarPago.replace("/0", "/" + d.id))) + '">' + 
                       '<i class="fa fa-trash"></i>' +
                       '</a>' +
                       '</li>' +
                       '</ul>';
-            }, className: "text-center"}
+            }, className: "text-center min-mobile-l"}
         ],
         initComplete: function (s, j) {
           utilTablas.establecerBotonRecargaTabla($("#tab-lista-pagos"));
@@ -100,13 +100,17 @@ listaPagosProfesor = (function ()/* - */ {
   }
 
   //Público
-  function mostrar()/* - */ {
+  function mostrar() {
     $("div[id^=sec-pago-]").hide();
     utilTablas.recargarDatosTabla($("#tab-lista-pagos"));
     $("#sec-pago-lista").show();
   }
+  function reCargar() {
+    $("#tab-lista-pagos").DataTable().ajax.reload();
+  }
 
   return {
-    mostrar: mostrar
+    mostrar: mostrar,
+    reCargar: reCargar
   };
 }());

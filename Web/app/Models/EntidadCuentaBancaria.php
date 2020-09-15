@@ -14,18 +14,18 @@ class EntidadCuentaBancaria extends Model/* |-| */ {
       "numeroCuenta"
   ];
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloEntidadCuentaBancaria = new EntidadCuentaBancaria();
     $nombreTabla = $modeloEntidadCuentaBancaria->getTable();
     unset($modeloEntidadCuentaBancaria);
     return $nombreTabla;
   }
 
-  public static function obtenerXIdEntidad($idEntidad)/* - */ {
+  public static function obtenerXIdEntidad($idEntidad) {
     return EntidadCuentaBancaria::where("idEntidad", $idEntidad)->get();
   }
 
-  public static function registrarActualizar($idEntidad, $cuentasBancarias)/* - */ {
+  public static function registrarActualizar($idEntidad, $cuentasBancarias) {
     if (isset($cuentasBancarias)) {
       EntidadCuentaBancaria::where("idEntidad", $idEntidad)->delete();
 

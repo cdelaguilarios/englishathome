@@ -1,10 +1,10 @@
 var listaAlumnos = {};
-listaAlumnos = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+listaAlumnos = (function () {
+  $(document).ready(function () {
     cargarLista();
   });
 
-  function cargarLista()/* - */ {
+  function cargarLista() {
     urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
     urlPerfilAlumno = (typeof (urlPerfilAlumno) === "undefined" ? "" : urlPerfilAlumno);
     urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
@@ -16,7 +16,7 @@ listaAlumnos = (function ()/* - */ {
     estadosDisponibleCambio = (typeof (estadosDisponibleCambio) === "undefined" ? "" : estadosDisponibleCambio);
 
     if (urlListar !== "" && urlPerfilAlumno !== "" && urlEditar !== "" && urlEliminar !== "" && urlPerfilProfesor !== "" && urlListarClases !== "" && estados !== "" && estadosDisponibleCambio !== "") {
-      $("#tab-lista-alumnos").DataTable({
+      utilTablas.iniciarTabla($("#tab-lista-alumnos"), {
         processing: true,
         serverSide: true,
         ajax: {
@@ -49,7 +49,7 @@ listaAlumnos = (function ()/* - */ {
                               : '');
             }, responsivePriority: 0},
           {data: "porcentajeAvanceXClases", name: "porcentajeAvanceXClases", width: "30%", render: function (e, t, d, m) {
-              var ultimaClaseFecha = utilFechasHorarios.formatoFecha(d.ultimaClaseFecha);
+              var fechaUltimaClase = utilFechasHorarios.formatoFecha(d.ultimaClaseFecha);
 
               var htmlAvanceXBolsaHoras = '<div class="clearfix"><span>Sin bolsa de horas</span></div><br/>';
               if (d.duracionTotalXClases && parseInt(d.numeroPagosXBolsaHoras)) {
@@ -102,12 +102,12 @@ listaAlumnos = (function ()/* - */ {
 
               return htmlAvanceXBolsaHoras +
                       htmlAvanceGlobal +
-                      (ultimaClaseFecha !== "" ? '<div class="clearfix"><small class="pull-left">Última clase: ' + ultimaClaseFecha + '</small></div>' : '');
+                      (fechaUltimaClase !== "" ? '<div class="clearfix"><small class="pull-left">Última clase: ' + fechaUltimaClase + '</small></div>' : '');
 
             }, "className": "min-tablet-p"},
           {data: "curso", name: "curso", render: function (e, t, d, m) {
-              return d.curso + '<div id="sec-info-horario-' + d.id + '"></div>';
-            }, "className": "min-tablet-l"},
+              return d.curso + '<div class="sec-info-horario-' + d.id + '"></div>';
+            }, "className": "min-tablet-p"},
           {data: "estado", name: "estado", render: function (e, t, d, m) {
               var estado = '';
               if (estados[d.estado] !== undefined) {
@@ -139,7 +139,7 @@ listaAlumnos = (function ()/* - */ {
               return utilFechasHorarios.formatoFecha(d.fechaRegistro, true) + '<br/>' +
                       (fechaInicioClases !== "" ? '<span class="text-info"><small>(Inicio de clases: ' + fechaInicioClases + ')</small></span>' : '');
             }, "className": "text-center desktop"},
-          {data: "id", name: "id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
+          {data: "idEntidad", name: "idEntidad", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
               return '<ul class="buttons">' +
                       '<li>' +
                       '<a href="' + (urlPerfilAlumno.replace("/0", "/" + d.id)) + '" title="Ver perfil"><i class="fa fa-eye"></i></a>' +
@@ -153,7 +153,103 @@ listaAlumnos = (function ()/* - */ {
                       '</a>' +
                       '</li>' +
                       '</ul>';
-            }, className: "text-center min-mobile-l"}
+            }, className: "text-center min-mobile-l"},
+          //--------- Columnas ocultas solo para exportación excel ---------
+          {data: "nombre", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "apellido", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "telefono", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "correoElectronico", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (d.nombreProfesor !== null ? d.nombreProfesor : "") + " " + (d.apellidoProfesor !== null ? d.apellidoProfesor : "");
+            }, "className": "never"},
+          {data: "telefonoProfesor", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (d.duracionTotalXClases && parseInt(d.numeroPagosXBolsaHoras)
+                      ? utilFechasHorarios.formatoHora(d.duracionTotalXClases)
+                      : "");
+            }, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (d.duracionTotalXClases && parseInt(d.numeroPagosXBolsaHoras)
+                      ? utilFechasHorarios.formatoHora(d.duracionTotalXClasesRealizadas)
+                      : "");
+            }, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (d.duracionTotalXClases && parseInt(d.numeroPagosXBolsaHoras) && (d.duracionTotalXClases - d.duracionTotalXClasesRealizadas)
+                      ? utilFechasHorarios.formatoHora(d.duracionTotalXClases - d.duracionTotalXClasesRealizadas)
+                      : "");
+            }, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (d.duracionTotalXClases && parseInt(d.numeroPagosXBolsaHoras)
+                      ? util.redondear(d.porcentajeAvanceXClases, 2) + " %"
+                      : "");
+            }, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (d.duracionTotalXClasesGlobal && parseInt(d.numeroPagosXBolsaHorasGlobal) && d.duracionTotalXClasesGlobal !== d.duracionTotalXClases
+                      ? utilFechasHorarios.formatoHora(d.duracionTotalXClasesGlobal)
+                      : '');
+            }, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (d.duracionTotalXClasesGlobal && parseInt(d.numeroPagosXBolsaHorasGlobal) && d.duracionTotalXClasesGlobal !== d.duracionTotalXClases
+                      && (d.duracionTotalXClasesGlobal - d.duracionTotalXClasesRealizadasGlobal) > 0
+                      ? utilFechasHorarios.formatoHora(d.duracionTotalXClasesRealizadasGlobal)
+                      : '');
+            }, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (d.duracionTotalXClasesGlobal && parseInt(d.numeroPagosXBolsaHorasGlobal) && d.duracionTotalXClasesGlobal !== d.duracionTotalXClases
+                      && (d.duracionTotalXClasesGlobal - d.duracionTotalXClasesRealizadasGlobal) > 0
+                      ? utilFechasHorarios.formatoHora(d.duracionTotalXClasesGlobal - d.duracionTotalXClasesRealizadasGlobal)
+                      : '');
+            }, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (d.duracionTotalXClasesGlobal && parseInt(d.numeroPagosXBolsaHorasGlobal) && d.duracionTotalXClasesGlobal !== d.duracionTotalXClases
+                      ? util.redondear(d.porcentajeAvanceXClasesGlobal, 2) + " %"
+                      : '');
+            }, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return utilFechasHorarios.formatoFecha(d.fechaInicioClase);
+            }, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return utilFechasHorarios.formatoFecha(d.ultimaClaseFecha);
+            }, "className": "never"},
+          {data: "curso", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "", name: "horarioExcel", orderable: false, "searchable": false, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (estados[d.estado] !== undefined ? estados[d.estado][0] : '');
+            }, "className": "never"},
+          {data: "nivelIngles", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (d.montoTotalPagosXBolsaHoras !== null && d.montoTotalPagosXBolsaHoras !== "" && d.montoTotalPagosXBolsaHoras > 0
+                      ? d.numeroPagosXBolsaHoras
+                      : "");
+            }, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (d.montoTotalPagosXBolsaHoras !== null && d.montoTotalPagosXBolsaHoras !== "" && d.montoTotalPagosXBolsaHoras > 0
+                      ? util.redondear(d.montoTotalPagosXBolsaHoras, 2)
+                      : "");
+            }, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (d.montoTotalPagosXBolsaHorasGlobal !== null && d.montoTotalPagosXBolsaHorasGlobal !== "" && d.montoTotalPagosXBolsaHorasGlobal > 0 && d.montoTotalPagosXBolsaHorasGlobal !== d.montoTotalPagosXBolsaHoras
+                      ? d.numeroPagosXBolsaHorasGlobal
+                      : "");
+            }, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (d.montoTotalPagosXBolsaHorasGlobal !== null && d.montoTotalPagosXBolsaHorasGlobal !== "" && d.montoTotalPagosXBolsaHorasGlobal > 0 && d.montoTotalPagosXBolsaHorasGlobal !== d.montoTotalPagosXBolsaHoras
+                      ? util.redondear(d.montoTotalPagosXBolsaHorasGlobal, 2)
+                      : "");
+            }, "className": "never"},
+          {data: "costoXHoraClase", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "numeroDocumento", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return utilFechasHorarios.formatoFecha(d.fechaNacimiento);
+            }, "className": "never"},
+          {data: "geoLatitud", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "geoLongitud", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "direccion", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "distritoAlumno", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return utilFechasHorarios.formatoFecha(d.fechaRegistro, true);
+            }, "className": "never"}
+          //----------------------------------------------------------------
         ],
         initComplete: function (s, j) {
           utilTablas.establecerBotonRecargaTabla($("#tab-lista-alumnos"));
@@ -162,13 +258,13 @@ listaAlumnos = (function ()/* - */ {
         drawCallback: function (s) {
           CargarHorarios();
         }
-      });
+      }, true, [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39]);
       listaClases.actualizar(urlListarClases, true, false);
     }
   }
 
   var datosHorariosCargados = [];
-  function CargarHorarios()/* - */ {
+  function CargarHorarios() {
     urlHorarioMultiple = (typeof (urlHorarioMultiple) === "undefined" ? "" : urlHorarioMultiple);
     if (urlHorarioMultiple !== "") {
       //Horarios
@@ -189,13 +285,24 @@ listaAlumnos = (function ()/* - */ {
       }
     }
   }
-  function MostrarHorarios()/* - */ {
+  function MostrarHorarios() {
     datosHorariosCargados.forEach(function (d) {
-      $("#sec-info-horario-" + d.idEntidad).html(horario.obtenerTexto($.parseJSON(d.datosHorario)));
+      $(".sec-info-horario-" + d.idEntidad).html(horario.obtenerTextoHTML($.parseJSON(d.datosHorario)));
+
+      var tabla = $("#tab-lista-alumnos");
+      var tr = $(tabla).find("#" + d.idEntidad)[0];
+      if ($(tr).is(":visible")) {
+        var fila = $(tabla).DataTable().row(tr);
+        var col = $(tabla).DataTable().column('horarioExcel:name');
+        var celda = $(tabla).DataTable().cell({row: fila.index(), column: col.index()});
+        if (celda.length) {
+          celda.data(horario.obtenerTextoExcel($.parseJSON(d.datosHorario)));
+        }
+      }
     });
   }
 
-  function abrirModalListaClases(id)/* - */ {
+  function abrirModalListaClases(id) {
     var tr = $("#tab-lista-alumnos").find("#" + id)[0];
     var fila = $("#tab-lista-alumnos").DataTable().row(tr);
     var datosAlumno = fila.data();

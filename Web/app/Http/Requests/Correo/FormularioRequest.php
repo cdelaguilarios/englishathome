@@ -7,13 +7,13 @@ use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\TiposEntidad;
 
-class FormularioRequest extends Request/* - */ {
+class FormularioRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["titulo"] = "";
     $datos["asunto"] = ReglasValidacion::formatoDato($datos, "asunto");
@@ -36,7 +36,7 @@ class FormularioRequest extends Request/* - */ {
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     $datos = $this->all();
     $reglasValidacion = [
         "asunto" => "required|max:255",
@@ -69,7 +69,7 @@ class FormularioRequest extends Request/* - */ {
     }
   }
 
-  public function messages()/* - */ {
+  public function messages() {
     return [
         "tipoEntidadNoValida.required" => "El tipo de entidad seleccionada no es válida.",
         "correosNoValido.required" => "Debe seleccionar por lo menos una entidad o ingresar un correo adicional.",

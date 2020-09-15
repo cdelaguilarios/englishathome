@@ -16,7 +16,7 @@ class Horario extends Model {
       "horaFin"
   ];
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloHorario = new Horario();
     $nombreTabla = $modeloHorario->getTable();
     unset($modeloHorario);
@@ -55,11 +55,11 @@ class Horario extends Model {
     return $idsEntidades;
   }
 
-  public static function obtenerXIdEntidad($idEntidad)/* - */ {
+  public static function obtenerXIdEntidad($idEntidad) {
     return Horario::where("idEntidad", $idEntidad)->orderBy("numeroDiaSemana", "asc")->get();
   }
 
-  public static function obtenerMultiple($datos)/* - */ {
+  public static function obtenerMultiple($datos) {
     $horarios = [];
     foreach ($datos["idsEntidades"] as $idEntidad) {
       $horarios[] = [
@@ -70,7 +70,7 @@ class Horario extends Model {
     return $horarios;
   }
 
-  public static function obtenerJsonXIdEntidad($idEntidad)/* - */ {
+  public static function obtenerJsonXIdEntidad($idEntidad) {
     $horarioSel = [];
     $horario = Horario::obtenerXIdEntidad($idEntidad);
     foreach ($horario as $datHorario) {
@@ -93,7 +93,7 @@ class Horario extends Model {
     return json_encode($horarioSel);
   }
 
-  public static function registrarActualizar($idEntidad, $datosJsonHorario)/* - */ {
+  public static function registrarActualizar($idEntidad, $datosJsonHorario) {
     Horario::where("idEntidad", $idEntidad)->delete();
     $datosHorario = json_decode($datosJsonHorario);
     foreach ($datosHorario as $horario) {

@@ -4,13 +4,13 @@ namespace App\Http\Requests\Notificacion;
 
 use App\Http\Requests\Request;
 
-class ActualizarRevisionRequest extends Request/* - */ {
+class ActualizarRevisionRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     if (isset($datos["idsNotificaciones"]) && !is_array($datos["idsNotificaciones"])) {
       $datos["idsNotificaciones"] = explode(",", $datos["idsNotificaciones"]);
@@ -19,7 +19,7 @@ class ActualizarRevisionRequest extends Request/* - */ {
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     switch ($this->method()) {
       case "GET":
       case "DELETE":

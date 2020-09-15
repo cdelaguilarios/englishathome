@@ -1,10 +1,10 @@
 var formularioInteresado = {};
-formularioInteresado = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+formularioInteresado = (function () {
+  $(document).ready(function () {
     cargarFormulario();
   });
 
-  function cargarFormulario()/* - */ {
+  function cargarFormulario() {
     $("#formulario-interesado").validate({
       ignore: ":hidden",
       rules: {

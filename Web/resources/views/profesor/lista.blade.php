@@ -1,4 +1,3 @@
-{{----}}
 @extends("layouts.master")
 @section("titulo", "Profesores")
 
@@ -54,6 +53,28 @@
               <th>Estado</th>
               <th>Fecha registro</th>
               <th class="all">Opciones</th>
+              <!--- Columnas ocultas solo para exportación excel --->
+              <th>Nombres</th>
+              <th>Apellidos</th>
+              <th>Teléfono</th>
+              <th>Correo electrónico</th>
+              <th>Descripción propia</th>
+              <th>Ensayo</th>
+              <th>Experiencia en otros idiomas</th>
+              <th>Últimos trabajos</th>
+              <th>Comentarios del administrador EAH</th>
+              <th>Cuentas bancarias</th>
+              <th>Estado</th>        
+              <th>Número de documento de identidad</th>
+              <th>Fecha de nacimiento</th>  
+              <th>Geo Latitud</th>
+              <th>Geo Longitu</th>
+              <th>Dirección</th>
+              <th>Referencia dirección</th>
+              <th>Número de departamento</th>
+              <th>Distrito</th>
+              <th>Fecha de registro</th>
+              <!---------------------------------------------------->
             </tr>
           </thead>
         </table>

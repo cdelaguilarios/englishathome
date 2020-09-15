@@ -2,7 +2,7 @@
 
 namespace App\Helpers\Enum;
 
-class TiposNotificacion/* - */ {
+class TiposNotificacion {
 
   const Notificacion = "NOTIFICACION";
   const Pago = "PAGO";
@@ -12,7 +12,7 @@ class TiposNotificacion/* - */ {
   const ClaseColorIconoDefecto = "bg-yellow";
   const ClaseTextoColorIconoDefecto = "text-yellow";
 
-  public static function listar()/* - */ {
+  public static function listar() {
     return [
         TiposNotificacion::Notificacion => ["Notificación", "fa-bullhorn", "bg-yellow", "text-yellow"],
         TiposNotificacion::Pago => ["Pago", "fa-dollar", "bg-green", "text-green"],

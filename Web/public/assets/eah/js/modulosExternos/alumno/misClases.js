@@ -1,10 +1,10 @@
 var misClases = {};
-misClases = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+misClases = (function () {
+  $(document).ready(function () {
     cargarLista();
   });
 
-  function cargarLista()/* - */ {
+  function cargarLista() {
     urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
     urlConfirmar = (typeof (urlConfirmar) === "undefined" ? "" : urlConfirmar);
 
@@ -29,9 +29,9 @@ misClases = (function ()/* - */ {
         order: [[1, "desc"]],
         rowId: 'id',
         columns: [
-          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+          {data: "", name: "", width: "2%", orderable: false, "searchable": false, render: function (e, t, d, m) {
               return m.row + m.settings._iDisplayStart + 1;
-            }, "className": "text-center min-tablet-l"},
+            }, "className": "text-center", responsivePriority: 0},
           {data: "fechaConfirmacion", name: "fechaConfirmacion", width: "20%", render: function (e, t, d, m) {
               var fechaConfirmacionIni = "";
               if (d.fechaConfirmacion !== null && !isNaN(Date.parse(d.fechaConfirmacion))) {
@@ -45,11 +45,13 @@ misClases = (function ()/* - */ {
                       + '<b>Profesor:</b> ' + d.nombreProfesor + ' ' + d.apellidoProfesor + '<br/>'
                       + '<b>Duración:</b> ' + utilFechasHorarios.formatoHora(d.duracion) + '<br/>'
                       + '<b>Estado:</b> ' + (estadosClase[d.estado] !== undefined ? '<span class="label ' + estadosClase[d.estado][1] + ' btn-estado">' + estadosClase[d.estado][0] + '</span>' : '');
-            }},
+            }, responsivePriority: 0},
           {data: "comentarioProfesor", name: "comentarioProfesor", render: function (e, t, d, m) {
-              return d.comentarioProfesor;
-            }, "className": "min-tablet-l"},
-          {data: "comentarioParaAlumno", name: "comentarioParaAlumno", "className": "min-tablet-l"},
+              return d.comentarioProfesor !== null && d.comentarioProfesor !== "" ? d.comentarioProfesor : "-";
+            }, "className": "desktop"},
+          {data: "comentarioParaAlumno", name: "comentarioParaAlumno", render: function (e, t, d, m) {
+              return d.comentarioParaAlumno !== null && d.comentarioParaAlumno !== "" ? d.comentarioParaAlumno : "-";
+            }, "className": "desktop"},
           {data: "id", name: "id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
               d.estado = (d.estado === estadoClaseConfirmadaProfesorAlumno ? estadoClaseRealizada : d.estado);
 
@@ -57,12 +59,12 @@ misClases = (function ()/* - */ {
                 return '<input type="checkbox" checked="checked" disabled>';
               } else if (d.estado === estadoClaseConfirmadaProfesor) {
                 return '<a href="javascript:void(0);" onclick="misClases.confirmar(' + d.id + ');" class="btn btn-success btn-xs">' +
-                      'Confirmar' +
-                      '</a>';
+                        'Confirmar' +
+                        '</a>';
               } else {
                 return '';
               }
-            }, "className": "text-center"}
+            }, "className": "text-center min-mobile-l"}
         ],
         initComplete: function (s, j) {
           utilTablas.establecerBotonRecargaTabla($("#tab-lista-clases"));
@@ -72,7 +74,7 @@ misClases = (function ()/* - */ {
     }
   }
 
-  function confirmar(idClase)/* - */ {
+  function confirmar(idClase) {
     if (confirm("¿Está seguro que desea confirmar la realización de la clase seleccionada?")) {
       urlConfirmar = (typeof (urlConfirmar) === "undefined" ? "" : urlConfirmar);
       if (urlConfirmar !== "") {

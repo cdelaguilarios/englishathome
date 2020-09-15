@@ -18,14 +18,14 @@ class Tarea extends Model {
       "fechaFinalizacion"
   ];
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloTarea = new Tarea();
     $nombreTabla = $modeloTarea->getTable();
     unset($modeloTarea);
     return $nombreTabla;
   }
 
-  private static function listarBase()/* - */ {
+  private static function listarBase() {
     $nombreTablaTarea = Tarea::nombreTabla();
     $nombreTablaEntidad = Entidad::nombreTabla();
     $nombreTablaTareaNotificacion = TareaNotificacion::nombreTabla();
@@ -60,14 +60,14 @@ class Tarea extends Model {
     );
   }
 
-  public static function listar($datos)/* - */ {
+  public static function listar($datos) {
     $nombreTablaTareaNotificacion = TareaNotificacion::nombreTabla();
     $tareas = Tarea::listarBase();
     Util::aplicarFiltrosBusquedaXFechas($tareas, $nombreTablaTareaNotificacion, "fechaProgramada", $datos);
     return $tareas;
   }
 
-  public static function listarNoRealizadas($seleccionarMisTareas = TRUE)/* - */ {
+  public static function listarNoRealizadas($seleccionarMisTareas = TRUE) {
     $nombreTablaTarea = Tarea::nombreTabla();
 
     $tareas = Tarea::listarBase();
@@ -79,7 +79,7 @@ class Tarea extends Model {
     return $tareas->whereNull($nombreTablaTarea . ".fechaRealizacion")->get();
   }
 
-  public static function listarParaPanel($seleccionarMisTareas = TRUE)/* - */ {
+  public static function listarParaPanel($seleccionarMisTareas = TRUE) {
     $tareasNoRealizadas = Tarea::listarNoRealizadas($seleccionarMisTareas);
 
     //Tareas recientemente realizadas    
@@ -101,7 +101,7 @@ class Tarea extends Model {
     return $tareasNoRealizadas->merge($tareasRealizadas);
   }
 
-  public static function obtenerXId($id)/* - */ {
+  public static function obtenerXId($id) {
     return Tarea::listarBase()->where("tareaNotificacion.id", $id)->firstOrFail();
   }
 
@@ -115,7 +115,7 @@ class Tarea extends Model {
 
     if (!(isset($datos["idTarea"]) && $datos["idTarea"] != "")) {
       //Registro
-      $datos["adjuntos"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 5, "Adjuntos");
+      $datos["adjuntos"] = Archivo::procesarArchivosSubidos("", $datos, 5, "Adjuntos");
 
       $idTareaNotificacion = TareaNotificacion::registrar($datos, FALSE);
       $tarea = new Tarea($datos);
@@ -137,7 +137,7 @@ class Tarea extends Model {
         unset($datos["fechaNotificacion"]);
       }
       
-      $datos["adjuntos"] = Archivo::procesarArchivosSubidosNUEVO($tarea->adjuntos, $datos, 5, "Adjuntos");
+      $datos["adjuntos"] = Archivo::procesarArchivosSubidos($tarea->adjuntos, $datos, 5, "Adjuntos");
 
       TareaNotificacion::actualizar($idTareaNotificacion, $datos, FALSE);
       $tarea->idUsuarioAsignado = $datos["idUsuarioAsignado"];
@@ -160,7 +160,7 @@ class Tarea extends Model {
     }
   }
 
-  public static function actualizarEstado($id, $estado)/* - */ {
+  public static function actualizarEstado($id, $estado) {
     $tarea = Tarea::obtenerXId($id);
     $tarea->estado = $estado;
     $tarea->fechaRealizacion = NULL;

@@ -1,4 +1,3 @@
-{{----}}
 <div class="row">
   <div class="col-sm-12">
     <div class="{{ ((isset($modo) && $modo == "registrar") ? "box box-info" : "") }}">

@@ -8,13 +8,13 @@ use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\EstadosPago;
 use App\Helpers\Enum\CuentasBancoPago;
 
-class FormularioRequest extends Request/* - */ {
+class FormularioRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["motivo"] = ReglasValidacion::formatoDato($datos, "motivo");
     $datos["fecha"] = ReglasValidacion::formatoDato($datos, "fecha");
@@ -30,7 +30,7 @@ class FormularioRequest extends Request/* - */ {
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     $datos = $this->all();
 
     $reglasValidacion = [
@@ -78,7 +78,7 @@ class FormularioRequest extends Request/* - */ {
     }
   }
 
-  public function messages()/* - */ {
+  public function messages() {
     return [
         "motivoNoValido.required" => "El motivo seleccionado del pago no es válido.",
         "cuentaNoValida.required" => "La cuenta de banco seleccionada del pago no es válida.",

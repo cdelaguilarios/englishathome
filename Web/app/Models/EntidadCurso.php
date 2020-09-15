@@ -13,19 +13,19 @@ class EntidadCurso extends Model/* |-| */ {
       "idCurso"
   ];
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloEntidadCurso = new EntidadCurso();
     $nombreTabla = $modeloEntidadCurso->getTable();
     unset($modeloEntidadCurso);
     return $nombreTabla;
   }
 
-  public static function obtenerXIdEntidad($idEntidad, $soloPrimerCurso = TRUE)/* - */ {
+  public static function obtenerXIdEntidad($idEntidad, $soloPrimerCurso = TRUE) {
     $entidadCursos = EntidadCurso::select("idCurso")->where("idEntidad", $idEntidad)->get();
     return (count($entidadCursos) > 0 ? ($soloPrimerCurso ? $entidadCursos[0] : $entidadCursos) : NULL);
   }
 
-  public static function registrarActualizar($idEntidad, $idCursos)/* - */ {
+  public static function registrarActualizar($idEntidad, $idCursos) {
     if (isset($idCursos)) {
       EntidadCurso::where("idEntidad", $idEntidad)->delete();
 

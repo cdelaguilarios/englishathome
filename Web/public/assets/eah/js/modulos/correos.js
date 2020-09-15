@@ -1,11 +1,11 @@
 var correos = {};
-correos = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+correos = (function () {
+  $(document).ready(function () {
     cargarFiltrosBusqueda();
     cargarFormulario();
   });
 
-  function cargarFiltrosBusqueda()/* - */ {
+  function cargarFiltrosBusqueda() {
     urlBuscarEntidades = (typeof (urlBuscarEntidades) === "undefined" ? "" : urlBuscarEntidades);
     urlArchivos = (typeof (urlArchivos) === "undefined" ? "" : urlArchivos);
     tiposEntidades = (typeof (tiposEntidades) === "undefined" ? "" : tiposEntidades);
@@ -77,7 +77,7 @@ correos = (function ()/* - */ {
       }
     }
   }
-  function cargarFormulario()/* - */ {
+  function cargarFormulario() {
     $("#formulario-correos").validate({
       ignore: "",
       rules: {

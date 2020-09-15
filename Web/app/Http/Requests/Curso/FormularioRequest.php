@@ -5,13 +5,13 @@ namespace App\Http\Requests\Curso;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 
-class FormularioRequest extends Request/* - */ {
+class FormularioRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["id"] = ReglasValidacion::formatoDato($datos, "id", 0);
     $datos["nombre"] = ReglasValidacion::formatoDato($datos, "nombre");   
@@ -24,7 +24,7 @@ class FormularioRequest extends Request/* - */ {
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     $reglasValidacion = [
         "nombre" => ["required", "max:255"],
         "descripcion" => "required|max:8000",

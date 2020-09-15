@@ -29,14 +29,14 @@ class Interesado extends Model/* |-| */ {
       "origen"
   ];
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloInteresado = new Interesado();
     $nombreTabla = $modeloInteresado->getTable();
     unset($modeloInteresado);
     return $nombreTabla;
   }
 
-  public static function listar($datos = NULL)/* - */ {
+  public static function listar($datos = NULL) {
     $nombreTablaInteresado = Interesado::nombreTabla();
     $interesados = Interesado::
             select(DB::raw($nombreTablaInteresado . ".*, 
@@ -60,7 +60,7 @@ class Interesado extends Model/* |-| */ {
     return $interesados;
   }
 
-  public static function listarBusqueda($terminoBus = NULL)/* - */ {
+  public static function listarBusqueda($terminoBus = NULL) {
     $interesados = Interesado::listar()->select(DB::raw("entidad.id, CONCAT(entidad.nombre, ' ', entidad.apellido) AS nombreCompleto"));
     if (isset($terminoBus)) {
       $interesados->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
@@ -68,7 +68,7 @@ class Interesado extends Model/* |-| */ {
     return $interesados->lists("nombreCompleto", "entidad.id");
   }
 
-  public static function listarCursosInteres()/* - */ {
+  public static function listarCursosInteres() {
     $nombreTabla = Interesado::nombreTabla();
     return Interesado::listar()
                     ->select(DB::raw("(CASE WHEN " . $nombreTabla . ".cursoInteres <> '' THEN " . $nombreTabla . ".cursoInteres ELSE 'Otros' END) AS 'cursoInteres'"))
@@ -76,7 +76,7 @@ class Interesado extends Model/* |-| */ {
                     ->lists("cursoInteres", "cursoInteres");
   }
 
-  public static function obtenerXId($id, $simple = FALSE)/* - */ {
+  public static function obtenerXId($id, $simple = FALSE) {
     $interesado = Interesado::listar()->where("entidad.id", $id)->firstOrFail();
 
     if (!$simple) {
@@ -90,7 +90,7 @@ class Interesado extends Model/* |-| */ {
     return $interesado;
   }
 
-  public static function registrar($datos)/* - */ {
+  public static function registrar($datos) {
     $estado = (isset($datos["estado"]) ? $datos["estado"] : EstadosInteresado::PendienteInformacion);
     $idEntidad = Entidad::registrar($datos, TiposEntidad::Interesado, $estado);
     EntidadCurso::registrarActualizar($idEntidad, $datos["idCurso"]);
@@ -102,12 +102,13 @@ class Interesado extends Model/* |-| */ {
     Notificacion::registrarActualizar([
         "idEntidades" => [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
         "titulo" => (Auth::guest() ? MensajesNotificacion::TituloInteresadoRegistro : MensajesNotificacion::TituloInteresadoRegistroXUsuario),
-        "enviarCorreo" => (Auth::guest() ? 1 : 0)
+        "enviarCorreo" => (Auth::guest() ? 1 : 0),
+        "mostrarEnPerfil" => 1
     ]);
     return $idEntidad;
   }
 
-  public static function registrarAlumno($id, $idAlumno = NULL)/* - */ {
+  public static function registrarAlumno($id, $idAlumno = NULL) {
     $datos = Interesado::obtenerXId($id, TRUE)->toArray();
 
     $idAlumnoRel = Interesado::obtenerIdAlumno($id);
@@ -139,7 +140,8 @@ class Interesado extends Model/* |-| */ {
       Notificacion::registrarActualizar([
           "idEntidades" => [$idAlumno, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
           "titulo" => (Auth::guest() ? MensajesNotificacion::TituloAlumnoRegistro : MensajesNotificacion::TituloAlumnoRegistroXUsuario),
-          "enviarCorreo" => (Auth::guest() ? 1 : 0)
+          "enviarCorreo" => (Auth::guest() ? 1 : 0),
+          "mostrarEnPerfil" => 1
       ]);
     } else {
       $alumno = Entidad::obtenerXId($idAlumno);
@@ -152,24 +154,25 @@ class Interesado extends Model/* |-| */ {
 
     Notificacion::registrarActualizar([
         "idEntidades" => [$id, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
-        "titulo" => (Auth::guest() ? MensajesNotificacion::TituloInteresadoRegistroAlumno : MensajesNotificacion::TituloInteresadoRegistroAlumnoXUsuario)
+        "titulo" => (Auth::guest() ? MensajesNotificacion::TituloInteresadoRegistroAlumno : MensajesNotificacion::TituloInteresadoRegistroAlumnoXUsuario),
+        "mostrarEnPerfil" => 1
     ]);
     return $idAlumno;
   }
 
-  public static function actualizar($id, $datos)/* - */ {
+  public static function actualizar($id, $datos) {
     Entidad::actualizar($id, $datos, TiposEntidad::Interesado, $datos["estado"]);
     EntidadCurso::registrarActualizar($id, $datos["idCurso"]);
     $interesado = Interesado::obtenerXId($id, TRUE);
     $interesado->update($datos);
   }
 
-  public static function actualizarEstado($id, $estado)/* - */ {
+  public static function actualizarEstado($id, $estado) {
     Interesado::obtenerXId($id, TRUE);
     Entidad::actualizarEstado($id, $estado);
   }
 
-  public static function enviarCotizacion($id, $datos)/* - */ {
+  public static function enviarCotizacion($id, $datos) {
     $interesado = Interesado::obtenerXId($id, TRUE);
     $interesado->costoXHoraClase = $datos["costoXHoraClase"];
     $interesado->save();
@@ -195,13 +198,10 @@ class Interesado extends Model/* |-| */ {
         }
       }
     }
-
-    Config::set("mail.username", VariableSistema::obtenerXLlave("correo"));
-    Config::set("mail.password", VariableSistema::obtenerXLlave("contrasenaCorreo"));
     $correoNotificaciones = VariableSistema::obtenerXLlave("correo");
 
-    Mail::send("interesado.plantillaCorreo.cotizacionNUEVO", $datos, function ($m) use ($esPrueba, $correo, $nombreDestinatario, $nombresArchivosAdjuntos, $nombresOriginalesArchivosAdjuntos, $nombresArchivosAdjuntosEliminados, $correoNotificaciones) {
-      $m->to($correo, $nombreDestinatario)->subject("English at Home Perú - Cotización");
+    Mail::send("interesado.plantillaCorreo.cotizacion", $datos, function ($m) use ($esPrueba, $correo, $nombreDestinatario, $nombresArchivosAdjuntos, $nombresOriginalesArchivosAdjuntos, $nombresArchivosAdjuntosEliminados, $correoNotificaciones) {
+      $m->to($correo, $nombreDestinatario)->subject(Config::get("eah.nombreComercialEmpresa") . " - Cotización");
       if (!$esPrueba && $correo !== $correoNotificaciones) {
         $m->bcc($correoNotificaciones);
       }
@@ -245,13 +245,13 @@ class Interesado extends Model/* |-| */ {
     }
   }
 
-  public static function obtenerIdAlumno($id)/* - */ {
+  public static function obtenerIdAlumno($id) {
     Interesado::obtenerXId($id, TRUE);
     $relacionEntidad = RelacionEntidad::obtenerXIdEntidadB($id);
     return (count($relacionEntidad) > 0 ? $relacionEntidad[0]->idEntidadA : 0);
   }
 
-  public static function obtenerXIdAlumno($idAlumno)/* - */ {
+  public static function obtenerXIdAlumno($idAlumno) {
     try {
       $relacionEntidad = RelacionEntidad::obtenerXIdEntidadA($idAlumno);
       if (count($relacionEntidad) > 0) {
@@ -265,7 +265,7 @@ class Interesado extends Model/* |-| */ {
     }
   }
 
-  public static function eliminar($id)/* - */ {
+  public static function eliminar($id) {
     Interesado::obtenerXId($id, TRUE);
     Entidad::eliminar($id);
   }

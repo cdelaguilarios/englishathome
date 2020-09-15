@@ -1,10 +1,10 @@
 var busquedaAlumno = {};
-busquedaAlumno = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+busquedaAlumno = (function () {
+  $(document).ready(function () {
     cargarCajaBusqueda();
   });
 
-  function cargarCajaBusqueda()/* - */ {
+  function cargarCajaBusqueda() {
     urlBuscar = (typeof (urlBuscar) === "undefined" ? "" : urlBuscar);
     urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
     urlPerfil = (typeof (urlPerfil) === "undefined" ? "" : urlPerfil);

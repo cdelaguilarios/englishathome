@@ -14,14 +14,14 @@
         <tr>
           <td align="center" style="text-align: center; border-bottom: 1px dashed #999 ">
             &nbsp;<br />&nbsp;
-            <img src="{{ asset("assets/eah/img/logo.png")}}" alt="English at home" width="150"/>
+            <img src="{{ asset("assets/eah/img/logo.png")}}" alt="{{ $nombreComercialEmpresa }}" width="150"/>
             &nbsp;<br />&nbsp;
           </td>
         </tr>
         <tr>
           <td style="padding: 10px; font-size: 14px; text-align: justify">
             &nbsp;<br />
-            <p>Estimado(a) {{ $nombreCompletoDestinatario }},</p>
+            <p>Estimado(a),</p>
             {!! $mensaje !!}
           </td>
         </tr>

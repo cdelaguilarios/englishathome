@@ -13,14 +13,14 @@ class AlumnoBolsaHoras extends Model/* |-| */ {
       "idPago"
   ];
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloAlumnoBolsaHoras = new AlumnoBolsaHoras();
     $nombreTabla = $modeloAlumnoBolsaHoras->getTable();
     unset($modeloAlumnoBolsaHoras);
     return $nombreTabla;
   }
 
-  public static function obtenerXIdAlumno($idAlumno)/* - */ {
+  public static function obtenerXIdAlumno($idAlumno) {
     return EntidadCuentaBancaria::where("idAlumno", $idAlumno)->get();
   }
 

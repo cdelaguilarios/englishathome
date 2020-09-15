@@ -1,7 +1,7 @@
 var listaClases = {};
-listaClases = (function ()/* - */ {
+listaClases = (function () {
   window.addEventListener("load", esperarCargaJquery, false);
-  function esperarCargaJquery()/* - */ {
+  function esperarCargaJquery() {
     ((window.jQuery && jQuery.ui) ? cargarSeccion() : window.setTimeout(esperarCargaJquery, 100));
   }
 
@@ -10,12 +10,13 @@ listaClases = (function ()/* - */ {
   var _tabla = null;
   var _esListaClasesAlumno = false;
   var _incluirBotonEliminar = false;
+  var _idAlumno = null;
 
-  function cargarSeccion()/* - */ {
+  function cargarSeccion() {
     cargarFormularioComentarios();
   }
 
-  function cargar()/* - */ {
+  function cargar() {
     urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
     urlPerfilAlumno = (typeof (urlPerfilAlumno) === "undefined" ? "" : urlPerfilAlumno);
 
@@ -36,18 +37,32 @@ listaClases = (function ()/* - */ {
             d._token = $("meta[name=_token]").attr("content");
           }
         },
+        dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" + "<'row'<'col-sm-6'i><'col-sm-6 text-right'B>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
         autoWidth: false,
         responsive: true,
         orderCellsTop: true,
         fixedHeader: true,
         order: [[1, "desc"]],
         rowId: 'id',
+        buttons: [
+          {
+            text: 'Descargar lista',
+            className: 'btn btn-primary btn-clean btn-xs',
+            action: function (e, dt, node, config) {
+              if (_idAlumno !== null) {
+                var win = window.open(urlDescargarListarClases.replace("/0", "/" + _idAlumno), '_blank');
+                win.focus();
+              }
+            }
+          }
+        ],
         columns: [
-          {data: "", name: "", orderable: false, "searchable": false, "className": "text-center not-mobile",
-            render: function (e, t, d, m) {
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
               return m.row + m.settings._iDisplayStart + 1;
-            }},
+            }, "className": "text-center", responsivePriority: 0},
           {data: "fechaConfirmacion", name: "fechaConfirmacion", render: function (e, t, d, m) {
+              _idAlumno = d.idAlumno;
+
               var fechaConfirmacionIni = "";
               var fechaConfirmacionFin = "";
               if (d.fechaConfirmacion !== null && !isNaN(Date.parse(d.fechaConfirmacion))) {
@@ -70,7 +85,7 @@ listaClases = (function ()/* - */ {
                 datos += (d.idsPagosProfesor !== null && d.idsPagosProfesor !== "" ? '<br/><b>Pago(s):</b> ' + d.idsPagosProfesor : '');
               }
               return datos;
-            }},
+            }, responsivePriority: 0},
           {data: "estado", name: "estado", width: "10%", render: function (e, t, d, m) {
               var estado = '';
               if (estadosClase[d.estado] !== undefined) {
@@ -85,7 +100,7 @@ listaClases = (function ()/* - */ {
                 }
               }
               return estado;
-            }, className: "text-center"},
+            }, className: "text-center min-tablet-p"},
           {data: "comentarioAlumno", name: "comentarioAlumno", width: "50%", orderable: false, render: function (e, t, d, m) {
               var incluirComentario = function (idClase, seccion, tipo, comentario) {
                 var maxTexto = 200;
@@ -98,7 +113,7 @@ listaClases = (function ()/* - */ {
                       incluirComentario(d.id, 'Del profesor', 2, d.comentarioProfesor) +
                       incluirComentario(d.id, 'De EAH para el alumno', 3, d.comentarioParaAlumno) +
                       incluirComentario(d.id, 'De EAH para el profesor', 4, d.comentarioParaProfesor);
-            }, "className": "not-mobile"},
+            }, "className": "min-tablet-l"},
           {data: "id", name: "id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
               if (_incluirBotonEliminar) {
                 urlEliminarClase = (typeof (urlEliminarClase) === "undefined" ? "" : urlEliminarClase);
@@ -112,7 +127,7 @@ listaClases = (function ()/* - */ {
               } else {
                 return '';
               }
-            }, className: "text-center"}
+            }, className: "text-center min-mobile-l"}
         ],
         initComplete: function (s, j) {
           utilTablas.establecerBotonRecargaTabla($("#tab-lista-clases"));
@@ -130,7 +145,7 @@ listaClases = (function ()/* - */ {
       });
     }
   }
-  function cargarFormularioComentarios()/* - */ {
+  function cargarFormularioComentarios() {
     $("#formulario-comentarios").validate({
       rules: {
         comentario: {
@@ -203,7 +218,7 @@ listaClases = (function ()/* - */ {
   }
 
   //Público
-  function actualizar(url, esListaClasesAlumno, incluirBotonEliminar, funcionRetorno, funcionError)/* - */ {
+  function actualizar(url, esListaClasesAlumno, incluirBotonEliminar, funcionRetorno, funcionError) {
     if (url !== "") {
       _url = url;
       _esListaClasesAlumno = esListaClasesAlumno;
@@ -227,7 +242,7 @@ listaClases = (function ()/* - */ {
       funcionError("URL para listar clases no disponible");
     }
   }
-  function abrirModalFormularioComentarios(idClase, tipo)/* - */ {
+  function abrirModalFormularioComentarios(idClase, tipo) {
     var tr = $("#tab-lista-clases").find("#" + idClase)[0];
     var fila = $("#tab-lista-clases").DataTable().row(tr);
     var datosFila = fila.data();

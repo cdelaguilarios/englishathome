@@ -10,9 +10,9 @@ use App\Http\Requests\Entidad\ActualizarImagenRequest;
 use App\Http\Requests\Entidad\ActualizarCredencialesAccesoRequest;
 use App\Http\Requests\Entidad\ActualizarComentariosAdministradorRequest;
 
-class EntidadController extends Controller/* - */ {
+class EntidadController extends Controller {
 
-  public function perfil($id)/* - */ {
+  public function perfil($id) {
     try {
       $datosEntidad = Entidad::ObtenerXId($id);
       return redirect(route(TiposEntidad::listarTiposBase()[$datosEntidad->tipo][4], ["id" => $id]));
@@ -23,7 +23,7 @@ class EntidadController extends Controller/* - */ {
     }
   }
 
-  public function actualizarComentariosAdministrador($id, ActualizarComentariosAdministradorRequest $req)/* - */ {
+  public function actualizarComentariosAdministrador($id, ActualizarComentariosAdministradorRequest $req) {
     try {
       Entidad::actualizarComentariosAdministrador($id, $req->all());
     } catch (\Exception $e) {
@@ -33,7 +33,7 @@ class EntidadController extends Controller/* - */ {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function actualizarCredencialesAcceso($id, ActualizarCredencialesAccesoRequest $req)/* - */ {
+  public function actualizarCredencialesAcceso($id, ActualizarCredencialesAccesoRequest $req) {
     try {
       $datosEntidad = Entidad::ObtenerXId($id);
     } catch (\Exception $e) {
@@ -52,7 +52,7 @@ class EntidadController extends Controller/* - */ {
     return redirect(route(TiposEntidad::listarTiposBase()[$datosEntidad->tipo][4], ["id" => $id]));
   }
 
-  public function actualizarImagenPerfil($id, ActualizarImagenRequest $req)/* - */ {
+  public function actualizarImagenPerfil($id, ActualizarImagenRequest $req) {
     try {
       $datosEntidad = Entidad::ObtenerXId($id);
     } catch (\Exception $e) {

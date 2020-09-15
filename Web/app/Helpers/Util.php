@@ -8,7 +8,7 @@ use App\Helpers\Enum\TiposBusquedaFecha;
 
 class Util {
 
-  public static function preProcesarFiltrosBusquedaXFechas(&$datos)/* - */ {
+  public static function preProcesarFiltrosBusquedaXFechas(&$datos) {
     $datos["tipoBusquedaFecha"] = ReglasValidacion::formatoDato($datos, "tipoBusquedaFecha");
     $datos["fechaDia"] = ReglasValidacion::formatoDato($datos, "fechaDia");
     $datos["fechaMes"] = ReglasValidacion::formatoDato($datos, "fechaMes");
@@ -38,7 +38,7 @@ class Util {
     }
   }
 
-  public static function aplicarFiltrosBusquedaXFechas(&$elementos, $nombreTabla, $nombreCampoFecha, $datosFiltros)/* - */ {
+  public static function aplicarFiltrosBusquedaXFechas(&$elementos, $nombreTabla, $nombreCampoFecha, $datosFiltros) {
     if (isset($datosFiltros["tipoBusquedaFecha"])) {
       $fechaBusIni = new Carbon('first day of this month');
       $fechaBusFin = new Carbon('last day of this month');
@@ -74,7 +74,7 @@ class Util {
     }
   }
 
-  public static function preProcesarDocumentosDocente(&$datos)/* - */ {
+  public static function preProcesarDocumentosDocente(&$datos) {
     $datos["nombresArchivosDocumentoPersonalCv"] = ReglasValidacion::formatoDato($datos, "nombresArchivosDocumentoPersonalCv");
     $datos["nombresOriginalesArchivosDocumentoPersonalCv"] = ReglasValidacion::formatoDato($datos, "nombresOriginalesArchivosDocumentoPersonalCv");
     $datos["nombresArchivosDocumentoPersonalCvEliminados"] = ReglasValidacion::formatoDato($datos, "nombresArchivosDocumentoPersonalCvEliminados");
@@ -88,14 +88,14 @@ class Util {
     $datos["nombresArchivosDocumentoPersonalImagenDocumentoIdentidadEliminados"] = ReglasValidacion::formatoDato($datos, "nombresArchivosDocumentoPersonalImagenDocumentoIdentidadEliminados");
   }
 
-  public static function formatoHora($tiempoSegundos, $incluirSegundos = FALSE)/* - */ {
+  public static function formatoHora($tiempoSegundos, $incluirSegundos = FALSE) {
     $h = floor($tiempoSegundos / 3600);
     $m = floor($tiempoSegundos % 3600 / 60);
     $s = floor($tiempoSegundos % 3600 % 60);
     return (($h >= 0 ? $h . ":" . ($m < 10 ? "0" : "") : "") . $m . ($incluirSegundos ? ":" . ($s < 10 ? "0" : "") . $s : ""));
   }
 
-  public static function incluirEnlaceWhatsApp($numero)/* - */ {
+  public static function incluirEnlaceWhatsApp($numero) {
     $numeroFinal = ($numero != null ? str_replace([" ", "+"], "", trim($numero)) : "");
 
     if ($numeroFinal != "" && strlen($numeroFinal) >= 9 && preg_match('/^[0-9]+$/', $numeroFinal)) {

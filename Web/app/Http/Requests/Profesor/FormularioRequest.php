@@ -12,11 +12,11 @@ use App\Helpers\Enum\SexosEntidad;
 
 class FormularioRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
 
     $datos["telefono"] = ReglasValidacion::formatoDato($datos, "telefono");
@@ -47,7 +47,7 @@ class FormularioRequest extends Request {
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     $datos = $this->all();
     $modoEdicion = ($this->method() == "PATCH");
     $idEntidad = $this->route('id');
@@ -113,7 +113,7 @@ class FormularioRequest extends Request {
     }
   }
 
-  public function messages()/* - */ {
+  public function messages() {
     return [
         "correoElectronico.unique" => "El correo electrónico ingresado ya está siendo utilizado. Tomar en cuenta que el profesor utiliza su correo electrónico para acceder al sistema y este dato no puede ser igual al que utiliza un alumno o un usuario del sistema.",
         "sexoNoValido.required" => "El sexo seleccionado no es válido.",

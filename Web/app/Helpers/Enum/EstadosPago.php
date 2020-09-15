@@ -2,13 +2,13 @@
 
 namespace App\Helpers\Enum;
 
-class EstadosPago/* - */ {
+class EstadosPago {
 
   const Realizado = "REALIZADO";
   const Pendiente = "PENDIENTE";
   const Consumido = "CONSUMIDO";//Estado especial para pagos que ya no deban ser considerados en una bolsa de horas
 
-  public static function listarSimple()/* - */ {
+  public static function listarSimple() {
     return [
         EstadosPago::Consumido => "Consumido",
         EstadosPago::Realizado => "Realizado",
@@ -16,7 +16,7 @@ class EstadosPago/* - */ {
     ];
   }
 
-  public static function listar()/* - */ {
+  public static function listar() {
     return [
         EstadosPago::Pendiente => ["Pendiente", "label-warning", "#f39c12"],
         EstadosPago::Realizado => ["Realizado", "label-success", "#00a65a"],
@@ -24,7 +24,7 @@ class EstadosPago/* - */ {
     ];
   }
 
-  public static function listarBusqueda($incluirConsumido = TRUE)/* - */ {
+  public static function listarBusqueda($incluirConsumido = TRUE) {
     $estados = EstadosPago::listar();
     
     $estadosBusqueda = [];
@@ -37,7 +37,7 @@ class EstadosPago/* - */ {
     return $estadosBusqueda;
   }
   
-  public static function listarDisponibleCambio()/* - */ {
+  public static function listarDisponibleCambio() {
     $estadosBusqueda = EstadosPago::listarBusqueda();
     $estadosDisponibleCambio = [
         EstadosPago::Pendiente,

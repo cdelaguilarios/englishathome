@@ -1,4 +1,3 @@
-{{----}}
 <script src="{{ asset("assets/eah/js/modulos/util/comentariosAdministrador.js")}}"></script>
 {{ Form::open(["url" => route("entidades.actualizar.comentarios.administrador", ["id" => $idEntidad]), "id" => "formulario-comentarios-administrador", "class" => "form-horizontal", "novalidate" => "novalidate", "files" => true]) }}
 <div class="row">

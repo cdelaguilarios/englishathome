@@ -1,4 +1,3 @@
-{{----}}
 @extends("layouts.master")
 @section("titulo", "Ficha " . ($profesor->sexo == "F" ? "de la profesora" : "del profesor") . " " . $profesor->nombre . " " .  $profesor->apellido)
 
@@ -42,7 +41,7 @@
     float: right;
   }
   .login-logo, .register-logo{
-    font-size: 30px;
+    font-size: 25px;
   }
   hr {
     margin-top: 2px;

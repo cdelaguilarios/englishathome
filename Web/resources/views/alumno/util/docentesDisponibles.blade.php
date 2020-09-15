@@ -1,4 +1,3 @@
-{{----}}
 <script>
   var urlListar = "{{ route('docentes.disponibles.listar') }}";
   

@@ -6,6 +6,7 @@ use PDF;
 use Log;
 use Auth;
 use Input;
+use Config;
 use Storage;
 use Mensajes;
 use Datatables;
@@ -28,7 +29,7 @@ class ProfesorController extends Controller {
   protected $data = array();
   protected $rutasArchivosEliminar = array();
 
-  public function __construct()/* - */ {
+  public function __construct() {
     $this->data["seccion"] = "docentes";
     $this->data["subSeccion"] = "profesores";
   }
@@ -40,11 +41,11 @@ class ProfesorController extends Controller {
   }
 
   // <editor-fold desc="Profesor">
-  public function index()/* - */ {
+  public function index() {
     return view("profesor.lista", $this->data);
   }
 
-  public function listar(BusquedaRequest $req)/* - */ {
+  public function listar(BusquedaRequest $req) {
     return Datatables::of(Profesor::listar($req->all()))->filterColumn("entidad.nombre", function($q, $k) {
               $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
             })->filterColumn("entidad.fechaRegistro", function($q, $k) {
@@ -52,7 +53,7 @@ class ProfesorController extends Controller {
             })->make(true);
   }
 
-  public function buscar()/* - */ {
+  public function buscar() {
     $termino = Input::get("termino");
 
     $profesoresPro = [];
@@ -63,11 +64,11 @@ class ProfesorController extends Controller {
     return \Response::json(["results" => $profesoresPro]);
   }
 
-  public function crear()/* - */ {
+  public function crear() {
     return view("profesor.crear", $this->data);
   }
 
-  public function registrar(FormularioRequest $req)/* - */ {
+  public function registrar(FormularioRequest $req) {
     try {
       $idProfesor = Profesor::registrar($req);
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
@@ -79,7 +80,7 @@ class ProfesorController extends Controller {
     }
   }
 
-  public function perfil($id)/* - */ {
+  public function perfil($id) {
     try {
       $this->data["profesor"] = Profesor::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
@@ -90,7 +91,7 @@ class ProfesorController extends Controller {
     return view("profesor.perfil", $this->data);
   }
 
-  public function ficha($id)/* - */ {
+  public function ficha($id) {
     try {
       $this->data["vistaImpresion"] = TRUE;
       $this->data["impresionDirecta"] = TRUE;
@@ -103,7 +104,7 @@ class ProfesorController extends Controller {
     return view("profesor.ficha", $this->data);
   }
 
-  public function fichaAlumno($id)/* - */ {
+  public function fichaAlumno($id) {
     try {
       $this->data["vistaImpresion"] = TRUE;
       $this->data["impresionDirecta"] = TRUE;
@@ -129,7 +130,7 @@ class ProfesorController extends Controller {
               ->setOption("dpi", 108)->setOption("page-size", "A4")
               ->setOption("viewport-size", "1280x1024")
               ->setOption("footer-font-size", "8")
-              ->setOption("footer-left", "English at home " . date("Y") . " - Ficha " . ($profesor->sexo == "F" ? "de la profesora" : "del profesor" ) . " " . $profesor->nombre . " " . $profesor->apellido)
+              ->setOption("footer-left", Config::get("eah.nombreComercialEmpresa") . " " . date("Y") . " - Ficha " . ($profesor->sexo == "F" ? "de la profesora" : "del profesor" ) . " " . $profesor->nombre . " " . $profesor->apellido)
               ->setOption("footer-right", '"Pag. [page] de [topage]"')
               ->save($rutaBaseAlmacenamiento . $nombrePdf, true);
     } catch (\Exception $e) {
@@ -140,7 +141,7 @@ class ProfesorController extends Controller {
     return $datosPdf->download($nombrePdf);
   }
 
-  public function editar($id)/* - */ {
+  public function editar($id) {
     try {
       $this->data["profesor"] = Profesor::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
@@ -151,7 +152,7 @@ class ProfesorController extends Controller {
     return view("profesor.editar", $this->data);
   }
 
-  public function actualizar($id, FormularioRequest $req)/* - */ {
+  public function actualizar($id, FormularioRequest $req) {
     try {
       Profesor::actualizar($id, $req);
       Mensajes::agregarMensajeExitoso("Actualización exitosa.");
@@ -162,7 +163,7 @@ class ProfesorController extends Controller {
     return redirect(route("profesores.editar", ["id" => $id]));
   }
 
-  public function actualizarEstado($id, ActualizarEstadoRequest $req)/* - */ {
+  public function actualizarEstado($id, ActualizarEstadoRequest $req) {
     try {
       $datos = $req->all();
       Profesor::actualizarEstado($id, $datos["estado"]);
@@ -173,7 +174,7 @@ class ProfesorController extends Controller {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function actualizarHorario($id, ActualizarHorarioRequest $req)/* - */ {
+  public function actualizarHorario($id, ActualizarHorarioRequest $req) {
     try {
       $datos = $req->all();
       Profesor::actualizarHorario($id, $datos["horario"]);
@@ -184,7 +185,7 @@ class ProfesorController extends Controller {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function actualizarComentariosPerfil($id, ActualizarComentariosPerfilRequest $req)/* - */ {
+  public function actualizarComentariosPerfil($id, ActualizarComentariosPerfilRequest $req) {
     try {
       Profesor::actualizarComentariosPerfil($id, $req->all());
       Mensajes::agregarMensajeExitoso("Actualización exitosa.");
@@ -195,7 +196,7 @@ class ProfesorController extends Controller {
     return redirect(route("profesores.perfil", ["id" => $id]));
   }
 
-  public function eliminar($id)/* - */ {
+  public function eliminar($id) {
     try {
       Profesor::eliminar($id);
     } catch (\Exception $e) {
@@ -208,7 +209,7 @@ class ProfesorController extends Controller {
   // </editor-fold>
   // // <editor-fold desc="Pagos">
 
-  public function listarPagos($id)/* - */ {
+  public function listarPagos($id) {
     return Datatables::of(PagoProfesor::listar($id))->filterColumn("id", function($q, $k) {
               $q->whereRaw("id like ?", ["%{$k}%"])
                       ->orWhereRaw("motivo like ?", ["%{$k}%"])
@@ -219,33 +220,21 @@ class ProfesorController extends Controller {
             })->make(true);
   }
 
-  public function registrarPagoGeneral($id, PagoRequest\FormularioRequest $req)/* - */ {
+  public function registrarActualizarPagoGeneral($id, PagoRequest\FormularioRequest $req) {
     try {
-      PagoProfesor::registrarGeneral($id, $req);
-      Mensajes::agregarMensajeExitoso("Registro exitoso.");
+      PagoProfesor::registrarActualizarGeneral($id, $req);
     } catch (\Exception $e) {
       Log::error($e);
-      Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
+      return response()->json(["mensaje" => "Ocurrió un problema durante el registro y/o actualización de datos. Por favor inténtelo nuevamente."], 500);
     }
-    return redirect(route("profesores.perfil", ["id" => $id, "seccion" => "pago"]));
+    return response()->json(["mensaje" => "Se guardaron los cambios exitosamente."], 200);
   }
 
-  public function actualizarPagoGeneral($id, PagoRequest\FormularioRequest $req)/* - */ {
-    try {
-      PagoProfesor::actualizarGeneral($id, $req);
-      Mensajes::agregarMensajeExitoso("Actualización exitosa.");
-    } catch (\Exception $e) {
-      Log::error($e);
-      Mensajes::agregarMensajeError("Ocurrió un problema durante la actualización de datos. Por favor inténtelo nuevamente.");
-    }
-    return redirect(route("profesores.perfil", ["id" => $id, "seccion" => "pago"]));
-  }
-
-  public function obtenerDatosPago($id, $idPago)/* - */ {
+  public function obtenerDatosPago($id, $idPago) {
     return response()->json(PagoProfesor::obtenerXId($id, $idPago), 200);
   }
 
-  public function actualizarEstadoPagoGeneral($id, $idPago, PagoRequest\ActualizarEstadoRequest $req)/* - */ {
+  public function actualizarEstadoPagoGeneral($id, $idPago, PagoRequest\ActualizarEstadoRequest $req) {
     try {
       PagoProfesor::actualizarEstadoGeneral($id, $idPago, $req->all());
     } catch (\Exception $e) {
@@ -255,7 +244,7 @@ class ProfesorController extends Controller {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function eliminarPago($id, $idPago)/* - */ {
+  public function eliminarPago($id, $idPago) {
     try {
       PagoProfesor::eliminar($id, $idPago);
     } catch (\Exception $e) {
@@ -267,8 +256,8 @@ class ProfesorController extends Controller {
 
   // </editor-fold>
   // <editor-fold desc="Clases">
-  public function listarClases($id)/* - */ {
-    return Datatables::of(Clase::listarXProfesorNUEVO($id))
+  public function listarClases($id) {
+    return Datatables::of(Clase::listarXProfesor($id))
                     ->filterColumn("fechaConfirmacion", function($q, $k) {
                       $q->whereRaw('numeroPeriodo like ?', ["%{$k}%"])
                       ->orWhereRaw("DATE_FORMAT((CASE WHEN fechaConfirmacion IS NULL 
@@ -291,7 +280,7 @@ class ProfesorController extends Controller {
 
   // </editor-fold>
   // <editor-fold desc="Externo">
-  public function misAlumnos()/* - */ {
+  public function misAlumnos() {
     $this->data["alumnosVigentes"] = Profesor::listarAlumnos(Auth::user()->idEntidad, TRUE);
     $this->data["alumnosAntiguos"] = Profesor::listarAlumnos(Auth::user()->idEntidad, FALSE, TRUE);
     return view("externo.profesor.misAlumnos", $this->data);
@@ -312,7 +301,7 @@ class ProfesorController extends Controller {
     return view("externo.profesor.misAlumnosClases", $this->data);
   }
 
-  public function misAlumnosListarClases($idAlumno)/* - */ {
+  public function misAlumnosListarClases($idAlumno) {
     return Datatables::of(Profesor::listarClasesAlumno(Auth::user()->idEntidad, $idAlumno))
                     ->filterColumn("fechaConfirmacion", function($q, $k) {
                       $q->whereRaw('fechaConfirmacion like ?', ["%{$k}%"])
@@ -328,7 +317,7 @@ class ProfesorController extends Controller {
                     })->make(true);
   }
 
-  public function misAlumnosRegistrarAvanceClase($idAlumno, RegistrarAvanceRequest $req)/* - */ {
+  public function misAlumnosRegistrarAvanceClase($idAlumno, RegistrarAvanceRequest $req) {
     try {
       Profesor::registrarAvanceClase(Auth::user()->idEntidad, $idAlumno, $req->all());
     } catch (\Exception $e) {
@@ -338,7 +327,7 @@ class ProfesorController extends Controller {
     return response()->json(["mensaje" => "Gracias por registrar tus avances."], 200);
   }
 
-  public function misAlumnosConfirmarClase($idAlumno, ConfirmarClaseRequest $req)/* - */ {
+  public function misAlumnosConfirmarClase($idAlumno, ConfirmarClaseRequest $req) {
     try {
       Profesor::confirmarClase(Auth::user()->idEntidad, $idAlumno, $req->all());
       Mensajes::agregarMensajeExitoso("Confirmación exitosa.");
@@ -347,19 +336,6 @@ class ProfesorController extends Controller {
       Mensajes::agregarMensajeError("Ocurrió un problema durante la confirmación de la clase. Por favor inténtelo nuevamente.");
     }
     return redirect(route("profesores.mis.alumnos.clases", ["id" => $idAlumno]));
-  }
-
-  // </editor-fold>
-  // <editor-fold desc="TODO: ELIMINAR">
-  public function registrarPagoXClases($id, PagoRequest\FormularioRequest $req) {
-    try {
-      PagoProfesor::registrarGeneral($id, $req);
-      Mensajes::agregarMensajeExitoso("Registro exitoso.");
-    } catch (\Exception $e) {
-      Log::error($e);
-      Mensajes::agregarMensajeError("Ocurrió un problema durante el registro de datos. Por favor inténtelo nuevamente.");
-    }
-    return redirect(route("profesores.perfil", ["id" => $id, "seccion" => "clase"]));
   }
 
   // </editor-fold>

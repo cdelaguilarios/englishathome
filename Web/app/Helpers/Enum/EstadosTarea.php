@@ -2,13 +2,13 @@
 
 namespace App\Helpers\Enum;
 
-class EstadosTarea/* - */ {
+class EstadosTarea {
 
   const Pendiente = "PENDIENTE";
   const EnProceso = "EN-PROCESO";
   const Realizada = "REALIZADA";
 
-  public static function listar()/* - */ {
+  public static function listar() {
     return [
         EstadosTarea::Pendiente => ["Pendiente", "label-primary"],
         EstadosTarea::EnProceso => ["En proceso", "label-warning"],
@@ -16,7 +16,7 @@ class EstadosTarea/* - */ {
     ];
   }
 
-  public static function listarBusqueda()/* - */ {
+  public static function listarBusqueda() {
     $estados = EstadosTarea::listar();
     
     $estadosBusqueda = [];
@@ -26,7 +26,7 @@ class EstadosTarea/* - */ {
     return $estadosBusqueda;
   }
 
-  public static function listarDisponibleCambio()/* - */ {
+  public static function listarDisponibleCambio() {
     $estadosBusqueda = EstadosTarea::listarBusqueda();
     $estadosDisponibleCambio = [
         EstadosTarea::Pendiente,

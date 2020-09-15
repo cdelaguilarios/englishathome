@@ -1,9 +1,9 @@
 if (typeof (archivosAdjuntos) === "undefined") {
   var archivosAdjuntos = {};
-  archivosAdjuntos = (function ()/* - */ {
+  archivosAdjuntos = (function () {
     //Público
     var objAdjuntos = [];
-    function cargar(adjuntos)/* - */ {
+    function cargar(adjuntos) {
       formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
 
       if (adjuntos.length > 0) {
@@ -22,7 +22,7 @@ if (typeof (archivosAdjuntos) === "undefined") {
       }
     }
 
-    function limpiarCampos(formulario, idCampo)/* - */ {
+    function limpiarCampos(formulario, idCampo) {
       objAdjuntos[idCampo].reset();
 
       $(".ajax-file-upload-container").html("");
@@ -30,7 +30,7 @@ if (typeof (archivosAdjuntos) === "undefined") {
       $(formulario).find("input[name^='nombresOriginalesArchivos']").val("");
       $(formulario).find("input[name*='Eliminados']").val("");
     }
-    function agregar(formulario, idHtml, nombreArchivo, nombreArchivoOriginal, esImagen)/* - */ {
+    function agregar(formulario, idHtml, nombreArchivo, nombreArchivoOriginal, esImagen) {
       var urlArchivo = urlArchivos.replace("/0", "/" + nombreArchivo);
       var htmlElemento = '<div class="ajax-file-upload-container">' +
               '<div class="ajax-file-upload-statusbar" style="width: 400px;">' +
@@ -46,7 +46,7 @@ if (typeof (archivosAdjuntos) === "undefined") {
               '</div>';
       $(formulario).find("#" + idHtml).after(htmlElemento);
     }
-    function eliminar(elemento, idHtml, nombreArchivo)/* - */ {
+    function eliminar(elemento, idHtml, nombreArchivo) {
       $("#nombres-archivos-" + idHtml + "-eliminados").val(nombreArchivo + "," + $("#nombres-archivos-" + idHtml + "-eliminados").val());
       $(elemento).closest(".ajax-file-upload-container").remove();
     }

@@ -2,7 +2,7 @@
 
 namespace App\Helpers\Enum;
 
-class EstadosInteresado/* - */ {
+class EstadosInteresado {
 
   const PendienteInformacion = "PENDIENTE-INFORMACION";
   const Seguimiento = "SEGUIMIENTO";
@@ -12,7 +12,7 @@ class EstadosInteresado/* - */ {
   const FichaCompleta = "FICHA-COMPLETA";
   const AlumnoRegistrado = "ALUMNO-REGISTRADO";
 
-  public static function listar()/* - */ {
+  public static function listar() {
     return [
         EstadosInteresado::PendienteInformacion => ["Pendiente de información", "label-warning"],
         EstadosInteresado::Seguimiento => ["Seguimiento", "label-info"],
@@ -23,7 +23,7 @@ class EstadosInteresado/* - */ {
     ];
   }
 
-  public static function listarBusqueda()/* - */ {
+  public static function listarBusqueda() {
     $estados = EstadosInteresado::listar();
     $estadosBusqueda = [];
     foreach ($estados as $k => $v) {
@@ -32,7 +32,7 @@ class EstadosInteresado/* - */ {
     return $estadosBusqueda;
   }
 
-  public static function listarDisponibleCambio()/* - */ {
+  public static function listarDisponibleCambio() {
     $estadosBusqueda = EstadosInteresado::listarBusqueda();
     $estadosDisponibleCambio = [
         EstadosInteresado::PendienteInformacion,

@@ -1,10 +1,10 @@
 var formularioAvancesClase = {};
-formularioAvancesClase = (function ()/* - */ {
+formularioAvancesClase = (function () {
   window.addEventListener("load", esperarCargaJquery, false);
-  function esperarCargaJquery()/* - */ {
+  function esperarCargaJquery() {
     ((window.jQuery && jQuery.ui) ? cargarFormulario() : window.setTimeout(esperarCargaJquery, 100));
   }
-  function cargarFormulario()/* - */ {
+  function cargarFormulario() {
     $("#formulario-avances-clase").validate({
       rules: {
         comentario: {
@@ -61,7 +61,7 @@ formularioAvancesClase = (function ()/* - */ {
     });
   }
 
-  function abrirModal(idClase)/* - */ {
+  function abrirModal(idClase) {
     var tr = $("#" + idClase);
     var datosFila = $("#tab-lista-clases").DataTable().row(tr).data();
     $("#formulario-avances-clase").find("textarea[name='comentario']").val("");

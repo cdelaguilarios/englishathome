@@ -2,7 +2,7 @@
 
 namespace App\Helpers\Enum;
 
-class TiposBusquedaFecha/* - */ {
+class TiposBusquedaFecha {
 
   const Dia = "DIA";
   const Mes = "MES";
@@ -11,7 +11,7 @@ class TiposBusquedaFecha/* - */ {
   const RangoMeses = "RANGO_MESES";
   const RangoAnios = "RANGO_ANIOS";
 
-  public static function listar()/* - */ {
+  public static function listar() {
     return [
         TiposBusquedaFecha::Dia => "Día",
         TiposBusquedaFecha::Mes => "Mes",

@@ -3,7 +3,7 @@
   <head>        
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>English at home {{ ((isset($vistaImpresion) && $vistaImpresion) ? "" : "administrador") }} - @yield("titulo")</title>
+    <title>{{ $nombreComercialEmpresa }} {{ ((isset($vistaImpresion) && $vistaImpresion) ? "" : "administrador") }} - @yield("titulo")</title>
     <meta name="_token" content="{!! csrf_token() !!}"/>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="icon" type="image/ico" href="{{ asset("assets/eah/img/favicon.ico") }}" />
@@ -48,7 +48,7 @@
                 @yield("tituloImpresion")
               </p>
               <p class="sec-ficha-logo">
-                <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login" width="150"/>
+                <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login" width="125"/>
               </p>
             </div>
             @else
@@ -60,7 +60,7 @@
               @endif
             </div><!--
             --><div class="col-sm-6 vcenter">
-              <a href="http://englishathomeperu.com/" target="_blank">
+              <a href="{{ $urlSitioWebEmpresa }}" target="_blank">
                 <img src="{{ asset("assets/eah/img/logo.png")}}" class="img-logo-login" width="150"/>
               </a>
             </div>
@@ -89,7 +89,6 @@
 
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
-              {{--@include("notificacion.widget")--}} 
               <li class="dropdown notifications-menu">
                 <a id="btn-ver-notificaciones-generales" data-target="#mod-notificaciones-generales" data-toggle="modal" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-bell-o"></i>
@@ -174,25 +173,6 @@
             <li class="{{ ((isset($seccion) && $seccion == "calendario") ? "active" : "") }}">
               <a href="{{ route("calendario")}}"><i class="fa fa-calendar"></i> <span>Calendario</span></a>
             </li>
-            {{--<li class="{{ ((isset($seccion) && $seccion == "reportes") ? "active" : "") }} treeview">
-              <a href="javascript:void(0);">
-                <i class="fa fa-bar-chart"></i> <span>Reportes</span>
-                <span class="pull-right-container">
-                  <i class="fa fa-angle-left pull-right"></i>
-                </span>
-              </a>
-              <ul class="treeview-menu">
-                <li class="{{ ((isset($subSeccion) && $subSeccion == "motor") ? "active" : "") }}">
-                  <a href="{{ route("reportes")}}"><i class="fa fa-qrcode"></i> Motor de reportes</a>
-                </li>
-                <li class="{{ ((isset($subSeccion) && $subSeccion == "clases") ? "active" : "") }}">
-                  <a href="{{ route("reporte.clases")}}"><i class="fa flaticon-student-in-front-of-a-stack-of-books"></i> Reporte de clases</a>
-                </li>
-                <li class="{{ ((isset($subSeccion) && $subSeccion == "pagos") ? "active" : "") }}">
-                  <a href="{{ route("reporte.pagos")}}"><i class="fa fa-line-chart"></i> Reporte de pagos</a>
-                </li>
-              </ul>
-            </li>--}}
             <li class="{{ ((isset($seccion) && $seccion == "correos") ? "active" : "") }}">
               <a href="{{ route("correos")}}"><i class="fa fa-envelope"></i> <span>Correos masivos</span></a>
             </li>           
@@ -224,7 +204,7 @@
         </section>
       </div>
       <footer class="main-footer">
-        <strong>Copyright &copy; 2014-{!! date("Y") !!} <a href="http://englishathomeperu.com/" target="_blank">English at Home Perú</a>.</strong> Todos los derechos reservados.
+        <strong>Copyright &copy; 2014-{!! date("Y") !!} <a href="{{ $urlSitioWebEmpresa }}" target="_blank">{{ $nombreComercialEmpresa }}</a>.</strong> Todos los derechos reservados.
       </footer>
     </div>
     <div id="secCargandoPrincipal" class="box cargando">
@@ -252,7 +232,10 @@
     <script src="{{ asset("assets/plugins/datatables/jquery.dataTables.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/datatables/dataTables.bootstrap.min.js") }}"></script>
     <script src="{{ asset("assets/plugins/datatables/extensions/Responsive/js/dataTables.responsive.min.js") }}"></script>
-    <script src="{{ asset("assets/plugins/blockui/jquery.blockUI.js") }}"></script>
+    <script src="{{ asset("assets/plugins/blockui/jquery.blockUI.js") }}"></script>        
+    <script src="{{ asset("assets/plugins/datatables/buttons/dataTables.buttons.min.js") }}"></script>    
+    <script src="{{ asset("assets/plugins/datatables/buttons/jszip.min.js") }}"></script>    
+    <script src="{{ asset("assets/plugins/datatables/buttons/buttons.html5.min.js") }}"></script>    
     @if(!(isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()))
     <script src="{{ asset("assets/plugins/jquery_validate/jquery.validate.messages_es.js") }}"></script> 
     @endif
@@ -285,7 +268,7 @@
       var estadosPago = {!!  json_encode(App\Helpers\Enum\EstadosPago::listar()) !!};
       var estadosClase = {!!  json_encode(App\Helpers\Enum\EstadosClase::listar()) !!};
       var formularioExternoPostulante = {{ ((isset($subSeccion) && $subSeccion == "postulantes" && Auth::guest()) ? "true" : "false") }};
-      var maxTamanhoArchivoSubida = {{ Config::get("eah.maxTamanhoArchivoSubida") }};
+      var maxTamanioArchivoSubida = {{ Config::get("eah.maxTamanioArchivoSubida") }};
       var estadosDocente = {!! json_encode(App\Helpers\Enum\EstadosDocente::listar()) !!};  
     </script>
     <script src="{{ asset("assets/eah/js/util.js") }}"></script>

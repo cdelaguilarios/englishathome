@@ -1,4 +1,3 @@
-{{----}}
 <script src="{{ asset("assets/eah/js/modulos/util/tarea/principal.js")}}"></script>
 <script src="{{ asset("assets/eah/js/modulos/util/tarea/panel.js")}}"></script>  
 <script src="{{ asset("assets/eah/js/modulos/util/tarea/crearEditar.js")}}"></script>

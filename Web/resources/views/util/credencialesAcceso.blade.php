@@ -1,4 +1,3 @@
-{{----}}
 <script type="text/javascript" src="{{ asset("assets/eah/js/modulos/util/credencialesAcceso.js") }}"></script>
 <div class="pull-right">
   <a id="btn-editar-credenciales-acceso" href="javascript:void(0);" title="Editar credenciales de acceso al sistema">

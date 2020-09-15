@@ -14,7 +14,7 @@ class PagoClase extends Model {
       "duracionCubierta"
   ];
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloPagoClase = new PagoClase();
     $nombreTabla = $modeloPagoClase->getTable();
     unset($modeloPagoClase);
@@ -33,48 +33,8 @@ class PagoClase extends Model {
     return PagoClase::where("idClase", $idClase)->get();
   }
 
-  public static function obtenerXIdPago($idPago)/* - */ {
+  public static function obtenerXIdPago($idPago) {
     return PagoClase::where("idPago", $idPago)->get();
   }
-  
-  
-  // <editor-fold desc="TODO: ELIMINAR">
-  public static function registrarActualizar($idPago, $idClase, $idAlumnoProfesor, $esPagoAlumno = TRUE) {
-    //TODO: solo se llama una vez, debe eliminarse esta función previa verificación
-    if ($esPagoAlumno) {
-      PagoClase::where("idClase", $idClase)
-              ->whereIn("idPago", function($q) use ($idAlumnoProfesor) {
-                $q->select("idPago")
-                ->from(with(new PagoAlumno)->getTable())
-                ->where("idAlumno", $idAlumnoProfesor);
-              })->delete();
-      $clase = Clase::obtenerXId($idAlumnoProfesor, $idClase);
-      $pago = Pago::obtenerXId($idPago);
-
-      $pagoClase = new PagoClase([
-          "idPago" => $idPago,
-          "idClase" => $idClase,
-          "duracionCubierta" => $clase->duracion
-      ]);
-      $pagoClase->save();
-    } else {
-      PagoClase::where("idClase", $idClase)
-              ->whereIn("idPago", function($q) use ($idAlumnoProfesor) {
-                $q->select("idPago")
-                ->from(with(new PagoProfesor)->getTable())
-                ->where("idProfesor", $idAlumnoProfesor);
-              })->delete();
-      $pagoClase = new PagoClase([
-          "idPago" => $idPago,
-          "idClase" => $idClase
-      ]);
-      $pagoClase->save();
-    }
-  }
-
-  public static function eliminarXIdPago($idPago) {
-    PagoClase::where("idPago", $idPago)->delete();
-  }
-  // </editor-fold>
 
 }

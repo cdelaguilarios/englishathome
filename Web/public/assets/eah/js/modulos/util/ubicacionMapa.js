@@ -1,15 +1,15 @@
 var ubicacionMapa = {};
-ubicacionMapa = (function ()/* - */ {
-  function esperarCargaJquery()/* - */ {
+ubicacionMapa = (function () {
+  function esperarCargaJquery() {
     ((window.jQuery && jQuery.ui) ? cargarSeccion() : window.setTimeout(esperarCargaJquery, 100));
   }
-  function cargarSeccion()/* - */ {
+  function cargarSeccion() {
     inicializarMapa();
   }
 
   var posicionSel = null;
   var mapa, geocoder, umto = null;
-  function inicializarMapa()/* - */ {
+  function inicializarMapa() {
     var cen = {lat: -12.069890396610955, lng: -77.10353526868857};
     mapa = new google.maps.Map(document.getElementById("mapa"), {
       zoom: 12,
@@ -53,12 +53,12 @@ ubicacionMapa = (function ()/* - */ {
   function obtenerMapa(){
     return mapa;
   }
-  function verificarPosicionSel()/* - */ {
+  function verificarPosicionSel() {
     if ($("input[name='geoLatitud']").val() !== "" && $("input[name='geoLongitud']").val() !== "") {
       seleccionarPosicionMapa({lat: parseFloat($("input[name='geoLatitud']").val()), lng: parseFloat($("input[name='geoLongitud']").val())}, true);
     }
   }
-  function buscarDireccionMapa(direccion)/* - */ {
+  function buscarDireccionMapa(direccion) {
     if (direccion !== undefined && direccion !== null && direccion !== "") {
       geocoder.geocode({"address": direccion}, function (resultados, estado) {
         if (estado === "OK") {
@@ -68,7 +68,7 @@ ubicacionMapa = (function ()/* - */ {
       });
     }
   }
-  function seleccionarPosicionMapa(pos, cambiarZoom)/* - */ {
+  function seleccionarPosicionMapa(pos, cambiarZoom) {
     if (posicionSel !== null) {
       posicionSel.setMap(null);
     }
@@ -85,7 +85,7 @@ ubicacionMapa = (function ()/* - */ {
     $("input[name='geoLongitud']").val((typeof pos.lng === 'function') ? pos.lng() : pos.lng);
   }
   var plvdbm = true;
-  function verificarDatosBusquedaMapa()/* - */ {
+  function verificarDatosBusquedaMapa() {
     if (plvdbm) {
       plvdbm = false;
     } else {

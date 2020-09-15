@@ -55,27 +55,35 @@ formularioPagoAlumno = (function () {
           $.blockUI({message: "<h4>Guardando cambios...</h4>"});
 
           var datos = utilFormularios.procesarDatos(f);
-          util.llamadaAjax($(f).attr("action"), "POST", datos, true,
-                  function (d) {
-                    $("body").unblock();
-                  },
-                  function (d) {
-                    listaPagosAlumno.mostrar();
-                    listaPagosAlumno.reCargar();
-                  },
-                  function (de) {
-                    var rj = de.responseJSON;
-                    $("body").unblock({
-                      onUnblock: function () {
-                        if (rj !== undefined && rj.mensaje !== undefined) {
-                          mensajes.agregar("errores", rj.mensaje, true, "#sec-pago-mensajes");
-                        } else if (rj !== undefined && rj[Object.keys(rj)[0]] !== undefined) {
-                          mensajes.agregar("errores", rj[Object.keys(rj)[0]][0], true, "#sec-pago-mensajes");
+          motivoPagoXClases = (typeof (motivoPagoXClases) === "undefined" ? "" : motivoPagoXClases);
+
+          if (datos["motivo"] === motivoPagoXClases) {
+            $.blockUI({message: "<h4>" + (idPago !== "" ? "Guardando datos..." : "Registrando datos...") + "</h4>"});
+            f.submit();
+          } else {
+            util.llamadaAjax($(f).attr("action"), "POST", datos, true,
+                    function (d) {
+                      $("body").unblock();
+                    },
+                    function (d) {
+                      listaPagosAlumno.mostrar();
+                      listaPagosAlumno.reCargar();
+                    },
+                    function (de) {
+                      var rj = de.responseJSON;
+                      $("body").unblock({
+                        onUnblock: function () {
+                          if (rj !== undefined && rj.mensaje !== undefined) {
+                            mensajes.agregar("errores", rj.mensaje, true, "#sec-pago-mensajes");
+                          } else if (rj !== undefined && rj[Object.keys(rj)[0]] !== undefined) {
+                            mensajes.agregar("errores", rj[Object.keys(rj)[0]][0], true, "#sec-pago-mensajes");
+                          }
                         }
-                      }
-                    });
-                  }
-          );
+                      });
+                    }
+            );
+          }
+
         }
       },
       highlight: function () {

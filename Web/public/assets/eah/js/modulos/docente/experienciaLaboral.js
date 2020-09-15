@@ -1,10 +1,10 @@
 var docenteExperienciaLaboral = {};
-docenteExperienciaLaboral = (function ()/* - */ {
+docenteExperienciaLaboral = (function () {
   window.addEventListener("load", esperarCargaJquery, false);
-  function esperarCargaJquery()/* - */ {
+  function esperarCargaJquery() {
     ((window.jQuery && jQuery.ui) ? cargarSeccion() : window.setTimeout(esperarCargaJquery, 100));
   }
-  function cargarSeccion()/* - */ {
+  function cargarSeccion() {
     cargarFormulario();
     
     if (util.obtenerParametroUrlXNombre("seccion") === "experiencia-laboral") {

@@ -1,10 +1,10 @@
 var busquedaInteresado = {};
-busquedaInteresado = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+busquedaInteresado = (function () {
+  $(document).ready(function () {
     cargarCajaBusqueda();
   });
 
-  function cargarCajaBusqueda()/* - */ {
+  function cargarCajaBusqueda() {
     urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
     urlBuscar = (typeof (urlBuscar) === "undefined" ? "" : urlBuscar);
     urlCotizar = (typeof (urlCotizar) === "undefined" ? "" : urlCotizar);
@@ -26,7 +26,7 @@ busquedaInteresado = (function ()/* - */ {
     }
   }
 
-  function copiarEnlaceFichaInscripcion(enlace)/* - */ {
+  function copiarEnlaceFichaInscripcion(enlace) {
     window.prompt("Copiar enlace ficha de inscripción: Ctrl+C, Enter", enlace);
     return false;
   }

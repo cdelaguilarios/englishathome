@@ -1,10 +1,10 @@
 var listaUsuarios = {};
-listaUsuarios = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+listaUsuarios = (function () {
+  $(document).ready(function () {
     cargarLista();
   });
 
-  function cargarLista()/* - */ {
+  function cargarLista() {
     urlListar = (typeof (urlListar) === "undefined" ? "" : urlListar);
     urlEditar = (typeof (urlEditar) === "undefined" ? "" : urlEditar);
     urlEliminar = (typeof (urlEliminar) === "undefined" ? "" : urlEliminar);
@@ -32,14 +32,14 @@ listaUsuarios = (function ()/* - */ {
         columns: [
           {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
               return m.row + m.settings._iDisplayStart + 1;
-            }, "className": "text-center not-mobile"},
+            }, "className": "text-center", responsivePriority: 0},
           {data: "nombre", name: "entidad.nombre", render: function (e, t, d, m) {
               return '<a href="' + (urlEditar.replace("/0", "/" + d.id)) + '">' + (d.nombre !== null ? d.nombre : "") + " " + (d.apellido !== null ? d.apellido : "") + '</a>';
-            }},
+            }, responsivePriority: 0},
           {data: "email", name: "usuario.email"},
           {data: "rol", name: "usuario.rol", render: function (e, t, d, m) {
               return roles[d.rol];
-            }},
+            }, "className": "min-tablet-l", "className": "min-tablet-l"},
           {data: "estado", name: "entidad.estado", render: function (e, t, d, m) {
               var estado = '';
               if (estados[d.estado] !== undefined) {
@@ -54,10 +54,10 @@ listaUsuarios = (function ()/* - */ {
                 }
               }
               return estado;
-            }, className: "text-center"},
+            }, className: "text-center min-tablet-p"},
           {data: "fechaRegistro", name: "entidad.fechaRegistro", render: function (e, t, d, m) {
               return utilFechasHorarios.formatoFecha(d.fechaRegistro, true);
-            }, className: "text-center"},
+            }, className: "text-center desktop"},
           {data: "id", name: "entidad.id", orderable: false, "searchable": false, width: "5%", render: function (e, t, d, m) {
               return '<ul class="buttons">' +
                       '<li>' +
@@ -69,7 +69,7 @@ listaUsuarios = (function ()/* - */ {
                       '</a>' +
                       '</li>' +
                       '</ul>';
-            }, className: "text-center"}
+            }, className: "text-center min-mobile-l"}
         ],
         initComplete: function (s, j) {
           utilTablas.establecerBotonRecargaTabla($("#tab-lista-usuarios"));

@@ -1,4 +1,3 @@
-{{----}}
 @extends("layouts.master")
 @section("titulo", "Interesados")
 
@@ -59,6 +58,19 @@
               <th>Estado</th>
               <th>Fecha registro</th>
               <th class="all">Opciones</th>
+              <!--- Columnas ocultas solo para exportación excel --->
+              <th>Nombres</th>
+              <th>Apellidos</th>
+              <th>Teléfono</th>
+              <th>Correo electrónico</th>
+              <th>Consulta</th>
+              <th>Curso de interes</th>
+              <th>Origen</th>
+              <th>Costo por hora de clase</th>
+              <th>Comentarios adicionales</th>
+              <th>Estado</th>
+              <th>Fecha de registro</th>
+              <!---------------------------------------------------->
             </tr>
           </thead>
         </table>

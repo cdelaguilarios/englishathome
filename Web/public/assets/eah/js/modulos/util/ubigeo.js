@@ -1,17 +1,17 @@
 var ubigeo = {};
-ubigeo = (function ()/* - */ {
+ubigeo = (function () {
   window.addEventListener("load", esperarCargaJquery, false);
-  function esperarCargaJquery()/* - */ {
+  function esperarCargaJquery() {
     ((window.jQuery && jQuery.ui) ? cargarSeccion() : window.setTimeout(esperarCargaJquery, 100));
   }
-  function cargarSeccion()/* - */ {
+  function cargarSeccion() {
     cargarUbigeo();
   }
 
   var primeraCargaProvincias = true;
   var codigoDepartamento = "", codigoProvincia = "", codigoDistrito = "";
   formularioExternoPostulante = (typeof (formularioExternoPostulante) === "undefined" ? false : formularioExternoPostulante);
-  function cargarUbigeo()/* - */ {
+  function cargarUbigeo() {
     if ($("input[name='codigoUbigeo']").length > 0 && $("input[name='codigoUbigeo']").val().length === 6) {
       codigoDepartamento = $("input[name='codigoUbigeo']").val().slice(0, 2);
       codigoProvincia = $("input[name='codigoUbigeo']").val().slice(0, 4);
@@ -35,7 +35,7 @@ ubigeo = (function ()/* - */ {
       }
     }, 1000);
   }
-  function cargarProvincias()/* - */ {
+  function cargarProvincias() {
     urlListarProvincias = (typeof (urlListarProvincias) === "undefined" ? "" : urlListarProvincias);
     $("#codigo-provincia, #codigo-distrito").html("");
     if ($("#codigo-departamento").val() !== "") {
@@ -50,7 +50,7 @@ ubigeo = (function ()/* - */ {
       });
     }
   }
-  function cargarDistritos()/* - */ {
+  function cargarDistritos() {
     urlListarDistritos = (typeof (urlListarDistritos) === "undefined" ? "" : urlListarDistritos);
     $("#codigo-distrito").html("");
     if ($("#codigo-provincia").val() !== "") {
@@ -58,7 +58,8 @@ ubigeo = (function ()/* - */ {
     }
   }
 
-  function cargarDatosUbigeo(elementoUbigeoLista, urlListarUbigeo, parametros, textoSeleccionDefecto, codigoUbigeoSel, noMostrarMensajeBloqueo, funcionCompletado)/* - */ {
+  function cargarDatosUbigeo(elementoUbigeoLista, urlListarUbigeo, parametros, textoSeleccionDefecto, codigoUbigeoSel, noMostrarMensajeBloqueo, funcionCompletado, numeroIntento) {
+    numeroIntento = numeroIntento || 1;
     if (urlListarUbigeo !== "") {
       (!noMostrarMensajeBloqueo ? $.blockUI({message: "<h4>" + (formularioExternoPostulante ? "Loading" : "Cargando") + "...</h4>"}) : "");
       util.llamadaAjax(urlListarUbigeo, "POST", parametros, true,
@@ -95,10 +96,14 @@ ubigeo = (function ()/* - */ {
                 $("body").unblock();
               },
               function (dataError) {
-                mensajes.agregar("errores",
-                        ((dataError.responseJSON !== undefined && dataError.responseJSON["mensaje"] !== undefined) ?
-                                dataError["responseJSON"]["mensaje"] :
-                                "Ocurrió un problema durante la carga de datos de ubigeo. Por favor inténtelo nuevamente."), true);
+                if (numeroIntento < 2) {
+                  cargarDatosUbigeo(elementoUbigeoLista, urlListarUbigeo, parametros, textoSeleccionDefecto, codigoUbigeoSel, noMostrarMensajeBloqueo, funcionCompletado, numeroIntento + 1);
+                } else {
+                  mensajes.agregar("errores",
+                          ((dataError.responseJSON !== undefined && dataError.responseJSON["mensaje"] !== undefined) ?
+                                  dataError["responseJSON"]["mensaje"] :
+                                  "Ocurrió un problema durante la carga de datos de ubigeo. Por favor inténtelo nuevamente."), true);
+                }
               }
       );
     }

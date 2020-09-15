@@ -1,4 +1,3 @@
-{{----}}
 <script>
   var motivoPagoXClases = "{{ App\Helpers\Enum\MotivosPago::Clases }}";
 </script>

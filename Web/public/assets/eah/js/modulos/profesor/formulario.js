@@ -1,10 +1,10 @@
 var formularioProfesor = {};
-formularioProfesor = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+formularioProfesor = (function () {
+  $(document).ready(function () {
     cargarFormulario();
   });
 
-  function cargarFormulario()/* - */ {
+  function cargarFormulario() {
     urlActualizarHorario = (typeof (urlActualizarHorario) === "undefined" ? "" : urlActualizarHorario);
     $("#formulario-profesor").validate({
       ignore: "",

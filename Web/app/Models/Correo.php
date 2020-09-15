@@ -19,14 +19,14 @@ class Correo extends Model {
       "correosAdicionales"
   ];
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloCorreo = new Correo();
     $nombreTabla = $modeloCorreo->getTable();
     unset($modeloCorreo);
     return $nombreTabla;
   }
 
-  public static function listarBase()/* - */ {
+  public static function listarBase() {
     $nombreTablaCorreo = Correo::nombreTabla();
     $nombreTablaTareaNotificacion = TareaNotificacion::nombreTabla();
 
@@ -37,8 +37,7 @@ class Correo extends Model {
   }
 
   public static function registrar($datos) {
-    //TODO: Si se registran muchos destinatarios va a ser mejor separarlos en varios registro-correos (grupos de 10 destinatarios)
-    
+    //TODO: Si se registran muchos destinatarios va a ser mejor separarlos en varios registro-correos (grupos de 250 destinatarios)
     //Correos adicionales
     $correosAdicionales = "";
     $correosAdicionalesExcluidos = "";
@@ -55,7 +54,7 @@ class Correo extends Model {
     $datos["correosAdicionales"] = $correosAdicionales;
 
     $datos["fechaProgramada"] = Carbon::now()->toDateTimeString();
-    $datos["adjuntos"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 5, "Adjuntos");
+    $datos["adjuntos"] = Archivo::procesarArchivosSubidos("", $datos, 5, "Adjuntos");
 
     $idTareaNotificacion = TareaNotificacion::registrar($datos);
     $correo = new Correo($datos);
@@ -129,7 +128,7 @@ class Correo extends Model {
 
   public static function enviar() {
     ini_set('max_execution_time', 900);
-    
+
     Correo::preProcesarNotificaciones();
 
     $nombreTablaCorreo = Correo::nombreTabla();
@@ -141,25 +140,27 @@ class Correo extends Model {
             ->take((int) Config::get("eah.numeroCorreosXEnvio"));
     $correos = $preCorreos->get();
     Correo::whereIn("id", $preCorreos->lists("tareaNotificacion.id")->toArray())->update(["envioEnProceso" => 1]);
-
-    Config::set("mail.username", VariableSistema::obtenerXLlave("correo"));
-    Config::set("mail.password", VariableSistema::obtenerXLlave("contrasenaCorreo"));
     $correoNotificaciones = VariableSistema::obtenerXLlave("correo");
-
 
     foreach ($correos as $correo) {
       $correoEnv = Correo::where("id", $correo->id)->firstOrFail();
       try {
-        $entidadesDestinatarias = [];
+        $adjuntos = ($correo->adjuntos);
+        $asunto = (isset($correo->asunto) && trim($correo->asunto) != "" ? $correo->asunto : Config::get("eah.nombreComercialEmpresa") . " - Notificación");
+        $mensajeFinal = (isset($correo->titulo) && trim($correo->titulo) != "" ? '<p>' . $correo->titulo . '</p>' : '');
+        $mensajeFinal .= (isset($correo->mensaje) && trim($correo->mensaje) != "" ? '<p>' . $correo->mensaje . '</p>' : '');
+        $correosDestinatarios = [];
+        $correoNotificacionesIncluido = false;
 
         $entidadesCorreo = EntidadCorreo::where("idCorreo", $correo->id)->get();
         foreach ($entidadesCorreo as $entidadCorreo) {
           if (Entidad::verificarExistencia($entidadCorreo->idEntidad)) {
             $datosEntidadCorreo = Entidad::ObtenerXId($entidadCorreo->idEntidad);
-            $entidadesDestinatarias[] = (object) [
-                        "nombreCompleto" => $datosEntidadCorreo->nombre . " " . $datosEntidadCorreo->apellido,
-                        "correoElectronico" => $datosEntidadCorreo->correoElectronico
-            ];
+            $correosDestinatarios[$datosEntidadCorreo->correoElectronico] = $datosEntidadCorreo->nombre . " " . $datosEntidadCorreo->apellido;
+
+            if ($datosEntidadCorreo->correoElectronico == $correoNotificaciones) {
+              $correoNotificacionesIncluido = true;
+            }
           }
         }
 
@@ -167,55 +168,33 @@ class Correo extends Model {
           $correosAdicionalesArr = explode(",", $correo->correosAdicionales);
           foreach ($correosAdicionalesArr as $correoAdicional) {
             if (trim($correoAdicional) != "" && filter_var(trim($correoAdicional), FILTER_VALIDATE_EMAIL)) {
-              $entidadesDestinatarias[] = (object) [
-                          "nombreCompleto" => "",
-                          "correoElectronico" => $correoAdicional
-              ];
+              $correosDestinatarios[$correoAdicional] = "";
+
+              if ($datosEntidadCorreo->correoElectronico == $correoAdicional) {
+                $correoNotificacionesIncluido = true;
+              }
             }
           }
         }
 
-        if (count($entidadesDestinatarias) == 0) {
-          $entidadesDestinatarias[] = (object) [
-                      "nombreCompleto" => "Usuario administrador",
-                      "correoElectronico" => $correoNotificaciones
-          ];
+        if (count($correosDestinatarios) == 0 || !$correoNotificacionesIncluido) {
+          $correosDestinatarios[$correoNotificaciones] = "Usuario administrador";
         }
 
-        $adjuntos = ($correo->adjuntos);
-        $asunto = (isset($correo->asunto) && trim($correo->asunto) != "" ? $correo->asunto : "English at home - Notificación");
-        $mensajeFinal = (isset($correo->titulo) && trim($correo->titulo) != "" ? '<p>' . $correo->titulo . '</p>' : '');
-        $mensajeFinal .= (isset($correo->mensaje) && trim($correo->mensaje) != "" ? '<p>' . $correo->mensaje . '</p>' : '');
+        Mail::send("correos.plantilla", ["mensaje" => $mensajeFinal], function ($m) use ($correosDestinatarios, $asunto, $adjuntos) {
+          $m->bcc($correosDestinatarios)->subject($asunto);
 
-        $enviosRealizados = 0;
-        foreach ($entidadesDestinatarias as $entidadDestinataria) {
-          try {
-            Mail::send("correos.plantilla", ["nombreCompletoDestinatario" => $entidadDestinataria->nombreCompleto, "mensaje" => $mensajeFinal], function ($m) use ($entidadDestinataria, $asunto, $adjuntos, $correoNotificaciones) {
-              $m->to($entidadDestinataria->correoElectronico, $entidadDestinataria->nombreCompleto)->subject($asunto);
-              if ($entidadDestinataria->correoElectronico !== $correoNotificaciones) {
-                $m->bcc($correoNotificaciones);
+          if (isset($adjuntos)) {
+            $rutaBaseAlmacenamiento = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix();
+            $archivosAdjuntos = explode(",", $adjuntos);
+            foreach ($archivosAdjuntos as $archivoAdjunto) {
+              $datosArchivoAdjunto = explode(":", $archivoAdjunto);
+              if (count($datosArchivoAdjunto) == 2) {
+                $m->attach($rutaBaseAlmacenamiento . "/" . $datosArchivoAdjunto[0], ['as' => $datosArchivoAdjunto[1]]);
               }
-
-              if (isset($adjuntos)) {
-                $rutaBaseAlmacenamiento = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix();
-                $archivosAdjuntos = explode(",", $adjuntos);
-                foreach ($archivosAdjuntos as $archivoAdjunto) {
-                  $datosArchivoAdjunto = explode(":", $archivoAdjunto);
-                  if (count($datosArchivoAdjunto) == 2) {
-                    $m->attach($rutaBaseAlmacenamiento . "/" . $datosArchivoAdjunto[0], ['as' => $datosArchivoAdjunto[1]]);
-                  }
-                }
-              }
-            });
-            $enviosRealizados++;
-          } catch (\Exception $e) {
-            if ($enviosRealizados == 0) {
-              throw $e;
-            } else {
-              Log::error($e);
             }
           }
-        }
+        });
 
         $fechaActual = Carbon::now()->toDateTimeString();
         $tareaNotificacion = TareaNotificacion::ObtenerXId($correo->id);

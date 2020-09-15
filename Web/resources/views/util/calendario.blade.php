@@ -1,4 +1,3 @@
-{{----}}
 <script>
   var urlCalendario = "{{ route('calendario.datos') }}";
   

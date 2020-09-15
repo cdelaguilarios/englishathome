@@ -1,6 +1,6 @@
 var perfilProfesor = {};
-perfilProfesor = (function ()/* - */ {
-  $(document).ready(function ()/* - */ {
+perfilProfesor = (function () {
+  $(document).ready(function () {
     $("input[name='horario']").change(function () {
       if (urlActualizarHorario !== "" && $(this).val() !== "") {
         $.blockUI({message: "<h4>Actualizando horario...</h4>"});

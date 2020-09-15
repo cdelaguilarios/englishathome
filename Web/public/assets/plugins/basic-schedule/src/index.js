@@ -64,7 +64,7 @@
         return '<td class="time-slot" data-time="' + hhmm(d) + '" data-day="' + days[i] + '"></td>'
       }).join();
 
-      /*English at home*/
+      /*Custom*/
       var start2 = new Date(new Date(2000, 0, 1, start.split(':')[0], start.split(':')[1]).getTime() + (1) * interval * 60000)
       var d2 = new Date(new Date(2000, 0, 1, hhmm(start2).split(':')[0], hhmm(start2).split(':')[1]).getTime() + (i) * interval * 60000);
       $el.append('<tr><td class="time-label">' + hhmm(d) + ' - ' + hhmm(d2) + '</td>' + daysInARow + '</tr>');

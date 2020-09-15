@@ -12,13 +12,13 @@ use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 use App\Helpers\Enum\SexosEntidad;
 
-class FormularioRequest extends Request/* - */ {
+class FormularioRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["telefono"] = ReglasValidacion::formatoDato($datos, "telefono");
     $datos["fechaNacimiento"] = ReglasValidacion::formatoDato($datos, "fechaNacimiento");
@@ -51,14 +51,14 @@ class FormularioRequest extends Request/* - */ {
     $datos["horario"] = ReglasValidacion::formatoDato($datos, "horario");
     $datos["comentarioAdicional"] = ReglasValidacion::formatoDato($datos, "comentarioAdicional");
 
-    $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado"); //TODO: Revisar si debe ir el campo estado
+    $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
     $datos["idInteresado"] = ReglasValidacion::formatoDato($datos, "idInteresado");
     $datos["codigoVerificacion"] = ReglasValidacion::formatoDato($datos, "codigoVerificacion");
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     $datos = $this->all();
     $modoEdicion = ($this->method() == "PATCH");
     $idEntidad = $this->route('id');
@@ -69,7 +69,8 @@ class FormularioRequest extends Request/* - */ {
         "telefono" => (Auth::guest() ? "required|" : "") . "max:30",
         "fechaNacimiento" => (Auth::guest() ? "required|" : "") . "date_format:d/m/Y",
         "numeroDocumento" => (Auth::guest() ? "required|" : "") . "numeric|digits_between:8,20",
-        "correoElectronico" => "required|email|max:245|unique:" . Usuario::nombreTabla() . ",email" . ($modoEdicion && !is_null($idEntidad) && is_numeric($idEntidad) ? "," . $idEntidad . ",idEntidad" : ""),
+        "correoElectronico" => "required|email|max:245|unique:" . Usuario::nombreTabla() . ",email" .
+        ($modoEdicion && !is_null($idEntidad) && is_numeric($idEntidad) ? "," . $idEntidad . ",idEntidad" : ""),
         "imagenPerfil" => "image",
         "direccion" => "required|max:255",
         "numeroDepartamento" => "max:255",
@@ -131,7 +132,7 @@ class FormularioRequest extends Request/* - */ {
     }
   }
 
-  public function messages()/* - */ {
+  public function messages() {
     return [
         "correoElectronico.unique" => "El correo electrónico ingresado ya está siendo utilizado. Tomar en cuenta que el alumno utiliza su correo electrónico para acceder al sistema y este dato no puede ser igual al que utiliza un profesor o un usuario del sistema.",
         "sexoNoValido.required" => "El sexo seleccionado no es válido.",

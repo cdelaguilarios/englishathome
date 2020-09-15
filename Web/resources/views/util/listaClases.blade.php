@@ -1,6 +1,6 @@
-{{----}}
 <script>
   var estadosClaseDisponibleCambio = {!! json_encode(App\Helpers\Enum\EstadosClase::listarDisponibleCambio()) !!};
+  var urlDescargarListarClases = "{{ route('alumnos.clases.descargar.lista', ['id' => 0]) }}";
 </script>
 <script src="{{ asset("assets/eah/js/modulos/util/listaClases.js") }}"></script>
 <div class="col-sm-12">
@@ -12,7 +12,7 @@
       <thead>
         <tr>
           <th>N°</th>    
-          <th class="all">Datos</th>
+          <th>Datos</th>
           <th>Estado</th>
           <th>Comentarios</th>
           <th>Opciones</th>

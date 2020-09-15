@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TipoDocumento extends Model/* - */ {
+class TipoDocumento extends Model {
 
   public $timestamps = false;
   protected $table = "tipoDocumento";
 
-  public static function listarSimple()/* - */ {
+  public static function listarSimple() {
     return TipoDocumento::where("eliminado", 0)->lists("nombre", "id");
   }
 

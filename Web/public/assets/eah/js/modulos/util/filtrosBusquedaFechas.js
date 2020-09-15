@@ -1,8 +1,8 @@
 if (typeof (filtrosBusquedaFechas) === "undefined") {
   var filtrosBusquedaFechas = {};
-  filtrosBusquedaFechas = (function ()/* - */ {
+  filtrosBusquedaFechas = (function () {
     var auxPrimerCambio = [];
-    function cargar(idSeccion, funcionBusquedaCambio)/* - */ {
+    function cargar(idSeccion, funcionBusquedaCambio) {
       if (funcionBusquedaCambio !== undefined) {
         var funcionCambioSel = funcionBusquedaCambio;
         var funcionCambio = function () {
@@ -37,7 +37,7 @@ if (typeof (filtrosBusquedaFechas) === "undefined") {
       $("#sec-filtro-busqueda-fechas-" + idSeccion).find("#lbl-filtro-busqueda-fechas-titulo").html(titulo);
     }
 
-    function obtenerDatos(idSeccion)/* - */ {
+    function obtenerDatos(idSeccion) {
       var seccionBusqueda = $("#sec-filtro-busqueda-fechas-" + idSeccion);
 
       var datos = {};

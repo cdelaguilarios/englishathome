@@ -2,7 +2,7 @@
 
 namespace App\Helpers\Enum;
 
-class EstadosAlumno/* - */ {
+class EstadosAlumno {
 
   const PorConfirmar = "POR-CONFIRMAR";
   const Activo = "ACTIVO";
@@ -10,19 +10,21 @@ class EstadosAlumno/* - */ {
   const PeriodoTrunco = "PERIODO-TRUNCO";
   const StandBy = "STAND-BY";
   const Inactivo = "INACTIVO";
+  const ListaNegra = "LISTA-NEGRA";
 
-  public static function listar()/* - */ {
+  public static function listar() {
     return [
         EstadosAlumno::PorConfirmar => ["Por confirmar", "label-primary"],
         EstadosAlumno::Activo => ["Activo", "label-success"],
         EstadosAlumno::PeriodoConcluido => ["Período concluido", "label-warning"],
         EstadosAlumno::PeriodoTrunco => ["Período trunco", "label-warning"],
         EstadosAlumno::StandBy => ["Stand by", "label-warning"],
-        EstadosAlumno::Inactivo => ["Inactivo", "label-danger"]
+        EstadosAlumno::Inactivo => ["Inactivo", "label-danger"],
+        EstadosAlumno::ListaNegra => ["Lista negra", "label-default"]
     ];
   }
 
-  public static function listarBusqueda()/* - */ {
+  public static function listarBusqueda() {
     $estados = EstadosAlumno::listar();
     
     $estadosBusqueda = [];
@@ -32,14 +34,15 @@ class EstadosAlumno/* - */ {
     return $estadosBusqueda;
   }
 
-  public static function listarDisponibleCambio()/* - */ {
+  public static function listarDisponibleCambio() {
     $estadosBusqueda = EstadosAlumno::listarBusqueda();
     $estadosDisponibleCambio = [
         EstadosAlumno::Activo,
         EstadosAlumno::PeriodoConcluido,
         EstadosAlumno::PeriodoTrunco,
         EstadosAlumno::StandBy,
-        EstadosAlumno::Inactivo
+        EstadosAlumno::Inactivo,
+        EstadosAlumno::ListaNegra
     ];
     
     $estadosDisponibleCambioSel = [];

@@ -20,27 +20,27 @@ class TareaController extends Controller {
     
   }
 
-  public function listar(ListaRequest $req)/* - */ {
+  public function listar(ListaRequest $req) {
     return Datatables::of(Tarea::listar($req->all()))->filterColumn("fechaProgramada", function($q, $k) {
               $q->whereRaw("DATE_FORMAT(fechaProgramada, '%d/%m/%Y %H:%i:%s') like ?", ["%{$k}%"]);
             })->make(true);
   }
 
-  public function listarParaPanel(ListaParaPanelRequest $req)/* - */ {
+  public function listarParaPanel(ListaParaPanelRequest $req) {
     $datos = $req->all();
     $seleccionarMisTareas = (isset($datos["seleccionarMisTareas"]) && $datos["seleccionarMisTareas"] != "0");
     return response()->json(Tarea::listarParaPanel($seleccionarMisTareas), 200);
   }
 
-  public function listarNoRealizadas()/* - */ {
+  public function listarNoRealizadas() {
     return response()->json(Tarea::listarNoRealizadas(), 200);
   }
 
-  public function obtenerDatos($id)/* - */ {
+  public function obtenerDatos($id) {
     return response()->json(Tarea::obtenerXId($id), 200);
   }
 
-  public function registrarActualizar(FormularioRequest $req)/* - */ {
+  public function registrarActualizar(FormularioRequest $req) {
     try {
       $datos = $req->all();
       Tarea::registrarActualizar($datos);
@@ -51,7 +51,7 @@ class TareaController extends Controller {
     return response()->json(["mensaje" => "Se guardaron los datos exitosamente."], 200);
   }
 
-  public function actualizarEstado($id, ActualizarEstadoRequest $req)/* - */ {
+  public function actualizarEstado($id, ActualizarEstadoRequest $req) {
     try {
       $datos = $req->all();
       Tarea::actualizarEstado($id, $datos["estado"]);
@@ -74,7 +74,7 @@ class TareaController extends Controller {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function eliminar($id)/* - */ {
+  public function eliminar($id) {
     try {
       Tarea::eliminar($id);
     } catch (\Exception $e) {

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>English at home - Página no encontrada</title>
+    <title>{{ $nombreComercialEmpresa }} - Error</title>
 
     <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet">
 

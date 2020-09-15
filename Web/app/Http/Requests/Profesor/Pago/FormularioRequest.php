@@ -6,13 +6,13 @@ use App\Http\Requests\Request;
 use App\Helpers\Enum\EstadosPago;
 use App\Helpers\ReglasValidacion;
 
-class FormularioRequest extends Request/* - */ {
+class FormularioRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["fecha"] = ReglasValidacion::formatoDato($datos, "fecha");
     $datos["estado"] = ReglasValidacion::formatoDato($datos, "estado");
@@ -22,7 +22,7 @@ class FormularioRequest extends Request/* - */ {
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     $datos = $this->all();
     
     $reglasValidacion = [
@@ -51,7 +51,7 @@ class FormularioRequest extends Request/* - */ {
     }
   }
 
-  public function messages()/* - */ {
+  public function messages() {
     return [
         "estadoNoValido.required" => "El estado seleccionado del pago no es válido."
     ];

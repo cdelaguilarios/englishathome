@@ -15,19 +15,19 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Requests\Interesado\ActualizarEstadoRequest;
 use App\Http\Requests\Interesado\FormularioCotizacionRequest;
 
-class InteresadoController extends Controller/* - */ {
+class InteresadoController extends Controller {
 
   protected $data = array();
 
-  public function __construct()/* - */ {
+  public function __construct() {
     $this->data["seccion"] = "interesados";
   }
 
-  public function index()/* - */ {
+  public function index() {
     return view("interesado.lista", $this->data);
   }
 
-  public function listar(BusquedaRequest $req)/* - */ {
+  public function listar(BusquedaRequest $req) {
     return Datatables::of(Interesado::listar($req->all()))
                     ->filterColumn("entidad.nombre", function($q, $k) {
                       $q->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$k}%"]);
@@ -46,7 +46,7 @@ class InteresadoController extends Controller/* - */ {
                     })->make(true);
   }
 
-  public function buscar()/* - */ {
+  public function buscar() {
     $termino = Input::get("termino");
 
     $interesadosPro = [];
@@ -57,11 +57,11 @@ class InteresadoController extends Controller/* - */ {
     return \Response::json(["results" => $interesadosPro]);
   }
 
-  public function crear()/* - */ {
+  public function crear() {
     return view("interesado.crear", $this->data);
   }
 
-  public function registrar(FormularioRequest $req)/* - */ {
+  public function registrar(FormularioRequest $req) {
     try {
       Interesado::registrar($req->all());
       Mensajes::agregarMensajeExitoso("Registro exitoso.");
@@ -73,7 +73,7 @@ class InteresadoController extends Controller/* - */ {
     }
   }
 
-  public function registrarExterno(FormularioRequest $req)/* - */ {
+  public function registrarExterno(FormularioRequest $req) {
     try {
       //TODO: Evaluar la posibilidad de validar el registro externo a través de un token o algo parecido
       $datos = $req->all();
@@ -86,7 +86,7 @@ class InteresadoController extends Controller/* - */ {
     return response()->json(["mensaje" => "Registro exitoso.", "id" => $id], 200);
   }
 
-  public function editar($id)/* - */ {
+  public function editar($id) {
     try {
       $this->data["interesado"] = Interesado::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
@@ -97,7 +97,7 @@ class InteresadoController extends Controller/* - */ {
     return view("interesado.editar", $this->data);
   }
 
-  public function actualizar($id, FormularioRequest $req)/* - */ {
+  public function actualizar($id, FormularioRequest $req) {
     try {
       $datos = $req->all();
       Interesado::actualizar($id, $datos);
@@ -116,7 +116,7 @@ class InteresadoController extends Controller/* - */ {
     return redirect(route("interesados.editar", ["id" => $id]));
   }
 
-  public function actualizarEstado($id, ActualizarEstadoRequest $req)/* - */ {
+  public function actualizarEstado($id, ActualizarEstadoRequest $req) {
     try {
       $datos = $req->all();
       Interesado::actualizarEstado($id, $datos["estado"]);
@@ -127,7 +127,7 @@ class InteresadoController extends Controller/* - */ {
     return response()->json(["mensaje" => "Actualización exitosa."], 200);
   }
 
-  public function cotizar($id)/* - */ {
+  public function cotizar($id) {
     try {
       $this->data["interesado"] = Interesado::obtenerXId($id);
     } catch (ModelNotFoundException $e) {
@@ -138,7 +138,7 @@ class InteresadoController extends Controller/* - */ {
     return view("interesado.cotizar", $this->data);
   }
 
-  public function enviarCotizacion($id, FormularioCotizacionRequest $req)/* - */ {
+  public function enviarCotizacion($id, FormularioCotizacionRequest $req) {
     try {
       Interesado::enviarCotizacion($id, $req->all());
       Mensajes::agregarMensajeExitoso("Cotización enviada.");
@@ -149,7 +149,7 @@ class InteresadoController extends Controller/* - */ {
     return redirect(route("interesados.cotizar", ["id" => $id]));
   }
 
-  public function perfilAlumno($id)/* - */ {
+  public function perfilAlumno($id) {
     try {
       $idAlumno = Interesado::obtenerIdAlumno($id);
       return redirect($idAlumno > 0 ? route("alumnos.perfil", ["id" => $idAlumno]) : route("interesados"));
@@ -160,7 +160,7 @@ class InteresadoController extends Controller/* - */ {
     }
   }
 
-  public function eliminar($id)/* - */ {
+  public function eliminar($id) {
     try {
       Interesado::eliminar($id);
     } catch (\Exception $e) {

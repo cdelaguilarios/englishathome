@@ -39,6 +39,8 @@ class ProfileComposer {
     $datosExtrasVistas = Cache::get("datosExtrasVistas");
     if (!isset($datosExtrasVistas)) {
       $datosExtrasVistas = [
+          "urlSitioWebEmpresa" => Config::get("eah.urlSitioWebEmpresa"),
+          "nombreComercialEmpresa" => Config::get("eah.nombreComercialEmpresa"),
           "cursos" => Curso::listarSimple(),
           "minHorasClase" => Config::get("eah.minHorasClase"),
           "maxHorasClase" => Config::get("eah.maxHorasClase"),

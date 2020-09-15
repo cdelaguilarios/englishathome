@@ -1,4 +1,3 @@
-{{----}}
 <script type="text/javascript">
   var modoVisualizarMapa = {{ (isset($modo) && ($modo === "visualizar" || $modo === "ficha")) ? "true" : "false" }};
 </script>

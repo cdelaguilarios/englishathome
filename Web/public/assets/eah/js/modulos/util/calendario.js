@@ -1,11 +1,11 @@
 var calendario = {};
-calendario = (function ()/* - */ {
+calendario = (function () {
   window.addEventListener("load", esperarCargaJquery, false);
-  function esperarCargaJquery()/* - */ {
+  function esperarCargaJquery() {
     ((window.jQuery && jQuery.ui) ? cargarSeccion() : window.setTimeout(esperarCargaJquery, 100));
   }
 
-  function  cargarSeccion()/* - */ {
+  function  cargarSeccion() {
     if (!$("#sec-calendario").is(":visible")) {
       setTimeout(function () {
         cargarSeccion();
@@ -29,7 +29,7 @@ calendario = (function ()/* - */ {
       establecerFiltrosBusqueda();
     }
   }
-  function obtenerDatosFuenteCalendario()/* - */ {
+  function obtenerDatosFuenteCalendario() {
     urlCalendario = (typeof (urlCalendario) === "undefined" ? "" : urlCalendario);
     var idAlumno = null;
     var idProfesor = null;
@@ -52,7 +52,7 @@ calendario = (function ()/* - */ {
             } : []);
   }
 
-  function establecerFiltrosBusqueda()/* - */ {
+  function establecerFiltrosBusqueda() {
     utilFechasHorarios.establecerCalendario($("#bus-fecha-calendario"), false, false, false, function () {
       var fechaBus = $("#bus-fecha-calendario").val();
       var datFechaBus = fechaBus.split("/");

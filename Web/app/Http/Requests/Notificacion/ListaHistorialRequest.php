@@ -5,20 +5,20 @@ namespace App\Http\Requests\Notificacion;
 use App\Http\Requests\Request;
 use App\Helpers\ReglasValidacion;
 
-class ListaHistorialRequest extends Request/* - */ {
+class ListaHistorialRequest extends Request {
 
-  public function authorize()/* - */ {
+  public function authorize() {
     return true;
   }
 
-  protected function getValidatorInstance()/* - */ {
+  protected function getValidatorInstance() {
     $datos = $this->all();
     $datos["numeroCarga"] = ReglasValidacion::formatoDato($datos, "numeroCarga", 0);
     $this->getInputSource()->replace($datos);
     return parent::getValidatorInstance();
   }
 
-  public function rules()/* - */ {
+  public function rules() {
     $reglasValidacion = [
         "numeroCarga" => "required|numeric"
     ];

@@ -1,4 +1,3 @@
-{{----}}
 <div class="box-body">
   <div class="form-group">
     {{ Form::label("titulo-notificacion-" . $idSeccion, "Título (*): ", ["class" => "col-sm-2 control-label"]) }}

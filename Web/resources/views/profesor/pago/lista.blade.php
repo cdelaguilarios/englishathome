@@ -1,4 +1,3 @@
-{{----}}
 <script>
   var urlListarPagos = "{{ route('profesores.pagos.listar', ['id' => $profesor->id]) }}";
   var urlEliminarPago = "{{ route('profesores.pagos.eliminar', ['id' => $profesor->id, 'idPago' => 0]) }}";

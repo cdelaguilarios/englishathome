@@ -20,29 +20,36 @@ class Postulante extends Model {
   protected $table = "postulante";
   protected $fillable = ["ultimosTrabajos", "experienciaOtrosIdiomas", "descripcionPropia", "ensayo", "cv", "certificadoInternacional", "imagenDocumentoIdentidad", "audio"];
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloPostulante = new Postulante();
     $nombreTabla = $modeloPostulante->getTable();
     unset($modeloPostulante);
     return $nombreTabla;
   }
 
-  public static function listar($datos = NULL)/* - */ {
+  public static function listar($datos = NULL) {
     $nombreTabla = Postulante::nombreTabla();
     $postulantes = Postulante::leftJoin(Entidad::nombreTabla() . " as entidad", $nombreTabla . ".idEntidad", "=", "entidad.id")
             ->leftJoin(EntidadCurso::nombreTabla() . " as entidadCurso", $nombreTabla . ".idEntidad", "=", "entidadCurso.idEntidad")
-            ->select($nombreTabla . ".*", "entidad.*", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'))
+            ->leftJoin("distrito AS distritoPostulante", function ($q) {
+              $q->on("distritoPostulante.codigo", "=", "entidad.codigoUbigeo");
+            })
             ->where("entidad.eliminado", 0)
             ->groupBy("entidad.id")
             ->distinct();
-
     if (isset($datos["estado"])) {
       $postulantes->where("entidad.estado", $datos["estado"]);
     }
-    return $postulantes;
+    return $postulantes->select(DB::raw(
+                            $nombreTabla . '.*,
+                            entidad.*,
+                            distritoPostulante.distrito AS distrito,   
+                            CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'
+                    )
+    );
   }
 
-  public static function listarBusqueda($terminoBus = NULL)/* - */ {
+  public static function listarBusqueda($terminoBus = NULL) {
     $alumnos = Postulante::listar()->select("entidad.id", DB::raw('CONCAT(entidad.nombre, " ", entidad.apellido) AS nombreCompleto'));
     if (isset($terminoBus)) {
       $alumnos->whereRaw('CONCAT(entidad.nombre, " ", entidad.apellido) like ?', ["%{$terminoBus}%"]);
@@ -50,7 +57,7 @@ class Postulante extends Model {
     return $alumnos->lists("nombreCompleto", "entidad.id");
   }
 
-  public static function obtenerXId($id, $simple = FALSE)/* - */ {
+  public static function obtenerXId($id, $simple = FALSE) {
     $postulante = Postulante::listar()->where("entidad.id", $id)->firstOrFail();
 
     if (!$simple) {
@@ -65,7 +72,7 @@ class Postulante extends Model {
     return $postulante;
   }
 
-  public static function registrar($req)/* - */ {
+  public static function registrar($req) {
     $datos = $req->all();
     if (isset($datos["fechaNacimiento"])) {
       $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
@@ -78,29 +85,30 @@ class Postulante extends Model {
     }
     Horario::registrarActualizar($idEntidad, $datos["horario"]);
 
-    $datos["cv"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 1, "DocumentoPersonalCv");
-    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 1, "DocumentoPersonalCertificadoInternacional");
-    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidosNUEVO("", $datos, 1, "DocumentoPersonalImagenDocumentoIdentidad");
+    $datos["cv"] = Archivo::procesarArchivosSubidos("", $datos, 1, "DocumentoPersonalCv");
+    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidos("", $datos, 1, "DocumentoPersonalCertificadoInternacional");
+    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidos("", $datos, 1, "DocumentoPersonalImagenDocumentoIdentidad");
 
     $postulante = new Postulante($datos);
     $postulante->idEntidad = $idEntidad;
     $postulante->save();
 
     Docente::registrarActualizarAudio($idEntidad, $req->file("audio"));
-    Notificacion::registrar([
+    Notificacion::registrarActualizar([
         "idEntidades" => [$idEntidad, (Auth::guest() ? NULL : Auth::user()->idEntidad)],
         "titulo" => (Auth::guest() ? MensajesNotificacion::TituloPostulanteRegistro : MensajesNotificacion::TituloPostulanteRegistroXUsuario),
-        "enviarCorreo" => (Auth::guest() ? 1 : 0)
+        "enviarCorreo" => (Auth::guest() ? 1 : 0),
+        "mostrarEnPerfil" => 1
     ]);
     return $idEntidad;
   }
 
-  public static function actualizar($id, $req)/* - */ {
+  public static function actualizar($id, $req) {
     $datos = $req->all();
     if (isset($datos["fechaNacimiento"])) {
       $datos["fechaNacimiento"] = Carbon::createFromFormat("d/m/Y H:i:s", $datos["fechaNacimiento"] . " 00:00:00")->toDateTimeString();
     }
-    
+
     Entidad::actualizar($id, $datos, TiposEntidad::Postulante, $datos["estado"]);
     Entidad::registrarActualizarImagenPerfil($id, $req->file("imagenPerfil"));
     EntidadCurso::registrarActualizar($id, $datos["idCursos"]);
@@ -108,24 +116,24 @@ class Postulante extends Model {
     Docente::registrarActualizarAudio($id, $req->file("audio"));
     unset($datos["audio"]);
 
-    $postulante = Postulante::obtenerXId($id, TRUE);    
-    $datos["cv"] = Archivo::procesarArchivosSubidosNUEVO($postulante->cv, $datos, 1, "DocumentoPersonalCv");
-    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidosNUEVO($postulante->certificadoInternacional, $datos, 1, "DocumentoPersonalCertificadoInternacional");
-    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidosNUEVO($postulante->imagenDocumentoIdentidad, $datos, 1, "DocumentoPersonalImagenDocumentoIdentidad");
+    $postulante = Postulante::obtenerXId($id, TRUE);
+    $datos["cv"] = Archivo::procesarArchivosSubidos($postulante->cv, $datos, 1, "DocumentoPersonalCv");
+    $datos["certificadoInternacional"] = Archivo::procesarArchivosSubidos($postulante->certificadoInternacional, $datos, 1, "DocumentoPersonalCertificadoInternacional");
+    $datos["imagenDocumentoIdentidad"] = Archivo::procesarArchivosSubidos($postulante->imagenDocumentoIdentidad, $datos, 1, "DocumentoPersonalImagenDocumentoIdentidad");
     $postulante->update($datos);
   }
 
-  public static function actualizarEstado($id, $estado)/* - */ {
+  public static function actualizarEstado($id, $estado) {
     Postulante::obtenerXId($id, TRUE);
     Entidad::actualizarEstado($id, $estado);
   }
 
-  public static function actualizarHorario($id, $horario)/* - */ {
+  public static function actualizarHorario($id, $horario) {
     Postulante::obtenerXId($id, TRUE);
     Horario::registrarActualizar($id, $horario);
   }
 
-  public static function obtenerIdProfesor($id)/* - */ {
+  public static function obtenerIdProfesor($id) {
     Postulante::obtenerXId($id, TRUE);
     $relacionEntidad = RelacionEntidad::obtenerXIdEntidadB($id);
     return ((count($relacionEntidad) > 0) ? $relacionEntidad[0]->idEntidadA : 0);
@@ -162,21 +170,23 @@ class Postulante extends Model {
       $profesor->save();
       $idProfesor = $idEntidad;
 
-      Notificacion::registrar([
+      Notificacion::registrarActualizar([
           "idEntidades" => [$idEntidad, Auth::user()->idEntidad],
-          "titulo" => MensajesNotificacion::TituloProfesorRegistroXUsuario
+          "titulo" => MensajesNotificacion::TituloProfesorRegistroXUsuario,
+          "mostrarEnPerfil" => 1
       ]);
     }
     RelacionEntidad::registrar($idProfesor, $id, TiposRelacionEntidad::ProfesorPostulante);
     Postulante::actualizarEstado($id, EstadosPostulante::ProfesorRegistrado);
-    Notificacion::registrar([
+    Notificacion::registrarActualizar([
         "idEntidades" => [$id, Auth::user()->idEntidad],
-        "titulo" => MensajesNotificacion::TituloPostulanteRegistroProfesorXUsuario
+        "titulo" => MensajesNotificacion::TituloPostulanteRegistroProfesorXUsuario,
+        "mostrarEnPerfil" => 1
     ]);
     return $idProfesor;
   }
 
-  public static function eliminar($id)/* - */ {
+  public static function eliminar($id) {
     Postulante::obtenerXId($id, TRUE);
     Entidad::eliminar($id);
   }
@@ -198,20 +208,6 @@ class Postulante extends Model {
       return FALSE;
     }
     return TRUE;
-  }
-
-  //REPORTE
-  public static function listarCampos() {
-    return [
-        "ultimosTrabajos" => ["titulo" => "Últimos trabajos"],
-        "experienciaOtrosIdiomas" => ["titulo" => "Experencia en otros idiomas"],
-        "descripcionPropia" => ["titulo" => "Descripción propia"],
-        "ensayo" => ["titulo" => "Ensayo"],
-        "cv" => ["titulo" => "CV"],
-        "certificadoInternacional" => ["titulo" => "Certificado internacional"],
-        "imagenDocumentoIdentidad" => ["titulo" => "Imagen documento de identidad"],
-        "audio" => ["titulo" => "Audio"]
-    ];
   }
 
 }

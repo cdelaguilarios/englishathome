@@ -10,7 +10,7 @@ var ListaNotificacionesHistorial = ListaNotificacionesHistorial || (function () 
     }, 100));
   };
 
-  var cargar = function ()/* - */ {
+  var cargar = function () {
     var self = this;
     cargarDatos.call(self);
 
@@ -18,7 +18,7 @@ var ListaNotificacionesHistorial = ListaNotificacionesHistorial || (function () 
       window[self._args.nombreModuloCrearEditar].crear();
     });
   };
-  var cargarDatos = function ()/* - */ {
+  var cargarDatos = function () {
     var self = this;
     var meses = utilFechasHorarios.obtenerMeses();
     var eLista = $("#" + self._args.idSeccionLista + " .lista");
@@ -82,8 +82,8 @@ var ListaNotificacionesHistorial = ListaNotificacionesHistorial || (function () 
                             var nombreAdjunto = datosAdjunto[datosAdjunto.length === 2 ? 1 : 0];
 
                             htmlHistorial += '<a href="' + rutaAdjunto + '" target="_blank">' +
-                                    (util.urlEsImagen(rutaAdjunto) ? '<img src="' + rutaAdjunto + '" class="margin" width="200">' : nombreAdjunto) +
-                                    '</a><br/>';
+                                    (util.urlEsImagen(rutaAdjunto) ? '<img src="' + rutaAdjunto + '" class="margin" width="' + (window.mobilecheck() ? '150' : '200') + '">' : nombreAdjunto) +
+                                    '</a>';
                           }
                         });
                       }
@@ -130,11 +130,11 @@ var ListaNotificacionesHistorial = ListaNotificacionesHistorial || (function () 
     Object.assign(this._args, args);
     esperarCargaJquery.call(this);
   };
-  Constructor.prototype.mostrar = function ()/* - */ {
+  Constructor.prototype.mostrar = function () {
     $("div[id^=" + this._args.idPrefijoSeccionNotificaciones + "]").hide();
     $("#" + this._args.idSeccionLista).show();
   };
-  Constructor.prototype.cargarDatos = function ()/* - */ {
+  Constructor.prototype.cargarDatos = function () {
     cargarDatos.call(this);
   };
   Constructor.prototype.reCargar = function () {

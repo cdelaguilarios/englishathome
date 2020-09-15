@@ -1,9 +1,8 @@
-{{----}}
 <script src="{{ asset("assets/eah/js/modulos/util/archivosAdjuntos.js")}}"></script>
 <script>
-  var archivosAdjuntos{{ uniqid() }} = (function ()/* - */ {
+  var archivosAdjuntos{{ uniqid() }} = (function () {
     window.addEventListener("load", esperarCargaJquery, false);
-    function esperarCargaJquery()/* - */ {
+    function esperarCargaJquery() {
       ((window.jQuery && jQuery.ui && typeof (utilFormularios) !== "undefined") ? archivosAdjuntos.cargar({!!  json_encode($adjuntos) !!}) : window.setTimeout(esperarCargaJquery, 100));
     }
   }());

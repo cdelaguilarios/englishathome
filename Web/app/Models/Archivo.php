@@ -7,9 +7,9 @@ use File;
 use Storage;
 use Intervention\Image\ImageManager;
 
-class Archivo/* - */ {
+class Archivo {
 
-  public static function obtener($nombre, $sexoEntidad = NULL, $esAudio = FALSE, $esDocumentoPersonal = FALSE)/* - */ {
+  public static function obtener($nombre, $sexoEntidad = NULL, $esAudio = FALSE, $esDocumentoPersonal = FALSE) {
     try {
       $archivo = Storage::get($nombre);
       $tipo = Storage::mimeType($nombre);
@@ -36,7 +36,7 @@ class Archivo/* - */ {
     }
   }
 
-  public static function registrar($identificador, $archivo, $reajustar = FALSE)/* - */ {
+  public static function registrar($identificador, $archivo, $reajustar = FALSE) {
     try {
       $nombre = $identificador . time() . "." . $archivo->getClientOriginalExtension();
       $archivoSel = file_get_contents($archivo->getRealPath());
@@ -53,62 +53,38 @@ class Archivo/* - */ {
     }
   }
 
-  public static function eliminar($nombre)/* - */ {
+  public static function eliminar($nombre) {
     Storage::delete($nombre);
   }
 
-  public static function procesarArchivosSubidosNUEVO($archivosActuales, $datos, $maxCantidadArchivos, $idCampo)/* - */ {    
-    $archivosActualesSel = (!is_null($archivosActuales) ? $archivosActuales : "");
-    
+  public static function verificarExistencia($nombre) {
+    try {
+      Storage::get($nombre);
+    } catch (\Exception $e) {
+      Log::error($e);
+      return FALSE;
+    }
+    return TRUE;
+  }
+
+  public static function procesarArchivosSubidos($archivosActuales, $datos, $maxCantidadArchivos, $idCampo) {
+    $archivosActualesSel = "";
+
+    //Verificando existencia de archivos actuales    
+    $listaArchivosActualesSel = explode(",", (!is_null($archivosActuales) ? $archivosActuales : ""));
+    for ($i = 0; $i < count($listaArchivosActualesSel); $i++) {
+      $datosArchivoActualSel = explode(":", $listaArchivosActualesSel[$i]);
+      if (Archivo::verificarExistencia($datosArchivoActualSel[0])) {
+        $archivosActualesSel .= $listaArchivosActualesSel[$i] . ",";
+      }
+    }
+
     $variableNombresArchivos = "nombresArchivos" . $idCampo;
     $variableNombresOriginalesArchivos = "nombresOriginalesArchivos" . $idCampo;
-    $variableNombresArchivosEliminados = "nombresArchivos"  . $idCampo . "Eliminados";
-    
-    if (isset($datos[$variableNombresArchivosEliminados])) {
-      $nombresArchivosEliminados = explode(",", $datos[$variableNombresArchivosEliminados]);
-      for ($i = 0; $i < count($nombresArchivosEliminados); $i++) {
-        if (trim($nombresArchivosEliminados[$i]) == "") {
-          continue;
-        }
-        try {
-          Archivo::eliminar($nombresArchivosEliminados[$i]);
-          $datArchivosActualesSel = explode(",", $archivosActualesSel);
-          for ($j = 0; $j < count($datArchivosActualesSel); $j++) {
-            if (strpos($datArchivosActualesSel[$j], $nombresArchivosEliminados[$i] . ":") !== false) {
-              $archivosActualesSel = str_replace($datArchivosActualesSel[$j] . ",", "", $archivosActualesSel);
-              break;
-            }
-          }
-        } catch (\Exception $e) {
-          Log::error($e);
-        }
-      }
-    }
-
-    if (isset($datos[$variableNombresArchivos]) && isset($datos[$variableNombresOriginalesArchivos])) {
-      $nombresArchivos = explode(",", $datos[$variableNombresArchivos]);
-      $nombresOriginalesArchivos = explode(",", $datos[$variableNombresOriginalesArchivos]);
-
-      for ($i = 0; $i < count($nombresArchivos); $i++) {
-        if (count(explode(",", $archivosActualesSel)) == ($maxCantidadArchivos + 1)) {
-          break;
-        }
-        if (trim($nombresArchivos[$i]) == "") {
-          continue;
-        }
-        $nombreOriginalArchivo = (array_key_exists($i, $nombresOriginalesArchivos) && $nombresOriginalesArchivos[$i] != "" ? str_replace(",", "", $nombresOriginalesArchivos[$i]) : NULL);
-        $archivosActualesSel .= $nombresArchivos[$i] . ":" . (isset($nombreOriginalArchivo) && $nombreOriginalArchivo != "" ? $nombreOriginalArchivo : $nombresArchivos[$i]) . ",";
-      }
-    }
-    return $archivosActualesSel;
-  }
-  
-  public static function procesarArchivosSubidos($archivosActuales, $datos, $maxCantidadArchivos, $variableNombresArchivos, $variableNombresOriginalesArchivos, $variableNombresArchivosEliminados = "") {
-    $archivosActualesSel = (!is_null($archivosActuales) ? $archivosActuales : "");
+    $variableNombresArchivosEliminados = "nombresArchivos" . $idCampo . "Eliminados";
 
     if (isset($datos[$variableNombresArchivosEliminados])) {
       $nombresArchivosEliminados = explode(",", $datos[$variableNombresArchivosEliminados]);
-
       for ($i = 0; $i < count($nombresArchivosEliminados); $i++) {
         if (trim($nombresArchivosEliminados[$i]) == "") {
           continue;

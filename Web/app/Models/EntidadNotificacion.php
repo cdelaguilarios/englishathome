@@ -6,7 +6,7 @@ use Auth;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class EntidadNotificacion extends Model/* - */ {
+class EntidadNotificacion extends Model {
 
   public $timestamps = false;
   protected $table = "entidadNotificacion";
@@ -17,7 +17,7 @@ class EntidadNotificacion extends Model/* - */ {
       "fechaRevision"
   ];
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloEntidadNotificacion = new EntidadNotificacion();
     $nombreTabla = $modeloEntidadNotificacion->getTable();
     unset($modeloEntidadNotificacion);

@@ -20,7 +20,7 @@ class CorreoController extends Controller {
   }
 
 
-  public function index()/* - */ {    
+  public function index() {    
     try {
       $idEntidad = Input::get("id");
       if (isset($idEntidad)) {
@@ -33,7 +33,7 @@ class CorreoController extends Controller {
     return view("correos.index", $this->data);
   }
 
-  public function listarEntidades(BusquedaEntidadRequest $req)/* - */ {
+  public function listarEntidades(BusquedaEntidadRequest $req) {
     return response()->json(Entidad::buscar($req->all()), 200);
   }
 

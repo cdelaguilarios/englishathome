@@ -2,7 +2,7 @@
 
 namespace App\Helpers\Enum;
 
-class OrigenesInteresado/* - */ {
+class OrigenesInteresado {
 
   const Web = "WEB";
   const Facebook = "FACEBOOK";
@@ -11,7 +11,7 @@ class OrigenesInteresado/* - */ {
   const Llamada = "LLAMADA";
   const LinkedIn = "LINKEDIN";
 
-  public static function listar()/* - */ {
+  public static function listar() {
     return [
         OrigenesInteresado::Web => "Web",
         OrigenesInteresado::Facebook => "Facebook",

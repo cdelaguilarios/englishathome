@@ -1,6 +1,6 @@
 var docentesDisponibles = {};
-docentesDisponibles = (function ()/* - */ {
-  function mostrar(funcionConfirmarDocente)/* - */ {
+docentesDisponibles = (function () {
+  function mostrar(funcionConfirmarDocente) {
     if ($.fn.DataTable.isDataTable("#tab-lista-docentes")) {
       utilTablas.recargarDatosTabla($("#tab-lista-docentes"));
     } else {

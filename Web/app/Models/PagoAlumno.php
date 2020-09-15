@@ -24,19 +24,19 @@ class PagoAlumno extends Model {
       "idPago"
   ];
 
-  public static function nombreTabla()/* - */ {
+  public static function nombreTabla() {
     $modeloPagoAlumno = new PagoAlumno();
     $nombreTabla = $modeloPagoAlumno->getTable();
     unset($modeloPagoAlumno);
     return $nombreTabla;
   }
 
-  public static function listarBase()/* - */ {
+  public static function listarBase() {
     return PagoAlumno::leftJoin(Pago::nombreTabla() . " as pago", PagoAlumno::nombreTabla() . ".idPago", "=", "pago.id")
                     ->where("pago.eliminado", 0);
   }
 
-  public static function listar($idAlumno)/* - */ {
+  public static function listar($idAlumno) {
     $nombreTablaPagoAlumno = PagoAlumno::nombreTabla();
     $nombreTablaPagoClase = PagoClase::nombreTabla();
     $nombreTablaClase = Clase::nombreTabla();
@@ -65,7 +65,7 @@ class PagoAlumno extends Model {
                                             THEN pagoClase.duracionCubierta 
                                             ELSE 0 
                                           END)";
-    $queryMontoXClasesRealizadas = "SUM(CASE WHEN clase.estado = '" . EstadosClase::ConfirmadaProfesor. "' OR clase.estado = '" . EstadosClase::ConfirmadaProfesorAlumno . "' OR clase.estado = '" . EstadosClase::Realizada . "' 
+    $queryMontoXClasesRealizadas = "SUM(CASE WHEN clase.estado = '" . EstadosClase::ConfirmadaProfesor . "' OR clase.estado = '" . EstadosClase::ConfirmadaProfesorAlumno . "' OR clase.estado = '" . EstadosClase::Realizada . "' 
                                             THEN (pagoClase.duracionCubierta/3600) * IFNULL(pago.costoXHoraClase, 0)
                                             ELSE 0 
                                           END)";
@@ -109,7 +109,7 @@ class PagoAlumno extends Model {
     );
   }
 
-  public static function listarXBolsaHoras($idAlumno)/* - */ {
+  public static function listarXBolsaHoras($idAlumno) {
     $nombreTablaAlumnoBolsaHoras = AlumnoBolsaHoras::nombreTabla();
     return PagoAlumno::listar($idAlumno)
                     ->where("estado", EstadosPago::Realizado)
@@ -119,7 +119,7 @@ class PagoAlumno extends Model {
                     ->orderBy("fecha", "asc");
   }
 
-  public static function obtenerXId($idAlumno, $id)/* - */ {
+  public static function obtenerXId($idAlumno, $id) {
     $datosPago = PagoAlumno::listar($idAlumno)->where("id", $id)->first();
     if (!isset($datosPago)) {
       throw new ModelNotFoundException;
@@ -127,7 +127,7 @@ class PagoAlumno extends Model {
     return $datosPago;
   }
 
-  public static function registrarActualizar($idAlumno, $req)/* - */ {
+  public static function registrarActualizar($idAlumno, $req) {
     $datos = $req->all();
 
     $datos["saldoFavor"] = 0;
@@ -139,7 +139,7 @@ class PagoAlumno extends Model {
 
     if (!(isset($datos["idPago"]) && $datos["idPago"] != "")) {
       //Registro
-      $datosPago = Pago::registrar($datos, $datos["estado"], $req);
+      $datosPago = Pago::registrar($datos, $datos["estado"]);
       $pagoAlumno = new PagoAlumno([
           "idPago" => $datosPago["id"],
           "idAlumno" => $idAlumno
@@ -157,7 +157,7 @@ class PagoAlumno extends Model {
       }
     } else {
       //Actualización
-      $datosPago = Pago::actualizar($datos["idPago"], $datos, $req);
+      $datosPago = Pago::actualizar($datos["idPago"], $datos);
     }
 
     if ($datos["usarSaldoFavor"] == 1) {
@@ -177,13 +177,13 @@ class PagoAlumno extends Model {
     PagoAlumno::registrarActualizarEvento($idAlumno, $datosPago);
   }
 
-  public static function actualizarEstado($idAlumno, $id, $datos)/* - */ {
+  public static function actualizarEstado($idAlumno, $id, $datos) {
     if (PagoAlumno::verificarExistencia($idAlumno, $id)) {
       Pago::actualizarEstado($id, $datos["estado"]);
     }
   }
 
-  public static function verificarExistencia($idAlumno, $id)/* - */ {
+  public static function verificarExistencia($idAlumno, $id) {
     try {
       PagoAlumno::obtenerXId($idAlumno, $id);
     } catch (\Exception $e) {
@@ -193,17 +193,16 @@ class PagoAlumno extends Model {
     return TRUE;
   }
 
-  public static function eliminar($idAlumno, $id)/* - */ {
+  public static function eliminar($idAlumno, $id) {
     if (PagoAlumno::verificarExistencia($idAlumno, $id)) {
       Clase::eliminadXIdPago($idAlumno, $id);
       Pago::eliminar($id);
       AlumnoBolsaHoras::where("idAlumno", $idAlumno)->where("idPago", $id)->delete();
-      //TODO: Falta validar
     }
   }
 
   //Util
-  private static function registrarActualizarEvento($idAlumno, $datosPago)/* - */ {
+  private static function registrarActualizarEvento($idAlumno, $datosPago) {
     $listaMotivosPago = MotivosPago::listar();
     $motivo = $listaMotivosPago[$datosPago["motivo"]];
     $descripcion = (isset($datosPago["descripcion"]) && $datosPago["descripcion"] != "" ? "<br/><strong>Descripción:</strong> " . $datosPago["descripcion"] : "");
@@ -215,8 +214,9 @@ class PagoAlumno extends Model {
         "tipo" => TiposNotificacion::Pago,
         "titulo" => MensajesNotificacion::TituloAlumnoRegistroPago,
         "mensaje" => $mensajeNotificacion,
-        "adjuntos" => $datosPago["imagenesComprobante"], //TODO: verificar
-        "idPago" => $datosPago["id"]
+        "adjuntos" => $datosPago["imagenesComprobante"],
+        "idPago" => $datosPago["id"],
+        "mostrarEnPerfil" => 1
     ];
 
     $notificacion = Notificacion::obtenerXIdPago($datosPago["id"]);
@@ -226,45 +226,4 @@ class PagoAlumno extends Model {
     Notificacion::registrarActualizar($datos);
   }
 
-  // <editor-fold desc="TODO: ELIMINAR">
-  public static function obtenerXClase($idAlumno, $idClase) {
-    $nombreTabla = PagoAlumno::nombreTabla();
-    return PagoAlumno::listar($idAlumno)->select("pago.*")
-                    ->leftJoin(PagoClase::nombreTabla() . " as pagoClase", $nombreTabla . ".idPago", "=", "pagoClase.idPago")
-                    ->where("pagoClase.idClase", $idClase)->first();
-  }
-
-  public static function obtenerTiemposClasesXId($idAlumno, $id) {
-    $datosPago = PagoAlumno::obtenerXId($idAlumno, $id);
-    if (isset($datosPago) && $datosPago->motivo == MotivosPago::Clases) {
-      $montoTotal = (!is_null($datosPago->monto) ? (float) $datosPago->monto : 0);
-      $saldoFavor = (!is_null($datosPago->saldoFavor) ? (float) $datosPago->saldoFavor : 0);
-      $montoTotalClases = ($montoTotal - $saldoFavor);
-      $costoXHoraClase = (!is_null($datosPago->costoXHoraClase) ? (float) $datosPago->costoXHoraClase : 0);
-
-      $duracionTotal = ($costoXHoraClase > 0 ? (($montoTotalClases / $costoXHoraClase) * 3600) : 0);
-      $duracionRealizada = (!is_null($datosPago->duracionTotalXClasesRealizadas) ? (float) explode("-", $datosPago->duracionTotalXClasesRealizadas)[0] : 0);
-      $duracionPendiente = ($duracionTotal - $duracionRealizada);
-      $duracionPendienteReal = (!is_null($datosPago->duracionTotalXClasesPendientes) ? (float) explode("-", $datosPago->duracionTotalXClasesPendientes)[0] : 0);
-      $duracionNoPagada = ($costoXHoraClase > 0 ? (($duracionRealizada + $duracionPendienteReal) - $duracionTotal) : 0);
-
-      return (object) [
-                  "duracionTotal" => $duracionTotal,
-                  "duracionRealizada" => $duracionRealizada,
-                  "duracionPendiente" => $duracionPendiente,
-                  "duracionPendienteReal" => $duracionPendienteReal,
-                  "duracionNoPagada" => $duracionNoPagada
-      ];
-    }
-    return null;
-  }
-
-  public static function obtenerUltimoXClases($idAlumno) {
-    return PagoAlumno::listar($idAlumno)
-                    ->where("motivo", MotivosPago::Clases)
-                    ->orderBy("fechaRegistro", "DESC")
-                    ->first();
-  }
-
-  // </editor-fold>
 }

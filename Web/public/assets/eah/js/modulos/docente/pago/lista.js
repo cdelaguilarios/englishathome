@@ -1,14 +1,14 @@
 var listaPagosDocente = {};
-listaPagosDocente = (function ()/* - */ {
+listaPagosDocente = (function () {
   window.addEventListener("load", esperarCargaJquery, false);
-  function esperarCargaJquery()/* - */ {
+  function esperarCargaJquery() {
     ((window.jQuery && jQuery.ui) ? cargar() : window.setTimeout(esperarCargaJquery, 100));
   }
 
   //Privado  
   var tablaPagos = null;
   var idSeccion = "docentes-pagos-x-clases";
-  function cargar()/* - */ {
+  function cargar() {
     urlListarPagosXClases = (typeof (urlListarPagosXClases) === "undefined" ? "" : urlListarPagosXClases);
     urlPerfilProfesor = (typeof (urlPerfilProfesor) === "undefined" ? "" : urlPerfilProfesor);
     urlPerfilAlumno = (typeof (urlPerfilAlumno) === "undefined" ? "" : urlPerfilAlumno);
@@ -18,7 +18,7 @@ listaPagosDocente = (function ()/* - */ {
     estadoPagoRealizado = (typeof (estadoPagoRealizado) === "undefined" ? "" : estadoPagoRealizado);
 
     if (urlListarPagosXClases !== "" && urlPerfilProfesor !== "" && urlPerfilAlumno !== "" && urlEliminarPagoXClases !== "" && estados !== "" && estadoPagoRealizado !== "") {
-      tablaPagos = $("#tab-lista-pagos").DataTable({
+      tablaPagos = utilTablas.iniciarTabla($("#tab-lista-pagos"), {
         processing: true,
         serverSide: true,
         ajax: {
@@ -38,7 +38,7 @@ listaPagosDocente = (function ()/* - */ {
         columns: [
           {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
               return m.row + m.settings._iDisplayStart + 1;
-            }, "className": "text-center not-mobile"},
+            }, "className": "text-center min-tablet-l"},
           {data: "profesor", name: "profesor", render: function (e, t, d, m) {
               var cuentasBancariasProfesor = '';
               if (d.cuentasBancariasProfesor !== null && d.cuentasBancariasProfesor !== "") {
@@ -74,7 +74,7 @@ listaPagosDocente = (function ()/* - */ {
           {data: "estadoPagoProfesor", name: "estadoPagoProfesor", render: function (e, t, d, m) {
               return '<span class="label ' + estados[d.estadoPagoProfesor][1] + ' btn-estado">' + estados[d.estadoPagoProfesor][0] + '</span>'
                       + (d.fechaPagoProfesor !== null && d.fechaPagoProfesor !== "" ? '<div class="clearfix"><span class="text-info">(Fecha pago: ' + utilFechasHorarios.formatoFecha(d.fechaPagoProfesor) + ')</span></div>' : '');
-            }, "className": "text-center not-mobile"},
+            }, "className": "text-center min-tablet-l"},
           {data: "idProfesor", name: "clase.idProfesor", orderable: false, "searchable": false, width: "10%", render: function (e, t, d, m) {
               return (d.estadoPagoProfesor === estadoPagoRealizado ?
                       '<ul class="buttons">' +
@@ -88,7 +88,30 @@ listaPagosDocente = (function ()/* - */ {
                       '</li>' +
                       '</ul>' :
                       '<a href="javascript:void(0);" onclick="listaPagosDocente.registrarPagoXClases(this);" type="button" class="btn btn-success btn-sm">Pagar</a>');
-            }, className: "text-center"}
+            }, className: "text-center"},
+          //--------- Columnas ocultas solo para exportación excel ---------
+          {data: "profesor", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (d.cuentasBancariasProfesor ? d.cuentasBancariasProfesor.replaceAll("|", " ").replaceAll(";", " - ") : "");
+            }, "className": "never"},
+          {data: "numeroTotalClases", name: "", orderable: false, "searchable": false, "className": "never"},
+          {data: "", name: "", "searchable": false, render: function (e, t, d, m) {
+              return utilFechasHorarios.formatoHora(d.duracionTotalClases);
+            }, className: "never"},
+          {data: "", name: "", "searchable": false, render: function (e, t, d, m) {
+              return util.redondear(d.pagoPromedioXHoraProfesor, 2);
+            }, className: "never"},
+          {data: "", name: "", "searchable": false, render: function (e, t, d, m) {
+              return util.redondear(d.montoTotalXClases, 2);
+            }, className: "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return (estados[d.estadoPagoProfesor] !== undefined ? estados[d.estadoPagoProfesor][0] : '');
+            }, "className": "never"},
+          {data: "", name: "", orderable: false, "searchable": false, render: function (e, t, d, m) {
+              return utilFechasHorarios.formatoFecha(d.fechaPagoProfesor);
+            }, "className": "never"},
+          {data: "descripcionPagoProfesor", name: "", orderable: false, "searchable": false, "className": "never"}
+          //----------------------------------------------------------------
         ],
         initComplete: function (s, j) {
           utilTablas.establecerBotonRecargaTabla($("#tab-lista-pagos"));
@@ -120,7 +143,7 @@ listaPagosDocente = (function ()/* - */ {
           $(api.column(5).footer()).html("Total de la página S/. " + util.redondear(montoTotalPagina, 2) +
                   (montoTotal !== montoTotalPagina ? "<br/>Total S/." + util.redondear(montoTotal, 2) : ""));
         }
-      });
+      }, true, [8, 9, 10, 11, 12, 13, 14, 15, 16]);
       tablaPagos.on('draw.dtr', function (event) {
         event.stopImmediatePropagation();
         return false;
@@ -140,12 +163,12 @@ listaPagosDocente = (function ()/* - */ {
   }
 
   //Público
-  function mostrar()/* - */ {
+  function mostrar() {
     $("div[id^=sec-pago-]").hide();
     utilTablas.recargarDatosTabla($("#tab-lista-pagos"));
     $("#sec-pago-lista").show();
   }
-  function reCargar()/* - */ {
+  function reCargar() {
     $("#tab-lista-pagos").DataTable().ajax.reload();
   }
 
@@ -210,7 +233,7 @@ listaPagosDocente = (function ()/* - */ {
         order: [[2, "desc"]],
         rowId: 'id',
         columns: [
-          {data: "", name: "", orderable: false, "searchable": false, "className": "text-center not-mobile"},
+          {data: "", name: "", orderable: false, "searchable": false, "className": "text-center min-tablet-l"},
           {data: "alumno", name: "alumno", render: function (e, t, d, m) {
               return '<a href="' + (urlPerfilAlumno.replace("/0", "/" + d.idAlumno)) + '" target="_blank">' + d.alumno + '</a>';
             }},

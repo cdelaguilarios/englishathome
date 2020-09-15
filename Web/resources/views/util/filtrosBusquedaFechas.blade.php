@@ -1,4 +1,3 @@
-{{----}}
 <script src="{{ asset("assets/eah/js/modulos/util/filtrosBusquedaFechas.js")}}"></script>
 <div id="sec-filtro-busqueda-fechas-{{ $idSeccion }}" class="form-group">      
   {{ Form::label("tipoBusquedaFecha", "Fecha: ", ["class" => "col-sm-2 control-label"]) }} 
