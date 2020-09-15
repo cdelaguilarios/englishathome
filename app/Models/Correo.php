@@ -170,7 +170,7 @@ class Correo extends Model {
             if (trim($correoAdicional) != "" && filter_var(trim($correoAdicional), FILTER_VALIDATE_EMAIL)) {
               $correosDestinatarios[$correoAdicional] = "";
 
-              if ($datosEntidadCorreo->correoElectronico == $correoAdicional) {
+              if ($correoAdicional == $correoNotificaciones) {
                 $correoNotificacionesIncluido = true;
               }
             }
